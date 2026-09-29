@@ -1,0 +1,71 @@
+name: Release comparator
+
+# Release gate: run Comparator on every challenges/*/config.json and upload an attestation.
+# Dispatch it on the exact release commit; tag and publish a GitHub release only after it passes,
+# with the attestation artifact attached. See challenges/README.md.
+on:
+  workflow_dispatch:
+  # Release candidates: release branches and version tags.
+  push:
+    branches: ['release/**']
+    tags: ['v*']
+
+jobs:
+  comparator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # Mathlib, the library, and Comparator's own Lean toolchain do not fit in a hosted
+      # runner's default free space. Remove preinstalled SDKs this job never uses.
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      # Build the trusted library once, outside the sandbox. The challenge workspaces share its
+      # dependency folder (`packagesDir`), which Comparator's sandbox can read but not write. The
+      # Mathlib cache does not cover the other git dependencies (viscosity_solns,
+      # AleksandrovDifferentiability, parabolic_basic_theory, bernoulli_parabolic_comparison,
+      # elliptic_bernoulli_foundations, gmt_foundations, inner_variational); they are built here
+      # from source.
+      - uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+          build: true
+          test: false
+      - name: Remove downloaded Mathlib cache archives
+        run: |
+          rm -rf "$HOME/.cache/mathlib"
+          df -h /
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.24.0'
+      - name: Validate challenge inventory and configuration
+        run: ruby scripts/check-formalization-manifest.rb --metadata-only
+      - name: Install pinned Comparator tools
+        run: bash scripts/release-comparator.sh install
+      # Lake writes `.hash` files the first time it replays some downloaded Mathlib artifacts,
+      # which the sandbox cannot do. Building the trusted targets (Challenge with its vocabulary
+      # files Challenge/*.lean, or Statement and Challenge) here writes them first. Solution files are built only inside the
+      # sandbox.
+      - name: Build trusted Challenge targets outside the sandbox
+        run: |
+          for workspace in challenges/*/; do
+            targets=Challenge
+            [ -f "${workspace}Statement.lean" ] && targets="Statement Challenge"
+            echo "==> ${workspace}: ${targets}"
+            (cd "$workspace" && lake build $targets)
+          done
+      - name: Run Comparator on every challenge
+        run: bash scripts/release-comparator.sh run
+      - name: Upload Comparator attestation
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: comparator-attestation-${{ github.sha }}
+          path: comparator-report/
+          if-no-files-found: error

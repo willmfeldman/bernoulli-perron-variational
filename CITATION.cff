@@ -1,0 +1,169 @@
+cff-version: 1.2.0
+message: "If you use this Lean formalization, please cite it using this metadata, and cite the paper it formalizes (listed under references)."
+title: "bernoulli-perron-variational: variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, in Lean"
+version: "0.1.0"
+license: "Apache-2.0"
+repository-code: "https://github.com/willmfeldman/bernoulli-perron-variational"
+authors:
+  - family-names: Feldman
+    given-names: "William M."
+abstract: >-
+  Lean 4 / Mathlib formalization of Abedin, Feldman and Stinson, "Variational properties of
+  Perron's extremal solutions in the Bernoulli one-phase problem" (arXiv:2609.14981). For the
+  one-phase Bernoulli problem with a Lipschitz coefficient on a bounded C² domain, Perron's
+  smallest supersolution and largest subsolution are viscosity solutions, inner variational
+  solutions, and one-sided minimizers of the Alt–Caffarelli energy near every free boundary
+  point. In the plane, the largest subsolution is classical, and the smallest supersolution is
+  classical off a set where every blow-up is a two-plane solution. The proof goes through a
+  semilinear parabolic approximation, its singular limit, and the long-time limit.
+keywords:
+  - Lean
+  - Mathlib
+  - formalized mathematics
+  - free boundary problems
+  - Bernoulli problem
+  - one-phase problem
+  - Perron's method
+  - viscosity solutions
+  - inner variational solutions
+references:
+  - type: article
+    authors:
+      - family-names: Abedin
+        given-names: Farhan
+      - family-names: Feldman
+        given-names: "William M."
+      - family-names: Stinson
+        given-names: Kerrek
+    title: "Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem"
+    year: 2026
+    identifiers:
+      - type: url
+        value: "https://arxiv.org/abs/2609.14981"
+  - type: article
+    authors:
+      - family-names: Kriventsov
+        given-names: Dennis
+      - family-names: Weiss
+        given-names: "Georg S."
+    title: "Rectifiability, finite Hausdorff measure, and compactness for non-minimizing Bernoulli free boundaries"
+    journal: "Communications on Pure and Applied Mathematics"
+    volume: "78"
+    issue: "3"
+    start: 545
+    end: 591
+    year: 2025
+    identifiers:
+      - type: doi
+        value: "10.1002/cpa.22226"
+      - type: url
+        value: "https://arxiv.org/abs/2306.10131"
+  - type: article
+    authors:
+      - family-names: Kim
+        given-names: "Inwon C."
+    title: "A free boundary problem arising in flame propagation"
+    journal: "Journal of Differential Equations"
+    volume: "191"
+    issue: "2"
+    start: 470
+    end: 489
+    year: 2003
+    identifiers:
+      - type: doi
+        value: "10.1016/S0022-0396(02)00195-X"
+  - type: article
+    authors:
+      - family-names: Caffarelli
+        given-names: "Luis A."
+      - family-names: Vázquez
+        given-names: "Juan L."
+    title: "A free-boundary problem for the heat equation arising in flame propagation"
+    journal: "Transactions of the American Mathematical Society"
+    volume: "347"
+    issue: "2"
+    start: 411
+    end: 441
+    year: 1995
+  - type: article
+    authors:
+      - family-names: Weiss
+        given-names: "Georg S."
+    title: "Partial regularity for weak solutions of an elliptic free boundary problem"
+    journal: "Communications in Partial Differential Equations"
+    volume: "23"
+    issue: "3-4"
+    start: 439
+    end: 455
+    year: 1998
+  - type: article
+    authors:
+      - family-names: Jerison
+        given-names: David
+      - family-names: Kamburov
+        given-names: Nikola
+    title: "Structure of one-phase free boundaries in the plane"
+    journal: "International Mathematics Research Notices"
+    issue: "19"
+    start: 5922
+    end: 5987
+    year: 2016
+    identifiers:
+      - type: doi
+        value: "10.1093/imrn/rnv339"
+      - type: url
+        value: "https://arxiv.org/abs/1412.4106"
+  - type: article
+    authors:
+      - family-names: Orcan-Ekmekci
+        given-names: Betul
+    title: "On the geometry and regularity of largest subsolutions for a free boundary problem in ℝ²: elliptic case"
+    journal: "Calculus of Variations and Partial Differential Equations"
+    volume: "49"
+    issue: "3-4"
+    start: 937
+    end: 962
+    year: 2014
+    identifiers:
+      - type: doi
+        value: "10.1007/s00526-013-0606-8"
+  - type: article
+    authors:
+      - family-names: Alt
+        given-names: "Hans W."
+      - family-names: Caffarelli
+        given-names: "Luis A."
+    title: "Existence and regularity for a minimum problem with free boundary"
+    journal: "Journal für die reine und angewandte Mathematik"
+    volume: "325"
+    start: 105
+    end: 144
+    year: 1981
+  - type: book
+    authors:
+      - family-names: Caffarelli
+        given-names: "Luis A."
+      - family-names: Salsa
+        given-names: Sandro
+    title: "A Geometric Approach to Free Boundary Problems"
+    collection-title: "Graduate Studies in Mathematics"
+    volume: "68"
+    publisher:
+      name: "American Mathematical Society"
+    year: 2005
+  - type: article
+    authors:
+      - family-names: De Silva
+        given-names: Daniela
+    title: "Free boundary regularity for a problem with right hand side"
+    journal: "Interfaces and Free Boundaries"
+    volume: "13"
+    issue: "2"
+    start: 223
+    end: 238
+    year: 2011
+    identifiers:
+      - type: doi
+        value: "10.4171/IFB/255"
+      - type: url
+        value: "https://arxiv.org/abs/0912.2057"

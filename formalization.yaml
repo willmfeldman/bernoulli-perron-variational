@@ -1,0 +1,186 @@
+# Theorem manifest for PerronVariational, modeled on the theorem-manifest conventions used by public
+# Lean formalization repositories. CI (scripts/check-formalization-manifest.rb) checks that every
+# listed Lean name resolves, that each target depends on exactly axioms.expected, and that the
+# challenge inventory below matches challenges/*/config.json; CI also elaborates the external
+# challenge workspaces. Statement equality between challenges and solutions is checked only by
+# the release comparator workflow.
+#
+# Targets of kind `sanity-check` have no library declaration: they are certified by their challenge
+# workspace alone.
+#
+# DRAFT (release phase E). TODO before release: the Comparator result (see challenges/README.md);
+# a check of every result number against arXiv:2609.14981.
+schema_version: "1"
+project:
+  name: "PerronVariational"
+  title: "bernoulli-perron-variational: variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, in Lean"
+  authors:
+    - "William M. Feldman"
+  repository: "https://github.com/willmfeldman/bernoulli-perron-variational"
+  license: "Apache-2.0"
+  language: "Lean"
+  theorem_prover: "Lean 4"
+  lean_toolchain: "leanprover/lean4:v4.30.0"
+  mathlib: "v4.30.0"
+  description: >-
+    Lean 4 formalization of F. Abedin, W. M. Feldman, K. Stinson, Variational properties of
+    Perron's extremal solutions in the Bernoulli one-phase problem (arXiv:2609.14981). For the
+    one-phase problem Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0}, with Q Lipschitz and
+    0 < Qmin ≤ Q ≤ Qmax on a bounded C² domain, Perron's smallest supersolution and largest
+    subsolution are viscosity solutions, inner variational solutions, and one-sided minimizers of
+    the Alt–Caffarelli energy near every free boundary point; in the plane, the free boundary is
+    classical, except for two-plane points of the smallest supersolution.
+
+dependencies:
+  - name: "mathlib"
+    url: "https://github.com/leanprover-community/mathlib4"
+    rev: "c5ea00351c28e24afc9f0f84379aa41082b1188f"
+  - name: "viscosity_solns"
+    url: "https://github.com/willmfeldman/viscosity-solution-theory"
+    rev: "3a9310934abe88875ed27fc6343ec1423f2850bc"
+  - name: "AleksandrovDifferentiability"
+    url: "https://github.com/willmfeldman/aleksandrov-differentiability"
+    rev: "730e7e9256c7e8018abad3bbc50a0598c656b61c"
+  - name: "parabolic_basic_theory"
+    url: "https://github.com/willmfeldman/parabolic-basic-theory"
+    rev: "35be935ced4a87143ee33f1e718d3ba0951cb7c8"
+  - name: "bernoulli_parabolic_comparison"
+    url: "https://github.com/willmfeldman/bernoulli-parabolic-comparison"
+    rev: "181494163728af0e23f44e0fa5b3817c4817b353"
+  - name: "elliptic_bernoulli_foundations"
+    url: "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
+    rev: "245f3210442ec4970675605aeef19119edf6de97"
+  - name: "gmt_foundations"
+    url: "https://github.com/willmfeldman/gmt-foundations"
+    rev: "5075a93696ec4e203cc6f3a886b21f3407eb6507"
+  - name: "inner_variational"
+    url: "https://github.com/willmfeldman/bernoulli-rectifiability"
+    rev: "807d9c7f8ef7fede9811e8630079a48796208b9f"
+
+build:
+  package_file: "lakefile.toml"
+  manifest_file: "lake-manifest.json"
+  root_import: "PerronVariational"
+  commands:
+    - "lake exe cache get"
+    - "lake build"
+
+axioms:
+  expected:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+
+automation:
+  methods:
+    - method: "agent-assisted formalization"
+      models:
+        - "Claude (Anthropic)"
+      framework: "Claude Code agentic coding workflow"
+      review_status: "human-supervised"
+      notes: >-
+        The Lean proofs were written by AI coding agents (Claude) under the author's mathematical
+        direction and review. The theorem statements and proof routes were reviewed by the author.
+        Correctness rests on Lean's kernel check, together with the comparator challenges in
+        challenges/.
+targets:
+  - id: main-theorem
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Perron's extremal solutions are viscosity, inner variational and one-sided minimizing solutions
+    source: "F. Abedin, W. M. Feldman, K. Stinson, Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, arXiv:2609.14981, Theorem 1.1"
+    module: PerronVariational.Main.Final
+    declaration: PerronVariational.main_smallest
+    related_declarations:
+      - PerronVariational.main_largest
+      - PerronVariational.parabolic_existence_bdd
+      - PerronVariational.semilinear_wellposed
+      - PerronVariational.Inner.eps_inner_limit
+      - PerronVariational.longtime_innerVar
+      - PerronVariational.directional
+    informal: >
+      Let U ⊂ ℝᵈ be a bounded domain with C² boundary and Q Lipschitz on the
+      closure of U with 0 < Qmin ≤ Q ≤ Qmax. If g is a smooth strict
+      subsolution with g > 0 on ∂U, the smallest supersolution above g is a
+      viscosity solution of Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0}, is an
+      inner variational solution for some χ, and near every free boundary
+      point is a downward minimizer of the Alt–Caffarelli energy on a ball.
+      If g is a smooth strict supersolution, the largest subsolution below g
+      is a viscosity solution, an inner variational solution, and near every
+      free boundary point an upward minimizer. The related declarations are
+      the main steps of the proof: parabolic existence (Theorem 3.9),
+      semilinear well-posedness (Proposition 3.8), the singular limit
+      (Proposition 4.1), the long-time limit (Theorem 3.10) and directional
+      minimality (Lemma 6.3).
+    challenge: challenges/main-theorem
+    challenge_theorems:
+      - challenge_main_smallest
+      - challenge_main_largest
+  - id: planar-structure
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Structure of the free boundary of Perron's extremal solutions in the plane
+    source: "F. Abedin, W. M. Feldman, K. Stinson, Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, arXiv:2609.14981, Corollary 1.2 and Theorem B.1"
+    module: PerronVariational.Main.Corollary2D.Structure
+    declaration: PerronVariational.corollary_2d_smallest
+    related_declarations:
+      - PerronVariational.corollary_2d_largest
+      - PerronVariational.largestSub_nondegenerate
+    informal: >
+      In ℝ², under the hypotheses of Theorem 1.1: the free boundary of the
+      smallest supersolution is the disjoint union of a relatively open set,
+      near each point of which the solution is classical (C^{1,γ} free
+      boundary, classical free boundary condition), and a set at each point x₀
+      of which every blow-up limit is Q(x₀)|y · e| for a unit vector e; the
+      largest subsolution is classical near every free boundary point. The
+      related declaration is the non-degeneracy of the largest subsolution
+      (Theorem B.1, after Orcan-Ekmekci).
+    challenge: challenges/planar-structure
+    challenge_theorems:
+      - challenge_corollary_2d_smallest
+      - challenge_corollary_2d_largest
+  - id: model-cases
+    kind: model-example
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: "A two-disc model example: a two-plane point, and distinct smallest and largest solutions"
+    source: "Not a result of arXiv:2609.14981: a model example for its Theorem 1.1 and Corollary 1.2"
+    module: PerronVariational.Examples.TwoDisc.Main
+    declaration: PerronVariational.TwoDisc.model_example
+    informal: >
+      In ℝ² with Q ≡ 1 there are a domain U and data g_sub, g_super meeting
+      the hypotheses of Theorem 1.1 (g_sub a smooth strict subsolution with
+      g_sub > 0 on ∂U, g_super a smooth strict supersolution), with
+      g_sub = g_super on ∂U, such that the smallest supersolution u_min above
+      g_sub and the largest subsolution u_max below g_super are both
+      nontrivial (positive somewhere, zero somewhere, nonempty free boundary),
+      0 is a two-plane point of u_min (its blow-ups at 0 converge to |y₁|
+      locally uniformly, so every blow-up limit is |y₁|), and u_min ≠ u_max in
+      U. The domain is the unit disc minus two closed discs of radius 1/20
+      centred at (±1/10, 0), with boundary value (log 2)/10 on both inner
+      circles, so that the two radial solutions have free boundaries
+      ∂B_{1/10}((±1/10, 0)), which touch at 0. The proof uses Theorem 1.1 (u_min
+      is a viscosity solution) and Corollary 1.2(ii) (u_max is classical, so it
+      cannot have the two-plane point of u_min).
+    challenge: challenges/model-cases
+    challenge_theorems:
+      - challenge_model_example
+
+comparator:
+  external_challenges:
+    directory: "challenges"
+    purpose: >-
+      Standalone comparator challenge workspaces, one per target above (its challenge and
+      challenge_theorems fields). They share one trusted Statement.lean, which imports Mathlib
+      only and defines every notion the claims use; each Challenge.lean states the target's
+      claims with `sorry`. Each Solution.lean imports PerronVariational and proves the same statements from the
+      library.
+    release_workflow: ".github/workflows/release-comparator.yml"
+    comparator_revision: "d03acab154d269c06e60e4de7e4cc85deebff94b"
+    lean4export_revision: "a3e35a584f59b390667db7269cd37fca8575e4bf"
+    landrun_revision: "5ed4a3db3a4ad930d577215c6b9abaa19df7f99f"
+    toolchain: "leanprover/lean4:v4.30.0"
+    mathlib: "v4.30.0"
+    permitted_axioms:
+      - "propext"
+      - "Classical.choice"
+      - "Quot.sound"

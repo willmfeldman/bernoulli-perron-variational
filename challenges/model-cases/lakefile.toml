@@ -1,0 +1,22 @@
+name = "model_cases"
+version = "0.1.0"
+# Only the trusted modules are default targets: under Comparator's threat model the (untrusted)
+# Solution is not compiled before Comparator processes it. During development build it with
+#   lake build Solution
+defaultTargets = ["Statement", "Challenge"]
+# Share the root workspace's dependency checkouts and builds; the manifests lock identical
+# revisions.
+packagesDir = "../../.lake/packages"
+
+[[require]]
+name = "perron_variational"
+path = "../.."   # used by Solution only; Statement and Challenge import Mathlib only
+
+[[lean_lib]]
+name = "Statement"
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
