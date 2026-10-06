@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Parabolic.Existence
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Main.ShiftLimit
 import PerronVariational.Parabolic.LongTimeInnerViscosity
 import PerronVariational.Parabolic.LongTimeViscosity
@@ -195,7 +196,7 @@ theorem inner_largest_of (h38 : ParabolicExistenceBddStatement)
     nlinarith
   have ha0 : Tendsto a atTop (𝓝 0) := by
     have := tendsto_one_div_add_atTop_nhds_zero_nat.const_mul a₁
-    simpa [hadef, mul_one_div] using this
+    simpa [hadef, div_eq_mul_inv] using this
   choose uk χk hk using fun k ↦ hshift (a k) (ha k).1 (ha k).2
   -- the limit `a → 0` along a subsequence (Lemma 2.10)
   obtain ⟨φ, û, χh, hφ, hconv, hinner⟩ := exists_innerVar_limit S uk χk (fun k ↦ (hk k).1)

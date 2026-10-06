@@ -1,0 +1,35 @@
+name: Challenge preflight
+
+# Runs the pinned external mechanical verifier on this exact commit, once per
+# challenge workspace listed below. Advisory only: it checks the workspace and
+# submits nothing. The verifier fetches the source anonymously from GitHub, so
+# this works only on a public repository.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # PARAM: one line per submitted workspace; `id` is exactly 12 lowercase letters/digits.
+          - { workspace: main-theorem, id: perronmain01 }
+          - { workspace: planar-structure, id: perronplanar }
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@65f0154ed776cd26c224254aa57b379137f28b0d
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: 65f0154ed776cd26c224254aa57b379137f28b0d
+      request_id: ${{ matrix.id }}
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: >-
+        {"project_path":"challenges/${{ matrix.workspace }}",
+        "comparator_config_path":"challenges/${{ matrix.workspace }}/config.json",
+        "formalization_metadata_path":"challenges/${{ matrix.workspace }}/formalization.yaml",
+        "authorization_relationship":"I am a responsible author or maintainer"}

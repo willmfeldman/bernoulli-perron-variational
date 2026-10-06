@@ -65,7 +65,7 @@ theorem frontier_posSet_inter_iff {U B : Set (E d)} {u : E d → ℝ} (hB : IsOp
     x ∈ frontier (posSet u U) ↔ x ∈ frontier {y | y ∈ B ∧ 0 < u y} := by
   have hs : {y | y ∈ B ∧ 0 < u y} = posSet u U ∩ B := by
     ext y
-    simp only [posSet, mem_setOf_eq, mem_inter_iff]
+    simp only [posSet, Set.mem_ofPred_eq, mem_inter_iff]
     exact ⟨fun h ↦ ⟨⟨hBU h.1, h.2⟩, h.1⟩, fun h ↦ ⟨h.2, h.1.2⟩⟩
   have h' := Set.ext_iff.1 (frontier_inter_open_inter (s := posSet u U) hB) x
   simp only [mem_inter_iff, hx, and_true] at h'
@@ -82,7 +82,7 @@ theorem sep_freeBoundary_inter_eq_sigmaHQ [NeZero d] {U B : Set (E d)} {Q u χ :
       volume (ball x r)) (𝓝[>] 0) (𝓝 1)} ∩ B = InnerVariational.sigmaHQ B Q u χ := by
   ext x
   rw [h.mem_sigmaHQ_iff_frontier_inter hQ]
-  simp only [mem_inter_iff, mem_setOf_eq, freeBoundary]
+  simp only [mem_inter_iff, Set.mem_ofPred_eq, freeBoundary]
   constructor
   · rintro ⟨⟨⟨hfr, -⟩, hT⟩, hxB⟩
     exact ⟨hxB, (frontier_posSet_inter_iff hB hBU hxB).1 hfr, hT⟩
@@ -127,7 +127,7 @@ theorem highDensitySet_relClosed_of_iv {U : Set (E d)} {Q u χ : E d → ℝ} (h
         volume (ball x r)) (𝓝[>] 0) (𝓝 1)} ∩ U ⊆
       {x ∈ freeBoundary u U | Tendsto (fun r ↦ volume ({y | χ y = 1} ∩ ball x r) /
         volume (ball x r)) (𝓝[>] 0) (𝓝 1)} := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨K, hK⟩ := hQ
   obtain ⟨c, hc, hcQ⟩ := hQpos
   obtain ⟨C', hC'⟩ := hQb
@@ -150,7 +150,7 @@ theorem isViscSolution_diff_highDensitySet_of_iv {U : Set (E d)} {Q u χ : E d �
     (h : IsInnerVarSolution U Q u χ) :
     IsViscSolution (U \ {x ∈ freeBoundary u U | Tendsto (fun r ↦
       volume ({y | χ y = 1} ∩ ball x r) / volume (ball x r)) (𝓝[>] 0) (𝓝 1)}) Q u := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   set H := {x ∈ freeBoundary u U | Tendsto (fun r ↦
       volume ({y | χ y = 1} ∩ ball x r) / volume (ball x r)) (𝓝[>] 0) (𝓝 1)} with hH
   have hclosed := highDensitySet_relClosed_of_iv hd hU hQ hQpos hQb h
@@ -160,7 +160,7 @@ theorem isViscSolution_diff_highDensitySet_of_iv {U : Set (E d)} {Q u χ : E d �
   have hWo : IsOpen (U \ H) := by
     have : U \ H = U ∩ (closure H)ᶜ := by
       ext x
-      simp only [mem_diff, mem_inter_iff, mem_compl_iff]
+      simp only [Set.mem_sdiff, mem_inter_iff, mem_compl_iff]
       exact ⟨fun hx ↦ ⟨hx.1, fun hcl ↦ hx.2 (hclosed ⟨hcl, hx.1⟩)⟩,
         fun hx ↦ ⟨hx.1, fun hxH ↦ hx.2 (subset_closure hxH)⟩⟩
     rw [this]
@@ -173,7 +173,7 @@ theorem isViscSolution_diff_highDensitySet_of_iv {U : Set (E d)} {Q u χ : E d �
     have hW : ball x δ \ InnerVariational.sigmaHQ (ball x δ) Q u χ = ball x δ ∩ (U \ H) := by
       rw [← heq]
       ext y
-      simp only [mem_diff, mem_inter_iff]
+      simp only [Set.mem_sdiff, mem_inter_iff]
       exact ⟨fun hy ↦ ⟨hy.1, hδU hy.1, fun hyH ↦ hy.2 ⟨hyH, hy.1⟩⟩,
         fun hy ↦ ⟨hy.1, fun hyH ↦ hy.2.2 hyH.1⟩⟩
     have hvisc := hsol.isViscositySolutionQ_diff_sigmaHQ hd hQB

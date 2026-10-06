@@ -59,7 +59,7 @@ theorem innerVarIntegrand_add (Q v χ : E d → ℝ) {ξ₁ ξ₂ : E d → E d}
     innerVarIntegrand Q v χ (fun y ↦ ξ₁ y + ξ₂ y) x =
       innerVarIntegrand Q v χ ξ₁ x + innerVarIntegrand Q v χ ξ₂ x := by
   simp only [innerVarIntegrand, divergence_add h₁ h₂, fderiv_fun_add h₁ h₂,
-    ContinuousLinearMap.add_apply, inner_add_right, map_add]
+    add_apply, inner_add_right, map_add]
   ring
 
 theorem innerVarIntegrand_zero (Q v χ : E d → ℝ) (x : E d) :

@@ -641,16 +641,19 @@ theorem lintegral_grad_T_le_liminf (hU : IsOpen U) (hu : IsSemilinearSolution U 
           ENNReal.ofReal (‖(step n)⁻¹ • avgGrad u (step n) (x, T)‖ ^ 2 / 2)) atTop := by
         refine setLIntegral_congr_fun hU.measurableSet fun x hx ↦ ?_
         refine (Tendsto.liminf_eq ?_).symm
-        exact (ENNReal.continuous_ofReal.tendsto _).comp
-          ((((tendsto_avgGrad hu hx hT).norm).pow 2).div_const 2)
+        have h1 : Tendsto (fun n ↦ ‖(step n)⁻¹ • avgGrad u (step n) (x, T)‖ ^ 2 / 2) atTop
+            (𝓝 (‖gradₓ u (x, T)‖ ^ 2 / 2)) :=
+          (((tendsto_avgGrad hu hx hT).norm).pow 2).div_const 2
+        exact (ENNReal.continuous_ofReal.tendsto _).comp h1
     _ ≤ _ := by
         refine lintegral_liminf_le' fun n ↦ ?_
-        refine ENNReal.measurable_ofReal.comp_aemeasurable ?_
         have hc : ContinuousOn (fun x ↦ avgGrad u (step n) (x, T)) U :=
           (continuousOn_avgGrad hU hu (step_pos n).le).comp
             (by fun_prop : Continuous fun x : E d ↦ (x, T)).continuousOn fun x hx ↦ ⟨hx, hT⟩
-        exact (((continuousOn_const.smul hc).norm.pow 2).div_const 2).aemeasurable
-          hU.measurableSet
+        have hc' : ContinuousOn
+            (fun x ↦ ‖(step n)⁻¹ • avgGrad u (step n) (x, T)‖ ^ 2 / 2) U := by
+          fun_prop
+        exact (hc'.aemeasurable hU.measurableSet).ennreal_ofReal
 
 /-- **Fatou for the time derivative.** -/
 theorem lintegral_dt_sq_le_liminf (hU : IsOpen U) (hUb : Bornology.IsBounded U)

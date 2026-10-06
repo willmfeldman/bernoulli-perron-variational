@@ -184,7 +184,7 @@ theorem laplacian_comp_nonneg {G : ℝ → ℝ} (hG : ContDiff ℝ 2 G)
   rw [InnerProductSpace.laplacian_eq_iteratedFDeriv_orthonormalBasis (G ∘ u) b]
   simp only [iteratedFDeriv_two_apply, Matrix.cons_val_zero, Matrix.cons_val_one] at hΔx ⊢
   rw [h2]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     ContinuousLinearMap.smulRight_apply, smul_eq_mul, Finset.sum_add_distrib, ← Finset.mul_sum,
     hΔx, mul_zero, zero_add]
   refine Finset.sum_nonneg fun i _ ↦ ?_
@@ -430,9 +430,9 @@ theorem isFiniteMeasureOnCompacts_volΩ (hΩ : IsOpen Ω) : IsFiniteMeasureOnCom
 
 theorem integrable_mul (hΩ : IsOpen Ω) {f : E 2 → ℝ} (hf : ContinuousOn f Ω)
     (φ : C_c(Ω, ℝ)) : Integrable (fun y : Ω ↦ φ y * f y) (volΩ Ω) := by
-  haveI := isFiniteMeasureOnCompacts_volΩ hΩ
+  have := isFiniteMeasureOnCompacts_volΩ hΩ
   exact (φ.continuous.mul
-    (continuousOn_iff_continuous_restrict.1 hf)).integrable_of_hasCompactSupport
+    (continuousOn_iff_continuous_domRestrict.1 hf)).integrable_of_hasCompactSupport
     φ.hasCompactSupport.mul_right
 
 /-- `φ ↦ ∫_Ω φ f`. -/
@@ -669,9 +669,10 @@ theorem L_bounded (φ : C_c(Ω, ℝ)) : ∃ C, ∀ n, |h.L n φ| ≤ C := by
   have hΨnn : ∀ y z, 0 ≤ Ψ y z := by
     intro y z
     by_cases hy : y ∈ Ω
-    · simp only [Ψ, dif_pos hy, logCutC_apply]; exact logCut_nonneg _ _ _ _
+    · simp only [Ψ, dite_eq_left hy, logCutC_apply]; exact logCut_nonneg _ _ _ _
     · simp [Ψ, hy]
-  have hψz : ∀ z, ψ z = ∑ y ∈ t, Ψ y z := fun z ↦ by rw [hψ, sum_apply]
+  have hψz : ∀ z, ψ z = ∑ y ∈ t, Ψ y z := fun z ↦ by
+    rw [hψ, CompactlySupportedContinuousMap.sum_apply]
   have hdom : ∀ z, |φ z| ≤ M * ψ z := by
     intro z
     by_cases hz : φ z = 0
@@ -681,7 +682,7 @@ theorem L_bounded (φ : C_c(Ω, ℝ)) : ∃ C, ∀ n, |h.L n φ| ≤ C := by
       obtain ⟨y, hyt, hzy⟩ := mem_iUnion₂.1 (hcover hzK)
       have hyΩ := hKΩ (htK y hyt)
       have hone : Ψ y z = 1 := by
-        simp only [Ψ, dif_pos hyΩ, logCutC_apply, logCut]
+        simp only [Ψ, dite_eq_left hyΩ, logCutC_apply, logCut]
         rw [mem_ball] at hzy
         rw [max_eq_left hzy.le, mul_div_assoc, div_self (hr0 y hyΩ).ne', mul_one, Real.log_exp,
           max_eq_left zero_le_one]
@@ -695,7 +696,7 @@ theorem L_bounded (φ : C_c(Ω, ℝ)) : ∃ C, ∀ n, |h.L n φ| ≤ C := by
     intro n y hyt
     have hyΩ := hKΩ (htK y hyt)
     have hr := hr0 y hyΩ
-    simp only [Ψ, dif_pos hyΩ]
+    simp only [Ψ, dite_eq_left hyΩ]
     rw [h.L_logCutC]
     have hsph : ∀ ρ, 0 ≤ ρ → ρ ≤ 3 * r y → sphere y ρ ⊆ closedBall y (3 * r y) :=
       fun ρ _ hρ ↦ sphere_subset_closedBall.trans (closedBall_subset_closedBall hρ)
@@ -757,7 +758,7 @@ theorem tendsto_circleMean {x : E 2} (hx : x ∈ Ω) {a : ℕ → ℝ} (ha : ∀
 
 /-- **Existence of the Riesz measure**, under the bundled hypotheses `h`. -/
 theorem exists_isRieszMeasure : ∃ μ : Measure (E 2), IsRieszMeasure Ω u μ := by
-  haveI := h.isOpen.locallyCompactSpace
+  have := h.isOpen.locallyCompactSpace
   set μΩ := RealRMK.rieszMeasure h.Λ with hμΩ
   set μ : Measure (E 2) := μΩ.map Subtype.val with hμ
   refine ⟨μ, fun x R hR hsub ↦ ?_⟩
@@ -771,7 +772,7 @@ theorem exists_isRieszMeasure : ∃ μ : Measure (E 2), IsRieszMeasure Ω u μ :
     have hcpt : IsCompact (Subtype.val ⁻¹' closedBall x R : Set Ω) :=
       Subtype.isCompact_iff.2 (by
         rw [Subtype.image_preimage_coe, inter_eq_right.2 hsub]; exact isCompact_closedBall x R)
-    haveI : IsFiniteMeasure ν := isFiniteMeasure_restrict.2 (by
+    have : IsFiniteMeasure ν := isFiniteMeasure_restrict.2 (by
       rw [hμ, Measure.map_apply measurable_subtype_coe measurableSet_closedBall]
       exact hcpt.measure_lt_top.ne)
     have h1 : ∫⁻ y, ENNReal.ofReal (logCut x a R y) ∂ν = ENNReal.ofReal (2 * π * (M R - M a)) := by

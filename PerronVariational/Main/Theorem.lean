@@ -52,7 +52,7 @@ theorem hasC2Boundary_ball (x : E d) {r : ℝ} (hr : 0 < r) : HasC2Boundary (bal
   refine ⟨fun y ↦ ‖y - x‖ ^ 2 - r ^ 2,
     ((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).sub contDiff_const, ?_, ?_⟩
   · ext y
-    simp only [mem_ball, dist_eq_norm, mem_setOf_eq, sub_neg]
+    simp only [mem_ball, dist_eq_norm, Set.mem_ofPred_eq, sub_neg]
     exact (sq_lt_sq₀ (norm_nonneg _) hr.le).symm
   · intro y hy h0
     rw [frontier_ball x hr.ne'] at hy
@@ -64,8 +64,8 @@ theorem hasC2Boundary_ball (x : E d) {r : ℝ} (hr : 0 < r) : HasC2Boundary (bal
       rw [← norm_eq_zero, ← norm_gradient_eq_norm_fderiv, h0, norm_zero]
     rw [hd.fderiv] at hf0
     have h2 := congrArg (fun L : E d →L[ℝ] ℝ ↦ L (y - x)) hf0
-    simp only [two_nsmul, ContinuousLinearMap.add_apply, ContinuousLinearMap.comp_apply,
-      innerSL_apply_apply, ContinuousLinearMap.id_apply, ContinuousLinearMap.zero_apply] at h2
+    simp only [two_nsmul, add_apply, ContinuousLinearMap.comp_apply,
+      innerSL_apply_apply, ContinuousLinearMap.id_apply, zero_apply] at h2
     rw [real_inner_self_eq_norm_sq, hyx] at h2
     have : 0 < r ^ 2 := by positivity
     linarith

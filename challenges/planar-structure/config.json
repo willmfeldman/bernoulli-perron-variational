@@ -3,7 +3,8 @@
   "solution_module": "Solution",
   "theorem_names": [
     "challenge_corollary_2d_smallest",
-    "challenge_corollary_2d_largest"
+    "challenge_corollary_2d_largest",
+    "challenge_model_example"
   ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
   "enable_nanoda": false

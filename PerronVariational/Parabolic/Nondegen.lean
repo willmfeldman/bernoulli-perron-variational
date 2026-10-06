@@ -112,16 +112,15 @@ private theorem laplacian_comp' {f : ℝ → ℝ} {g : F → ℝ} {x : F} (hf : 
   rw [laplacian_eq_sum_fderiv_fderiv', laplacian_eq_sum_fderiv_fderiv', hfd,
     ← sum_fderiv_basis_sq', Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     ContinuousLinearMap.smulRight_apply, smul_eq_mul]
   ring
 
 omit [FiniteDimensional ℝ F] in
 private theorem hasFDerivAt_normSq_sub (x₀ y : F) :
     HasFDerivAt (fun y ↦ ‖y - x₀‖ ^ 2) ((2 : ℝ) • innerSL ℝ (y - x₀)) y := by
-  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1
-  ext v
-  simp [two_smul]
+  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1 <;>
+    first | rfl | (ext v; simp [two_smul])
 
 omit [FiniteDimensional ℝ F] in
 private theorem fderiv_normSq_sub (x₀ : F) :
@@ -144,7 +143,7 @@ private theorem laplacian_normSq_sub (x₀ x : F) :
   rw [hd.fderiv]
   have h1 : ∀ i, ((2 : ℝ) • innerSL ℝ (E := F)) (stdOrthonormalBasis ℝ F i)
       (stdOrthonormalBasis ℝ F i) = 2 := fun i ↦ by
-    rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, innerSL_apply_apply,
+    rw [smul_apply, smul_apply, innerSL_apply_apply,
       real_inner_self_eq_norm_sq, (stdOrthonormalBasis ℝ F).orthonormal.1 i]
     norm_num
   refine (Finset.sum_congr rfl fun i _ ↦ h1 i).trans ?_
@@ -190,8 +189,9 @@ private theorem hasDerivAt_nondegProfile (r q s : ℝ) :
     ((d : ℝ) + 1)).exp
   have h2 := (h.const_sub 1).const_mul (q * r / (8 * ((d : ℝ) + 1)))
   convert h2 using 1
-  simp only [id]
-  ring
+  · rfl
+  · simp only [id]
+    ring
 
 private theorem deriv_nondegProfile (r q : ℝ) :
     deriv (nondegProfile d r q) = fun s ↦ q * r / (8 * ((d : ℝ) + 1)) *

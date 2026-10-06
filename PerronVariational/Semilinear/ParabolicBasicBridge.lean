@@ -11,7 +11,8 @@ public import ParabolicBasic.Defs.Parabolic
 public import ParabolicBasic.Defs.Semilinear
 public import ParabolicBasic.MainTheorems
 public import PerronVariational.Defs.Semilinear
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Profiles
 
 /-!

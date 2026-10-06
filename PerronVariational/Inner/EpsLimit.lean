@@ -8,7 +8,8 @@ module
 public import PerronVariational.Inner.SemilinearEstimates
 import GMTFoundations.Sobolev.Lipschitz
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.ChiConverge
 import PerronVariational.Inner.Compactness
 import PerronVariational.Inner.EpsIdentity
@@ -95,9 +96,10 @@ theorem lintegral_UInf_le {U : Set (E d)} {f : E d × ℝ → ℝ} {A : ℝ≥0�
 
 /-- `eLpNorm f 2 μ ≤ √A` from `∫⁻ f² ≤ A`. -/
 theorem eLpNorm_two_le_of_lintegral {X : Type*} [MeasurableSpace X] {μ : Measure X}
-    {f : X → ℝ} {A : ℝ≥0∞} (hA : A ≠ ⊤) (h : ∫⁻ x, ENNReal.ofReal (f x ^ 2) ∂μ ≤ A) :
+    {f : X → ℝ} {A : ℝ≥0∞} (hf : AEStronglyMeasurable f μ) (hA : A ≠ ⊤)
+    (h : ∫⁻ x, ENNReal.ofReal (f x ^ 2) ∂μ ≤ A) :
     eLpNorm f 2 μ ≤ ENNReal.ofReal (Real.sqrt A.toReal) := by
-  rw [← ENNReal.pow_le_pow_left_iff two_ne_zero, eLpNorm_two_sq,
+  rw [← ENNReal.pow_le_pow_left_iff two_ne_zero, eLpNorm_two_sq f hf,
     ← ENNReal.ofReal_pow (Real.sqrt_nonneg _), Real.sq_sqrt ENNReal.toReal_nonneg,
     ENNReal.ofReal_toReal hA]
   simpa [Real.norm_eq_abs, sq_abs] using h
@@ -111,7 +113,7 @@ theorem energyBound_eq (S : Setting d) {G : E d → E d}
       eLpNorm G 2 (volume.restrict S.U) ^ 2 + ENNReal.ofReal (S.Qmax ^ 2) * volume S.U := by
   have hm : AEMeasurable (fun x ↦ ENNReal.ofReal (‖G x‖ ^ 2)) (volume.restrict S.U) :=
     (hG.norm.aemeasurable.pow_const 2).ennreal_ofReal
-  rw [energyBound, eLpNorm_two_sq, ← setLIntegral_const, ← lintegral_add_left' hm]
+  rw [energyBound, eLpNorm_two_sq G hG, ← setLIntegral_const, ← lintegral_add_left' hm]
   congr 1
   ext x
   exact ENNReal.ofReal_add (sq_nonneg _) (sq_nonneg _)
@@ -124,8 +126,8 @@ theorem tendsto_energyBound (S : Setting d) {ι : Type*} {l : Filter ι} {G : ι
     (h : Tendsto (fun i ↦ eLpNorm (G i - G₀) 2 (volume.restrict S.U)) l (𝓝 0)) :
     Tendsto (fun i ↦ energyBound S (G i)) l (𝓝 (energyBound S G₀)) := by
   set μ := volume.restrict S.U with hμ
-  have hmeas : ∀ᶠ i in l, AEStronglyMeasurable (G i) μ := hG.mono fun i hi ↦ hi.1
-  have hfin : eLpNorm G₀ 2 μ ≠ ⊤ := hG₀.2.ne
+  have hmeas : ∀ᶠ i in l, AEStronglyMeasurable (G i) μ := hG.mono fun i hi ↦ hi.aestronglyMeasurable
+  have hfin : eLpNorm G₀ 2 μ ≠ ⊤ := hG₀.ne
   have hn : Tendsto (fun i ↦ eLpNorm (G i) 2 μ) l (𝓝 (eLpNorm G₀ 2 μ)) := by
     have hup : Tendsto (fun i ↦ eLpNorm G₀ 2 μ + eLpNorm (G i - G₀) 2 μ) l
         (𝓝 (eLpNorm G₀ 2 μ)) := by
@@ -138,13 +140,13 @@ theorem tendsto_energyBound (S : Setting d) {ι : Type*} {l : Filter ι} {G : ι
       rw [tsub_le_iff_right]
       calc eLpNorm G₀ 2 μ = eLpNorm (G i - (G i - G₀)) 2 μ := by rw [sub_sub_cancel]
         _ ≤ eLpNorm (G i) 2 μ + eLpNorm (G i - G₀) 2 μ :=
-          eLpNorm_sub_le hi (hi.sub hG₀.1) (by norm_num)
+          eLpNorm_sub_le (by norm_num)
     · filter_upwards [hmeas] with i hi
       calc eLpNorm (G i) 2 μ = eLpNorm (G₀ + (G i - G₀)) 2 μ := by rw [add_sub_cancel]
-        _ ≤ _ := eLpNorm_add_le hG₀.1 (hi.sub hG₀.1) (by norm_num)
+        _ ≤ _ := eLpNorm_add_le (by norm_num)
   have hlim := (ENNReal.Tendsto.pow (n := 2) hn).add_const
     (ENNReal.ofReal (S.Qmax ^ 2) * volume S.U)
-  rw [energyBound_eq S hG₀.1]
+  rw [energyBound_eq S hG₀.aestronglyMeasurable]
   exact hlim.congr' (hmeas.mono fun i hi ↦ (energyBound_eq S hi).symm)
 
 theorem ennreal_le_of_half_le {a b : ℝ≥0∞} (h : a / 2 ≤ b / 2) : a ≤ b :=
@@ -509,12 +511,14 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
   set B : ℝ := Real.sqrt (E1 / 2).toReal with hBdef
   have hB0 : 0 ≤ B := Real.sqrt_nonneg _
   have hdtB : ∀ n, eLpNorm (dₜ (v n)) 2 (volume.restrict (UInf S.U)) ≤ ENNReal.ofReal B :=
-    fun n ↦ eLpNorm_two_le_of_lintegral hE1h (hdtL2 n)
+    fun n ↦ eLpNorm_two_le_of_lintegral
+      (((hsolv n).2.1.2.2.2.2.2.1).aestronglyMeasurable
+        (S.isOpen.measurableSet.prod measurableSet_Ioi)) hE1h (hdtL2 n)
   have hUInfm : MeasurableSet (UInf S.U) := S.isOpen.measurableSet.prod measurableSet_Ioi
   have hUInfo : IsOpen (UInf S.U) := S.isOpen.prod isOpen_Ioi
   have hdtc : ∀ n, ContinuousOn (dₜ (v n)) (UInf S.U) := fun n ↦ (hsolv n).2.1.2.2.2.2.2.1
   have hdtmem : ∀ n, MemLp (dₜ (v n)) 2 (volume.restrict (UInf S.U)) := fun n ↦
-    ⟨(hdtc n).aestronglyMeasurable hUInfm, (hdtB n).trans_lt ENNReal.ofReal_lt_top⟩
+    (hdtB n).trans_lt ENNReal.ofReal_lt_top
   obtain ⟨φ₂, hφ₂, w, hw₂⟩ := Registry.exists_tendstoWeakL2_subseq volume (UInf S.U)
     (fun n ↦ dₜ (v (φ₁ n))) B (fun n ↦ hdtmem _) (fun n ↦ hdtB _)
   set ψ : ℕ → ℕ := fun n ↦ φ₁ (φ₂ n) with hψdef
@@ -613,7 +617,7 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
     intro ξ hξ hξc hξs
     have hK : IsCompact (tsupport ξ) := hξc
     have hKm : MeasurableSet (tsupport ξ) := (isClosed_tsupport ξ).measurableSet
-    haveI : IsFiniteMeasure (volume.restrict (tsupport ξ)) :=
+    have : IsFiniteMeasure (volume.restrict (tsupport ξ)) :=
       isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
     obtain ⟨LQ, hLQ⟩ := S.lip
     have hQc : ContinuousOn (fun p : E d × ℝ ↦ S.Q p.1) (tsupport ξ) :=

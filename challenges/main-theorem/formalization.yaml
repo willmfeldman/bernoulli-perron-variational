@@ -1,0 +1,109 @@
+# Entry metadata for the `main-theorem` workspace (format: mathlib-initiative formalization.yaml v0.4).
+# The root formalization.yaml keeps its own schema for the repository's checkers.
+# Keep comments outside block scalars (`>-`); anything inside one becomes public text.
+
+version: v0.4
+
+project:
+  name: "Perron's extremal solutions of the Bernoulli one-phase problem are viscosity, inner variational and one-sided minimizing solutions"
+  description: >-
+    A Lean 4 formalization of the main theorem of Abedin, Feldman and
+    Stinson on Perron's extremal solutions of the one-phase Bernoulli free
+    boundary problem Δu = 0 in {u > 0} ∩ U, |∇u| = Q on ∂{u > 0} ∩ U.
+    Let U ⊂ ℝᵈ, d ≥ 2, be open, bounded and connected with C² boundary, and
+    let Q be Lipschitz on the closure of U with 0 < Q_min ≤ Q ≤ Q_max. The
+    smallest supersolution above a smooth strict subsolution g with g > 0
+    on ∂U is (i) a viscosity solution in U, (ii) an inner variational
+    solution in U for some χ (the first domain variation of the
+    Alt–Caffarelli energy ∫ |∇u|² + Q² χ vanishes), and (iii) a downward
+    minimizer of that energy on a ball around each free boundary point.
+    The largest subsolution below a smooth strict supersolution g has the
+    same three properties, with upward minimality in (iii). Every notion,
+    including viscosity solutions, smooth strict sub- and supersolutions,
+    Perron's classes, inner variational solutions, Sobolev functions and
+    the one-sided minimizers, is written out from Mathlib definitions. A
+    third statement is a non-vacuity check, not a theorem of the paper: in
+    ℝ² with Q ≡ 1 there are a domain and data, with the same boundary
+    values for both problems, whose smallest supersolution and largest
+    subsolution are both nontrivial, with nonempty free boundaries, and
+    differ, and the origin is a two-plane point of the smallest
+    supersolution.
+  authors: ["William M. Feldman"]
+  responsible_maintainers: ["William M. Feldman"]
+  license: "Apache-2.0"
+
+classification:
+  arxiv: ["math.AP"]
+  msc2020: ["35R35", "35D40", "49Q10", "35J25"]
+
+sources:
+  - title: "Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem"
+    authors: ["Farhan Abedin", "William M. Feldman", "Kerrek Stinson"]
+    type: paper
+    id: "arXiv:2609.14981"
+    location: "Theorem 1.1, the smallest supersolution and the largest subsolution cases (arXiv:2609.14981v1)"
+    relationship: formalizes
+    note: >-
+      Formalizes Theorem 1.1 (i)–(iii) of arXiv version 1, both cases, under
+      the standing assumptions of its Section 1, with the definitions of its
+      Section 2 (Definitions 2.1, 2.2, 2.8 and 2.11 and the Perron classes
+      (2.1)–(2.4)). The non-vacuity check is not in the paper. The
+      differences are listed under fidelity.
+
+related_formalizations: []
+
+automation:
+  methods:
+    - method: agent
+      models: ["Claude Opus"]
+      framework: "Claude Code"
+  notes: >-
+    The Lean proofs were written by AI coding agents (Claude, by Anthropic)
+    under the author's mathematical direction and review. The theorem
+    statements, definitions and proof routes were reviewed by the author;
+    correctness rests on Lean's kernel check and the comparator challenges.
+
+review:
+  status: "author-verified"
+  notes: >-
+    The author, a co-author of the paper, reviewed the definitions and the
+    statements of the compared theorems against arXiv:2609.14981v1,
+    including every difference recorded under fidelity, and the proof
+    routes against the paper. The proofs are checked by Lean's kernel and
+    by the comparator challenges in the repository.
+
+fidelity:
+  divergences: >-
+    The C² boundary of U is encoded by a global C² defining function (U =
+    {ρ < 0} with ∇ρ ≠ 0 on ∂U). Test functions in the viscosity
+    definitions are smooth on ℝᵈ rather than on U, which is equivalent
+    because the conditions are local; the data g are C² on ℝᵈ rather than
+    on the closure of U, and a C² function there extends. In the inner
+    variation identity the derivatives are pointwise ones, which agree
+    almost everywhere with the weak derivatives for the Lipschitz functions
+    involved. Sobolev functions carry their weak gradient as explicit data,
+    and the energy is an extended-nonnegative lower integral, so that no
+    integrability side conditions are needed. In Definition 2.11 the paper
+    takes u, v ∈ H¹(U) and compares the energies on U; here u, v ∈ H¹_loc(U)
+    and the energies are compared on the ball B where u and v differ, and
+    u − v ∈ H¹₀(B) is written as v = u almost everywhere off B. The two forms
+    agree when the energy of u on U is finite, which holds on the balls of
+    (iii). "Locally around each free boundary point" in (iii) is stated as:
+    each free boundary point x has a ball B_r(x) with closure in U on which
+    u is a minimizer. Two intermediate results used in the proof are
+    corrected relative to arXiv version 1: Proposition 5.3 and Corollary
+    5.4 are stated for the authors' corrected set E*; the statement of
+    Theorem 1.1 is unaffected. The non-vacuity check is not a result of the
+    paper.
+
+status:
+  main_results:
+    - declaration: "challenge_main_smallest"
+      file: "challenges/main-theorem/Challenge.lean"
+      comparator_config: "challenges/main-theorem/config.json"
+    - declaration: "challenge_main_largest"
+      file: "challenges/main-theorem/Challenge.lean"
+      comparator_config: "challenges/main-theorem/config.json"
+    - declaration: "challenge_model_example"
+      file: "challenges/main-theorem/Challenge.lean"
+      comparator_config: "challenges/main-theorem/config.json"

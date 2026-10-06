@@ -1,21 +1,22 @@
-import Mathlib.Analysis.InnerProductSpace.Laplacian
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Calculus.Gradient.Basic
-import Mathlib.LinearAlgebra.Trace
-import Mathlib.MeasureTheory.Function.LocallyIntegrable
-import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
-import Mathlib.Topology.EMetricSpace.Lipschitz
-import Mathlib.Topology.MetricSpace.Holder
-import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Laplacian
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+public import Mathlib.LinearAlgebra.Trace
+public import Mathlib.MeasureTheory.Function.LocallyIntegrable
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+public import Mathlib.Topology.EMetricSpace.Lipschitz
+public import Mathlib.Topology.MetricSpace.Holder
+public import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
 
 /-!
 # Trusted statements: Perron's extremal solutions of the Bernoulli problem
 
-This file imports Mathlib only. It is the complete trusted surface of the three challenges
-`main-theorem`, `planar-structure` and `model-cases`, and it is shared verbatim by them:
-each `Challenge.lean` and `Solution.lean` states some of the claims below.
+This file imports Mathlib only. It is the complete trusted surface of the `main-theorem`
+challenge: `Challenge.lean` and `Solution.lean` both state the three claims below.
 
 ## Source
 
@@ -24,10 +25,9 @@ the Bernoulli one-phase problem*, arXiv:2609.14981 (`[AFS]` below).
 
 * `MainSmallestClaim`, `MainLargestClaim`: [AFS, Theorem 1.1], the smallest supersolution and the
   largest subsolution cases.
-* `Corollary2DSmallestClaim`, `Corollary2DLargestClaim`: [AFS, Corollary 1.2] (i) and (ii).
-* `ModelExampleClaim`: a model example, not a result of the paper. In `ℝ²` with `Q ≡ 1`, one
-  domain and one boundary condition give distinct smallest and largest solutions, and the smallest
-  one has a two-plane point.
+* `ModelExampleClaim`: a non-vacuity check (a model example), not a result of the paper. In `ℝ²`
+  with `Q ≡ 1`, one domain and one boundary condition give distinct smallest and largest solutions,
+  and the smallest one has a two-plane point.
 
 ## The problem
 
@@ -59,8 +59,7 @@ ones (`0` at points of non-differentiability, by Mathlib's convention).
   [AFS, Definition 2.8, (2.5)].
 * `HasWeakGradient`, `MemH1Loc`, `energyJ`, `IsDownwardMinimizer`, `IsUpwardMinimizer`: one-sided
   minimizers of `J_Q` [AFS, Definition 2.11].
-* `blowup`, `IsBlowupLimit`, `IsC1GammaHypersurfaceNear`, `IsClassicalNear`: blow-ups and classical
-  solutions near a free boundary point [AFS, Corollary 1.2 and its footnote].
+* `blowup`, `IsBlowupLimit`: blow-ups at a free boundary point, used by the model example.
 
 ## Differences from the printed paper
 
@@ -77,6 +76,8 @@ Each is stated in the docstring of the definition concerned.
   forms agree when `J_Q(u; U) < ∞`. The condition `u − v ∈ H¹₀(B)` is written `v = u` a.e. on
   `U \ B`, which is equivalent for balls.
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -272,7 +273,7 @@ def IsUpwardMinimizer (U : Set (E d)) (Q u : E d → ℝ) : Prop :=
         (∀ᵐ y ∂(volume.restrict (U \ ball x r)), v y = u y) →
         energyJ (ball x r) Q u Gu ≤ energyJ (ball x r) Q v Gv
 
-/-! ### Blow-ups and classical solutions ([AFS, Corollary 1.2]) -/
+/-! ### Blow-ups -/
 
 /-- The blow-up `u_{x₀,r}(y) = r⁻¹ u(x₀ + r y)`. -/
 def blowup (u : E d → ℝ) (x₀ : E d) (r : ℝ) (y : E d) : ℝ :=
@@ -283,29 +284,6 @@ def blowup (u : E d → ℝ) (x₀ : E d) (r : ℝ) (y : E d) : ℝ :=
 def IsBlowupLimit (u : E d → ℝ) (x₀ : E d) (v : E d → ℝ) : Prop :=
   ∃ r : ℕ → ℝ, (∀ n, 0 < r n) ∧ Tendsto r atTop (𝓝 0) ∧
     TendstoLocallyUniformly (fun n ↦ blowup u x₀ (r n)) v atTop
-
-/-- `S` is a `C^{1,γ}` hypersurface in `B_r(x₀)`: for some `γ ∈ (0, 1]`, unit vector `e`, and
-`C¹` function `f` whose derivative is `γ`-Hölder, `S ∩ B_r(x₀)` is the graph
-`{y : (y - x₀) · e = f(P(y - x₀))}` over the hyperplane `e^⊥`, where `P z = z - (z · e) e` is the
-orthogonal projection onto `e^⊥`. -/
-def IsC1GammaHypersurfaceNear (S : Set (E d)) (x₀ : E d) (r : ℝ) : Prop :=
-  ∃ γ : ℝ≥0, 0 < γ ∧ γ ≤ 1 ∧ ∃ e : E d, ‖e‖ = 1 ∧ ∃ (f : E d → ℝ) (C : ℝ≥0),
-    ContDiff ℝ 1 f ∧ HolderWith C γ (fderiv ℝ f) ∧
-    S ∩ ball x₀ r =
-      {y ∈ ball x₀ r | inner ℝ (y - x₀) e = f (y - x₀ - inner ℝ (y - x₀) e • e)}
-
-/-- `u` is a classical solution of [AFS, (1.1)] near the free boundary point `x₀`
-([AFS, Corollary 1.2, footnote]): for some `r > 0` with `B_r(x₀) ⊆ U`,
-* the free boundary `∂{u > 0} ∩ U` is a `C^{1,γ}` hypersurface in `B_r(x₀)`;
-* `u` is `C²` and harmonic in `{u > 0} ∩ B_r(x₀)`;
-* `∇u` extends continuously (as `G`) to `\overline{{u > 0}} ∩ B_r(x₀)`, and the free boundary
-  condition `|∇u| = Q` holds at every point of `∂{u > 0} ∩ B_r(x₀)`. -/
-def IsClassicalNear (U : Set (E d)) (Q u : E d → ℝ) (x₀ : E d) : Prop :=
-  ∃ r > 0, ball x₀ r ⊆ U ∧ IsC1GammaHypersurfaceNear (freeBoundary u U) x₀ r ∧
-    ContDiffOn ℝ 2 u (posSet u U ∩ ball x₀ r) ∧ (∀ y ∈ posSet u U ∩ ball x₀ r, Δ u y = 0) ∧
-    ∃ G : E d → E d, ContinuousOn G (closure (posSet u U) ∩ ball x₀ r) ∧
-      (∀ y ∈ posSet u U ∩ ball x₀ r, G y = ∇ u y) ∧
-      ∀ y ∈ freeBoundary u U ∩ ball x₀ r, ‖G y‖ = Q y
 
 /-! ### The claims -/
 
@@ -344,39 +322,6 @@ def MainLargestClaim (d : ℕ) : Prop :=
       (∃ χ : E d → ℝ, IsInnerVarSolution U Q (perronLargest U Q g) χ) ∧
       ∀ x ∈ freeBoundary (perronLargest U Q g) U, ∃ r > 0, closedBall x r ⊆ U ∧
         IsUpwardMinimizer (ball x r) Q (perronLargest U Q g)
-
-/-- **[AFS, Corollary 1.2(i)]**. Let `U ⊆ ℝ²` be open, bounded and connected with `C²` boundary,
-and `Q` Lipschitz on `Ū` with `0 < Q_min ≤ Q ≤ Q_max` on `Ū`. Let `u` be the smallest
-supersolution above a smooth strict subsolution `g` with `g > 0` on `∂U`. Then the free boundary
-`∂{u > 0} ∩ U` is the disjoint union of `FB_reg` and `FB_TP`, where `FB_reg` is relatively open in
-the free boundary and `u` is a classical solution near each of its points, and at each
-`x₀ ∈ FB_TP` every subsequential blow-up limit of `u` is `y ↦ Q(x₀) |y · e|` for some unit vector
-`e` (in the blow-up variable `y`; the paper writes `Q(x₀) |(x - x₀) · e|`). -/
-def Corollary2DSmallestClaim : Prop :=
-  ∀ (U : Set (E 2)) (Q : E 2 → ℝ) (Qmin Qmax : ℝ),
-    IsOpen U → Bornology.IsBounded U → IsConnected U → HasC2Boundary U →
-    (∃ K, LipschitzOnWith K Q (closure U)) → 0 < Qmin → Qmin ≤ Qmax →
-    (∀ x ∈ closure U, Qmin ≤ Q x ∧ Q x ≤ Qmax) →
-    ∀ g : E 2 → ℝ, IsStrictSub U Q g → (∀ x ∈ frontier U, 0 < g x) →
-      ∃ FBreg FBtp : Set (E 2),
-        Disjoint FBreg FBtp ∧
-        FBreg ∪ FBtp = freeBoundary (perronSmallest U Q g) U ∧
-        (∃ O : Set (E 2), IsOpen O ∧ FBreg = O ∩ freeBoundary (perronSmallest U Q g) U) ∧
-        (∀ x₀ ∈ FBreg, IsClassicalNear U Q (perronSmallest U Q g) x₀) ∧
-        ∀ x₀ ∈ FBtp, ∀ v : E 2 → ℝ, IsBlowupLimit (perronSmallest U Q g) x₀ v →
-          ∃ e : E 2, ‖e‖ = 1 ∧ ∀ y, v y = Q x₀ * |inner ℝ y e|
-
-/-- **[AFS, Corollary 1.2(ii)]**. Under the assumptions on `U ⊆ ℝ²` and `Q` of
-`Corollary2DSmallestClaim`, let `u` be the largest subsolution below a smooth strict supersolution
-`g`. Then `u` is a classical solution of [AFS, (1.1)] in `U`: it is a classical solution near
-every free boundary point. -/
-def Corollary2DLargestClaim : Prop :=
-  ∀ (U : Set (E 2)) (Q : E 2 → ℝ) (Qmin Qmax : ℝ),
-    IsOpen U → Bornology.IsBounded U → IsConnected U → HasC2Boundary U →
-    (∃ K, LipschitzOnWith K Q (closure U)) → 0 < Qmin → Qmin ≤ Qmax →
-    (∀ x ∈ closure U, Qmin ≤ Q x ∧ Q x ≤ Qmax) →
-    ∀ g : E 2 → ℝ, IsStrictSuper U Q g →
-      ∀ x₀ ∈ freeBoundary (perronLargest U Q g) U, IsClassicalNear U Q (perronLargest U Q g) x₀
 
 /-- **Model example: a two-plane point, and distinct extremal solutions.** Not a result of
 [AFS]; it shows that the two cases of [AFS, Theorem 1.1] can produce different solutions from the
@@ -422,3 +367,5 @@ def ModelExampleClaim : Prop :=
     ∃ x ∈ U, perronSmallest U (fun _ ↦ 1) gsub x ≠ perronLargest U (fun _ ↦ 1) gsuper x
 
 end PerronVariationalChallenge
+
+end

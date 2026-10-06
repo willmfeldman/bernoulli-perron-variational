@@ -142,7 +142,7 @@ theorem perimeter_slices (S : Setting d) (Cper : ℝ → ℝ → ℝ) :
   classical
   set U := S.U
   have hUc : Uᶜ.Nonempty := by
-    haveI : Nonempty (Fin d) := ⟨⟨0, by have := S.two_le; omega⟩⟩
+    have : Nonempty (Fin d) := ⟨⟨0, by have := S.two_le; omega⟩⟩
     by_contra h
     rw [not_nonempty_iff_eq_empty, compl_empty_iff] at h
     exact NormedSpace.unbounded_univ ℝ (E d) (h ▸ S.isBounded)
@@ -155,7 +155,7 @@ theorem perimeter_slices (S : Setting d) (Cper : ℝ → ℝ → ℝ) :
     by_contra hxU
     have h0 : infDist x Uᶜ = 0 := infDist_zero_of_mem hxU
     have : (0 : ℝ) < ((k : ℝ) + 1)⁻¹ := by positivity
-    simp only [mem_setOf_eq] at hx
+    simp only [Set.mem_ofPred_eq] at hx
     linarith
   choose θ hθ using fun k ↦ GMTFoundations.exists_smooth_cutoff (hKc k) S.isOpen (hKU k)
   have hθ1 : ∀ k, ContDiff ℝ 1 (θ k) := fun k ↦ (hθ k).1.of_le (by exact_mod_cast le_top)
@@ -216,13 +216,12 @@ theorem bv_select {U : Set (E d)} (hU : IsOpen U) (χ : ℕ → E d → ℝ)
 /-- `L¹_loc` limits of `{0, 1}`-valued functions are `{0, 1}`-valued a.e. (a.e. convergence of
 a subsequence on each compact set). -/
 theorem ae_zero_or_one_of_tendstoLpLoc {U : Set (E d)} (hU : IsOpen U) (χ : ℕ → E d → ℝ)
-    (hmeas : ∀ n, Measurable (χ n)) (hval : ∀ n, ∀ x ∈ U, χ n x = 0 ∨ χ n x = 1)
-    {χ₀ : E d → ℝ} (hχ₀ : Measurable χ₀) (hconv : TendstoLpLoc 1 volume U χ χ₀ atTop) :
+    (_hmeas : ∀ n, Measurable (χ n)) (hval : ∀ n, ∀ x ∈ U, χ n x = 0 ∨ χ n x = 1)
+    {χ₀ : E d → ℝ} (_hχ₀ : Measurable χ₀) (hconv : TendstoLpLoc 1 volume U χ χ₀ atTop) :
     ∀ᵐ x ∂(volume.restrict U), χ₀ x = 0 ∨ χ₀ x = 1 := by
   refine StationaryLimit.ae_restrict_of_forall_isCompact hU fun K hKU hK ↦ ?_
   have hm : TendstoInMeasure (volume.restrict K) χ atTop χ₀ :=
-    tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero (fun n ↦ (hmeas n).aestronglyMeasurable)
-      hχ₀.aestronglyMeasurable (hconv K hKU hK)
+    tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero (hconv K hKU hK)
   obtain ⟨ns, -, hae⟩ := hm.exists_seq_tendsto_ae
   filter_upwards [hae, ae_restrict_mem hK.measurableSet] with x hx hxK
   have hclosed : IsClosed ({0, 1} : Set ℝ) := (Set.toFinite _).isClosed
@@ -278,7 +277,7 @@ theorem weakHarmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u
     rw [hheat, hibp, neg_neg]
   -- the two limits
   have hlim1 : Tendsto (fun n ↦ ∫ x in S.U, w (x, s n) * φ x) atTop (𝓝 0) :=
-    tendsto_integral_mul_of_lintegral_sq (fun n ↦ (hs.good n).memL2.1) hs.w_zero
+    tendsto_integral_mul_of_lintegral_sq (fun n ↦ (hs.good n).memL2.aestronglyMeasurable) hs.w_zero
       ((hφ.continuous.memLp_of_hasCompactSupport hφc).restrict _)
   have hlim2 : Tendsto (fun n ↦ ∫ x in S.U, u (x, s n) * coordLap φ x) atTop
       (𝓝 (∫ x in S.U, uInf x * coordLap φ x)) := by
@@ -289,7 +288,7 @@ theorem weakHarmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u
     exact (continuousOn_slice h (hs.good n).pos).mono (hLK.trans hKU)
   have hzero : ∫ x in S.U, uInf x * coordLap φ x = 0 :=
     tendsto_nhds_unique hlim2 (hlim1.congr' (hkey.mono fun n hn ↦ hn.symm))
-  rw [← setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hWU fun x hx ↦ by
+  rw [← setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hWU fun x hx ↦ by
       simp [gradient, fderiv_of_notMem_tsupport ℝ fun h' ↦ hx.2 (hφW h')],
     integral_inner_gradient_eq_neg S.isOpen huInf hφ2 hφc hKU, hzero, neg_zero]
 
@@ -350,13 +349,13 @@ theorem strong_grad (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
   set K'' := tsupport η
   have hK'' : IsCompact K'' := hηc.isCompact
   have hK''m : MeasurableSet K'' := hK''.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K'') :=
+  have : IsFiniteMeasure (volume.restrict K'') :=
     isFiniteMeasure_restrict.2 hK''.measure_lt_top.ne
   have hid : ∀ n, ∫ x in S.U, w (x, s n) * (v n x * η x) =
       -∫ x in S.U, (‖∇ (v n) x‖ ^ 2 * η x + v n x * inner ℝ (∇ (v n) x) (∇ η x)) := fun n ↦
     integral_truncation_identity hU (hvL n) (hv0 n)
       (fun K' hK' hK'U ↦ by
-        haveI : IsFiniteMeasure (volume.restrict K') :=
+        have : IsFiniteMeasure (volume.restrict K') :=
           isFiniteMeasure_restrict.2 hK'.measure_lt_top.ne
         exact ((hs.good n).memL2.mono_measure (Measure.restrict_mono hK'U le_rfl)).integrable
           one_le_two)
@@ -370,12 +369,13 @@ theorem strong_grad (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
   have hlimW : Tendsto (fun n ↦ ∫ x in S.U, w (x, s n) * (v n x * η x)) atTop (𝓝 0) := by
     have hred : ∀ n, ∫ x in S.U, w (x, s n) * (v n x * η x) =
         ∫ x in K'', w (x, s n) * (v n x * η x) := fun n ↦
-      setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hηU fun x hx ↦ by
+      setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hηU fun x hx ↦ by
         simp [hη0 x hx.2]
     simp only [hred]
     refine tendsto_integral_mul_of_lintegral_sq_of_bdd (μ := volume.restrict K'')
       (W := fun n x ↦ w (x, s n)) (Φ := fun n x ↦ v n x * η x)
-      (fun n ↦ ((hs.good n).memL2.1.mono_measure (Measure.restrict_mono hηU le_rfl)))
+      (fun n ↦ ((hs.good n).memL2.aestronglyMeasurable.mono_measure
+        (Measure.restrict_mono hηU le_rfl)))
       (tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hs.w_zero
         (fun _ ↦ bot_le) fun n ↦ lintegral_mono_set hηU) (c := M)
       (Eventually.of_forall fun n ↦ (ae_restrict_mem hK''m).mono fun x hx ↦ ?_)
@@ -427,7 +427,7 @@ theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
   set K := tsupport ξ with hKdef
   have hK : IsCompact K := hξc.isCompact
   have hKm : MeasurableSet K := hK.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hUm : MeasurableSet S.U := S.isOpen.measurableSet
   have hpos : ∀ n, 0 < s n := fun n ↦ (hs.good n).pos
   have hχsm : ∀ t, Measurable fun x ↦ χ (x, t) := fun t ↦
@@ -466,10 +466,10 @@ theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
   have hFG : ∀ n, ∫ x in S.U, F n x = ∫ x in K, G n x := by
     intro n
     have h0 := ((hs.good n).innerVar ξ hξ hξc hξU).2
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hξU (hvanS n)] at h0
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hξU (hvanS n)] at h0
     have : ∫ x in K, (F n x - G n x) = 0 := h0
     rw [integral_sub (hFi n) (hGi n)] at this
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hξU fun x hx ↦
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hξU fun x hx ↦
       innerVarIntegrand_eq_zero_of_notMem _ _ _ hx.2]
     linarith
   -- `∫_K Gₙ → 0`
@@ -486,7 +486,8 @@ theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
       gcongr
       exact (norm_inner_le_norm _ _).trans (mul_le_mul (hCξ x hx) (hn x hx) (norm_nonneg _)
         ((norm_nonneg _).trans (hCξ x hx)))
-    refine (tendsto_integral_mul_of_lintegral_sq_of_bdd (fun n ↦ (hwK n).1) hw0 hc).congr
+    refine (tendsto_integral_mul_of_lintegral_sq_of_bdd (fun n ↦ (hwK n).aestronglyMeasurable)
+      hw0 hc).congr
       fun n ↦ integral_congr_ae (Eventually.of_forall fun x ↦ ?_)
     simp only [G]
     ring

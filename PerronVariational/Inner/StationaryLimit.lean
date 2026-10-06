@@ -113,7 +113,7 @@ theorem ae_restrict_of_forall_isCompact {U : Set (E d)} (hU : IsOpen U) {P : E d
     exact measure_mono_null (fun y hy ↦ fun hy' ↦ hy.1.2 (hy' (ball_subset_closedBall hy.2))) h1
   rw [ae_iff]
   exact measure_mono_null (fun y hy ↦ by
-    simp only [mem_setOf_eq, Classical.not_imp] at hy ⊢; exact hy) hB
+    simp only [Set.mem_ofPred_eq, Classical.not_imp] at hy ⊢; exact hy) hB
 
 /-- **`1_{u₀ > 0} ≤ χ₀`** in the limit (proof of Theorem 3.10, Step 4): if `vₙ → u₀` locally
 uniformly on `U`, `1_{vₙ > 0} ≤ χₙ` a.e. on `U` and `χₙ → χ₀` in `L¹_loc(U)`, then
@@ -122,7 +122,7 @@ uniformly on `U`, `1_{vₙ > 0} ≤ χₙ` a.e. on `U` and `χₙ → χ₀` in 
 theorem ae_pos_imp_eq_one {U : Set (E d)} (hU : IsOpen U) {v χ : ℕ → E d → ℝ}
     {u₀ χ₀ : E d → ℝ} (hu₀ : ContinuousOn u₀ U) (hconv : TendstoLocallyUniformlyOn v u₀ atTop U)
     (hpos : ∀ n, ∀ᵐ x ∂(volume.restrict U), 0 < v n x → χ n x = 1)
-    (hχ : TendstoLpLoc 1 volume U χ χ₀ atTop) (hχm : Measurable χ₀) :
+    (hχ : TendstoLpLoc 1 volume U χ χ₀ atTop) (_hχm : Measurable χ₀) :
     ∀ᵐ x ∂(volume.restrict U), 0 < u₀ x → χ₀ x = 1 := by
   have hW : IsOpen (posSet u₀ U) := hu₀.isOpen_inter_preimage hU isOpen_Ioi
   have hWU : posSet u₀ U ⊆ U := fun x hx ↦ hx.1
@@ -149,7 +149,7 @@ theorem ae_pos_imp_eq_one {U : Set (E d)} (hU : IsOpen U) {v χ : ℕ → E d �
       simp [hx (hn x hxK)]
     have hzero : eLpNorm (fun x ↦ 1 - χ₀ x) 1 (volume.restrict K) = 0 :=
       tendsto_const_nhds_iff.1 ((hχ K (hKW.trans hWU) hK).congr' heq)
-    rw [eLpNorm_eq_zero_iff (measurable_const.sub hχm).aestronglyMeasurable one_ne_zero] at hzero
+    rw [eLpNorm_eq_zero_iff one_ne_zero] at hzero
     filter_upwards [hzero] with x hx
     simp only [Pi.zero_apply] at hx
     linarith
@@ -183,7 +183,7 @@ theorem integral_energy_eq_zero {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ
         hweak hζ hζc hζW
       have e : ∫ x in U, inner ℝ (∇ f x) (∇ ζ x) =
           ∫ x in posSet f U, inner ℝ (∇ f x) (∇ ζ x) :=
-        setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hWU fun x hx ↦ by
+        setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hWU fun x hx ↦ by
           simp [gradient, fderiv_of_notMem_tsupport ℝ fun h' ↦ hx.2 (hζW h')]
       rw [e, h0]
       simp) hη hηc hηU
@@ -224,7 +224,7 @@ theorem tendstoLpLoc_gradient_of_energy {U : Set (E d)} (hU : IsOpen U)
   set K'' := tsupport η
   have hK'' : IsCompact K'' := hηc.isCompact
   have hK''m : MeasurableSet K'' := hK''.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K'') :=
+  have : IsFiniteMeasure (volume.restrict K'') :=
     isFiniteMeasure_restrict.2 hK''.measure_lt_top.ne
   have hη0 : ∀ x ∉ K'', η x = 0 := fun x hx ↦ image_eq_zero_of_notMem_tsupport hx
   have hgη0 : ∀ x ∉ K'', ∇ η x = 0 := fun x hx ↦ by
@@ -427,7 +427,9 @@ theorem tendstoLpLoc_gradient_of_energy {U : Set (E d)} (hU : IsOpen U)
     rwa [Function.comp_def, ENNReal.ofReal_zero, ENNReal.zero_rpow_of_pos (by norm_num)] at h
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hup (fun _ ↦ bot_le)
     fun n ↦ ?_
-  exact eLpNorm_two_le_of_weight hKU (fun x ↦ (hη01 x).1) hη1 hK.measurableSet (hiD n)
+  exact eLpNorm_two_le_of_weight hKU (fun x ↦ (hη01 x).1) hη1 hK.measurableSet
+    ((GMTFoundations.measurable_gradient _).sub
+      (GMTFoundations.measurable_gradient u₀)).aestronglyMeasurable (hiD n)
 
 /-! ### Passing to the limit in the inner variation integrand -/
 
@@ -457,7 +459,7 @@ convergence after extracting a.e. convergent subsequences); see
 theorem exists_subseq_tendsto_integral_innerVarIntegrand {U : Set (E d)} (hU : IsOpen U)
     {Q : E d → ℝ} (hQ : LocallyLipschitzOn U fun y ↦ Q y ^ 2)
     {v χ : ℕ → E d → ℝ} {u₀ χ₀ : E d → ℝ} (hχm : ∀ n, Measurable (χ n))
-    (hχ₀m : Measurable χ₀) (hχb : ∀ n, ∀ x ∈ U, |χ n x| ≤ 1)
+    (_hχ₀m : Measurable χ₀) (hχb : ∀ n, ∀ x ∈ U, |χ n x| ≤ 1)
     (hBF : ∀ K, IsCompact K → K ⊆ U → ∃ B, ∀ᶠ n in atTop, ∀ x ∈ K, ‖∇ (v n) x‖ ≤ B)
     (hgrad : TendstoLpLoc 2 volume U (fun n ↦ ∇ (v n)) (∇ u₀) atTop)
     (hχ : TendstoLpLoc 1 volume U χ χ₀ atTop)
@@ -468,20 +470,17 @@ theorem exists_subseq_tendsto_integral_innerVarIntegrand {U : Set (E d)} (hU : I
   set K := tsupport ξ with hKdef
   have hK : IsCompact K := hξc.isCompact
   have hKm : MeasurableSet K := hK.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hUm : MeasurableSet U := hU.measurableSet
   have hred : ∀ w c : E d → ℝ, ∫ x in U, innerVarIntegrand Q w c ξ x =
       ∫ x in K, innerVarIntegrand Q w c ξ x := fun w c ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hξU fun x hx ↦
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hξU fun x hx ↦
       innerVarIntegrand_eq_zero_of_notMem _ _ _ hx.2
   simp only [hred]
   -- a subsequence along which `∇vₙ → ∇u₀` and `χₙ → χ₀` a.e. on `K`
   obtain ⟨ns1, hns1, hae1⟩ := (tendstoInMeasure_of_tendsto_eLpNorm two_ne_zero
-    (fun n ↦ (GMTFoundations.measurable_gradient (v n)).aestronglyMeasurable)
-    (GMTFoundations.measurable_gradient u₀).aestronglyMeasurable
     (hgrad K hξU hK)).exists_seq_tendsto_ae
   obtain ⟨ns2, hns2, hae2⟩ := (tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero
-    (fun n ↦ (hχm (ns1 n)).aestronglyMeasurable) hχ₀m.aestronglyMeasurable
     ((hχ K hξU hK).comp hns1.tendsto_atTop)).exists_seq_tendsto_ae
   refine ⟨fun k ↦ ns1 (ns2 k), hns1.comp hns2, ?_⟩
   -- bounds on `K`

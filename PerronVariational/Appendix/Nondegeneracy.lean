@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Defs.Stationary
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Monotone
 import PerronVariational.Semilinear.PositivityTrace
@@ -142,9 +143,12 @@ theorem hasDerivAt_radialProfileF (t : ℝ) :
       Real.exp (-((d : ℝ) / (2 * σ ^ 2) * (t - σ ^ 2)))) t := by
   set lm := (d : ℝ) / (2 * σ ^ 2)
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lm * (t - σ ^ 2))) (-lm) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    have h := (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    simp only [mul_one] at h
+    exact h
   have h2 := (h1.exp.const_mul A).const_sub A
   convert h2 using 1
+  · rfl
   ring
 
 theorem deriv_radialProfileF : deriv (radialProfileF σ A d) = fun t ↦ A * ((d : ℝ) / (2 * σ ^ 2)) *
@@ -156,7 +160,9 @@ theorem deriv_deriv_radialProfileF (t : ℝ) : deriv (deriv (radialProfileF σ A
   rw [deriv_radialProfileF]
   set lm := (d : ℝ) / (2 * σ ^ 2)
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lm * (t - σ ^ 2))) (-lm) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    have h := (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    simp only [mul_one] at h
+    exact h
   have h2 := h1.exp.const_mul (A * lm)
   rw [h2.deriv]
   ring
@@ -333,9 +339,12 @@ theorem contDiff_expProfile {n : WithTop ℕ∞} : ContDiff ℝ n (expProfile p 
 theorem hasDerivAt_expProfileF (t : ℝ) :
     HasDerivAt (expProfileF σ lam A) (A * lam * Real.exp (-(lam * (t - σ ^ 2)))) t := by
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * (t - σ ^ 2))) (-lam) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    have h := (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    simp only [mul_one] at h
+    exact h
   have h2 := (h1.exp.const_mul A).const_sub A
   convert h2 using 1
+  · rfl
   ring
 
 theorem deriv_expProfileF :
@@ -346,7 +355,9 @@ theorem deriv_deriv_expProfileF (t : ℝ) :
     deriv (deriv (expProfileF σ lam A)) t = -(A * lam ^ 2 * Real.exp (-(lam * (t - σ ^ 2)))) := by
   rw [deriv_expProfileF]
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * (t - σ ^ 2))) (-lam) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    have h := (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    simp only [mul_one] at h
+    exact h
   rw [(h1.exp.const_mul (A * lam)).deriv]
   ring
 

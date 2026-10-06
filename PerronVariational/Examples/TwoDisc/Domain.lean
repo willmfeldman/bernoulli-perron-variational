@@ -67,7 +67,7 @@ theorem norm_lt_iff_sq {v : E 2} {r : ℝ} (hr : 0 ≤ r) : ‖v‖ < r ↔ ‖v
 theorem mem_domain_iff (x : E 2) :
     x ∈ domain ↔ x 0 ^ 2 + x 1 ^ 2 < 1 ∧ 1 / 400 < (x 0 - 1 / 10) ^ 2 + x 1 ^ 2 ∧
       1 / 400 < (x 0 + 1 / 10) ^ 2 + x 1 ^ 2 := by
-  simp only [domain, mem_diff, mem_ball, mem_union, mem_closedBall, dist_eq_norm, sub_zero,
+  simp only [domain, Set.mem_sdiff, mem_ball, mem_union, mem_closedBall, dist_eq_norm, sub_zero,
     sub_neg_eq_add, not_or, not_le]
   rw [norm_lt_iff_sq zero_le_one, lt_norm_iff_sq (by norm_num), lt_norm_iff_sq (by norm_num),
     norm_sq_eq, norm_sub_hole_sq, norm_add_hole_sq]
@@ -77,9 +77,9 @@ theorem isOpen_domain : IsOpen domain :=
   isOpen_ball.sdiff (isClosed_closedBall.union isClosed_closedBall)
 
 theorem isBounded_domain : Bornology.IsBounded domain :=
-  isBounded_ball.subset diff_subset
+  isBounded_ball.subset Set.sdiff_subset
 
-theorem domain_subset_ball : domain ⊆ ball 0 1 := diff_subset
+theorem domain_subset_ball : domain ⊆ ball 0 1 := Set.sdiff_subset
 
 /-! ### Connectedness -/
 
@@ -127,7 +127,7 @@ theorem caps_subset_domain :
       domain := by
   rintro y (((⟨hb, hy⟩ | ⟨hb, hy⟩) | ⟨hb, hy⟩) | ⟨hb, hy⟩) <;>
   · rw [mem_ball_iff_coord] at hb
-    simp only [mem_setOf_eq] at hy
+    simp only [Set.mem_ofPred_eq] at hy
     rw [mem_domain_iff]
     refine ⟨hb, ?_, ?_⟩ <;> nlinarith [sq_nonneg (y 0 - 1 / 10), sq_nonneg (y 0 + 1 / 10),
       sq_nonneg (y 1)]
@@ -173,7 +173,7 @@ theorem isConnected_domain : IsConnected domain := by
   have hb : pt 0 (1 / 2) ∈ W := by
     refine Or.inl (Or.inl (Or.inl ⟨?_, ?_⟩))
     · rw [mem_ball_iff_coord]; norm_num
-    · simp only [mem_setOf_eq, pt_one]; norm_num
+    · simp only [Set.mem_ofPred_eq, pt_one]; norm_num
   refine ⟨⟨pt 0 (1 / 2), caps_subset_domain hb⟩,
     isPreconnected_of_forall (pt 0 (1 / 2)) fun y hy ↦ ?_⟩
   by_cases hyW : y ∈ W
@@ -183,8 +183,8 @@ theorem isConnected_domain : IsConnected domain := by
     rw [abs_le]
     have hyb : y ∈ ball (0 : E 2) 1 := domain_subset_ball hy
     constructor <;> by_contra h <;> push Not at h <;> apply hyW
-    · exact Or.inr ⟨hyb, by simp only [mem_setOf_eq]; linarith⟩
-    · exact Or.inl (Or.inl (Or.inr ⟨hyb, by simp only [mem_setOf_eq]; linarith⟩))
+    · exact Or.inr ⟨hyb, by simp only [Set.mem_ofPred_eq]; linarith⟩
+    · exact Or.inl (Or.inl (Or.inr ⟨hyb, by simp only [Set.mem_ofPred_eq]; linarith⟩))
   have hyb := (mem_domain_iff y).1 hy
   set t := if 0 ≤ y 1 then max (y 1) (1 / 10) else min (y 1) (-1 / 10) with ht
   have hxt : 0 ≤ y 1 * (t - y 1) := by
@@ -211,12 +211,12 @@ theorem isConnected_domain : IsConnected domain := by
       · rw [max_eq_right hm] at htsq; linarith
       · rw [max_eq_left hm] at htsq; linarith [hyb.1]
     by_cases h : 0 ≤ y 1
-    · have htv : t = max (y 1) (1 / 10) := by rw [ht, if_pos h]
+    · have htv : t = max (y 1) (1 / 10) := by rw [ht, ite_eq_left h]
       exact Or.inl (Or.inl (Or.inl ⟨hball, by
-        simp only [mem_setOf_eq, pt_one]; rw [htv]; linarith [le_max_right (y 1) (1 / 10)]⟩))
-    · have htv : t = min (y 1) (-1 / 10) := by rw [ht, if_neg h]
+        simp only [Set.mem_ofPred_eq, pt_one]; rw [htv]; linarith [le_max_right (y 1) (1 / 10)]⟩))
+    · have htv : t = min (y 1) (-1 / 10) := by rw [ht, ite_eq_right h]
       exact Or.inl (Or.inr ⟨hball, by
-        simp only [mem_setOf_eq, pt_one]; rw [htv]; linarith [min_le_right (y 1) (-1 / 10)]⟩)
+        simp only [Set.mem_ofPred_eq, pt_one]; rw [htv]; linarith [min_le_right (y 1) (-1 / 10)]⟩)
   refine ⟨segment ℝ y (pt (y 0) t) ∪ W,
     union_subset (segment_vertical_subset hy hy0 hxt htsq) caps_subset_domain, Or.inr hb,
     Or.inl (left_mem_segment _ _ _), ?_⟩
@@ -247,7 +247,7 @@ theorem domain_eq : domain = {x | rhoU x < 0} := by
   ext x
   have hd : x ∈ domain ↔ ‖x‖ ^ 2 < 1 ∧ 1 / 400 < ‖x - hole‖ ^ 2 ∧ 1 / 400 < ‖x + hole‖ ^ 2 := by
     rw [mem_domain_iff, norm_sq_eq, norm_sub_hole_sq, norm_add_hole_sq]
-  rw [hd, mem_setOf_eq, rhoU]
+  rw [hd, Set.mem_ofPred_eq, rhoU]
   obtain ⟨h1, h2⟩ := hole_facts x
   constructor
   · rintro ⟨ha, hb, hc⟩
@@ -296,8 +296,8 @@ theorem gradient_mul_ne_zero {f g : E 2 → ℝ} {x v : E 2} {Df Dg : E 2 →L[�
     simpa [gradient] using this
   rw [hd.fderiv] at this
   have := congrArg (fun L : E 2 →L[ℝ] ℝ ↦ L v) this
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
-    hfx, zero_mul, zero_add, ContinuousLinearMap.zero_apply] at this
+  simp only [add_apply, smul_apply, smul_eq_mul,
+    hfx, zero_mul, zero_add, zero_apply] at this
   exact mul_ne_zero hgx hv this
 
 theorem hasFDerivAt_norm_sub_sq (c x : E 2) :
@@ -317,7 +317,7 @@ theorem hasC2Boundary_domain : HasC2Boundary domain := by
   have hdir : ∀ c : E 2, x - c ≠ 0 →
       (2 • (innerSL ℝ (x - c)).comp (ContinuousLinearMap.id ℝ (E 2))) (x - c) ≠ 0 := by
     intro c hc
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.coe_comp',
+    simp only [smul_apply, ContinuousLinearMap.coe_comp,
       Function.comp_apply, ContinuousLinearMap.coe_id', id_eq, innerSL_apply_apply,
       real_inner_self_eq_norm_sq, nsmul_eq_mul, Nat.cast_ofNat]
     exact mul_ne_zero two_ne_zero (pow_ne_zero 2 (norm_ne_zero_iff.2 hc))
@@ -358,8 +358,8 @@ theorem hasC2Boundary_domain : HasC2Boundary domain := by
       (by
         have hn : ‖x + hole‖ ^ 2 ≠ 0 := by
           rw [show ‖x + hole‖ ^ 2 = 1 / 400 by linarith]; norm_num
-        simp only [ContinuousLinearMap.neg_apply, ContinuousLinearMap.smul_apply,
-          ContinuousLinearMap.coe_comp', Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
+        simp only [neg_apply, smul_apply,
+          ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
           innerSL_apply_apply, real_inner_self_eq_norm_sq, nsmul_eq_mul, Nat.cast_ofNat,
           neg_ne_zero]
         exact mul_ne_zero two_ne_zero hn)

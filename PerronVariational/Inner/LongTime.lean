@@ -87,7 +87,7 @@ private theorem two_pow_mul_ofReal (k : ℕ) (c : ℝ) :
 
 /-- The complement of the domain is nonempty (`U` is bounded, `d ≥ 2`). -/
 theorem setting_compl_nonempty {d : ℕ} (S : Setting d) : S.Uᶜ.Nonempty := by
-  haveI : Nonempty (Fin d) := ⟨⟨0, by have := S.two_le; omega⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, by have := S.two_le; omega⟩⟩
   by_contra h
   rw [not_nonempty_iff_eq_empty, compl_empty_iff] at h
   exact NormedSpace.unbounded_univ ℝ (E d) (h ▸ S.isBounded)
@@ -125,7 +125,7 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
   have hsgood : ∀ i, IsGoodSlice S.U S.Q u w χ E0 (s i) ∧
       ∫⁻ x in S.U, ENNReal.ofReal (w (x, s i) ^ 2) = G (s i) := fun i ↦ by
     have := hsN i
-    simp only [hN_def, mem_setOf_eq, not_not] at this
+    simp only [hN_def, Set.mem_ofPred_eq, not_not] at this
     exact this (hspos i)
   have hstend : Tendsto s atTop atTop :=
     tendsto_atTop_mono (fun i ↦ (hsge i).le) tendsto_natCast_atTop_atTop
@@ -195,7 +195,7 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
   · -- (3.15): lower semicontinuity of the total variation
     intro V hV
     have hex : ∃ k, V ⊆ innerSet S.U k := exists_subset_innerSet S.isOpen hne hV
-    have hk : kOf V = Nat.find hex := dif_pos hex
+    have hk : kOf V = Nat.find hex := dite_eq_left hex
     have hVk : V ⊆ innerSet S.U (Nat.find hex) := Nat.find_spec hex
     have hΩ := isOpen_innerSet S.isOpen (Nat.find hex)
     have hloc : ∀ n, LocallyIntegrableOn (fun x ↦ χ (x, s (φ n))) (innerSet S.U (Nat.find hex))

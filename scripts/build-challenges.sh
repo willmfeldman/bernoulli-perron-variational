@@ -18,8 +18,8 @@ usage() {
   cat <<'EOF'
 Usage: scripts/build-challenges.sh --challenge-only|--trusted-all
 
-  --challenge-only  Build only the trusted Challenge target in every workspace.
-  --trusted-all     Build Challenge and Solution explicitly in every workspace.
+  --challenge-only  Build only the trusted Vocabulary and Challenge targets in every workspace.
+  --trusted-all     Build Vocabulary, Challenge and Solution explicitly in every workspace.
 
 Use --challenge-only before an adversarial Comparator run.  --trusted-all is
 only for a reviewed, trusted checkout.
@@ -53,8 +53,7 @@ repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
 # directories: this driver is part of the reviewed release configuration.
 workspaces='
 main-theorem
-planar-structure
-model-cases'
+planar-structure'
 
 # Fail closed if a new configured workspace has not been added to the reviewed
 # allowlist above.  This catches coverage drift without executing arbitrary
@@ -98,18 +97,15 @@ fi
 
 for workspace in $workspaces; do
   workspace_dir="$repo_root/challenges/$workspace"
-  # A workspace in the Statement.lean layout builds its trusted Statement module first.
-  if [ -f "$workspace_dir/Statement.lean" ]; then
-    echo "==> $workspace: Statement"
-    (
-      cd "$workspace_dir"
-      $LAKE build Statement
-    )
+  # The trusted modules: the Mathlib-only Vocabulary (imported by Solution) and Challenge.
+  if [ ! -f "$workspace_dir/Vocabulary.lean" ] || [ -e "$workspace_dir/Statement.lean" ]; then
+    echo "$workspace: expected Vocabulary.lean and no Statement.lean" >&2
+    exit 1
   fi
-  echo "==> $workspace: Challenge"
+  echo "==> $workspace: Vocabulary Challenge"
   (
     cd "$workspace_dir"
-    $LAKE build Challenge
+    $LAKE build Vocabulary Challenge
   )
 done
 

@@ -6,7 +6,8 @@ Authors: William M. Feldman
 module
 
 public import PerronVariational.Semilinear.Profiles
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.Comparison
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.ExteriorBall

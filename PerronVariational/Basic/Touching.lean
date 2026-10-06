@@ -6,7 +6,7 @@ Authors: William M. Feldman
 module
 
 public import Mathlib.Topology.ContinuousOn
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Touching from above and below

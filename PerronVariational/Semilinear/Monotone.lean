@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Registry.Semilinear
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.Comparison
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
@@ -261,9 +262,8 @@ variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDim
 omit [FiniteDimensional ℝ F] in
 theorem hasFDerivAt_normSq_sub_const (x₀ y : F) :
     HasFDerivAt (fun y ↦ ‖y - x₀‖ ^ 2) ((2 : ℝ) • innerSL ℝ (y - x₀)) y := by
-  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1
-  ext v
-  simp [two_smul]
+  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1 <;>
+    first | rfl | (ext v; simp [two_smul])
 
 /-- `Δ ‖y - x₀‖² = 2 dim F`. -/
 theorem laplacian_normSq_sub_const (x₀ x : F) :
@@ -277,7 +277,7 @@ theorem laplacian_normSq_sub_const (x₀ x : F) :
   rw [hd.fderiv]
   have h1 : ∀ i, ((2 : ℝ) • innerSL ℝ (E := F)) (stdOrthonormalBasis ℝ F i)
       (stdOrthonormalBasis ℝ F i) = 2 := fun i ↦ by
-    rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, innerSL_apply_apply,
+    rw [smul_apply, smul_apply, innerSL_apply_apply,
       real_inner_self_eq_norm_sq, (stdOrthonormalBasis ℝ F).orthonormal.1 i]
     norm_num
   refine (Finset.sum_congr rfl fun i _ ↦ h1 i).trans ?_

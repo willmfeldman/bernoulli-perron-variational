@@ -10,7 +10,8 @@ public import GMTFoundations.Sobolev.Cutoff
 import GMTFoundations.Sobolev.Lattice
 import GMTFoundations.Sobolev.Lipschitz
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Main.Directional
 
 /-!
@@ -96,13 +97,13 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
   have hBs_cl : ball x s ⊆ closedBall x R := hBsR.trans ball_subset_closedBall
   have hBs_t : ball x s ⊆ ball x t := hBs_cl.trans D.closedBall_subset_ball
   have hA_t : A ⊆ ball x t :=
-    diff_subset.trans (ball_subset_closedBall.trans D.closedBall_subset_ball)
+    Set.sdiff_subset.trans (ball_subset_closedBall.trans D.closedBall_subset_ball)
   have hφg0 : ∀ y ∈ ball x s, ∇ φ y = 0 := fun y hy ↦ gradient_eq_zero_of_eqOn_ball hφ1 hy
   have hvt := memH1Loc_mono hv D.ball_subset
   have hK : closedBall x R ⊆ U := D.closedBall_subset_ball.trans D.ball_subset
   have huK := hu.2 _ hK (isCompact_closedBall x R)
   have hvK := hv.2 _ hK (isCompact_closedBall x R)
-  have hAK : A ⊆ closedBall x R := diff_subset.trans ball_subset_closedBall
+  have hAK : A ⊆ closedBall x R := Set.sdiff_subset.trans ball_subset_closedBall
   have hrA : volume.restrict A ≤ volume.restrict (closedBall x R) :=
     Measure.restrict_mono hAK le_rfl
   have hrBs : volume.restrict (ball x s) ≤ volume.restrict (closedBall x R) :=
@@ -198,9 +199,11 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     have hvuA : ∀ᵐ y ∂(volume.restrict A), v y ≤ u y :=
       ae_restrict_of_ae_restrict_of_subset (hAK.trans hK) hvu
     filter_upwards [D.eventually_abs_sub_le hδ] with n hn
-    have hGvA : AEStronglyMeasurable Gv (volume.restrict A) := hvK.2.1.mono_measure hrA
+    have hGvA : AEStronglyMeasurable Gv (volume.restrict A) :=
+      hvK.2.aestronglyMeasurable.mono_measure hrA
     have hhA : AEMeasurable (fun y ↦ u y - v y) (volume.restrict A) :=
-      (huK.1.1.mono_measure hrA).aemeasurable.sub (hvK.1.1.mono_measure hrA).aemeasurable
+      (huK.1.aestronglyMeasurable.mono_measure hrA).aemeasurable.sub
+        (hvK.1.aestronglyMeasurable.mono_measure hrA).aemeasurable
     refine (energyJ_le_of_pointwise hGvA hhA (annConst_nonneg L Qmax)
       (by positivity : (0 : ℝ) ≤ 6 * M ^ 2) ?_).trans ?_
     · filter_upwards [ae_restrict_mem hAm, hvuA] with y hy hyvu
@@ -241,13 +244,15 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
   -- (iii) convergence of `J_{Qₙ}(v; B_s)`
   have hvlim : Tendsto (fun n ↦ energyJ (ball x s) (Qn n) v Gv) atTop
       (𝓝 (energyJ (ball x s) Q v Gv)) := by
-    have hGvBs : AEStronglyMeasurable Gv (volume.restrict (ball x s)) := hvK.2.1.mono_measure hrBs
+    have hGvBs : AEStronglyMeasurable Gv (volume.restrict (ball x s)) :=
+      hvK.2.aestronglyMeasurable.mono_measure hrBs
     simp_rw [energyJ_eq_add hGvBs]
     refine tendsto_const_nhds.add (tendsto_lintegral_of_dominated_convergence'
       (fun _ ↦ ENNReal.ofReal (Qmax ^ 2)) (fun n ↦ ?_) (fun n ↦ ?_) ?_ ?_)
     · have hsv : NullMeasurableSet (posSet v (ball x s)) (volume.restrict (ball x s)) :=
         measurableSet_ball.nullMeasurableSet.inter
-          ((hvK.1.1.mono_measure hrBs).aemeasurable.nullMeasurable measurableSet_Ioi)
+          ((hvK.1.aestronglyMeasurable.mono_measure hrBs).aemeasurable.nullMeasurable
+            measurableSet_Ioi)
       exact ENNReal.measurable_ofReal.comp_aemeasurable
         (((((D.Qcont n).mono hBs_cl).aemeasurable measurableSet_ball).pow_const 2).mul
           (aemeasurable_const.indicator₀ hsv))
@@ -268,7 +273,7 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     have hvuBs : ∀ᵐ y ∂(volume.restrict (ball x s)), v y ≤ u y :=
       ae_restrict_of_ae_restrict_of_subset (hBs_t.trans D.ball_subset) hvu
     have hvm : AEMeasurable v (volume.restrict (ball x s)) :=
-      (hvK.1.1.mono_measure hrBs).aemeasurable
+      (hvK.1.aestronglyMeasurable.mono_measure hrBs).aemeasurable
     have hmn_eq : ∀ n y, mn n y = max (un n y) (v y) := by
       intro n y
       simp only [hmn_def]
@@ -278,7 +283,8 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     refine energyJ_le_liminf isOpen_ball measure_ball_lt_top.ne
       (fun n ↦ hasWeakGradient_mono (hmn n).1 hBs_t)
       (fun n ↦ ((hmn n).2 _ hcl_t (isCompact_closedBall _ _)).2.mono_measure hr)
-      (hasWeakGradient_mono hu.1 (hBs_t.trans D.ball_subset)) (huK.2.1.mono_measure hrBs)
+      (hasWeakGradient_mono hu.1 (hBs_t.trans D.ball_subset))
+      (huK.2.aestronglyMeasurable.mono_measure hrBs)
       (fun δ hδ ↦ ?_) (fun n ↦ ?_)
       (fun n ↦ ((D.Qcont n).mono hBs_cl).aemeasurable measurableSet_ball)
       (fun y hy ↦ D.Qconv y (hBs_cl hy)) ?_
@@ -335,13 +341,13 @@ theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
   have hBs_cl : ball x s ⊆ closedBall x R := hBsR.trans ball_subset_closedBall
   have hBs_t : ball x s ⊆ ball x t := hBs_cl.trans D.closedBall_subset_ball
   have hA_t : A ⊆ ball x t :=
-    diff_subset.trans (ball_subset_closedBall.trans D.closedBall_subset_ball)
+    Set.sdiff_subset.trans (ball_subset_closedBall.trans D.closedBall_subset_ball)
   have hφg0 : ∀ y ∈ ball x s, ∇ φ y = 0 := fun y hy ↦ gradient_eq_zero_of_eqOn_ball hφ1 hy
   have hvt := memH1Loc_mono hv D.ball_subset
   have hK : closedBall x R ⊆ U := D.closedBall_subset_ball.trans D.ball_subset
   have huK := hu.2 _ hK (isCompact_closedBall x R)
   have hvK := hv.2 _ hK (isCompact_closedBall x R)
-  have hAK : A ⊆ closedBall x R := diff_subset.trans ball_subset_closedBall
+  have hAK : A ⊆ closedBall x R := Set.sdiff_subset.trans ball_subset_closedBall
   have hrA : volume.restrict A ≤ volume.restrict (closedBall x R) :=
     Measure.restrict_mono hAK le_rfl
   have hrBs : volume.restrict (ball x s) ≤ volume.restrict (closedBall x R) :=
@@ -437,9 +443,11 @@ theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     have hvuA : ∀ᵐ y ∂(volume.restrict A), u y ≤ v y :=
       ae_restrict_of_ae_restrict_of_subset (hAK.trans hK) hvu
     filter_upwards [D.eventually_abs_sub_le hδ] with n hn
-    have hGvA : AEStronglyMeasurable Gv (volume.restrict A) := hvK.2.1.mono_measure hrA
+    have hGvA : AEStronglyMeasurable Gv (volume.restrict A) :=
+      hvK.2.aestronglyMeasurable.mono_measure hrA
     have hhA : AEMeasurable (fun y ↦ u y - v y) (volume.restrict A) :=
-      (huK.1.1.mono_measure hrA).aemeasurable.sub (hvK.1.1.mono_measure hrA).aemeasurable
+      (huK.1.aestronglyMeasurable.mono_measure hrA).aemeasurable.sub
+        (hvK.1.aestronglyMeasurable.mono_measure hrA).aemeasurable
     refine (energyJ_le_of_pointwise hGvA hhA (annConst_nonneg L Qmax)
       (by positivity : (0 : ℝ) ≤ 6 * M ^ 2) ?_).trans ?_
     · filter_upwards [ae_restrict_mem hAm, hvuA] with y hy hyvu
@@ -484,13 +492,15 @@ theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
   -- (iii) convergence of `J_{Qₙ}(v; B_s)`
   have hvlim : Tendsto (fun n ↦ energyJ (ball x s) (Qn n) v Gv) atTop
       (𝓝 (energyJ (ball x s) Q v Gv)) := by
-    have hGvBs : AEStronglyMeasurable Gv (volume.restrict (ball x s)) := hvK.2.1.mono_measure hrBs
+    have hGvBs : AEStronglyMeasurable Gv (volume.restrict (ball x s)) :=
+      hvK.2.aestronglyMeasurable.mono_measure hrBs
     simp_rw [energyJ_eq_add hGvBs]
     refine tendsto_const_nhds.add (tendsto_lintegral_of_dominated_convergence'
       (fun _ ↦ ENNReal.ofReal (Qmax ^ 2)) (fun n ↦ ?_) (fun n ↦ ?_) ?_ ?_)
     · have hsv : NullMeasurableSet (posSet v (ball x s)) (volume.restrict (ball x s)) :=
         measurableSet_ball.nullMeasurableSet.inter
-          ((hvK.1.1.mono_measure hrBs).aemeasurable.nullMeasurable measurableSet_Ioi)
+          ((hvK.1.aestronglyMeasurable.mono_measure hrBs).aemeasurable.nullMeasurable
+            measurableSet_Ioi)
       exact ENNReal.measurable_ofReal.comp_aemeasurable
         (((((D.Qcont n).mono hBs_cl).aemeasurable measurableSet_ball).pow_const 2).mul
           (aemeasurable_const.indicator₀ hsv))
@@ -511,7 +521,7 @@ theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     have hvuBs : ∀ᵐ y ∂(volume.restrict (ball x s)), u y ≤ v y :=
       ae_restrict_of_ae_restrict_of_subset (hBs_t.trans D.ball_subset) hvu
     have hvm : AEMeasurable v (volume.restrict (ball x s)) :=
-      (hvK.1.1.mono_measure hrBs).aemeasurable
+      (hvK.1.aestronglyMeasurable.mono_measure hrBs).aemeasurable
     have hmn_eq : ∀ n y, mn n y = min (un n y) (v y) := by
       intro n y
       simp only [hmn_def]
@@ -521,7 +531,8 @@ theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     refine energyJ_le_liminf isOpen_ball measure_ball_lt_top.ne
       (fun n ↦ hasWeakGradient_mono (hmn n).1 hBs_t)
       (fun n ↦ ((hmn n).2 _ hcl_t (isCompact_closedBall _ _)).2.mono_measure hr)
-      (hasWeakGradient_mono hu.1 (hBs_t.trans D.ball_subset)) (huK.2.1.mono_measure hrBs)
+      (hasWeakGradient_mono hu.1 (hBs_t.trans D.ball_subset))
+      (huK.2.aestronglyMeasurable.mono_measure hrBs)
       (fun δ hδ ↦ ?_) (fun n ↦ ?_)
       (fun n ↦ ((D.Qcont n).mono hBs_cl).aemeasurable measurableSet_ball)
       (fun y hy ↦ D.Qconv y (hBs_cl hy)) ?_

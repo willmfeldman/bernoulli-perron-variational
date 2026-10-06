@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Semilinear.DirDeriv
 public import PerronVariational.Defs.Semilinear
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.BernsteinPoint
 
 /-!

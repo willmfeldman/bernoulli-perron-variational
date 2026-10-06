@@ -63,7 +63,7 @@ theorem isClosed_upperKLimit {X ι : Type*} [TopologicalSpace X] (A : ι → Set
     (l : Filter ι) : IsClosed (upperKLimit A l) := by
   rw [← isOpen_compl_iff, isOpen_iff_mem_nhds]
   intro x hx
-  simp only [mem_compl_iff, upperKLimit, mem_setOf_eq, not_forall] at hx
+  simp only [mem_compl_iff, upperKLimit, Set.mem_ofPred_eq, not_forall] at hx
   obtain ⟨N, hN, hfreq⟩ := hx
   obtain ⟨V, hVN, hVo, hxV⟩ := mem_nhds_iff.1 hN
   refine mem_of_superset (hVo.mem_nhds hxV) fun y hy hyA => hfreq ?_
@@ -73,7 +73,7 @@ theorem isClosed_upperKLimit {X ι : Type*} [TopologicalSpace X] (A : ι → Set
 theorem upperKLimit_congr {X ι : Type*} [TopologicalSpace X] {A B : ι → Set X} {l : Filter ι}
     (h : ∀ᶠ i in l, A i = B i) : upperKLimit A l = upperKLimit B l := by
   ext x
-  simp only [upperKLimit, mem_setOf_eq]
+  simp only [upperKLimit, Set.mem_ofPred_eq]
   refine forall₂_congr fun N _ => ⟨fun hA => ?_, fun hB => ?_⟩
   · exact (hA.and_eventually h).mono fun i hi => hi.2 ▸ hi.1
   · exact (hB.and_eventually h).mono fun i hi => hi.2 ▸ hi.1
@@ -149,7 +149,7 @@ theorem eventually_sub_lt_of_upperKLimit (hU : IsOpen U) (huInf : ContinuousOn u
       have := (abs_lt.1 (ht z hzK)).2
       have hz' : uInf z - φ z < κ - ε := hz
       linarith
-    · simp only [upperKLimit, mem_setOf_eq, not_forall, not_frequently] at hyE
+    · simp only [upperKLimit, Set.mem_ofPred_eq, not_forall, not_frequently] at hyE
       obtain ⟨N, hN, hev⟩ := hyE
       refine ⟨N, hN, ?_⟩
       filter_upwards [hev] with t ht z hz _ hzE
@@ -637,7 +637,7 @@ theorem longtime_relaxedSub (hU : IsOpen U) (hQ : ContinuousOn Q U) {Eset : Set 
       (fun y hy hyE => ?_) ?_ ?_
     · have hyU : y ∈ U := hrU hy
       have := h1 ⟨(hsub.trans (ball_subset_ball (min_le_left _ _))) hy, hyE, hyU⟩
-      simp only [hw_def, mem_setOf_eq] at this ⊢
+      simp only [hw_def, Set.mem_ofPred_eq] at this ⊢
       linarith
     · rwa [laplacian_add_mul hφ hw]
     · rw [gradient_add_mul (hφ.differentiable (by simp)) (hw.differentiable (by simp))]

@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Semilinear.BernsteinCutoff
 public import PerronVariational.Defs.Parabolic
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Profiles
 
 /-!

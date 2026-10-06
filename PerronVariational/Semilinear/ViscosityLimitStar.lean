@@ -170,7 +170,7 @@ theorem exists_gt_forall_notMem_cyl {V : Set (E d)} (hVb : Bornology.IsBounded V
   refine ⟨(b + q₀.2) / 2, by linarith, fun q hq hqK ↦ ?_⟩
   have hqC : q ∈ C := ⟨hq, hqK.1, hqK.2.1, by linarith [hqK.2.2]⟩
   have := hmin hqC
-  simp only [mem_setOf_eq] at this
+  simp only [Set.mem_ofPred_eq] at this
   linarith [hqK.2.2]
 
 section Star
@@ -416,7 +416,6 @@ theorem relaxedSub_star_core (hβ : IsReactionProfile β) (hεpos : ∀ j, 0 < �
     have hqE : q ∈ Estar :=
       hLk _ ⟨superKappa_pos hβ hθh, (superKappa_lt_one hβ hθh).le⟩ hqL
     have := hμle q ⟨hqE, hqP⟩
-    simp only at this
     linarith
   have hpK : p ∈ K := cyl_subset hpcyl
   rcases lt_or_ge 0 (φ p) with hφp | hφp

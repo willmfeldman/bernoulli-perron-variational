@@ -8,7 +8,8 @@ module
 public import PerronVariational.Statements.Intermediate
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Attainment
 import PerronVariational.Semilinear.Monotone
 import PerronVariational.Topology.KLimit
@@ -235,7 +236,7 @@ theorem WeakHeatInPos.congr (hU : IsOpen U) (h : WeakHeatInPos U u w)
     (heq : EqOn u u' (UInf U)) : WeakHeatInPos U u' w := by
   intro φ hφ hc hsupp
   have hpos : posSetP u' (UInf U) = posSetP u (UInf U) := by
-    ext p; simp only [posSetP, mem_setOf_eq]
+    ext p; simp only [posSetP, Set.mem_ofPred_eq]
     exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, (heq hp) ▸ h⟩, fun ⟨hp, h⟩ ↦ ⟨hp, (heq hp).symm ▸ h⟩⟩
   rw [h φ hφ hc (hpos ▸ hsupp)]
   congr 1
@@ -363,6 +364,31 @@ theorem semilinearLimitSet_subset_closure (εs : ℕ → ℝ) (us : ℕ → E d 
     semilinearLimitSet U I εs us ⊆ closure U ×ˢ closure I :=
   upperKLimit_subset_of_eventually (isClosed_closure.prod isClosed_closure)
     (Eventually.of_forall fun _ _ hp ↦ ⟨subset_closure hp.1.1, subset_closure hp.1.2⟩)
+
+theorem semilinearLimitSetStar_Ioc_subset (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (T : ℝ) :
+    semilinearLimitSetStar U (Ioc 0 T) εs us ⊆ semilinearLimitSetStar U (Ioi 0) εs us :=
+  closure_mono <| iUnion₂_mono fun _ _ ↦ upperKLimit_mono fun _ _ hp ↦
+    ⟨⟨hp.1.1, hp.1.2.1⟩, hp.2⟩
+
+/-- Below time `T`, `E*` on `U × (0, ∞)` lies in `E*` on `U × (0, T]`, since `limsup*` and the
+closure are local. -/
+theorem semilinearLimitSetStar_Ioi_inter_subset (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (T : ℝ) :
+    semilinearLimitSetStar U (Ioi 0) εs us ∩ {p | p.2 < T} ⊆
+      semilinearLimitSetStar U (Ioc 0 T) εs us := by
+  refine (inter_comm _ _).subset.trans <| (isOpen_snd_lt T).inter_closure.trans <|
+    closure_mono ?_
+  rw [inter_iUnion₂]
+  refine iUnion₂_mono fun _ _ ↦ (inter_comm _ _).subset.trans <|
+    (upperKLimit_inter_subset_of_isOpen (isOpen_snd_lt T)).trans <| upperKLimit_mono ?_
+  rintro j q ⟨⟨⟨hqU, hq0⟩, hq⟩, hqT⟩
+  exact ⟨⟨hqU, hq0, le_of_lt hqT⟩, hq⟩
+
+theorem semilinearLimitSetStar_subset_closure (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (I : Set ℝ) :
+    semilinearLimitSetStar U I εs us ⊆ closure U ×ˢ closure I :=
+  closure_minimal (iUnion₂_subset fun _ _ ↦ upperKLimit_subset_of_eventually
+    (isClosed_closure.prod isClosed_closure)
+    (Eventually.of_forall fun _ _ hp ↦ ⟨subset_closure hp.1.1, subset_closure hp.1.2⟩))
+    (isClosed_closure.prod isClosed_closure)
 
 
 end Glue
@@ -534,23 +560,24 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
     have hnn : ∀ p ∈ S.U ×ˢ Ioi 0, 0 ≤ u p := fun p hp ↦ (hbd p (hUI hp)).1
     have hanti : ∀ j, AntitoneInTime (uε (εs j)) (closure S.U) (Ici 0) := fun j ↦ by
       simpa using (hfam.2.1 (εs j) (hεs j)).2.2.2.2.2.2.1
-    refine ⟨u, w, χ, hcommon, ?_, ⟨closure (S.U ×ˢ Ioi 0), ?_⟩, hbd, hmodu⟩
+    refine ⟨u, w, χ, hcommon, ?_,
+      ⟨semilinearLimitSetStar S.U (Ioi 0) εs (fun j ↦ uε (εs j)), ?_⟩, hbd, hmodu⟩
     · intro x hx s hs t ht hst
       exact le_of_tendsto_of_tendsto' (hlim (x, t) ⟨hx, ht⟩) (hlim (x, s) ⟨hx, hs⟩)
         fun j ↦ hanti j x hx hs ht hst
-    · -- Proposition 5.3, in the form proved here: relaxed solution with the set
-      -- `E = \overline{U × (0, T]}` (the paper's set `limsup* {u_ε > ε}` can fail)
+    · -- Proposition 5.3 on each `U × (0, T]`, with the set `E*`; the sets glue over `T`
       have hrel : ∀ T > 0, IsParaRelaxedSolution S.U S.Q (Ioc 0 T) u
-          (closure (S.U ×ˢ Ioc 0 T)) := fun T hT ↦
+          (semilinearLimitSetStar S.U (Ioc 0 T) εs (fun j ↦ uε (εs j))) := fun T hT ↦
         h53 d S β hβ T εs (fun j ↦ uε (εs j)) u hT (fun j ↦ (hεs j).1) hεs0
           (fun j ↦ (hfam.2.1 (εs j) (hεs j)).1.2.1.mono Ioc_subset_Ioi_self)
           (fun j p hp ↦ ((hfam.2.1 (εs j) (hεs j)).2.2.2.2.2.2.2.1 M hgM p
             ⟨subset_closure hp.1, le_of_lt hp.2.1⟩).1)
           (hloc.mono (hIoc T))
       exact ⟨isParaSuper_Ioi_of_Ioc hcont hnn fun T hT ↦ (hrel T hT).1,
-        isParaRelaxedSub_Ioi_of_Ioc hcont hnn isClosed_closure closure_prod_eq.subset
-          (fun T _ ↦ closure_mono (hIoc T))
-          (fun T _ ↦ closure_Ioi_inter_subset T) fun T hT ↦ (hrel T hT).2⟩
+        isParaRelaxedSub_Ioi_of_Ioc hcont hnn isClosed_closure
+          (semilinearLimitSetStar_subset_closure _ _ _)
+          (fun T _ ↦ semilinearLimitSetStar_Ioc_subset _ _ T)
+          (fun T _ ↦ semilinearLimitSetStar_Ioi_inter_subset _ _ T) fun T hT ↦ (hrel T hT).2⟩
 
 /-- **Theorem 3.9** from Proposition 3.8 (`h37`), Proposition 4.1 (`h41`), Proposition 5.3
 (`h53`) and Corollary 5.4 (`h54`), taken as statements. -/

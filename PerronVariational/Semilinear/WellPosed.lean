@@ -115,11 +115,11 @@ theorem isWellPreparedFamily_of_data (S : Setting d) {β : ℝ → ℝ} (hβ : I
     have hv := h.visc ε hε
     cases increasing with
     | true =>
-      simp only [if_true] at hv ⊢
+      simp only [ite_true] at hv ⊢
       exact (hu ε hε).monotoneInTime hβ hε.1
         ((hu ε hε).le_of_viscSubStat hβ hε.1 hv (hcont ε hε))
     | false =>
-      simp only [Bool.false_eq_true, if_false] at hv ⊢
+      simp only [Bool.false_eq_true, ite_false] at hv ⊢
       exact (hu ε hε).antitoneInTime hβ hε.1
         ((hu ε hε).le_of_viscSuperStat hβ hε.1 hv (hcont ε hε))
   · -- (ii) the bound (3.7)
@@ -154,8 +154,8 @@ theorem semilinear_wellposed : SemilinearWellposedStatement := by
     intro increasing hg
     have hgC : ContDiff ℝ 2 g := by
       cases increasing
-      · simp only [Bool.false_eq_true, if_false] at hg; exact hg.1
-      · simp only [if_true] at hg; exact hg.1
+      · simp only [Bool.false_eq_true, ite_false] at hg; exact hg.1
+      · simp only [ite_true] at hg; exact hg.1
     obtain ⟨ε₀, gε, h⟩ := exists_isWellPreparedData S hβ increasing hg
     have h' := h.mono (lt_min h.pos one_pos) (min_le_left _ _)
     obtain ⟨K, hK⟩ := h'.exists_lipschitzOnWith (hgC.of_le (by norm_num))

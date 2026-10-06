@@ -71,7 +71,8 @@ theorem locallyIntegrableOn_inner_const {U : Set (E d)} {G : E d → E d}
   obtain ⟨t, ht, hi⟩ := hG x hx
   refine ⟨t, ht, ?_⟩
   have := (innerSL ℝ v).integrable_comp hi
-  simpa [innerSL_apply_apply, real_inner_comm] using this
+  refine this.congr (ae_of_all _ fun y ↦ ?_)
+  simp [real_inner_comm]
 
 /-- A function locally integrable on an open `U`, multiplied by a continuous function with compact
 support in `U`, is integrable on `U`. -/
@@ -80,7 +81,7 @@ theorem integrableOn_mul_of_tsupport_subset {U : Set (E d)} (hU : IsOpen U) {F �
     (hφU : tsupport φ ⊆ U) : IntegrableOn (fun x ↦ F x * φ x) U := by
   have hK : IsCompact (tsupport φ) := hφc
   have h1 : IntegrableOn F (tsupport φ) := hF.integrableOn_compact_subset hφU hK
-  exact (h1.mul_continuousOn hφ.continuousOn hK).of_forall_diff_eq_zero hU.measurableSet
+  exact (h1.mul_continuousOn hφ.continuousOn hK).of_forall_sdiff_eq_zero hU.measurableSet
     fun x hx ↦ by simp [image_eq_zero_of_notMem_tsupport hx.2]
 
 theorem eq_zero_of_forall_inner_single {z : E d}
@@ -140,7 +141,7 @@ theorem energyJ_congr {V : Set (E d)} {Q f₁ f₂ : E d → ℝ}
     {G₁ G₂ : E d → E d} (hf : EqOn f₁ f₂ V) (hG : ∀ᵐ x ∂(volume.restrict V), G₁ x = G₂ x) :
     energyJ V Q f₁ G₁ = energyJ V Q f₂ G₂ := by
   have hpos : posSet f₁ V = posSet f₂ V := by
-    ext y; simp only [posSet, mem_setOf_eq]
+    ext y; simp only [posSet, Set.mem_ofPred_eq]
     exact ⟨fun h ↦ ⟨h.1, hf h.1 ▸ h.2⟩, fun h ↦ ⟨h.1, (hf h.1).symm ▸ h.2⟩⟩
   unfold energyJ
   rw [hpos]
@@ -167,11 +168,11 @@ theorem energyJ_split {B B' : Set (E d)} (hB : MeasurableSet B) (hB' : Measurabl
     (Q f : E d → ℝ) (G : E d → E d) :
     energyJ B' Q f G = energyJ B Q f G + energyJ (B' \ B) Q f G := by
   unfold energyJ
-  rw [← lintegral_inter_add_diff _ B' hB, inter_eq_right.2 hBB']
+  rw [← MeasureTheory.lintegral_inter_add_sdiff _ B' hB, inter_eq_right.2 hBB']
   congr 1
   · refine setLIntegral_congr_fun hB fun x hx ↦ ?_
     have : x ∈ posSet f B' ↔ x ∈ posSet f B := by
-      simp only [posSet, mem_setOf_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hBB' hx, h.2⟩⟩
+      simp only [posSet, Set.mem_ofPred_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hBB' hx, h.2⟩⟩
     have hind : (posSet f B').indicator (1 : E d → ℝ) x = (posSet f B).indicator 1 x := by
       by_cases h : x ∈ posSet f B
       · rw [indicator_of_mem h, indicator_of_mem (this.2 h)]
@@ -179,7 +180,7 @@ theorem energyJ_split {B B' : Set (E d)} (hB : MeasurableSet B) (hB' : Measurabl
     rw [hind]
   · refine setLIntegral_congr_fun (hB'.diff hB) fun x hx ↦ ?_
     have : x ∈ posSet f B' ↔ x ∈ posSet f (B' \ B) := by
-      simp only [posSet, mem_setOf_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hx.1, h.2⟩⟩
+      simp only [posSet, Set.mem_ofPred_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hx.1, h.2⟩⟩
     have hind : (posSet f B').indicator (1 : E d → ℝ) x = (posSet f (B' \ B)).indicator 1 x := by
       by_cases h : x ∈ posSet f (B' \ B)
       · rw [indicator_of_mem h, indicator_of_mem (this.2 h)]
@@ -432,7 +433,7 @@ theorem upwardMinimizer_of_localLargest (hU : IsOpen U) (hQ : ∃ K, LipschitzOn
         rintro y ⟨hyN, hyU, hy⟩
         have h1 := hN y hyN (subset_closure ⟨hyU, hy⟩)
         by_contra hneg
-        simp only [mem_setOf_eq, not_le] at hneg
+        simp only [Set.mem_ofPred_eq, not_le] at hneg
         rw [max_eq_right hneg.le] at h1
         linarith
       intro y hyN hycl
@@ -462,7 +463,7 @@ theorem upwardMinimizer_of_localLargest (hU : IsOpen U) (hQ : ∃ K, LipschitzOn
         hwout y ⟨hy.1, fun h ↦ hy.2 (ball_subset_closedBall h)⟩
       have hmem : x₀ ∈ closure (posSet w U) ∩ U ∩ (U \ closedBall x r) :=
         ⟨⟨hx₀cl, hx₀U⟩, hx₀U, hout⟩
-      rw [closure_posSet_inter_eq hW diff_subset heqW] at hmem
+      rw [closure_posSet_inter_eq hW Set.sdiff_subset heqW] at hmem
       have hsub : posSet u (U \ closedBall x r) ⊆ posSet u U := fun y hy ↦ ⟨hy.1.1, hy.2⟩
       exact ⟨closure_mono hsub hmem.1, heqW ⟨hx₀U, hout⟩⟩
     have hx₀B' : x₀ ∈ ball x (δ + r) := closedBall_subset_ball hrr' hx₀cb
@@ -517,7 +518,7 @@ theorem upwardMinimizer_of_localLargest (hU : IsOpen U) (hQ : ∃ K, LipschitzOn
       refine energyJ_congr (fun y hy ↦ by
         rw [hw'eq y ⟨hB'U' hy.1, hy.2⟩, hwout y ⟨hB'U' hy.1, hy.2⟩]) ?_
       have hW : IsOpen (U \ closure (ball x r)) := hU.sdiff isClosed_closure
-      have hae := HasWeakGradient.ae_eq_of_eqOn hU hW diff_subset hGw'.1 hGw.1 (fun y hy ↦ by
+      have hae := HasWeakGradient.ae_eq_of_eqOn hU hW Set.sdiff_subset hGw'.1 hGw.1 (fun y hy ↦ by
         have hy' : y ∈ U \ ball x r := ⟨hy.1, fun h ↦ hy.2 (subset_closure h)⟩
         rw [hw'eq y hy', hwout y hy'])
       have hfr : volume (frontier (ball x r)) = 0 :=

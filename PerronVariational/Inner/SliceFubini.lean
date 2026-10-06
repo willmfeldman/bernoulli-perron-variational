@@ -66,7 +66,7 @@ theorem ae_setIntegral_slice_eq_zero {A : Set (E d)} {I T : Set ℝ} (hA : Measu
       exact (hψs.continuous.comp continuous_snd).aestronglyMeasurable
     have hzero : ∀ s ∉ J, ψ s = 0 := fun s hs ↦ image_eq_zero_of_notMem_tsupport hs
     have e1 : ∫ p in A ×ˢ I, ψ p.2 * h p = ∫ p in A ×ˢ J, ψ p.2 * h p := by
-      refine setIntegral_eq_of_subset_of_forall_diff_eq_zero (hA.prod hI)
+      refine MeasureTheory.setIntegral_eq_of_subset_of_forall_sdiff_eq_zero (hA.prod hI)
         (Set.prod_mono le_rfl ((hψT).trans hTI)) ?_
       · intro p hp
         have : p.2 ∉ J := fun h' ↦ hp.2 ⟨hp.1.1, h'⟩

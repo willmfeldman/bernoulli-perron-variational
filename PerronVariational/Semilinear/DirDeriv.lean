@@ -57,20 +57,20 @@ theorem dd_congr (h : EqOn f g O) (hO : IsOpen O) (hp : p ∈ O) (a : X) : dd a 
 
 theorem dd_add (hf : DifferentiableAt ℝ f p) (hg : DifferentiableAt ℝ g p) (a : X) :
     dd a (fun q ↦ f q + g q) p = dd a f p + dd a g p := by
-  simp only [PerronVariational.dd, fderiv_fun_add hf hg, ContinuousLinearMap.add_apply]
+  simp only [PerronVariational.dd, fderiv_fun_add hf hg, add_apply]
 
 theorem dd_sub (hf : DifferentiableAt ℝ f p) (hg : DifferentiableAt ℝ g p) (a : X) :
     dd a (fun q ↦ f q - g q) p = dd a f p - dd a g p := by
-  simp only [PerronVariational.dd, fderiv_fun_sub hf hg, ContinuousLinearMap.sub_apply]
+  simp only [PerronVariational.dd, fderiv_fun_sub hf hg, sub_apply]
 
 theorem dd_mul (hf : DifferentiableAt ℝ f p) (hg : DifferentiableAt ℝ g p) (a : X) :
     dd a (fun q ↦ f q * g q) p = f p * dd a g p + g p * dd a f p := by
-  simp only [PerronVariational.dd, fderiv_fun_mul hf hg, ContinuousLinearMap.add_apply,
-    ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp only [PerronVariational.dd, fderiv_fun_mul hf hg, add_apply,
+    smul_apply, smul_eq_mul]
 
 theorem dd_const_mul (hf : DifferentiableAt ℝ f p) (c : ℝ) (a : X) :
     dd a (fun q ↦ c * f q) p = c * dd a f p := by
-  simp only [PerronVariational.dd, fderiv_const_mul hf, ContinuousLinearMap.smul_apply,
+  simp only [PerronVariational.dd, fderiv_const_mul hf, smul_apply,
     smul_eq_mul]
 
 theorem dd_const (c : ℝ) (a : X) : dd a (fun _ ↦ c) p = 0 := by
@@ -80,7 +80,7 @@ theorem dd_sum {ι : Type*} (s : Finset ι) {F : ι → X → ℝ}
     (hF : ∀ i ∈ s, DifferentiableAt ℝ (F i) p) (a : X) :
     dd a (fun q ↦ ∑ i ∈ s, F i q) p = ∑ i ∈ s, dd a (F i) p := by
   simp only [PerronVariational.dd]
-  rw [fderiv_fun_sum hF, ContinuousLinearMap.sum_apply]
+  rw [fderiv_fun_sum hF, sum_apply]
 
 theorem dd_comp {Φ : ℝ → ℝ} (hΦ : DifferentiableAt ℝ Φ (f p)) (hf : DifferentiableAt ℝ f p)
     (a : X) : dd a (fun q ↦ Φ (f q)) p = deriv Φ (f p) * dd a f p := by

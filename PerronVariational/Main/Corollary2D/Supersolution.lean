@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Stationary.DirectionalStable.Blowup
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Stationary.TwoPlane.Basic
 import PerronVariational.Stationary.ViscosityLocal
@@ -54,7 +55,7 @@ theorem IsC1GammaHypersurfaceNear.mono {S : Set (E d)} {x₀ y : E d} {r s : ℝ
     intro a b
     simpa using hH (a + c) (b + c)
   · ext z
-    simp only [mem_inter_iff, mem_setOf_eq]
+    simp only [mem_inter_iff, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨hzS, hz⟩
       have hz' : z ∈ S ∩ ball x₀ r := ⟨hzS, hs hz⟩

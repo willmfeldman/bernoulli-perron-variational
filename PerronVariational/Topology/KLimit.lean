@@ -142,6 +142,12 @@ theorem upperKLimit_inter_subset {F : Set X} (hF : IsClosed F) :
     upperKLimit (fun i ↦ A i ∩ F) l ⊆ upperKLimit A l ∩ F :=
   fun _ hx ↦ let h := upperKLimit_inter_subset_closure F hx; ⟨h.1, hF.closure_subset h.2⟩
 
+/-- `(limsup* A_i) ∩ W ⊆ limsup* (A_i ∩ W)` for open `W`: `limsup*` is local. -/
+theorem upperKLimit_inter_subset_of_isOpen {W : Set X} (hW : IsOpen W) :
+    upperKLimit A l ∩ W ⊆ upperKLimit (fun i ↦ A i ∩ W) l := fun _ ⟨hx, hxW⟩ N hN ↦
+  (hx (N ∩ W) (inter_mem hN (hW.mem_nhds hxW))).mono fun _ ⟨y, hyA, hyN, hyW⟩ ↦
+    ⟨y, ⟨hyA, hyW⟩, hyN⟩
+
 theorem upperKLimit_union :
     upperKLimit (fun i ↦ A i ∪ B i) l = upperKLimit A l ∪ upperKLimit B l := by
   refine Subset.antisymm (fun x hx ↦ ?_)

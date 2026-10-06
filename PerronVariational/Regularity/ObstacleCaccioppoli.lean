@@ -59,11 +59,11 @@ theorem step_of_energy {U : Set (E d)} {B : Set (E d)} (hBm : MeasurableSet B) {
       (∫ x in ball z t, ‖(1 - η x) • GF x - F x • ∇ η x‖ ^ 2) + X := by
   set h : E d → ℝ := fun y ↦ ‖Gv y‖ ^ 2 - ‖Gw y‖ ^ 2 with hh
   have h1 : ∫ x in B, h x = ∫ x in B ∩ ball z t, h x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hBm inter_subset_left fun y hy ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hBm inter_subset_left fun y hy ↦ by
       have : y ∉ ball z t := fun h' ↦ hy.2 ⟨hy.1, h'⟩
       simp [hh, hout y this]
   have h2 : ∫ x in ball z t, h x = ∫ x in B ∩ ball z t, h x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero measurableSet_ball inter_subset_right
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_ball inter_subset_right
       fun y hy ↦ by
         have : y ∉ B := fun h' ↦ hy.2 ⟨h', hy.1⟩
         simp [hh, houtB y hy.1 this]
@@ -163,7 +163,7 @@ theorem step_above (hU : IsOpen U) {Cq : ℝ} (hCq : 0 ≤ Cq) (hQ : ∀ x ∈ U
       simp only [hGvdef, hGF]
       congr 2
       rw [sub_smul, one_smul]
-      abel
+      abel_nf
 
 end Above
 
@@ -334,6 +334,7 @@ theorem isDeGiorgiAt_below {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E
       exact this) hρ hρR hR
   rw [setOf_posPart_sub_pos] at h
   convert h using 2
+  rw [caccConst, mul_div_assoc]
 
 end PerronVariational.Regularity
 

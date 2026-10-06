@@ -249,6 +249,7 @@ theorem hasDerivAt_subField (z : ℝ) :
     ((hβ.hasDerivAt_bigB z).const_mul (2 * θ)).const_add (1 - θ)
   have h2 := h1.sqrt (subField_arg_pos hβ hθ hθ1 z).ne'
   convert h2 using 1
+  · rfl
   simp only [subField]
   field_simp
 
@@ -256,7 +257,9 @@ theorem profileSub_hasDerivAt (s : ℝ) :
     HasDerivAt (profileSub β θ) (subField β θ (profileSub β θ s)) s := by
   have h := (odeSol_hasDerivAt (a := 1) (continuous_subField hβ) (subField_pos hβ hθ hθ1)
     (subField_le_one hβ hθ) (s - 1)).comp s ((hasDerivAt_id s).sub_const 1)
-  simpa [profileSub] using h
+  convert h using 1
+  · rfl
+  simp [profileSub]
 
 theorem profileSub_deriv : deriv (profileSub β θ) = fun s ↦ subField β θ (profileSub β θ s) :=
   funext fun s ↦ (profileSub_hasDerivAt hβ hθ hθ1 s).deriv
@@ -282,6 +285,7 @@ theorem profileSub_hasDerivAt_deriv (s : ℝ) :
   have h := (hasDerivAt_subField hβ hθ hθ1 (profileSub β θ s)).comp s
     (profileSub_hasDerivAt hβ hθ hθ1 s)
   convert h using 1
+  · rfl
   field_simp [(subField_pos hβ hθ hθ1 (profileSub β θ s)).ne']
 
 /-- **Lemma A.2(i)**: `Φ'' = θ β(Φ)` on `ℝ`. -/
@@ -420,6 +424,7 @@ theorem profileSubEps_hasDerivAt (s : ℝ) :
     ((hasDerivAt_id s).div_const ε)).const_mul ε
   rw [profileSub_deriv hβ hθ hθ1]
   convert h using 1
+  · rfl
   field_simp
 
 theorem profileSubEps_deriv :
@@ -443,6 +448,7 @@ theorem profileSubEps_hasDerivAt_deriv (s : ℝ) :
     ((hasDerivAt_id s).div_const ε)
   rw [betaEps, profileSubEps_div hε]
   convert h using 1
+  · rfl
   simp only [one_div]
   ring
 

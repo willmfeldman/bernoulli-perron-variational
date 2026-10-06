@@ -8,7 +8,8 @@ module
 public import PerronVariational.Registry.Semilinear
 public import PerronVariational.Semilinear.Profiles
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.Comparison
 import PerronVariational.Semilinear.ViscosityLimitCalculus
 
@@ -196,7 +197,6 @@ theorem exists_sub_geometry (hφ : ContDiff ℝ ∞ φ) (hK : IsCompact K)
     have hφ0 : φ p ≤ 0 := hp.1.2
     have h' := hmle p (hfr p hpA hφ0)
     have h'' : ‖gradₓ φ p‖ ^ 2 - Q p.1 ^ 2 ≤ m / 2 := hp.2
-    simp only at h'
     linarith)
   set r := min (min r₁ r₂ / 3) R with hr_def
   have hr : 0 < r := lt_min (by positivity) hR
@@ -218,7 +218,8 @@ theorem exists_sub_geometry (hφ : ContDiff ℝ ∞ φ) (hK : IsCompact K)
   have hAnn : IsCompact (K ∩ (fun p ↦ infDist p A) ⁻¹' Icc r (2 * r)) :=
     hK.of_isClosed_subset (hK.isClosed.inter (isClosed_Icc.preimage (continuous_infDist_pt A)))
       inter_subset_left
-  obtain ⟨η, hη, hηle⟩ := exists_pos_le_of_isCompact hAnn hφ.continuous.neg.continuousOn
+  obtain ⟨η, hη, hηle⟩ := exists_pos_le_of_isCompact hAnn
+    (show Continuous fun p ↦ -φ p from hφ.continuous.neg).continuousOn
     (fun p ⟨hpK, hr1, hr2⟩ ↦ by
       simp only at hr1 hr2
       have hpA : p ∉ A := fun hpA ↦ by rw [infDist_zero_of_mem hpA] at hr1; linarith
@@ -255,7 +256,6 @@ theorem exists_sub_geometry (hφ : ContDiff ℝ ∞ φ) (hK : IsCompact K)
       sq_nonneg Qmax]
   · intro p hpK h1' h2'
     have := hηle p ⟨hpK, h1', h2'⟩
-    simp only at this
     linarith
 
 /-- **Boundary margin.** If `φ < u` on `A ∩ P_b` (`P_b` closed, inside the compact `K`), then for
@@ -281,7 +281,7 @@ theorem exists_bdry_margin {Pb A : Set (E d × ℝ)} (hK : IsCompact K) (hPb : I
           rwa [hAc.closure_eq] at this
         have h1 := hm'le p ⟨hpA, hp.1⟩
         have h2 : u p - φ p ≤ m' / 2 := hp.2
-        simp only at h1
+        rw [Pi.sub_apply] at h1
         linarith)
   refine ⟨m' / 2, by positivity, r₃, hr₃, fun p hp hd ↦ ?_⟩
   by_contra hc
@@ -316,7 +316,7 @@ theorem gluedSub_le (hβ : IsReactionProfile β) (hθ : 0 < θ) (hθ1 : θ < 1) 
 theorem le_gluedSub (hβ : IsReactionProfile β) (hθ : 0 < θ) (hθ1 : θ < 1) (hε : 0 < ε)
     {p : E d × ℝ} (hp : D p < 3 * r / 2) : φ p + δ ≤ gluedSub β θ ε δ r φ D p := by
   unfold gluedSub
-  rw [if_pos hp]
+  rw [ite_eq_left hp]
   exact (self_le_profileSubEps hβ hθ hθ1 hε _).trans (le_max_left _ _)
 
 /-- Where `Φ_ε(φ + δ) > 0` we have `φ > -2δ` (using `ε s₀ ≥ -c_θ ε ≥ -δ`). -/
@@ -370,7 +370,7 @@ theorem gluedSub_eventuallyEq (_hε : 0 < ε) {p : E d × ℝ} (hφ : Continuous
     (profileSubEps_continuous hβ hθ hθ1).comp (hφ.add continuous_const)
   filter_upwards [hD.continuousAt.eventually (gt_mem_nhds hDp),
     hc.continuousAt.eventually (lt_mem_nhds hΦ)] with q h1 h2
-  simp only [gluedSub, if_pos h1, max_eq_left h2.le]
+  simp only [gluedSub, ite_eq_left h1, max_eq_left h2.le]
 
 theorem continuousOn_gluedSub (hφ : Continuous φ) (hD : Continuous D) (hr0 : 0 < r) :
     ContinuousOn (gluedSub β θ ε δ r φ D) K := by
@@ -388,7 +388,7 @@ theorem continuousOn_gluedSub (hφ : Continuous φ) (hD : Continuous D) (hr0 : 0
         continuous_const
     refine (hc.continuousAt.congr ?_).continuousWithinAt
     filter_upwards [hD.continuousAt.eventually (gt_mem_nhds hDp)] with q hq
-    simp only [gluedSub, if_pos hq]
+    simp only [gluedSub, ite_eq_left hq]
 
 /-- **The glued function is a viscosity subsolution** of the semilinear equation in `V × (a, b]`,
 given the margins (1)–(2) of `exists_sub_geometry` (with `2δ ≤ r`, `ε ≤ δ`). -/

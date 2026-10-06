@@ -1,8 +1,9 @@
 name = "perron_variational"
-version = "0.1.0"
+version = "0.2.0"
 description = "Lean 4 formalization of 'Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem' (Abedin, Feldman, Stinson)"
 keywords = ["math"]
 defaultTargets = ["PerronVariational"]
+preferReleaseBuild = true
 
 [leanOptions]
 pp.unicode.fun = true
@@ -14,32 +15,32 @@ maxSynthPendingDepth = 3
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.30.0"
+rev = "v4.35.0-rc3"
 
 [[require]]
 name = "viscosity_solns"
 git = "https://github.com/willmfeldman/viscosity-solution-theory"
-rev = "v0.2.0"
+rev = "v0.4.0"
 
 [[require]]
 name = "parabolic_basic_theory"
 git = "https://github.com/willmfeldman/parabolic-basic-theory"
-rev = "v0.1.0"
+rev = "v0.3.0"
 
 [[require]]
 name = "bernoulli_parabolic_comparison"
 git = "https://github.com/willmfeldman/bernoulli-parabolic-comparison"
-rev = "v0.1.0"
+rev = "v0.3.0"
 
 [[require]]
 name = "elliptic_bernoulli_foundations"
 git = "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
-rev = "v0.1.0"
+rev = "v0.3.0"
 
 [[require]]
 name = "gmt_foundations"
 git = "https://github.com/willmfeldman/gmt-foundations"
-rev = "v0.1.0"
+rev = "v0.3.0"
 
 [[lean_lib]]
 name = "PerronVariational"
@@ -47,4 +48,4 @@ name = "PerronVariational"
 [[require]]
 name = "inner_variational"
 git = "https://github.com/willmfeldman/bernoulli-rectifiability"
-rev = "v0.2.0"
+rev = "v0.4.0"

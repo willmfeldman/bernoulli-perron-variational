@@ -10,7 +10,8 @@ public import PerronVariational.Inner.Common
 public import PerronVariational.Statements.Intermediate
 import GMTFoundations.Sobolev.Cutoff
 import GMTFoundations.Sobolev.L2Inner
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.StrongGrad
 import PerronVariational.Inner.WeakGrad
 import PerronVariational.Semilinear.Profiles
@@ -192,7 +193,7 @@ theorem isSliceLipTest_mul {Ω : Set (E d × ℝ)} (hΩ : IsOpen Ω) {F η : E d
     · have hp' : p ∉ tsupport η := fun h ↦ hp (hηs h)
       refine ⟨0, (tsupport η)ᶜ, (isClosed_tsupport η).isOpen_compl, hp', fun q _ ↦ ?_⟩
       refine LipschitzOnWith.of_dist_le_mul fun y hy z hz ↦ ?_
-      simp only [mem_setOf_eq, mem_compl_iff] at hy hz
+      simp only [Set.mem_ofPred_eq, mem_compl_iff] at hy hz
       simp [φ, image_eq_zero_of_notMem_tsupport hy, image_eq_zero_of_notMem_tsupport hz]
   refine ⟨hcont, fun t x ↦ ?_, ?_⟩
   · obtain ⟨c, V, hVo, hpV, hV⟩ := hloc (x, t)

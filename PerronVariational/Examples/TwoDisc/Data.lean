@@ -250,12 +250,12 @@ theorem mem_closure_domain {x : E 2} (hx : x ∈ closure domain) :
     ‖x - 0‖ ^ 2 ≤ 1 ∧ 1 / 400 ≤ ‖x - hole‖ ^ 2 ∧ 1 / 400 ≤ ‖x + hole‖ ^ 2 := by
   have hcl : IsClosed {y : E 2 | ‖y - 0‖ ^ 2 ≤ 1 ∧ 1 / 400 ≤ ‖y - hole‖ ^ 2 ∧
       1 / 400 ≤ ‖y + hole‖ ^ 2} := by
-    simp only [Set.setOf_and]
+    simp only [Set.ofPred_and]
     refine (isClosed_le ?_ continuous_const).inter
       ((isClosed_le continuous_const ?_).inter (isClosed_le continuous_const ?_)) <;> fun_prop
   refine closure_minimal (fun y hy ↦ ?_) hcl hx
   rw [mem_domain_iff] at hy
-  rw [mem_setOf_eq, sub_zero, norm_sub_hole_sq, norm_add_hole_sq, norm_sq_eq]
+  rw [Set.mem_ofPred_eq, sub_zero, norm_sub_hole_sq, norm_add_hole_sq, norm_sq_eq]
   exact ⟨hy.1.le, hy.2.1.le, hy.2.2.le⟩
 
 /-! ### Values of the pieces on their floors -/

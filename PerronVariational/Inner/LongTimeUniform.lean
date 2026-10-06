@@ -74,7 +74,7 @@ theorem lipschitzOnWith_of_norm_gradient_le {s : Set (E d)} {f : E d → ℝ} {L
     have hd := (hK.mono hrt).ae_differentiableWithinAt_of_mem (μ := volume)
     rw [ae_iff] at hd
     refine measure_mono_null (fun y hy ↦ ?_) hd
-    simp only [mem_setOf_eq, Classical.not_imp]
+    simp only [Set.mem_ofPred_eq, Classical.not_imp]
     exact ⟨hy.2, fun h' ↦ hy.1.2 (h'.differentiableAt (isOpen_ball.mem_nhds hy.2))⟩
   obtain ⟨N', hNN', hN'm, hN'0⟩ := exists_measurable_superset_of_null hN
   refine LipschitzOnWith.of_dist_le_mul fun b hb a ha ↦ ?_
@@ -152,7 +152,7 @@ theorem lipschitzOnWith_of_norm_gradient_le {s : Set (E d)} {f : E d → ℝ} {L
     intro n
     set ρ := min δ (1 / ((n : ℝ) + 1)) with hρ_def
     have hρ : 0 < ρ := lt_min hδ (by positivity)
-    haveI : (ae (volume.restrict (ball (0 : E d) ρ))).NeBot :=
+    have : (ae (volume.restrict (ball (0 : E d) ρ))).NeBot :=
       ae_neBot.2 (by
         rw [Ne, Measure.restrict_eq_zero]
         exact (measure_ball_pos volume 0 hρ).ne')

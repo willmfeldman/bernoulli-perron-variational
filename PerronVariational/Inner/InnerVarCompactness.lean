@@ -101,6 +101,7 @@ theorem sub_le_of_nonneg_of_norm_fderiv_le {s : Set (E d)} (hs : Convex ℝ s) {
       have hdiff := (hd _ (hγ t htI) (hpos t ht)).1
       have hγd : HasDerivAt γ (y - x) t := by
         convert ((hasDerivAt_id t).smul_const (y - x)).const_add x using 1
+        · rfl
         simp
       exact (hdiff.hasFDerivAt.comp_hasDerivAt t hγd).hasDerivWithinAt
     · intro t ht

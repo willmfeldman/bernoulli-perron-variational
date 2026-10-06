@@ -182,7 +182,9 @@ theorem forall_intervalIntegral_comp_neg {w g : ℝ → ℝ}
   intro a b
   refine ⟨?_, ?_⟩
   · have := (IntervalIntegrable.iff_comp_neg (f := g) (a := -a) (b := -b)).1 (hwg (-a) (-b)).1
-    simpa using this.neg
+    have h := this.neg
+    simp only [neg_neg] at h
+    exact h
   · rw [intervalIntegral.integral_neg, intervalIntegral.integral_comp_neg, ← (hwg (-b) (-a)).2]
     ring
 
@@ -222,7 +224,7 @@ theorem oneDim_downward {α q a b : ℝ} (hq : 0 < q) (hqα : q ≤ α) (hab : a
         (isOpen_lt continuous_const continuous_id)).inter (isOpen_ne_fun hwc hφc)
     have h0 : volume ({s | s < a ∨ b < s} ∩ {s | w s ≠ α * |s|}) = 0 := by
       refine measure_mono_null (fun s hs ↦ ?_) (ae_iff.1 hout)
-      simp only [mem_inter_iff, mem_setOf_eq] at hs ⊢
+      simp only [mem_inter_iff, Set.mem_ofPred_eq] at hs ⊢
       exact fun h ↦ hs.2 (h fun hm ↦ by rcases hs.1 with h1 | h1 <;> linarith [hm.1, hm.2])
     rw [hU.measure_eq_zero_iff volume] at h0
     intro s hs; by_contra h

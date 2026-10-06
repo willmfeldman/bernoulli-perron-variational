@@ -158,6 +158,7 @@ theorem freeBoundary_nonempty {U : Set (E 2)} {u : E 2 → ℝ} (hU : IsOpen U)
   have hA : IsOpen (posSet u U) := by
     have := hu.isOpen_inter_preimage hU (isOpen_Ioi (a := (0 : ℝ)))
     convert this using 1
+    rfl
   have hB : IsOpen (closure (posSet u U))ᶜ := isClosed_closure.isOpen_compl
   obtain ⟨y, hyU, hyA, hyB⟩ := hc _ _ hA hB (fun y hy ↦ by
       by_cases h : y ∈ closure (posSet u U)
@@ -184,6 +185,7 @@ theorem hasGradientAt_wIn {z y : E 2} (h1 : 1 / 400 ≤ ‖y - z‖ ^ 2) (h2 : �
     (show (1 / 3200 : ℝ) < ‖y - z‖ ^ 2 by linarith)
   rw [floorCapD_of_mem_Icc (by norm_num) cst_pos (wIn_mid h1 h2)] at hw
   convert hw using 2
+  · simp only [wIn, pV]
   ring
 
 /-- Near `t e₁`, `0 < t < 1/100`, `u_min` is the right radial solution. -/
@@ -244,7 +246,7 @@ theorem exists_uMin_ne_uMax : ∃ x ∈ domain, uMin x ≠ uMax x := by
   push Not at hcon
   -- `0` is a free boundary point of `u_max`
   have hpos : posSet uMax domain = posSet uMin domain := by
-    ext y; simp only [posSet, mem_setOf_eq]
+    ext y; simp only [posSet, Set.mem_ofPred_eq]
     exact ⟨fun ⟨h1, h2⟩ ↦ ⟨h1, by rwa [hcon y h1]⟩, fun ⟨h1, h2⟩ ↦ ⟨h1, by rwa [← hcon y h1]⟩⟩
   have hfb : (0 : E 2) ∈ freeBoundary uMax domain := by
     have := zero_mem_freeBoundary

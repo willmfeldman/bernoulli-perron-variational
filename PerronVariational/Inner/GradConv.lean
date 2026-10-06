@@ -86,7 +86,7 @@ theorem integral_inner_gradient_eq_neg_div {U : Set (E d)} (hU : IsOpen U) {F : 
   have hint : ∀ i : Fin d, IntegrableOn (fun x ↦ fderiv ℝ F x (coordVec i) * Φ x i) U := by
     intro i
     obtain ⟨C, hC⟩ := (hΦic i).exists_bound_of_continuous (contDiff_coord hΦ i).continuous
-    refine IntegrableOn.of_forall_diff_eq_zero (s := tsupport Φ) ?_ hU.measurableSet
+    refine IntegrableOn.of_forall_sdiff_eq_zero (s := tsupport Φ) ?_ hU.measurableSet
       fun x hx ↦ ?_
     · refine IntegrableOn.of_bound hK.measure_lt_top
         ((measurable_fderiv_apply_const ℝ F _).mul
@@ -109,7 +109,7 @@ theorem integral_inner_gradient_eq_neg_div {U : Set (E d)} (hU : IsOpen U) {F : 
       ((contDiff_coord hΦ i).continuous_fderiv one_ne_zero).clm_apply continuous_const
     have hcs : tsupport (fun x ↦ fderiv ℝ (fun y ↦ Φ y i) x (coordVec i)) ⊆ tsupport Φ :=
       (tsupport_fderiv_apply_subset _ _).trans (tsupport_coord_subset Φ i)
-    refine IntegrableOn.of_forall_diff_eq_zero (s := tsupport Φ) ?_ hU.measurableSet
+    refine IntegrableOn.of_forall_sdiff_eq_zero (s := tsupport Φ) ?_ hU.measurableSet
       fun x hx ↦ ?_
     · exact ((hF.continuousOn.mono hΦU).mul hc.continuousOn).integrableOn_compact hK
     · simp [image_eq_zero_of_notMem_tsupport fun h ↦ hx.2 (hcs h)]
@@ -137,7 +137,7 @@ theorem integrableOn_inner_gradient {U : Set (E d)} (hU : IsOpen U) {F : E d →
     {H : E d → E d} (hHm : AEStronglyMeasurable H volume) {M : ℝ} (hHb : ∀ x, ‖H x‖ ≤ M)
     (hH0 : ∀ x ∉ K, H x = 0) : IntegrableOn (fun x ↦ inner ℝ (∇ F x) (H x)) U := by
   obtain ⟨B, hB⟩ := GMTFoundations.exists_bound_fderiv_of_locallyLipschitzOn hU hF hK hKU
-  refine IntegrableOn.of_forall_diff_eq_zero (s := K) ?_ hU.measurableSet fun x hx ↦ by
+  refine IntegrableOn.of_forall_sdiff_eq_zero (s := K) ?_ hU.measurableSet fun x hx ↦ by
     simp [hH0 x hx.2]
   refine IntegrableOn.of_bound hK.measure_lt_top
     ((GMTFoundations.measurable_gradient F).aestronglyMeasurable.inner hHm.restrict) (B * M)
@@ -152,7 +152,7 @@ theorem norm_setIntegral_inner_gradient_le {U : Set (E d)} (hU : MeasurableSet U
     {K : Set (E d)} (hKm : MeasurableSet K) (hKU : K ⊆ U) {H : E d → E d} (hHi : IntegrableOn H K)
     (hH0 : ∀ x ∉ K, H x = 0) {b : ℝ} (hb : ∀ x ∈ K, ‖∇ F x‖ ≤ b) :
     ‖∫ x in U, inner ℝ (∇ F x) (H x)‖ ≤ b * ∫ x in K, ‖H x‖ := by
-  rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hU hKU fun x hx ↦ by simp [hH0 x hx.2],
+  rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU hKU fun x hx ↦ by simp [hH0 x hx.2],
     ← integral_const_mul]
   refine norm_integral_le_of_norm_le (hHi.norm.const_mul b)
     ((ae_restrict_mem hKm).mono fun x hx ↦ ?_)
@@ -176,7 +176,7 @@ theorem tendsto_integral_inner_gradient {U : Set (E d)} (hU : IsOpen U) {F : ℕ
   have hK'' : IsCompact K'' := hθc.isCompact
   have hK''m : MeasurableSet K'' := hK''.measurableSet
   have hUm : MeasurableSet U := hU.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K'') :=
+  have : IsFiniteMeasure (volume.restrict K'') :=
     isFiniteMeasure_restrict.2 hK''.measure_lt_top.ne
   obtain ⟨B, hB⟩ := hBF K'' hK'' hθU
   obtain ⟨B', hB'⟩ := GMTFoundations.exists_bound_fderiv_of_locallyLipschitzOn hU hf hK'' hθU
@@ -336,7 +336,7 @@ theorem setIntegral_inner_gradient_eq_zero_of_lipschitz {W : Set (E d)} (hW : Is
     have h0 := h (mollAt n q) (contDiff_mollAt n q) hc
       ((tsupport_mollAt_subset n q).trans ((hball.trans hW'V).trans hVW))
     refine Eq.trans ?_ h0
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hW.measurableSet hVW ?_,
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hW.measurableSet hVW ?_,
       firstOrderFunctional]
     · refine setIntegral_congr_fun hVm fun x _ ↦ ?_
       rw [inner_gradient_eq_fderiv]
@@ -350,19 +350,20 @@ theorem setIntegral_inner_gradient_eq_zero_of_lipschitz {W : Set (E d)} (hW : Is
   have hvan : ∀ x ∉ V, fderiv ℝ ζ x = 0 := fun x hx ↦
     fderiv_of_notMem_tsupport ℝ fun h' ↦ hx (self_subset_cthickening _ h')
   unfold firstOrderFunctional at hΨ
-  simp only [zero_mul, zero_add] at hΨ
-  rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hW.measurableSet hVW fun x hx ↦ by
+  rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hW.measurableSet hVW fun x hx ↦ by
     simp [gradient, hvan x hx.2]]
   rw [← hΨ]
-  exact setIntegral_congr_fun hVm fun x _ ↦ inner_gradient_eq_fderiv _ _ _
+  exact setIntegral_congr_fun hVm fun x _ ↦ by
+    rw [inner_gradient_eq_fderiv, Pi.zero_apply, zero_mul, zero_add]
 
 /-- `‖D‖_{L²(K)} ≤ (∫_U η |D|²)^{1/2}` for a weight `η ≥ 0` equal to `1` on `K ⊆ U`. -/
 theorem eLpNorm_two_le_of_weight {U K : Set (E d)} (hKU : K ⊆ U) {D : E d → E d}
     {η : E d → ℝ} (hη0 : ∀ x, 0 ≤ η x) (hη1 : ∀ x ∈ K, η x = 1) (hKm : MeasurableSet K)
+    (hDm : AEStronglyMeasurable D (volume.restrict K))
     (hi : IntegrableOn (fun x ↦ η x * ‖D x‖ ^ 2) U) :
     eLpNorm D 2 (volume.restrict K) ≤
       ENNReal.ofReal (∫ x in U, η x * ‖D x‖ ^ 2) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hDm]
   simp only [ENNReal.toReal_ofNat]
   refine ENNReal.rpow_le_rpow ?_ (by norm_num)
   rw [ofReal_integral_eq_lintegral_ofReal hi
@@ -380,7 +381,7 @@ theorem integrableOn_of_bound_of_vanish {U K : Set (E d)} (hUm : MeasurableSet U
     (hK : IsCompact K) {φ : E d → ℝ} (hm : AEStronglyMeasurable φ (volume.restrict K)) {c : ℝ}
     (hb : ∀ x ∈ K, ‖φ x‖ ≤ c) (h0 : ∀ x ∉ K, φ x = 0) : IntegrableOn φ U :=
   (IntegrableOn.of_bound hK.measure_lt_top hm c
-    ((ae_restrict_mem hK.measurableSet).mono hb)).of_forall_diff_eq_zero hUm
+    ((ae_restrict_mem hK.measurableSet).mono hb)).of_forall_sdiff_eq_zero hUm
     fun x hx ↦ h0 x hx.2
 
 end LongTime

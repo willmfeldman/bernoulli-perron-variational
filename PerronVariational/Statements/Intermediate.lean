@@ -299,13 +299,14 @@ def EpsInnerLimitStatement : Prop :=
 
 /-! ### Proposition 5.3 and Corollary 5.4 (ε → 0 limit, viscosity form) -/
 
-/-- The set `E = limsup* {uε_j > ε_j}` of Proposition 5.3, the sets taken in `U × I`. -/
+/-- The set `E = limsup* {uε_j > ε_j}` of Proposition 5.3 in arXiv v1, the sets taken in
+`U × I`. -/
 def semilinearLimitSet (U : Set (E d)) (I : Set ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) :
     Set (E d × ℝ) :=
   upperKLimit (fun j ↦ {p ∈ U ×ˢ I | εs j < us j p}) atTop
 
 /-- The set `E* = \overline{⋃_{0 < κ ≤ 1} limsup* {uε_j > κ ε_j}}`, which replaces the set `E` of
-Proposition 5.3 (the paper's `E` does not make the limit a relaxed subsolution; see
+Proposition 5.3 in arXiv v1 (that `E` does not make the limit a relaxed subsolution; see
 `SemilinearLimitRelaxedStatement`). This replacement is the authors' correction. It contains
 `semilinearLimitSet` (`κ = 1`) and, unlike it, every point where the `uε_j` are not `o(ε_j)`. -/
 def semilinearLimitSetStar (U : Set (E d)) (I : Set ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) :
@@ -313,16 +314,16 @@ def semilinearLimitSetStar (U : Set (E d)) (I : Set ℝ) (εs : ℕ → ℝ) (us
   closure (⋃ κ ∈ Ioc (0 : ℝ) 1, upperKLimit (fun j ↦ {p ∈ U ×ˢ I | κ * εs j < us j p}) atTop)
 
 /-- **Proposition 5.3**, **corrected**. If `u_j` (nonnegative) solve the semilinear equation
-with `ε_j → 0` in `U × (0, T]` and `u_j → u` locally uniformly in `U × (0, T]`, then `u` is a
-relaxed viscosity solution of (3.1) in `U × (0, T]` with `E = \overline{U × (0, T]}`.
+with `ε_j → 0` in `U × (0, T]` and `u_j → u` locally uniformly in `U × (0, T]`, then `(u, E*)` is
+a relaxed viscosity solution of (3.1) in `U × (0, T]`, where
+`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (`semilinearLimitSetStar`).
 
-The paper claims this with `E = limsup* {u_j > ε_j}` (`semilinearLimitSet`), which is **false**:
-for `U = B₁`, `Q ≡ 1`, `u_j = ε_j (1 + h)` with `h ≥ 0` the heat kernel from a point outside `Ū`
-switched on at time `t₀` (a solution since `β = 0` on `[1, ∞)`), one gets `u ≡ 0` and
-`E = Ū × [t₀, T]`, and the strict supersolution `φ = A(|x|² - ρ²) + B(t - t₀)` violates the
-relaxed subsolution property at `(0, t₀)`. Here we state it with the nearly vacuous set
-`E = \overline{U × (0, T]}` instead, which suffices for Theorem 3.9(iv) (decreasing case, `∃ E`).
-The increasing case uses the corrected set `E*` of `semilinearLimitSetStar` (Corollary 5.4). -/
+Difference from arXiv v1: there the set is `E = limsup* {u_j > ε_j}` (`semilinearLimitSet`), and
+with that set the statement is **false**: for `U = B₁`, `Q ≡ 1`, `u_j = ε_j (1 + h)` with `h ≥ 0`
+the heat kernel from a point outside `Ū` switched on at time `t₀` (a solution since `β = 0` on
+`[1, ∞)`), one gets `u ≡ 0` and `E = Ū × [t₀, T]`, and the strict supersolution
+`φ = A(|x|² - ρ²) + B(t - t₀)` violates the relaxed subsolution property at `(0, t₀)`. The
+authors' corrected set `E*` also contains the points where the `u_j` are not `o(ε_j)`. -/
 def SemilinearLimitRelaxedStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (β : ℝ → ℝ), IsReactionProfile β →
     ∀ (T : ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (u : E d × ℝ → ℝ), 0 < T →
@@ -330,18 +331,18 @@ def SemilinearLimitRelaxedStatement : Prop :=
       (∀ j, IsSemilinearSolOn S.U S.Q β (εs j) (Ioc 0 T) (us j)) →
       (∀ j, ∀ p ∈ S.U ×ˢ Ioc 0 T, 0 ≤ us j p) →
       TendstoLocallyUniformlyOn us u atTop (S.U ×ˢ Ioc 0 T) →
-      IsParaRelaxedSolution S.U S.Q (Ioc 0 T) u (closure (S.U ×ˢ Ioc 0 T))
+      IsParaRelaxedSolution S.U S.Q (Ioc 0 T) u (semilinearLimitSetStar S.U (Ioc 0 T) εs us)
 
 /-- **Corollary 5.4**. If the `uε` are as in Proposition 3.8 with `g` a strict subsolution,
 `uε ε_j → u` with `ε_j → 0`, and `E = E* = \overline{⋃_{0<κ≤1} limsup* {uε ε_j > κ ε_j}}`
 (`semilinearLimitSetStar`), then `u` is monotone increasing in `t`, `E = \overline{{u > 0}}`
 inside `U × [0, T]`, and `u` is a viscosity solution of (3.1) in `U × (0, T]`.
 
-Differences from the paper:
-* The paper uses `E = limsup* {uε ε_j > ε_j}`; here we use the authors' corrected set `E*`,
-  because with the paper's set the relaxed subsolution property of Proposition 5.3 fails (see
+Differences from arXiv v1:
+* arXiv v1 uses `E = limsup* {uε ε_j > ε_j}`; here we use the authors' corrected set `E*`,
+  because with the set of arXiv v1 the relaxed subsolution property of Proposition 5.3 fails (see
   `SemilinearLimitRelaxedStatement`).
-* The paper claims `E = \overline{{u > 0}}` everywhere, but never treats the points of `E` over
+* arXiv v1 claims `E = \overline{{u > 0}}` everywhere, but never treats the points of `E` over
   `∂U`; we state the equality inside `U × [0, T]`, which is all that is used. -/
 def SemilinearLimitIncreasingStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (ε₀ : ℝ) (gε : ℝ → E d → ℝ)

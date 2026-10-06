@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Upper Kuratowski limits and strict ordering on a set

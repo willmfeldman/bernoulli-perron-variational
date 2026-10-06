@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Statements.Intermediate
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.MeasureTheory.Group.Integral
 import PerronVariational.Inner.EnergyConv
 import PerronVariational.Inner.ReactionBound
@@ -53,7 +54,7 @@ theorem exists_compact_exhaustion {Ω : Set (E d × ℝ)} (hΩ : IsOpen Ω) (hΩ
   · rintro p ⟨-, hp⟩
     by_contra h
     have : infDist p Ωᶜ = 0 := infDist_zero_of_mem h
-    simp only [mem_setOf_eq, this] at hp
+    simp only [Set.mem_ofPred_eq, this] at hp
     exact absurd hp (not_le.2 (by positivity))
   · rintro p ⟨h1, h2⟩
     have hm : (m : ℝ) ≤ m' := by exact_mod_cast hmm'
@@ -277,8 +278,7 @@ theorem exists_tendstoLpLoc_subseq_of_translation {Ω : Set (E d × ℝ)} (hΩ :
         simp only [Pi.sub_apply, hζ1 m p hp, hζ1 M p (hKmono hmM hp)]
         ring
       rw [eLpNorm_congr_ae heq]
-      refine (eLpNorm_sub_le (((hfζm M k).sub (hGm M)).restrict)
-        (((hfζm m k).sub (hGm m)).restrict) le_rfl).trans ?_
+      refine (eLpNorm_sub_le le_rfl).trans ?_
       rw [add_comm]
       exact add_le_add (eLpNorm_mono_measure _ Measure.restrict_le_self)
         (eLpNorm_mono_measure _ Measure.restrict_le_self)
@@ -286,7 +286,7 @@ theorem exists_tendstoLpLoc_subseq_of_translation {Ω : Set (E d × ℝ)} (hΩ :
     rw [add_zero] at hlim
     have h0 : eLpNorm (G m - G M) 1 (volume.restrict (K m)) = 0 :=
       le_antisymm (ge_of_tendsto' hlim hle) zero_le
-    rw [eLpNorm_eq_zero_iff ((hGm m).sub (hGm M)).restrict one_ne_zero] at h0
+    rw [eLpNorm_eq_zero_iff one_ne_zero] at h0
     exact (sub_ae_eq_zero _ _).1 h0
   -- measurable representatives and the limit `χ₀`
   set H : ℕ → E d × ℝ → ℝ := fun m ↦ (hGm m).mk (G m) with hHdef
@@ -424,6 +424,7 @@ theorem abs_chiEps_add_sub_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} 
       simp only [chiEps, hq r']
     rw [hfun]
     convert h2 using 1
+    · rfl
     simp only [γ', hq r, gradₓ, ← inner_gradient_eq_fderiv, Function.comp_def]
     ring
   have hγc : ContinuousOn γ' (uIcc 0 1) := by

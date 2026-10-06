@@ -60,7 +60,7 @@ theorem IsViscSuper.congr (h : IsViscSuper U Q u) (heq : EqOn u v U) : IsViscSup
 
 theorem posSet_congr (heq : EqOn u v U) : posSet u U = posSet v U := by
   ext y
-  simp only [posSet, mem_setOf_eq]
+  simp only [posSet, Set.mem_ofPred_eq]
   exact ⟨fun h ↦ ⟨h.1, heq h.1 ▸ h.2⟩, fun h ↦ ⟨h.1, (heq h.1).symm ▸ h.2⟩⟩
 
 theorem IsViscSub.congr (h : IsViscSub U Q u) (heq : EqOn u v U) : IsViscSub U Q v := by
@@ -237,7 +237,7 @@ theorem mem_closure_posSetP_iff {Ω₁ Ω₂ W : Set (E d × ℝ)} (hW : IsOpen 
     q ∈ closure (posSetP u Ω₁) ↔ q ∈ closure (posSetP u Ω₂) := by
   have hP : W ∩ posSetP u Ω₁ = W ∩ posSetP u Ω₂ := by
     ext p
-    simp only [posSetP, mem_inter_iff, mem_setOf_eq]
+    simp only [posSetP, mem_inter_iff, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨hpW, hp1, hpos⟩
       exact ⟨hpW, (h.subset ⟨hp1, hpW⟩).1, hpos⟩
@@ -337,7 +337,7 @@ theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) (hQ : ContinuousOn Q U) {T : ℝ}
     have := min_le_right m₁ m₂; rw [hηdef]; linarith
   have hψ := hsc η hη hη₂
   have hψbd : ∀ q ∈ Eset ∩ parBdry V a b, u q < φ q - η := fun q hq ↦ by
-    have := hm₁' q hq; simp only at this; linarith
+    have := hm₁' q hq; linarith
   -- comparison on `V × (a, b']`, `b' < b`
   have hstep : ∀ b' ∈ Ioo a b, ∀ q ∈ Eset ∩ cyl V a b', u q < φ q - η := by
     intro b' hb'

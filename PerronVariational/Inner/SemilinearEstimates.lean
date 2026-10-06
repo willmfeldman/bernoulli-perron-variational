@@ -9,7 +9,8 @@ public import PerronVariational.Statements.Intermediate
 public import PerronVariational.Inner.Common
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Topology.TietzeExtension
 import PerronVariational.Registry.Comparison
 import PerronVariational.Registry.SemilinearDissipation
@@ -168,11 +169,11 @@ theorem Setting.exists_lipschitz_approx (S : Setting d) {g : E d → ℝ}
   have hK : IsCompact K := S.isBounded.isCompact_closure
   -- continuous extension
   obtain ⟨G, -, hGK⟩ := ContinuousMap.exists_restrict_eq_forall_mem_of_closed
-    (⟨K.restrict g, hg.restrict⟩ : C(K, ℝ)) (t := univ) (fun _ ↦ mem_univ _) univ_nonempty
+    (⟨K.domRestrict g, hg.domRestrict⟩ : C(K, ℝ)) (t := univ) (fun _ ↦ mem_univ _) univ_nonempty
     isClosed_closure
   have hGg : ∀ x ∈ K, G x = g x := fun x hx ↦ by
     have := congrArg (fun F : C(K, ℝ) ↦ F ⟨x, hx⟩) hGK
-    simpa using this
+    exact this
   -- smoothing
   have huc : UniformContinuousOn G (cthickening 1 K) :=
     hK.cthickening.uniformContinuousOn_of_continuous G.continuous.continuousOn
@@ -259,7 +260,7 @@ theorem IsSemilinearSolution.abs_sub_le_of_data (S : Setting d) {β : ℝ → �
     refine Registry.semilinear_comparison S.isOpen S.isBounded hb S.lip hβ hε
       ((hu'.continuousOn_Icc _).sub hcc) (hu.continuousOn_Icc _) hS (hu.viscSuperOn (t + 1))
       (fun p hp ↦ ?_) _ hpt
-    rw [hu.eq_on_parBdry hp]
+    rw [hu.eq_on_parBdry hp, Pi.sub_apply]
     rw [hu'.eq_on_parBdry hp]
     have h3 := hgg p.1 (parBdry_fst_mem hp)
     have h4 := hc0 p.2 (ht0 p hp)

@@ -54,6 +54,7 @@ theorem hasGradientAt_twoPlaneBump (x : E d) :
   have h2 := (GMTFoundations.hasDerivAt_max_sq (1 - ‖x‖ ^ 2)).comp_hasFDerivAt x h1
   rw [hasGradientAt_iff_hasFDerivAt]
   convert h2 using 1
+  · rfl
   ext v
   simp
   ring
@@ -99,7 +100,7 @@ variable {n : ℕ}
 
 theorem exists_orthonormalBasis_zero {e : E (n + 1)} (he : ‖e‖ = 1) :
     ∃ b : OrthonormalBasis (Fin (n + 1)) ℝ (E (n + 1)), b 0 = e := by
-  have hv : Orthonormal ℝ (({0} : Set (Fin (n + 1))).restrict fun _ ↦ e) := by
+  have hv : Orthonormal ℝ (({0} : Set (Fin (n + 1))).domRestrict fun _ ↦ e) := by
     rw [orthonormal_iff_ite]
     intro i j
     have : i = j := Subsingleton.elim i j
@@ -247,7 +248,7 @@ theorem hasFDerivAt_cylBump (x : E (n + 1)) :
 
 theorem inner_gradient_cylBump (he : ‖e‖ = 1) (x : E (n + 1)) :
     inner ℝ (∇ (cylBump e) x) e = 0 := by
-  rw [inner_gradient_left (hasFDerivAt_cylBump x).differentiableAt,
+  rw [inner_gradient_left,
     (hasFDerivAt_cylBump x).fderiv]
   simp [projPerp_self he]
 
@@ -279,7 +280,7 @@ theorem volume_abs_mem_Ioo {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) :
     volume {s : ℝ | a < |s| ∧ |s| < b} = ENNReal.ofReal (2 * (b - a)) := by
   have hset : {s : ℝ | a < |s| ∧ |s| < b} = Ioo (-b) (-a) ∪ Ioo a b := by
     ext s
-    simp only [mem_setOf_eq, mem_union, mem_Ioo]
+    simp only [Set.mem_ofPred_eq, mem_union, mem_Ioo]
     constructor
     · rintro ⟨h1, h2⟩
       rcases le_or_gt 0 s with hs | hs
@@ -540,7 +541,7 @@ theorem twoPlane_not_downwardMinimizer_of_lt_aux {α q : ℝ} (hα : 0 < α) (h�
     refine setLIntegral_congr_fun (hBm.diff hDm) fun x hx ↦ ?_
     obtain ⟨h1, h2⟩ := hψnD x hx.2
     have hpos : x ∈ posSet ψ B ↔ x ∈ posSet φ B := by
-      simp only [posSet, mem_setOf_eq, h1]
+      simp only [posSet, Set.mem_ofPred_eq, h1]
     have hind : (posSet ψ B).indicator (1 : E (n + 1) → ℝ) x = (posSet φ B).indicator 1 x := by
       by_cases h : x ∈ posSet φ B
       · rw [indicator_of_mem h, indicator_of_mem (hpos.2 h)]
@@ -572,7 +573,7 @@ theorem twoPlane_not_downwardMinimizer_of_lt_aux {α q : ℝ} (hα : 0 < α) (h�
     refine ne_top_of_le_ne_top (b := ∫⁻ _ in B, ENNReal.ofReal (α ^ 2 + q ^ 2)) ?_ ?_
     · rw [setLIntegral_const]
       exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top measure_ball_lt_top.ne
-    · refine (lintegral_mono_set diff_subset).trans (lintegral_mono fun x ↦ ?_)
+    · refine (lintegral_mono_set Set.sdiff_subset).trans (lintegral_mono fun x ↦ ?_)
       refine ENNReal.ofReal_le_ofReal (add_le_add ?_ ?_)
       · have := norm_twoPlaneGrad_le α he x
         rw [abs_of_pos hα] at this
@@ -581,7 +582,7 @@ theorem twoPlane_not_downwardMinimizer_of_lt_aux {α q : ℝ} (hα : 0 < α) (h�
         by_cases h : x ∈ posSet φ B
         · simp [indicator_of_mem h]
         · simp [indicator_of_notMem h]
-  rw [hEψ, hEφ, ← lintegral_inter_add_diff _ B hDm, ← lintegral_inter_add_diff fφ B hDm, hBD,
+  rw [hEψ, hEφ, ← lintegral_inter_add_sdiff _ B hDm, ← lintegral_inter_add_sdiff fφ B hDm, hBD,
     hoff, honψ, honφ]
   refine ENNReal.add_lt_add_right hfin ?_
   -- Fubini in coordinates adapted to `e`
@@ -631,7 +632,7 @@ theorem twoPlane_not_downwardMinimizer_of_lt_aux {α q : ℝ} (hα : 0 < α) (h�
         · rw [indicator_of_mem hD, hFψdef]
           simp only
           have hD' := hD
-          simp only [hDdef, mem_setOf_eq, h1, h2] at hD'
+          simp only [hDdef, Set.mem_ofPred_eq, h1, h2] at hD'
           rw [indicator_of_notMem (show Θ.symm (s, y) ∉ {y | ε * η y < |ℓ y|} by
             change ¬ ε * η _ < |ℓ _|; rw [h1, h2]; exact fun h ↦ hs ⟨h, hD'.2⟩)]
           simp

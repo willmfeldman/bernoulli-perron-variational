@@ -98,7 +98,7 @@ theorem isViscSub_of_isViscositySolutionQ {W : Set (E d)} {Q u : E d → ℝ} (h
     have hle : ∀ᶠ y in 𝓝 x, u y ≤ φ y := by
       filter_upwards [hposN, hφN, hW.mem_nhds hxW, ball_mem_nhds x hε] with y hy hφy hyW hyε
       have := hεS ⟨hyε, hposS ⟨hyW, hy⟩⟩
-      rwa [mem_setOf_eq, max_eq_left hφy.le] at this
+      rwa [Set.mem_ofPred_eq, max_eq_left hφy.le] at this
     have := laplacian_le_of_eventually_le harm.1 hφ2.contDiffAt hφx.symm hle
     have h0 : Δ u x = 0 := harm.2.self_of_nhds
     linarith
@@ -116,7 +116,7 @@ theorem isViscSub_of_isViscositySolutionQ {W : Set (E d)} {Q u : E d → ℝ} (h
       have hbx : b ∈ ball x (min ε ε') := by rw [mem_ball, dist_comm]; exact hxb
       have hb1 := hεS ⟨ball_subset_ball (min_le_left _ _) hbx, hposS hb⟩
       have hb2 := hε'φ b (ball_subset_ball (min_le_right _ _) hbx)
-      rw [mem_setOf_eq, max_eq_right hb2.le] at hb1
+      rw [Set.mem_ofPred_eq, max_eq_right hb2.le] at hb1
       exact absurd hb.2 (not_lt.2 hb1)
     have hfr : x ∈ frontier {y | 0 < u y} :=
       ⟨closure_mono (fun y hy ↦ hy.2) hxcl, fun hint ↦ by

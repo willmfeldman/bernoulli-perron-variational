@@ -118,7 +118,7 @@ theorem superKappa_spec : superKappa β θh ∈ Ioo (0 : ℝ) 1 ∧
     obtain ⟨κ, hκ, hκ'⟩ := intermediate_value_Ioo zero_le_one
       ((continuous_const.mul hβ.continuous_bigB).continuousOn) hmem
     exact ⟨κ, hκ, hκ'⟩
-  rw [superKappa, dif_pos hex]
+  rw [superKappa, dite_eq_left hex]
   exact hex.choose_spec
 
 theorem superKappa_pos : 0 < superKappa β θh := (superKappa_spec hβ hθh).1.1
@@ -306,6 +306,7 @@ theorem hasDerivAt_superField {z : ℝ} (hz : superKappa β θh < z) :
   have hr := hu.sqrt hupos.ne'
   have h := (hasDerivAt_superP hβ hθh z).mul hr
   convert h using 1
+  · rfl
   have hr0 : 0 < √((1 + superSigma θh) / (superP β θh z + superSigma θh)) :=
     Real.sqrt_pos.2 hupos
   have hr2 := Real.sq_sqrt hupos.le
@@ -403,6 +404,7 @@ theorem profileSuper_hasDerivAt (s : ℝ) :
   have h := (((superLogSol_hasDerivAt hβ hθh (s - 1)).comp s
     ((hasDerivAt_id s).sub_const 1)).exp).const_add (superKappa β θh)
   convert h using 1
+  · rfl
   simp only [profileSuper, superLogField, Function.comp, id, mul_one, Real.exp_neg]
   field_simp
 
@@ -442,6 +444,7 @@ theorem profileSuper_hasDerivAt_deriv (s : ℝ) :
   have h := (hasDerivAt_superField hβ hθh (kappa_lt_profileSuper hβ hθh s)).comp s
     (profileSuper_hasDerivAt hβ hθh s)
   convert h using 1
+  · rfl
   field_simp
 
 theorem profileSuper_deriv_deriv (s : ℝ) :
@@ -676,6 +679,7 @@ theorem profileSuperEps_hasDerivAt (s : ℝ) :
     ((hasDerivAt_id s).div_const ε)).const_mul ε
   rw [profileSuper_deriv hβ hθh]
   convert h using 1
+  · rfl
   field_simp
 
 theorem profileSuperEps_deriv :
@@ -695,6 +699,7 @@ theorem profileSuperEps_hasDerivAt_deriv (s : ℝ) :
     ((hasDerivAt_id s).div_const ε)
   rw [profileSuper_deriv_deriv hβ hθh]
   convert h using 1
+  · rfl
   simp only [one_div]
   ring
 

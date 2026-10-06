@@ -10,7 +10,8 @@ public import PerronVariational.Statements.Intermediate
 import GMTFoundations.Sobolev.L2Inner
 import GMTFoundations.Sobolev.Lipschitz
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.FunctionalAnalysis
 
 /-!
@@ -42,9 +43,9 @@ namespace Inner
 variable {d : ℕ}
 
 theorem eLpNorm_two_sq {X F : Type*} [MeasurableSpace X] [NormedAddCommGroup F]
-    {μ : Measure X} (f : X → F) :
+    {μ : Measure X} (f : X → F) (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 2 μ ^ 2 = ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ := by
-  have h := eLpNorm_nnreal_pow_eq_lintegral (μ := μ) (f := f) (p := 2) two_ne_zero
+  have h := eLpNorm_nnreal_pow_eq_lintegral (μ := μ) (f := f) (p := 2) two_ne_zero hf
   simp only [ENNReal.coe_ofNat, NNReal.coe_ofNat, ENNReal.rpow_two] at h
   rw [h]
   congr 1
@@ -53,10 +54,10 @@ theorem eLpNorm_two_sq {X F : Type*} [MeasurableSpace X] [NormedAddCommGroup F]
 
 /-- `eLpNorm f 2 μ ≤ √A` from `∫⁻ |f|² ≤ A`. -/
 theorem eLpNorm_two_le_of_lintegral_norm {X F : Type*} [MeasurableSpace X]
-    [NormedAddCommGroup F] {μ : Measure X} {f : X → F} {A : ℝ≥0∞} (hA : A ≠ ⊤)
-    (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≤ A) :
+    [NormedAddCommGroup F] {μ : Measure X} {f : X → F} (hf : AEStronglyMeasurable f μ)
+    {A : ℝ≥0∞} (hA : A ≠ ⊤) (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≤ A) :
     eLpNorm f 2 μ ≤ ENNReal.ofReal (Real.sqrt A.toReal) := by
-  rw [← ENNReal.pow_le_pow_left_iff two_ne_zero, eLpNorm_two_sq,
+  rw [← ENNReal.pow_le_pow_left_iff two_ne_zero, eLpNorm_two_sq f hf,
     ← ENNReal.ofReal_pow (Real.sqrt_nonneg _), Real.sq_sqrt ENNReal.toReal_nonneg,
     ENNReal.ofReal_toReal hA]
   exact h
@@ -88,10 +89,10 @@ theorem tendsto_setIntegral_mul_of_tendstoLocallyUniformlyOn {U : Set (E d)} (hU
   have hK : IsCompact K := hhc
   have hKm : MeasurableSet K := (isClosed_tsupport h).measurableSet
   have hUK : ∀ g : E d → ℝ, ∫ x in U, g x * h x = ∫ x in K, g x * h x := fun g ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hhs fun x hx ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hhs fun x hx ↦ by
       simp [image_eq_zero_of_notMem_tsupport hx.2]
   simp only [hUK]
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   obtain ⟨Bu, hBu⟩ := hK.exists_bound_of_continuousOn (hf₀c.mono hhs)
   obtain ⟨Bh, hBh⟩ := hK.exists_bound_of_continuousOn hh.continuousOn
   have hunif := (tendstoLocallyUniformlyOn_iff_forall_isCompact hU).1 hconv K hhs hK
@@ -126,10 +127,9 @@ theorem tendstoWeakL2_gradient_of_tendsto {U : Set (E d)} (hU : IsOpen U) {f : �
   have hUm : MeasurableSet U := hU.measurableSet
   set B := Real.sqrt E0.toReal with hBdef
   have hB : ∀ n, eLpNorm (∇ (f n)) 2 μ ≤ ENNReal.ofReal B := fun n ↦
-    eLpNorm_two_le_of_lintegral_norm hE0 (hbd n)
-  have hmem : ∀ n, MemLp (∇ (f n)) 2 μ := fun n ↦
-    ⟨(GMTFoundations.measurable_gradient _).aestronglyMeasurable,
-      (hB n).trans_lt ENNReal.ofReal_lt_top⟩
+    eLpNorm_two_le_of_lintegral_norm (GMTFoundations.measurable_gradient _).aestronglyMeasurable
+      hE0 (hbd n)
+  have hmem : ∀ n, MemLp (∇ (f n)) 2 μ := fun n ↦ (hB n).trans_lt ENNReal.ofReal_lt_top
   have hW : ∀ n, HasWeakGradient U (f n) (∇ (f n)) := fun n ↦
     (Registry.memH1Loc_gradient_of_locallyLipschitzOn hU (hf n)).1
   have hW₀ : HasWeakGradient U f₀ (∇ f₀) :=
@@ -168,7 +168,7 @@ theorem tendstoWeakL2_gradient_of_tendsto {U : Set (E d)} (hU : IsOpen U) {f : �
     have hGloc : LocallyIntegrableOn G U volume := by
       rw [locallyIntegrableOn_iff hU.isLocallyClosed]
       intro k hk hkc
-      haveI : IsFiniteMeasure (volume.restrict k) :=
+      have : IsFiniteMeasure (volume.restrict k) :=
         isFiniteMeasure_restrict.2 hkc.measure_lt_top.ne
       have h := hG.2.1.restrict k
       rw [Measure.restrict_restrict_of_subset hk] at h
@@ -259,7 +259,9 @@ theorem measurable_gradₓ {φ : E d × ℝ → ℝ} (hφ : Continuous φ) : Mea
 theorem norm_gradₓ_le {φ : E d × ℝ → ℝ} {K : ℝ≥0} (hφ : LipschitzWith K φ) (p : E d × ℝ) :
     ‖gradₓ φ p‖ ≤ K := by
   rw [gradₓ, gradient, LinearIsometryEquiv.norm_map]
-  simpa using norm_fderiv_le_of_lipschitz ℝ (hφ.comp (LipschitzWith.prodMk_right p.2))
+  have h := hφ.comp (LipschitzWith.prodMk_right p.2)
+  rw [mul_one] at h
+  simpa [Function.comp_def] using norm_fderiv_le_of_lipschitz ℝ h
 
 /-- `∇ₓu` is locally integrable on an open set `Ω` where `u` is continuous and locally Lipschitz in
 space (hence `AEStronglyMeasurable` on `Ω`): near each point `∇ₓu` agrees with `∇ₓ(η u)` for a
@@ -352,11 +354,11 @@ theorem memLp_prod_of_slices {U : Set (E d)} {I : Set ℝ} (hIm : MeasurableSet 
     (hFm : AEStronglyMeasurable F (volume.restrict (U ×ˢ I))) {E0 : ℝ≥0∞} (hE0 : E0 ≠ ⊤)
     (hbd : ∀ t ∈ I, ∫⁻ x in U, ENNReal.ofReal (‖F (x, t)‖ ^ 2) ≤ E0) :
     MemLp F 2 (volume.restrict (U ×ˢ I)) := by
-  refine ⟨hFm, ?_⟩
   have hle : eLpNorm F 2 (volume.restrict (U ×ˢ I)) ^ 2 ≤ E0 * volume I := by
     have hm : AEMeasurable (fun p ↦ ENNReal.ofReal (‖F p‖ ^ 2)) (volume.restrict (U ×ˢ I)) :=
       (hFm.norm.aemeasurable.pow_const 2).ennreal_ofReal
-    rw [eLpNorm_two_sq, volume_restrict_prod] at *
+    rw [eLpNorm_two_sq F hFm]
+    rw [volume_restrict_prod] at hm ⊢
     rw [lintegral_prod_symm _ hm]
     calc ∫⁻ t, ∫⁻ x, ENNReal.ofReal (‖F (x, t)‖ ^ 2) ∂volume.restrict U ∂volume.restrict I
         ≤ ∫⁻ _, E0 ∂volume.restrict I := by
@@ -383,14 +385,14 @@ theorem tendstoWeakL2_prod_of_slices {U : Set (E d)} {I : Set ℝ} (hIm : Measur
   refine ⟨hF, hF₀, fun φ hφ ↦ ?_⟩
   set μU := volume.restrict U with hμU
   set μI := volume.restrict I with hμI
-  haveI : IsFiniteMeasure μI := isFiniteMeasure_restrict.2 hI
-  set φ' := hφ.1.mk φ with hφ'def
-  have hφφ' : φ =ᵐ[volume.restrict (U ×ˢ I)] φ' := hφ.1.ae_eq_mk
+  have : IsFiniteMeasure μI := isFiniteMeasure_restrict.2 hI
+  set φ' := hφ.aestronglyMeasurable.mk φ with hφ'def
+  have hφφ' : φ =ᵐ[volume.restrict (U ×ˢ I)] φ' := hφ.aestronglyMeasurable.ae_eq_mk
   have hcongr : ∀ G : E d × ℝ → E d,
       ∫ p in U ×ˢ I, ⟪G p, φ p⟫ = ∫ p in U ×ˢ I, ⟪G p, φ' p⟫ := fun G ↦
     integral_congr_ae (hφφ'.mono fun p hp ↦ by simp only [hp])
   simp only [hcongr]
-  have hφ'm : StronglyMeasurable φ' := hφ.1.stronglyMeasurable_mk
+  have hφ'm : StronglyMeasurable φ' := hφ.aestronglyMeasurable.stronglyMeasurable_mk
   have hφ'L : MemLp φ' 2 (volume.restrict (U ×ˢ I)) := hφ.ae_eq hφφ'
   rw [volume_restrict_prod] at hF hF₀ hφ'L ⊢
   have hfub : ∀ G : E d × ℝ → E d, MemLp G 2 (μU.prod μI) →
@@ -406,13 +408,13 @@ theorem tendstoWeakL2_prod_of_slices {U : Set (E d)} {I : Set ℝ} (hIm : Measur
   set N : ℝ → ℝ≥0∞ := fun t ↦ ∫⁻ x, ENNReal.ofReal (‖φ' (x, t)‖ ^ 2) ∂μU with hNdef
   have hNm : Measurable N := hφ2m.lintegral_prod_left'
   have hNint : ∫⁻ t, N t ∂μI ≠ ⊤ := by
-    rw [hNdef, ← lintegral_prod_symm' _ hφ2m, ← eLpNorm_two_sq]
-    exact ENNReal.pow_ne_top hφ'L.2.ne
+    rw [hNdef, ← lintegral_prod_symm' _ hφ2m, ← eLpNorm_two_sq _ hφ'm.aestronglyMeasurable]
+    exact ENNReal.pow_ne_top hφ'L.ne
   have hNfin : ∀ᵐ t ∂μI, N t < ⊤ := ae_lt_top hNm hNint
   have hsl : ∀ t, N t < ⊤ → MemLp (fun x ↦ φ' (x, t)) 2 μU := by
     intro t ht
-    refine ⟨(hφ'm.comp_measurable measurable_prodMk_right).aestronglyMeasurable, ?_⟩
-    have h2 : eLpNorm (fun x ↦ φ' (x, t)) 2 μU ^ 2 = N t := eLpNorm_two_sq _
+    have h2 : eLpNorm (fun x ↦ φ' (x, t)) 2 μU ^ 2 = N t :=
+      eLpNorm_two_sq _ (hφ'm.comp_measurable measurable_prodMk_right).aestronglyMeasurable
     refine lt_top_iff_ne_top.2 fun h ↦ ?_
     rw [h] at h2
     simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, ENNReal.top_pow] at h2
@@ -441,9 +443,11 @@ theorem tendstoWeakL2_prod_of_slices {U : Set (E d)} {I : Set ℝ} (hIm : Measur
     refine (GMTFoundations.abs_integral_inner_le ((hslice t ht).1 n) (hsl t hNt)).trans ?_
     have h1 : (eLpNorm (fun x ↦ F n (x, t)) 2 μU).toReal ≤ C :=
       ENNReal.toReal_le_of_le_ofReal (Real.sqrt_nonneg _)
-        (eLpNorm_two_le_of_lintegral_norm hE0 (hbd n t ht))
+        (eLpNorm_two_le_of_lintegral_norm ((hslice t ht).1 n).aestronglyMeasurable hE0
+          (hbd n t ht))
     have h2 : (eLpNorm (fun x ↦ φ' (x, t)) 2 μU).toReal = Real.sqrt (N t).toReal := by
-      have h3 : eLpNorm (fun x ↦ φ' (x, t)) 2 μU ^ 2 = N t := eLpNorm_two_sq _
+      have h3 : eLpNorm (fun x ↦ φ' (x, t)) 2 μU ^ 2 = N t :=
+        eLpNorm_two_sq _ (hφ'm.comp_measurable measurable_prodMk_right).aestronglyMeasurable
       rw [← h3, ENNReal.toReal_pow, Real.sqrt_sq ENNReal.toReal_nonneg]
     rw [h2]
     exact mul_le_mul_of_nonneg_right h1 (Real.sqrt_nonneg _)

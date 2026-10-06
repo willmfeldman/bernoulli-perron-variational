@@ -97,7 +97,7 @@ theorem laplacian_comp {f : ℝ → ℝ} {g : F → ℝ} {x : F} (hf : ContDiffA
   rw [laplacian_eq_sum_fderiv_fderiv, laplacian_eq_sum_fderiv_fderiv, hfd,
     ← sum_fderiv_basis_sq, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     ContinuousLinearMap.smulRight_apply, smul_eq_mul]
   ring
 
@@ -165,7 +165,7 @@ theorem fderiv_fderiv_nonneg_of_isLocalMin {f : F → ℝ} {x : F} (hmin : IsLoc
     exact h
   have hψmin : IsLocalMin (f ∘ L) 0 := by
     have h2 : IsMinFilter f (𝓝 x) (L 0) := by rwa [hL0]
-    exact h2.comp_tendsto hLt
+    exact h2.comp_of_tendsto hLt
   have hf'1 : ContDiffAt ℝ 1 (fderiv ℝ f) x := hf.fderiv_right (by norm_num)
   have hB : HasFDerivAt (fderiv ℝ f) (fderiv ℝ (fderiv ℝ f) x) (L 0) := by
     rw [hL0]; exact (hf'1.differentiableAt one_ne_zero).hasFDerivAt

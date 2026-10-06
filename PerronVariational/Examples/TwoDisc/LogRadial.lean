@@ -61,9 +61,10 @@ theorem hasGradientAt_radial {G : ℝ → ℝ} {z x : E 2}
   have h := hG.hasDerivAt.comp_hasFDerivAt x hf
   rw [hasGradientAt_iff_hasFDerivAt]
   convert h using 1
+  · rfl
   ext w
-  simp only [toDual_apply_apply, real_inner_smul_left, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
+  simp only [toDual_apply_apply, real_inner_smul_left, smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
     innerSL_apply_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_ofNat]
   ring
 
@@ -122,6 +123,8 @@ theorem hasDerivAt_log_profile (hP₁ : ∀ t, HasDerivAt P (P₁ t) t) {τ : �
     ((Real.hasDerivAt_log hτ.ne').const_mul α).add_const k
   have := (hP₁ _).comp τ h
   convert this using 1
+  · rfl
+  rw [div_eq_mul_inv]
 
 theorem deriv_logProfile (hP₁ : ∀ t, HasDerivAt P (P₁ t) t) (hδ : 0 < δ) {τ : ℝ} (h : δ < τ) :
     deriv (logProfile P α k δ) τ = P₁ (α * Real.log τ + k) * (α / τ) := by

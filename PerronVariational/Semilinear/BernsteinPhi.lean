@@ -118,7 +118,7 @@ theorem contDiff_glue : ContDiff ℝ ∞ glue :=
 theorem le_glue {x : ℝ} (hx : 1 ≤ x) : exp (-1) * x ≤ glue x := by
   have hx0 : 0 < x := by linarith
   refine mul_le_mul_of_nonneg_right ?_ hx0.le
-  simp only [expNegInvGlue, not_le.2 hx0, if_false]
+  simp only [expNegInvGlue, not_le.2 hx0, ite_false]
   exact exp_le_exp.2 (by rw [neg_le_neg_iff]; exact inv_le_one_of_one_le₀ hx)
 
 /-! ### The global diffeomorphism `Φ` -/

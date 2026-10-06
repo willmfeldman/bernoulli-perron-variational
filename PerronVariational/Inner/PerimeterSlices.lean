@@ -74,11 +74,11 @@ theorem exists_TV_family (V : Set (E d)) :
     integrable_divergence_of_isTVTestField ξ.2 _
   set L : T → E d →₁[volume.restrict V] ℝ := fun ξ ↦ (hint ξ).toL1 _
   set R := range L
-  haveI : Nonempty R := ⟨⟨L ⟨_, isTVTestField_zero V⟩, mem_range_self _⟩⟩
-  haveI : Fact ((1 : ℝ≥0∞) ≠ ⊤) := ⟨ENNReal.one_ne_top⟩
-  haveI : SecondCountableTopology (E d →₁[volume.restrict V] ℝ) := inferInstance
-  haveI : SecondCountableTopology R := inferInstance
-  haveI : TopologicalSpace.SeparableSpace R := inferInstance
+  have : Nonempty R := ⟨⟨L ⟨_, isTVTestField_zero V⟩, mem_range_self _⟩⟩
+  have : Fact ((1 : ℝ≥0∞) ≠ ⊤) := ⟨ENNReal.one_ne_top⟩
+  have : SecondCountableTopology (E d →₁[volume.restrict V] ℝ) := inferInstance
+  have : SecondCountableTopology R := inferInstance
+  have : TopologicalSpace.SeparableSpace R := inferInstance
   have hdense := TopologicalSpace.denseRange_denseSeq R
   set seq := TopologicalSpace.denseSeq R
   have hpre : ∀ j, ∃ ξ : T, L ξ = (seq j).1 := fun j ↦ (seq j).2
@@ -349,7 +349,7 @@ theorem divergence_sum_smul {s : Finset ℕ} (c : ℕ → ℝ) {φ : ℕ → E d
     divergence (fun y ↦ ∑ j ∈ s, c j • φ j y) x = ∑ j ∈ s, c j * divergence (φ j) x := by
   unfold divergence
   rw [fderiv_fun_sum (A := fun j y ↦ c j • φ j y) fun j hj ↦ (h j hj).const_smul (c j)]
-  simp only [ContinuousLinearMap.coe_sum, map_sum]
+  simp only [ContinuousLinearMap.toLinearMap_sum, map_sum]
   refine Finset.sum_congr rfl fun j hj ↦ ?_
   rw [fderiv_fun_const_smul (h j hj)]
   simp
@@ -552,10 +552,10 @@ theorem setLIntegral_sliceTV_le (hVU : V ⊆ U) (hχm : Measurable χ)
     by_cases ht : t ∈ I
     · rw [indicator_of_mem ht, sliceMax, ← hAsum t]
       refine Finset.sum_congr rfl fun j _ ↦ ?_
-      rw [hBind, if_pos ht]
+      rw [hBind, ite_eq_left ht]
       by_cases ht' : t ∈ A j <;> simp [ht']
     · rw [indicator_of_notMem ht]
-      exact Finset.sum_eq_zero fun j _ ↦ by rw [hBind, if_neg ht, zero_mul]
+      exact Finset.sum_eq_zero fun j _ ↦ by rw [hBind, ite_eq_right ht, zero_mul]
   rw [← integral_finsetSum _ fun j _ ↦ hint j] at hlimle
   simp_rw [hpt] at hlimle
   have hIint : Integrable (I.indicator (sliceMax χ φ N)) := by

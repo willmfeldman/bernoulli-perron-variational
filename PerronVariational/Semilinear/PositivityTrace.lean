@@ -6,7 +6,8 @@ Authors: William M. Feldman
 module
 
 public import PerronVariational.Semilinear.WellPosedData
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.Comparison
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Monotone
@@ -113,6 +114,7 @@ theorem hasDerivAt_trapProfile (z : ℝ) :
   have h := ((((hasDerivAt_id' z).div_const (2 * r ^ 2)).const_sub 1).const_mul
     ((d : ℝ) + 1)).exp.const_sub 1 |>.const_mul b
   convert h using 1
+  · rfl
   ring
 
 theorem deriv_trapProfile :
@@ -570,6 +572,7 @@ theorem mem_closure_posSet_of_gradient_ne_zero {g : E d → ℝ} {U : Set (E d)}
   have hf : HasDerivAt (fun t : ℝ ↦ g (x + t • v)) (inner ℝ v v) 0 := by
     have h2 : HasFDerivAt g (fderiv ℝ g x) (x + (0 : ℝ) • v) := by simpa using hg.hasFDerivAt
     convert h2.comp_hasDerivAt (0 : ℝ) hline using 1
+    · rfl
     rw [hv, gradient, InnerProductSpace.toDual_symm_apply]
   have hpos : 0 < inner ℝ v v := real_inner_self_pos.2 hne
   have hslope := (hasDerivAt_iff_tendsto_slope.1 hf).mono_left (nhdsGT_le_nhdsNE (0 : ℝ))

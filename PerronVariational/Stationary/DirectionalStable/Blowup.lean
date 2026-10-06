@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Stationary.DirectionalStable.Lemma211
 import GMTFoundations.Sobolev.Lattice
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # Stability of directional minimality: blow-ups (Corollary 2.13)
@@ -47,7 +48,8 @@ theorem map_affE (x₀ : E d) (r : ℝ) (hr : r ≠ 0) :
     Measure.map (affE x₀ r hr) volume = jac d r • (volume : Measure (E d)) := by
   have h : (affE x₀ r hr : E d → E d) = (fun z ↦ x₀ + z) ∘ fun y ↦ r • y := rfl
   rw [h, ← Measure.map_map (measurable_const_add x₀) (measurable_const_smul r),
-    Measure.map_addHaar_smul volume hr, Measure.map_smul, map_add_left_eq_self,
+    Measure.map_addHaar_smul volume hr, Measure.map_smul _ (measurable_const_add x₀).aemeasurable,
+    map_add_left_eq_self,
     finrank_euclideanSpace_fin]
   rfl
 
@@ -179,7 +181,8 @@ theorem memH1Loc_blowup {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ} {G : E
 
 theorem mem_posSet_blowup (hr0 : 0 < r) {f : E d → ℝ} {S : Set (E d)} {y : E d} :
     y ∈ posSet (blowup f x₀ r) (affE x₀ r hr ⁻¹' S) ↔ affE x₀ r hr y ∈ posSet f S := by
-  simp only [posSet, mem_setOf_eq, mem_preimage, blowup, affE_apply, div_pos_iff_of_pos_right hr0]
+  simp only [posSet, Set.mem_ofPred_eq, mem_preimage, blowup, affE_apply,
+    div_pos_iff_of_pos_right hr0]
 
 /-- **Scaling of the energy.** -/
 theorem energyJ_blowup (hr0 : 0 < r) (S : Set (E d)) (Q f : E d → ℝ) (G : E d → E d) :
@@ -332,7 +335,7 @@ theorem blowup_minimality_scaled {U : Set (E d)} (hU : IsOpen U) {Q u : E d → 
   have heq' : ∀ᵐ z ∂(volume.restrict (U \ ball (e y) (r * R))),
       blowup w (-(r⁻¹ • x₀)) r⁻¹ z = u z := by
     have := ae_comp_affE (x₀ := -(r⁻¹ • x₀)) hr' heqae
-    rw [← hball, ← preimage_diff, preimage_preimage_affE hr] at this
+    rw [← hball, ← Set.preimage_sdiff, preimage_preimage_affE hr] at this
     filter_upwards [this] with z hz
     rw [← hWu z]
     simp only [blowup, affE_apply] at hz ⊢

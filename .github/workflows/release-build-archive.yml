@@ -1,0 +1,45 @@
+name: Release build archive
+
+# Attach prebuilt Lake build archives (`<package>-<platform>.tar.gz`) to a published GitHub release.
+# Projects that `require` this tag and set nothing else then download compiled .olean files
+# instead of building this package from source (the lakefile sets `preferReleaseBuild`).
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to attach the archives to (e.g. v0.3.0)'
+        required: true
+
+jobs:
+  archive:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Linux for CI runners; macOS arm64 for local clones and worktrees on the author's machine.
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 180   # PARAM: raise for large repos
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch mathlib cache
+        run: lake exe cache get
+      # Build this package and its tracked upstreams from source: an archive never contains
+      # outputs that were themselves downloaded.
+      - name: Build library from source
+        run: lake build --no-cache
+      - name: Upload build archive to the release
+        run: lake upload "$TAG"

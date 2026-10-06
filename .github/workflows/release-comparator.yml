@@ -13,7 +13,7 @@ on:
 jobs:
   comparator:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300   # PARAM: raise for large repos (IV uses 300)
     permissions:
       contents: read
     steps:
@@ -27,15 +27,14 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           df -h /
       # Build the trusted library once, outside the sandbox. The challenge workspaces share its
-      # dependency folder (`packagesDir`), which Comparator's sandbox can read but not write. The
-      # Mathlib cache does not cover the other git dependencies (viscosity_solns,
-      # AleksandrovDifferentiability, parabolic_basic_theory, bernoulli_parabolic_comparison,
-      # elliptic_bernoulli_foundations, gmt_foundations, inner_variational); they are built here
-      # from source.
+      # dependency folder (`packagesDir`), which Comparator's sandbox can read but not write.
+      # `--no-cache`: tracked dependencies are built from source, never taken from prebuilt
+      # release archives. The Mathlib cache is fetched separately and is not affected.
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
           build: true
+          build-args: "--no-cache"
           test: false
       - name: Remove downloaded Mathlib cache archives
         run: |
@@ -49,16 +48,14 @@ jobs:
       - name: Install pinned Comparator tools
         run: bash scripts/release-comparator.sh install
       # Lake writes `.hash` files the first time it replays some downloaded Mathlib artifacts,
-      # which the sandbox cannot do. Building the trusted targets (Challenge with its vocabulary
-      # files Challenge/*.lean, or Statement and Challenge) here writes them first. Solution files are built only inside the
-      # sandbox.
+      # which the sandbox cannot do. Building the trusted Challenge targets (and the Mathlib-only
+      # Vocabulary modules, if any) here writes them first. Solution files are built only inside
+      # the sandbox.
       - name: Build trusted Challenge targets outside the sandbox
         run: |
           for workspace in challenges/*/; do
-            targets=Challenge
-            [ -f "${workspace}Statement.lean" ] && targets="Statement Challenge"
-            echo "==> ${workspace}: ${targets}"
-            (cd "$workspace" && lake build $targets)
+            echo "==> ${workspace}Challenge"
+            (cd "$workspace" && lake build Vocabulary Challenge)   # PARAM: `Vocabulary Challenge` if workspaces have Vocabulary modules (v1.4)
           done
       - name: Run Comparator on every challenge
         run: bash scripts/release-comparator.sh run

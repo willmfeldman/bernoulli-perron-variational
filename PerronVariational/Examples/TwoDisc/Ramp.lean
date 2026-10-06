@@ -216,6 +216,7 @@ theorem hasDerivAt_floorCap (hLf : Lf ≠ 0) (hLc : Lc ≠ 0) (t : ℝ) :
   have := ((hasDerivAt_id t).add (((hasDerivAt_ramp _).comp t h1).const_mul Lf)).sub
     (((hasDerivAt_ramp _).comp t h2).const_mul Lc)
   convert this using 1
+  · rfl
   simp only [floorCapD]
   field_simp
   ring
@@ -229,6 +230,7 @@ theorem hasDerivAt_floorCapD (hLf : Lf ≠ 0) (hLc : Lc ≠ 0) (t : ℝ) :
   have := ((hasDerivAt_const t (1 : ℝ)).sub ((hasDerivAt_rampD _).comp t h1)).sub
     ((hasDerivAt_rampD _).comp t h2)
   convert this using 1
+  · rfl
   simp only [floorCapDD]
   field_simp
   ring

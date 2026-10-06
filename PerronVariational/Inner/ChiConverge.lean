@@ -134,7 +134,7 @@ theorem volume_chi_mem_Ioo_eq_zero (hβ : IsReactionProfile β) {Ω K : Set (E d
         by_contra h
         have := hβ.bigB_monotone (not_le.1 h).le
         linarith
-      simp only [mem_setOf_eq, hf, betaEps]
+      simp only [Set.mem_ofPred_eq, hf, betaEps]
       exact ENNReal.ofReal_le_ofReal
         (div_le_div_of_nonneg_right (hcβ _ ⟨hlo, hhi⟩) (hε n).le)
     have hmark := mul_meas_ge_le_lintegral₀ hfm (ENNReal.ofReal (c / ε n))
@@ -177,7 +177,7 @@ theorem ae_zero_or_one_of_tendsto (hβ : IsReactionProfile β) {Ω : Set (E d ×
       ∫⁻ p in K, ENNReal.ofReal (betaEps β (ε n) (v n p)) ≤ ENNReal.ofReal C) :
     ∀ᵐ p ∂(volume.restrict Ω), χ p = 0 ∨ χ p = 1 := by
   have hΩσ : IsSigmaCompact Ω := by
-    haveI : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
+    have : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
     exact isSigmaCompact_iff_sigmaCompactSpace.2 inferInstance
   obtain ⟨K, hKc, hKU⟩ := hΩσ
   have hKΩ : ∀ m, K m ⊆ Ω := fun m ↦ hKU ▸ subset_iUnion K m
@@ -217,7 +217,7 @@ theorem exists_subseq_ae_tendsto_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : 
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
       ∀ᵐ p ∂(volume.restrict Ω), Tendsto (fun n ↦ f (φ n) p) atTop (𝓝 (f₀ p)) := by
   have hΩσ : IsSigmaCompact Ω := by
-    haveI : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
+    have : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
     exact isSigmaCompact_iff_sigmaCompactSpace.2 inferInstance
   obtain ⟨K₀, hK₀c, hK₀U⟩ := hΩσ
   set K := accumulate K₀ with hKdef
@@ -245,7 +245,8 @@ theorem exists_subseq_ae_tendsto_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : 
         exact ENNReal.ofNat_ne_top
       · calc ∫⁻ p in K m, ‖f (φ (n + m)) p - f₀ p‖ₑ
             = eLpNorm (f (φ (n + m)) - f₀) 1 (volume.restrict (K m)) :=
-              eLpNorm_one_eq_lintegral_enorm.symm
+              (eLpNorm_one_eq_lintegral_enorm
+                (((hf _).sub hf₀).mono_measure (Measure.restrict_mono (hKΩ m) le_rfl))).symm
           _ ≤ eLpNorm (f (φ (n + m)) - f₀) 1 (volume.restrict (K (n + m))) :=
               eLpNorm_mono_measure _
                 (Measure.restrict_mono (hKmono (Nat.le_add_left m n)) le_rfl)
@@ -258,7 +259,7 @@ theorem exists_subseq_ae_tendsto_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : 
     have h1 : Tendsto (fun n ↦ f (φ (n + m)) p) atTop (𝓝 (f₀ p)) := by
       rw [tendsto_iff_norm_sub_tendsto_zero]
       have := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp h0
-      simpa using this
+      simpa [Function.comp_def] using this
     exact (tendsto_add_atTop_iff_nat m).1 h1
   rw [ae_restrict_iff' hΩ.measurableSet]
   have hall : ∀ᵐ p ∂volume, ∀ m, p ∈ K m → Tendsto (fun n ↦ f (φ n) p) atTop (𝓝 (f₀ p)) := by

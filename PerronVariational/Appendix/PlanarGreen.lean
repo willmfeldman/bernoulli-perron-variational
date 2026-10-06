@@ -81,6 +81,7 @@ theorem hasDerivAt_radial (hU : IsOpen U) (hv : ContDiffOn ℝ 2 v U) (c : ℂ) 
   have h2 := h1.clm_apply (hasDerivAt_const ρ (circleMap 0 1 θ))
   have h3 := (hasDerivAt_id ρ).mul h2
   convert h3 using 1
+  · rfl
   simp [radTerm]
 
 theorem hasDerivAt_angular (hU : IsOpen U) (hv : ContDiffOn ℝ 2 v U) (c : ℂ) (ρ : ℝ) {θ : ℝ}
@@ -96,7 +97,7 @@ theorem hasDerivAt_angular (hU : IsOpen U) (hv : ContDiffOn ℝ 2 v U) (c : ℂ)
     simp [circleMap, Complex.real_smul]; ring
   have e2 : circleMap 0 1 θ * I * I = -circleMap 0 1 θ := by
     rw [mul_assoc, I_mul_I]; ring
-  rw [e1, e2, map_smul, ContinuousLinearMap.smul_apply, map_neg, angTerm, smul_eq_mul]
+  rw [e1, e2, map_smul, smul_apply, map_neg, angTerm, smul_eq_mul]
   ring
 
 /-! ### Continuity -/

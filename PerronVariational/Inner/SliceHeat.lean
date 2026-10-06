@@ -130,14 +130,15 @@ theorem ae_heat_slice_bump (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w �
     (toDual ℝ (E d)).symm.continuous.comp ((contDiff_mollAt n q).continuous_fderiv (by simp))
   set H : E d × ℝ → ℝ := fun p ↦ w p * mollAt n q p.1 + inner ℝ (gradₓ u p) (∇ (mollAt n q) p.1)
   have hvan : ∀ p : E d × ℝ, p.1 ∉ B → H p = 0 := fun p hp ↦ by
-    simp [H, mollAt_eq_zero hp, gradient_mollAt_eq_zero hp]
+    simp only [H, mollAt_eq_zero hp, gradient_mollAt_eq_zero hp, mul_zero, inner_zero_right,
+      add_zero]
   -- `H` is integrable on `U × J` for compact `J ⊆ T`
   have hint : ∀ J ⊆ T, IsCompact J → IntegrableOn H (U ×ˢ J) := by
     intro J hJT hJ
     have hsub : B ×ˢ J ⊆ UInf U := fun p hp ↦ (hJT hp.2 p.1 hp.1).1
     have h1 := integrableOn_heat_integrand hU h ((isCompact_closedBall q _).prod hJ) hsub
       (hcm.comp continuous_fst) (hcg.comp continuous_fst)
-    refine h1.of_forall_diff_eq_zero (hU.measurableSet.prod hJ.measurableSet) fun p hp ↦
+    refine h1.of_forall_sdiff_eq_zero (hU.measurableSet.prod hJ.measurableSet) fun p hp ↦
       hvan p fun hB ↦ hp.2 ⟨hB, hp.1.2⟩
   refine ae_setIntegral_slice_eq_zero hU.measurableSet measurableSet_Ioi hT
     (bumpTimes_subset n q) hint fun ψ hψs hψc hψT ↦ ?_
@@ -169,7 +170,7 @@ theorem ae_heat_slice_bump (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w �
     have := integrableOn_heat_integrand hU h hKc hKsub hφs.continuous
       (continuous_const : Continuous fun _ : E d × ℝ ↦ (0 : E d))
     simp only [inner_zero_right, add_zero] at this
-    exact this.of_forall_diff_eq_zero (hU.measurableSet.prod measurableSet_Ioi) fun p hp ↦ by
+    exact this.of_forall_sdiff_eq_zero (hU.measurableSet.prod measurableSet_Ioi) fun p hp ↦ by
       rw [hsuppφ p hp.2, mul_zero]
   have hI2 : IntegrableOn (fun p ↦ inner ℝ (gradₓ u p) (gradₓ φ p)) (UInf U) := by
     have := integrableOn_heat_integrand hU h hKc hKsub
@@ -177,7 +178,7 @@ theorem ae_heat_slice_bump (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w �
       (show Continuous fun p : E d × ℝ ↦ ψ p.2 • ∇ (mollAt n q) p.1 from
         (hψs.continuous.comp continuous_snd).smul (hcg.comp continuous_fst))
     simp only [mul_zero, zero_add, ← hgφ] at this
-    refine this.of_forall_diff_eq_zero (hU.measurableSet.prod measurableSet_Ioi) fun p hp ↦ ?_
+    refine this.of_forall_sdiff_eq_zero (hU.measurableSet.prod measurableSet_Ioi) fun p hp ↦ ?_
     rcases not_and_or.1 hp.2 with h1 | h1
     · simp [hgφ, gradient_mollAt_eq_zero h1]
     · simp [hgφ, image_eq_zero_of_notMem_tsupport h1]
@@ -228,7 +229,7 @@ theorem heat_slice_of_bumps (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w 
   set W' := thickening (δ / 2) (tsupport ζ)
   have hW'V : W' ⊆ V := thickening_subset_cthickening _ _
   have hζW' : tsupport ζ ⊆ W' := self_subset_thickening (half_pos hδ) _
-  haveI : IsFiniteMeasure (volume.restrict V) := isFiniteMeasure_restrict.2 hVc.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict V) := isFiniteMeasure_restrict.2 hVc.measure_lt_top.ne
   set a : E d → ℝ := fun x ↦ w (x, s)
   set g : E d → E d := fun x ↦ gradₓ u (x, s)
   have ha : Integrable a (volume.restrict V) :=
@@ -245,7 +246,7 @@ theorem heat_slice_of_bumps (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w 
     have hT : s ∈ bumpTimes U u n q := fun x hx ↦
       ⟨⟨hVU (hW'V (hball hx)), hs⟩, (hVW (hW'V (hball hx))).2⟩
     rw [← hb n q hq hT, firstOrderFunctional,
-      setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hVU ?_]
+      setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hVU ?_]
     · refine setIntegral_congr_fun hVm fun x _ ↦ ?_
       simp only [a, g, inner_gradient_eq_fderiv]
       rfl
@@ -270,11 +271,11 @@ theorem heat_slice_of_bumps (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w 
   unfold firstOrderFunctional at hΨ
   rw [integral_add hI1 hI2] at hΨ
   have e1 : ∫ x in U, w (x, s) * ζ x = ∫ x in V, a x * ζ x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hVU fun x hx ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hVU fun x hx ↦ by
       simp [(hvan x hx.2).1]
   have e2 : ∫ x in U, inner ℝ (gradₓ u (x, s)) (∇ ζ x) = ∫ x in V, fderiv ℝ ζ x (g x) := by
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hVU fun x hx ↦ by
-      simp [inner_gradient_eq_fderiv, (hvan x hx.2).2]]
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hVU fun x hx ↦ by
+      simp [(hvan x hx.2).2]]
     exact setIntegral_congr_fun hVm fun x _ ↦ inner_gradient_eq_fderiv ζ x _
   rw [e1, e2]
   linarith

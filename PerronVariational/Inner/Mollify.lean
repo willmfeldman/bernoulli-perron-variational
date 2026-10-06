@@ -203,9 +203,11 @@ theorem hasCompactSupport_moll_sub (n : ℕ) (x : E d) :
 theorem hasFDerivAt_moll_sub (n : ℕ) (x t : E d) :
     HasFDerivAt (fun t ↦ moll d n (x - t)) (-(fderiv ℝ (moll d n) (x - t))) t := by
   have h1 : HasFDerivAt (fun t : E d ↦ x - t) (-ContinuousLinearMap.id ℝ (E d)) t := by
-    simpa using (hasFDerivAt_const x t).sub (hasFDerivAt_id t)
+    have h := (hasFDerivAt_const (𝕜 := ℝ) x t).sub (hasFDerivAt_id t)
+    rw [zero_sub] at h
+    exact h
   have := ((contDiff_moll (d := d) n).differentiable (by simp) (x - t)).hasFDerivAt.comp t h1
-  simpa using this
+  convert this using 1 <;> first | rfl | simp
 
 /-- Integration by parts for the mollification of a Lipschitz function. -/
 theorem integral_fderiv_moll_mul_eq {ζ : E d → ℝ} {K : NNReal} (hζ : LipschitzWith K ζ)

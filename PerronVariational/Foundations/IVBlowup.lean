@@ -66,8 +66,7 @@ theorem tendstoLpLoc_one_of_tendsto_integral_abs {U : Set (E d)} (hU : IsOpen U)
       continuous_const.add (continuous_fst.smul continuous_snd)
     exact hc.continuousAt.eventually (hU.mem_nhds (by simpa using hx₀))
   have hmeas : ∀ k, Measurable fun y ↦ χ (x₀ + r k • y) - χ₀ y := fun k ↦ by
-    have hc : Continuous fun y : E d ↦ x₀ + r k • y :=
-      continuous_const.add (continuous_const.smul continuous_id)
+    have hc : Continuous fun y : E d ↦ x₀ + r k • y := by fun_prop
     exact (hχ.comp hc.measurable).sub hχ₀
   have heq : ∀ᶠ k in atTop, eLpNorm ((fun y ↦ χ (x₀ + r k • y)) - χ₀) 1 (volume.restrict K) =
       ENNReal.ofReal (∫ y in K, |χ (x₀ + r k • y) - χ₀ y|) := by
@@ -79,7 +78,9 @@ theorem tendstoLpLoc_one_of_tendsto_integral_abs {U : Set (E d)} (hU : IsOpen U)
     have hint : Integrable (fun y ↦ χ (x₀ + r k • y) - χ₀ y) (volume.restrict K) :=
       IntegrableOn.of_bound hK.measure_lt_top (hmeas k).aestronglyMeasurable 1
         (ae_restrict_of_forall_mem hK.measurableSet hbd)
-    rw [eLpNorm_one_eq_lintegral_enorm]
+    rw [eLpNorm_one_eq_lintegral_enorm
+      (show AEStronglyMeasurable ((fun y ↦ χ (x₀ + r k • y)) - χ₀) (volume.restrict K) from
+        (hmeas k).aestronglyMeasurable)]
     simp only [Pi.sub_apply]
     rw [← ofReal_integral_norm_eq_lintegral_enorm hint]
     simp only [Real.norm_eq_abs]
@@ -105,7 +106,7 @@ theorem blowup_homogeneous_seq_of_iv (S : Setting d) {u χ : E d → ℝ}
       ∃ (φ : ℕ → ℕ) (χ₀ : E d → ℝ), StrictMono φ ∧
         TendstoLpLoc 1 volume univ (fun n y ↦ χ (x₀ + r (φ n) • y)) χ₀ atTop ∧
         IsInnerVarSolution univ (fun _ ↦ S.Q x₀) v χ₀ := by
-  haveI : NeZero d := ⟨by have := S.two_le; omega⟩
+  have : NeZero d := ⟨by have := S.two_le; omega⟩
   obtain ⟨δ, hδ, hδU, C, hsol⟩ := exists_ball_isVariationalSolutionQ h S.isOpen hx₀.2
   obtain ⟨L, hQ⟩ := exists_qBounds_of_setting S hδU
   have hx : x₀ ∈ ball x₀ δ := mem_ball_self hδ

@@ -96,8 +96,8 @@ theorem paraInnerVarIntegrand_timeProd (Q : E d → ℝ) (u w χ : E d × ℝ �
   have hD : fderivₓ (fun p : E d × ℝ ↦ ψ p.2 • η p.1) (x, s) = ψ s • fderiv ℝ η x :=
     fderiv_fun_const_smul (hη x) (ψ s)
   simp only [paraInnerVarIntegrand, divₓ, hD, sliceInnerVarIntegrand, innerVarIntegrand,
-    divergence, ContinuousLinearMap.coe_smul, map_smul, smul_eq_mul,
-    ContinuousLinearMap.smul_apply, inner_smul_right, inner_smul_left, conj_trivial]
+    divergence, ContinuousLinearMap.toLinearMap_smul, map_smul, smul_eq_mul,
+    smul_apply, inner_smul_right, inner_smul_left, conj_trivial]
   change _ = ψ s * ((‖gradₓ u (x, s)‖ ^ 2 + _) * _ - 2 * inner ℝ (gradₓ u (x, s))
     (fderiv ℝ η x (gradₓ u (x, s))) + _ - _)
   ring
@@ -200,7 +200,7 @@ theorem integrable_firstOrder_integrand {μ : Measure (E d)} {a : E d → ℝ} {
 /-- The coordinates `y ↦ ξ(y)ᵢ` of a Lipschitz field are Lipschitz. -/
 theorem lipschitz_coord {ξ : E d → E d} {K : NNReal} (hξ : LipschitzWith K ξ) (i : Fin d) :
     ∃ K', LipschitzWith K' fun y ↦ ξ y i :=
-  ⟨_, (EuclideanSpace.proj i : E d →L[ℝ] ℝ).lipschitz.comp hξ⟩
+  ⟨_, (EuclideanSpace.proj i : E d →L[ℝ] ℝ).lipschitzWith.comp hξ⟩
 
 theorem tsupport_coord_subset (ξ : E d → E d) (i : Fin d) :
     tsupport (fun y ↦ ξ y i) ⊆ tsupport ξ :=
@@ -251,7 +251,7 @@ theorem sum_coord_firstOrder_eq_zero {U : Set (E d)} (hU : IsOpen U) {D : Set (E
         firstOrderFunctional (volume.restrict V) (A i) (G i) (fun x ↦ moll d n (x - q)) = 0 := by
       intro n q hq hball
       rw [← hb i n q hq ((hball.trans hW'V).trans hVU), firstOrderFunctional,
-        setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hVU ?_]
+        setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hVU ?_]
       · rfl
       · intro x hx
         have hxB : x ∉ closedBall q (bumpRad n) := fun h' ↦ hx.2 (hW'V (hball h'))
@@ -266,8 +266,8 @@ theorem sum_coord_firstOrder_eq_zero {U : Set (E d)} (hU : IsOpen U) {D : Set (E
   have hzero : ∀ x ∈ U \ V,
       ∑ i, (A i x * ξ x i + fderiv ℝ (fun y ↦ ξ y i) x (G i x)) = 0 := fun x hx ↦
     Finset.sum_eq_zero fun i _ ↦ by simp [(hvan x hx.2 i).1, (hvan x hx.2 i).2]
-  refine ⟨hIV.of_forall_diff_eq_zero hU.measurableSet hzero, ?_⟩
-  rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hVU hzero,
+  refine ⟨hIV.of_forall_sdiff_eq_zero hU.measurableSet hzero, ?_⟩
+  rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hVU hzero,
     integral_finsetSum _ fun i _ ↦ (hcoord i).1]
   exact Finset.sum_eq_zero fun i _ ↦ (hcoord i).2
 
@@ -306,7 +306,7 @@ theorem integrableOn_ivCoeffG {Q v χ : E d → ℝ} {K : Set (E d)} (hK : IsCom
     · refine AEStronglyMeasurable.smul_const ?_ e
       exact (hgm.norm.pow_const 2).aestronglyMeasurable.add
         ((hQc.aestronglyMeasurable hKm).mul hχm.aestronglyMeasurable)
-    · exact ((measurable_const.mul (hgm.inner_const (c := e))).smul
+    · exact ((measurable_const.mul (hgm.inner_const (𝕜 := ℝ) (c := e))).smul
         hgm).aestronglyMeasurable
   refine IntegrableOn.of_bound hK.measure_lt_top hm ((B ^ 2 + CQ) * ‖e‖ + 2 * (B * ‖e‖) * B)
     ((ae_restrict_mem hKm).mono fun x hx ↦ ?_)
@@ -333,7 +333,7 @@ theorem integrableOn_sliceCoeffA (h : IsParaInnerVarSolution U Q u w χ) (hU : I
     (hmem : MemLp (fun x ↦ w (x, s)) 2 (volume.restrict U)) (e : E d) {K : Set (E d)}
     (hK : IsCompact K) (hKU : K ⊆ U) :
     IntegrableOn (sliceCoeffA Q u w χ s e) K := by
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hKm := hK.measurableSet
   obtain ⟨CQ, hCQ⟩ := GMTFoundations.exists_bound_fderiv_of_locallyLipschitzOn hU hQ hK hKU
   obtain ⟨B, hB⟩ := exists_bound_gradₓ_slice h hs hK hKU

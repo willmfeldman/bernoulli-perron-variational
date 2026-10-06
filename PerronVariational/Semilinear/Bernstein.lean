@@ -332,7 +332,7 @@ include hψ hε hM
 /-- `∫₀^ε ℓ = (1 + a ε²)/2`. -/
 theorem integral_ell_eps : ∫ s in (0 : ℝ)..ε, ell ψ ε M s = (1 + acoef ε M * ε ^ 2) / 2 := by
   rw [integral_congr (g := fun s ↦ ((ε ^ 2)⁻¹ + acoef ε M) * (ε - s)) fun s hs ↦ ?_]
-  · rw [integral_const_mul, integral_sub intervalIntegral.intervalIntegrable_const
+  · rw [integral_const_mul, integral_sub intervalIntegrable_const
       intervalIntegral.intervalIntegrable_id,
       integral_const, integral_id, smul_eq_mul]
     field_simp

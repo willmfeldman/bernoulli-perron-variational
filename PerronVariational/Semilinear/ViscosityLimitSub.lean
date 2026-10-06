@@ -8,7 +8,8 @@ module
 public import PerronVariational.Statements.Intermediate
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Parabolic.StatToPara
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.ViscosityLimitCalculus
@@ -40,8 +41,9 @@ The gap in the paper's proof is at the parabolic boundary in Step 1: off `E_j` o
   crossing time) where `E` contains a neighbourhood of `p`, a local stability argument (touching
   `u_j` from above by `φ` plus a strict quadratic penalty) gives a contradiction; hence
   `relaxedSub_case_pos` (case `u(p) > 0`, the paper's case (i)).
-* `semilinear_limit_relaxedSolution` (**Proposition 5.3** in corrected form):
-  `(u, \overline{U × (0,T]})` is a relaxed viscosity solution.
+* `semilinear_limit_relaxedSolution_closure`: `(u, \overline{U × (0,T]})` is a relaxed viscosity
+  solution. Proposition 5.3 with the corrected set `E*` is `semilinear_limit_relaxedSolution`
+  (`ViscosityLimit`).
 * `isParaRelaxedSub_semilinearLimitSet_of_case_zero`: the relaxed subsolution property for
   `E = limsup* {u_j > ε_j}`, conditional on excluding the case `u(p) = 0`.
 -/
@@ -64,9 +66,8 @@ variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDim
 omit [FiniteDimensional ℝ F] in
 theorem hasFDerivAt_normSq_sub' (x₀ y : F) :
     HasFDerivAt (fun y ↦ ‖y - x₀‖ ^ 2) ((2 : ℝ) • innerSL ℝ (y - x₀)) y := by
-  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1
-  ext v
-  simp [two_smul]
+  convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1 <;>
+    first | rfl | (ext v; simp [two_smul])
 
 /-- `Δ ‖y - x₀‖² = 2 dim`. -/
 theorem laplacian_normSq_sub' (x₀ x : F) :
@@ -80,7 +81,7 @@ theorem laplacian_normSq_sub' (x₀ x : F) :
   rw [hd.fderiv]
   have h1 : ∀ i, ((2 : ℝ) • innerSL ℝ (E := F)) (stdOrthonormalBasis ℝ F i)
       (stdOrthonormalBasis ℝ F i) = 2 := fun i ↦ by
-    rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, innerSL_apply_apply,
+    rw [smul_apply, smul_apply, innerSL_apply_apply,
       real_inner_self_eq_norm_sq, (stdOrthonormalBasis ℝ F).orthonormal.1 i]
     norm_num
   refine (Finset.sum_congr rfl fun i _ ↦ h1 i).trans ?_
@@ -322,9 +323,9 @@ theorem relaxedSub_contra_of_nhds (hβ : IsReactionProfile β) (hεpos : ∀ j, 
     have hqC : q ∈ C := ⟨mem_closedBall.2 (mem_ball.1 hq.1).le, (mem_Ioi.1 hq.2).le,
       hqS.2.trans hpjC.2.2⟩
     have := hpjmax hqC
-    simp only [mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     simp only [hψ_def, hcj_def]
-    simp only [hζ_def] at this ⊢
+    simp only [hζ_def, Pi.sub_apply] at this ⊢
     linarith
   -- (12) the viscosity subsolution property of `u_j`
   have hvisc := (Registry.isSemilinearViscSubOn_of_solOn S.isOpen Ioc_leftNhds (hsol j)).2 ψ
@@ -491,14 +492,6 @@ theorem semilinear_limit_relaxedSolution_closure (hβ : IsReactionProfile β)
     semilinear_limit_isParaRelaxedSub_closure hβ hεpos hsol hnn hconv⟩
 
 end Step1
-
-/-- **Proposition 5.3**, in the corrected form of `SemilinearLimitRelaxedStatement`: the limit
-is a relaxed viscosity solution with `E = \overline{U × (0, T]}`. The paper assumes
-`E = limsup* {u_j > ε_j}`; here `E = \overline{U × (0, T]}`, because the statement with the
-paper's set is false (see the module docstring). -/
-theorem semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement := by
-  intro d S β hβ T εs us u _ hεpos hεlim hsol hnn hconv
-  exact semilinear_limit_relaxedSolution_closure hβ hεpos hεlim hsol hnn hconv
 
 end PerronVariational
 

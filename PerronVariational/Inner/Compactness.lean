@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Inner.SemilinearEstimates
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Topology.UniformSpace.Ascoli
 import PerronVariational.Inner.ReactionBound
 import PerronVariational.Semilinear.Calculus
@@ -63,7 +64,7 @@ theorem exists_tendstoLocallyUniformlyOn_subseq {Ω : Set X} (hΩ : IsOpen Ω) (
     ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∃ f₀ : X → ℝ, ContinuousOn f₀ Ω ∧
       TendstoLocallyUniformlyOn (fun n ↦ f (φ n)) f₀ atTop Ω := by
   classical
-  haveI : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
+  have : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
   -- pointwise bounds and equicontinuity neighbourhoods, as functions on the subtype
   choose B hB using fun x : Ω ↦ hbdd x x.2
   have hN : ∀ (x : Ω) (η : ℝ), ∃ N ∈ 𝓝 x, 0 < η → ∀ n, ∀ y ∈ N, |f n y - f n x| < η := by
@@ -74,7 +75,8 @@ theorem exists_tendstoLocallyUniformlyOn_subseq {Ω : Set X} (hΩ : IsOpen Ω) (
         continuous_subtype_val.continuousAt.preimage_mem_nhds this, fun _ n y hy ↦ hy n⟩
     · exact ⟨univ, univ_mem, fun h ↦ absurd h hη⟩
   choose N hNmem hNlt using hN
-  let F : ℕ → C(Ω, ℝ) := fun n ↦ ⟨fun x ↦ f n x, (continuousOn_iff_continuous_restrict.1 (hcont n))⟩
+  let F : ℕ → C(Ω, ℝ) := fun n ↦
+    ⟨fun x ↦ f n x, (continuousOn_iff_continuous_domRestrict.1 (hcont n))⟩
   let S : Set C(Ω, ℝ) := {g | (∀ x, |g x| ≤ B x) ∧ ∀ x η, 0 < η → ∀ y ∈ N x η, |g y - g x| ≤ η}
   have hFS : ∀ n, F n ∈ S := fun n ↦
     ⟨fun x ↦ hB x n, fun x η hη y hy ↦ (hNlt x η hη n y hy).le⟩
@@ -98,11 +100,11 @@ theorem exists_tendstoLocallyUniformlyOn_subseq {Ω : Set X} (hΩ : IsOpen Ω) (
         exact hg
       · intro hg
         exact ⟨⟨g, hcont_of g hg.2⟩, hg, rfl⟩
-    rw [this, setOf_and]
+    rw [this, Set.ofPred_and]
     refine IsClosed.inter ?_ ?_
-    · rw [setOf_forall]
+    · rw [Set.ofPred_forall]
       exact isClosed_iInter fun x ↦ isClosed_le (continuous_apply x).abs continuous_const
-    · simp only [setOf_forall]
+    · simp only [Set.ofPred_forall]
       refine isClosed_iInter fun x ↦ isClosed_iInter fun η ↦ isClosed_iInter fun _ ↦
         isClosed_iInter fun y ↦ isClosed_iInter fun _ ↦ ?_
       exact isClosed_le ((continuous_apply y).sub (continuous_apply x)).abs continuous_const
@@ -116,7 +118,7 @@ theorem exists_tendstoLocallyUniformlyOn_subseq {Ω : Set X} (hΩ : IsOpen Ω) (
   have hScpt : IsCompact S := ArzelaAscoli.isCompact_of_equicontinuous S hS1 hS2
   obtain ⟨g, -, φ, hφ, hlim⟩ := hScpt.tendsto_subseq hFS
   refine ⟨φ, hφ, fun x ↦ if hx : x ∈ Ω then g ⟨x, hx⟩ else 0, ?_, ?_⟩
-  · rw [continuousOn_iff_continuous_restrict]
+  · rw [continuousOn_iff_continuous_domRestrict]
     refine g.continuous.congr fun x ↦ ?_
     simp [x.2]
   · rw [tendstoLocallyUniformlyOn_iff_tendstoLocallyUniformly_comp_coe]

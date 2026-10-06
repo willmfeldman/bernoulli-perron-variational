@@ -102,7 +102,7 @@ theorem isViscSuper_of_locally (hU : IsOpen U)
 theorem posSet_inter_eq (hWU : W ⊆ U) (heq : EqOn u v W) :
     posSet u U ∩ W = posSet v W := by
   ext y
-  simp only [posSet, mem_inter_iff, mem_setOf_eq]
+  simp only [posSet, mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨-, hy⟩, hyW⟩; exact ⟨hyW, by rwa [← heq hyW]⟩
   · rintro ⟨hyW, hy⟩; exact ⟨⟨hWU hyW, by rwa [heq hyW]⟩, hyW⟩
@@ -161,8 +161,8 @@ theorem isViscSuper_piecewise (hU : IsOpen U) (hW : IsOpen W) (hWU : W ⊆ U) {K
   refine isViscSuper_of_locally hU fun x hx ↦ ?_
   by_cases hxW : x ∈ W
   · exact ⟨W, hW, hxW, hWU, v, hv, fun y hy ↦ piecewise_eq_of_mem _ _ _ hy⟩
-  · refine ⟨U \ K, hU.sdiff hK, ⟨hx, fun h ↦ hxW (hKW h)⟩, diff_subset, u,
-      hu.mono (hU.sdiff hK) diff_subset, fun y hy ↦ ?_⟩
+  · refine ⟨U \ K, hU.sdiff hK, ⟨hx, fun h ↦ hxW (hKW h)⟩, Set.sdiff_subset, u,
+      hu.mono (hU.sdiff hK) Set.sdiff_subset, fun y hy ↦ ?_⟩
     by_cases hyW : y ∈ W
     · rw [piecewise_eq_of_mem _ _ _ hyW]; exact heq y ⟨hyW, hy.2⟩
     · exact piecewise_eq_of_notMem _ _ _ hyW
@@ -175,8 +175,8 @@ theorem isViscSub_piecewise (hU : IsOpen U) (hW : IsOpen W) (hWU : W ⊆ U) {K :
   refine isViscSub_of_locally fun x hx ↦ ?_
   by_cases hxW : x ∈ W
   · exact ⟨W, hW, hxW, hWU, v, hv, fun y hy ↦ piecewise_eq_of_mem _ _ _ hy⟩
-  · refine ⟨U \ K, hU.sdiff hK, ⟨hx, fun h ↦ hxW (hKW h)⟩, diff_subset, u,
-      hu.mono (hU.sdiff hK) diff_subset, fun y hy ↦ ?_⟩
+  · refine ⟨U \ K, hU.sdiff hK, ⟨hx, fun h ↦ hxW (hKW h)⟩, Set.sdiff_subset, u,
+      hu.mono (hU.sdiff hK) Set.sdiff_subset, fun y hy ↦ ?_⟩
     by_cases hyW : y ∈ W
     · rw [piecewise_eq_of_mem _ _ _ hyW]; exact heq y ⟨hyW, hy.2⟩
     · exact piecewise_eq_of_notMem _ _ _ hyW
@@ -432,7 +432,7 @@ theorem IsViscSub.le_max_of_barrier {W K : Set (E d)} {Q v H : E d → ℝ} (hd 
     by_cases hwK : w ∈ K
     · by_cases hvw : 0 < v w
       · have := hzmax (subset_closure (⟨⟨hw, hvw⟩, hwK⟩ : w ∈ A))
-        simp only [mem_setOf_eq] at this
+        simp only [Set.mem_ofPred_eq] at this
         exact le_max_of_le_left (by linarith)
       · exact le_max_of_le_right (not_lt.1 hvw)
     · exact (hout w ⟨hw, hwK⟩).trans (max_le_max (by linarith) le_rfl)
@@ -621,7 +621,7 @@ theorem perronLargest_isLocalLargestSub_near_fb {U : Set (E d)} {Q g : E d → �
     have hsub' : posSet u U ⊆ {y | 0 ≤ g y} := by
       rintro y ⟨hyU, hy⟩
       by_contra hneg
-      simp only [mem_setOf_eq, not_le] at hneg
+      simp only [Set.mem_ofPred_eq, not_le] at hneg
       have := hug y (subset_closure hyU)
       rw [max_eq_right hneg.le] at this
       linarith

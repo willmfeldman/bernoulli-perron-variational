@@ -18,21 +18,18 @@ import PerronVariational.Semilinear.ViscosityLimitSuper
 Proposition 5.3 and Corollary 5.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
 properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
-* `semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement` (**Proposition 5.3**, in
-  corrected form), proved in `ViscosityLimitSub` (supersolution part in `ViscosityLimitSuper`).
-  The paper states it with `E = limsup* {u_j > ε_j}`, and with that set it is false: `u ≡ ε` is a
-  stationary solution, and a vanishing perturbation lifts a whole `ε`-plateau over the threshold.
-  The formal statement uses `E = \overline{U × (0, T]}`; the relaxed subsolution property for the
-  authors' corrected set `E*` below is `semilinear_limit_isParaRelaxedSub_star`.
+* `semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement` (**Proposition 5.3**),
+  with the authors' corrected set `E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}`: the
+  supersolution part (`ViscosityLimitSuper`) and the relaxed subsolution property of `(u, E*)`
+  (`semilinear_limit_isParaRelaxedSub_star`, `ViscosityLimitStar`). arXiv v1 states it with
+  `E = limsup* {u_j > ε_j}`, and with that set it is false: `u ≡ ε` is a stationary solution, and
+  a vanishing perturbation lifts a whole `ε`-plateau over the threshold.
 * `semilinear_limit_viscSolution_increasing : SemilinearLimitIncreasingStatement`
-  (**Corollary 5.4**), with the authors' corrected set
-  `E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}`: the supersolution part of
-  Proposition 5.3, the relaxed subsolution property of `(u, E*)`
-  (`semilinear_limit_isParaRelaxedSub_star`, `ViscosityLimitStar`), Proposition 3.5
+  (**Corollary 5.4**), with the set `E*`: Proposition 5.3, Proposition 3.5
   (`isParaSub_of_monotone_Ioc`) with the time-`0` hypothesis from Proposition 3.8(vi*), and
   monotonicity of the limit. The properties of the well-prepared family enter as hypotheses.
 
-The paper states the identity `E* = \overline{{u > 0}}` of Corollary 5.4 without restriction, but
+arXiv v1 states the identity `E = \overline{{u > 0}}` of Corollary 5.4 without restriction, but
 argues it only at `t = 0`, not at lateral boundary points over `∂U`; here it is stated inside
 `U × [0, T]`, which is all that is used later.
 -/
@@ -45,6 +42,14 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
+/-- **Proposition 5.3**, with the authors' corrected set
+`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (see `SemilinearLimitRelaxedStatement` for the
+difference from arXiv v1): the supersolution part (`semilinear_limit_isParaSuper`) and the relaxed
+subsolution property of `(u, E*)` (`semilinear_limit_isParaRelaxedSub_star`). -/
+theorem semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement := by
+  intro d S β hβ T εs us u _ hεpos hεlim hsol hnn hconv
+  exact ⟨semilinear_limit_isParaSuper hβ hεpos hεlim hsol hnn hconv,
+    semilinear_limit_isParaRelaxedSub_star hβ hεpos hεlim hsol hnn hconv⟩
 
 section Cor54
 

@@ -166,6 +166,7 @@ theorem locallyIntegrable_marginal {u : E (n + 1) → ℝ} (hu : LocallyIntegrab
     (disjoint_empty K)
   have hi := (marginal_integral b hu hφ₁ hφ₁c θ.continuous hθc).1
   refine (hi.integrableOn (s := K)).congr_fun (fun y hy ↦ ?_) hK.measurableSet
+  beta_reduce
   rw [hθ1 hy, Pi.one_apply, one_mul]
 
 end Marginals
@@ -294,7 +295,7 @@ theorem exists_Ioo_eq_slice_ball (hb : b 0 = e) (he : ‖e‖ = 1) (y : Fin n �
   · refine ⟨0, 0, le_rfl, ?_⟩
     rw [Ioo_self]
     ext s
-    simp only [mem_setOf_eq, mem_ball, mem_empty_iff_false, iff_false, not_lt]
+    simp only [Set.mem_ofPred_eq, mem_ball, mem_empty_iff_false, iff_false, not_lt]
     rcases hH with hr | hH
     · exact hr.trans dist_nonneg
     · by_contra h
@@ -309,7 +310,7 @@ theorem exists_Ioo_eq_slice_ball (hb : b 0 = e) (he : ‖e‖ = 1) (y : Fin n �
     set H := r ^ 2 - ‖z‖ ^ 2 + p ^ 2
     refine ⟨-p - √H, -p + √H, by linarith [Real.sqrt_nonneg H], ?_⟩
     ext s
-    simp only [mem_setOf_eq, mem_ball, mem_Ioo]
+    simp only [Set.mem_ofPred_eq, mem_ball, mem_Ioo]
     rw [← sq_lt_sq₀ dist_nonneg hr.le, hdist]
     have : (s + p) ^ 2 + (‖z‖ ^ 2 - p ^ 2) < r ^ 2 ↔ |s + p| < √H := by
       rw [Real.lt_sqrt (abs_nonneg _), sq_abs]; constructor <;> intro h <;> linarith
@@ -394,11 +395,11 @@ theorem energyJ_ge_of_downward {α q : ℝ} (hq : 0 < q) (hqα : q ≤ α) (he :
   by_cases h : 0 < w s
   · rw [indicator_of_mem (show s ∈ {s | 0 < w s} from h),
       indicator_of_mem (show Θ.symm (s, y) ∈ {x | 0 < v x} by
-        rw [mem_setOf_eq, hs']; exact h)]
+        rw [Set.mem_ofPred_eq, hs']; exact h)]
     rfl
   · rw [indicator_of_notMem (show s ∉ {s | 0 < w s} from h),
       indicator_of_notMem (show Θ.symm (s, y) ∉ {x | 0 < v x} by
-        rw [mem_setOf_eq, hs']; exact h)]
+        rw [Set.mem_ofPred_eq, hs']; exact h)]
 /-- The energy of the two-plane function on a ball: `J_q(φ_α; B) = (α² + q²)|B|` (any weak
 gradient of `φ_α`). -/
 theorem energyJ_twoPlane {d : ℕ} {α q : ℝ} (hα : 0 < α) {e : E d} (he : ‖e‖ = 1)
@@ -447,7 +448,7 @@ theorem twoPlane_downwardMinimizer_of_le_aux {α q : ℝ} (hq : 0 < q) (hqα : q
     refine setLIntegral_congr_fun_ae measurableSet_ball ?_
     filter_upwards [hvv', hGG'] with x h1 h2 hx
     have hpos : x ∈ posSet v (ball x₀ r) ↔ x ∈ posSet v' (ball x₀ r) := by
-      simp only [posSet, mem_setOf_eq, h1]
+      simp only [posSet, Set.mem_ofPred_eq, h1]
     have hind : (posSet v (ball x₀ r)).indicator (1 : E (n + 1) → ℝ) x =
         (posSet v' (ball x₀ r)).indicator 1 x := by
       by_cases h : x ∈ posSet v (ball x₀ r)
@@ -476,7 +477,7 @@ theorem twoPlane_not_upwardMinimizer {α : ℝ} (hα : 0 < α) {e : E d} (he : �
   have he0 : e ≠ 0 := by rintro rfl; simp at he
   set G := twoPlaneGrad α e with hGdef
   set B : Set (E d) := ball 0 2 with hBdef
-  haveI : IsFiniteMeasure (volume.restrict B) :=
+  have : IsFiniteMeasure (volume.restrict B) :=
     isFiniteMeasure_restrict.2 measure_ball_lt_top.ne
   have hBm : MeasurableSet B := measurableSet_ball
   set P : E d → ℝ := fun x ↦ max (1 - ‖x‖ ^ 2) 0 * (α * |inner ℝ x e|) with hPdef
@@ -521,7 +522,7 @@ theorem twoPlane_not_upwardMinimizer {α : ℝ} (hα : 0 < α) {e : E d} (he : �
   have heq : ∀ᵐ y ∂(volume.restrict (univ \ B)), v y = twoPlane α e y := by
     refine (ae_restrict_iff' (MeasurableSet.univ.diff hBm)).2 (Eventually.of_forall fun y hy ↦ ?_)
     have : 1 ≤ ‖y‖ := by
-      simp only [hBdef, mem_diff, mem_univ, mem_ball, dist_zero_right, not_lt, true_and] at hy
+      simp only [hBdef, Set.mem_sdiff, mem_univ, mem_ball, dist_zero_right, not_lt, true_and] at hy
       linarith
     simp [hvdef, twoPlaneBump_eq_zero this]
   have key := hmin 0 2 two_pos (subset_univ _) G v Gv hu hv hle heq

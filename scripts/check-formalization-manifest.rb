@@ -4,17 +4,22 @@
 # Metadata checks (no Lean):
 # * project.lean_toolchain, comparator toolchain and every workspace's lean-toolchain equal the
 #   root lean-toolchain; every dependency revision equals the one locked in lake-manifest.json;
+# * project.mathlib and the comparator mathlib equal the lakefile.toml mathlib rev, which equals
+#   the lockfile inputRev; every git package in a workspace lake-manifest.json has the root
+#   lockfile's rev and inputRev;
 # * every target's module file exists and declares the target's declaration, and every related
 #   declaration is declared somewhere in the library; each target's expected_axioms equal
 #   axioms.expected. A target of kind `sanity-check` has no library declaration: it is certified
 #   by its challenge workspace alone, so it has no module, declaration or related declarations;
-# * the challenge inventory (the targets' challenge fields) equals challenges/*/config.json;
-#   each workspace is complete and trusted-only by default. Its trusted statement surface is
-#   Challenge.lean plus either vocabulary files Challenge/*.lean or a single Statement.lean (the
-#   two layouts used in this family of repositories), all importing only Mathlib and the
-#   workspace's own trusted modules; Solution.lean imports only PerronVariational, Mathlib and the
-#   workspace's trusted modules. Config theorem names equal the target's challenge_theorems, and
-#   config permitted axioms equal axioms.expected;
+# * the challenge inventory (the targets' challenge fields) equals challenges/*/config.json; a
+#   target without a challenge field (the model example, whose check is folded into both headline
+#   workspaces) has none of its own, and no two targets share one. Each workspace is complete and
+#   trusted-only by default. Its trusted statement surface is a single Mathlib-only
+#   Vocabulary.lean plus Challenge.lean, which imports Mathlib only (its vocabulary block is
+#   generated from Vocabulary.lean; scripts/challenge-prep.py check verifies the copy); the old
+#   Statement.lean and Challenge/ layouts are rejected. Solution.lean imports only
+#   PerronVariational, Mathlib and Vocabulary. Config theorem names equal the target's
+#   challenge_theorems, and config permitted axioms equal axioms.expected;
 # * the pinned Comparator tool revisions agree with scripts/release-comparator.sh.
 #
 # Lean checks (after `lake build`): every declaration and related declaration resolves, and each
@@ -47,7 +52,15 @@ failures << 'project.lean_toolchain differs from lean-toolchain' \
   unless manifest.fetch('project').fetch('lean_toolchain') == root_toolchain
 
 # Dependencies agree with lake-manifest.json.
-locked = JSON.parse(File.read('lake-manifest.json')).fetch('packages').to_h { |p| [p['name'], p['rev']] }
+root_packages = JSON.parse(File.read('lake-manifest.json')).fetch('packages').to_h { |p| [p['name'], p] }
+locked = root_packages.transform_values { |p| p['rev'] }
+# The Mathlib tag agrees across formalization.yaml, lakefile.toml and the lockfile.
+lakefile_mathlib = File.read('lakefile.toml')[/name = "mathlib"\n(?:[^\[]*?\n)?rev = "([^"]+)"/, 1]
+mathlib_input = root_packages.fetch('mathlib')['inputRev']
+failures << "lakefile.toml mathlib rev #{lakefile_mathlib.inspect} differs from lake-manifest.json inputRev #{mathlib_input.inspect}" \
+  unless lakefile_mathlib == mathlib_input
+failures << 'project.mathlib differs from the lakefile.toml mathlib rev' \
+  unless manifest.fetch('project').fetch('mathlib') == lakefile_mathlib
 manifest.fetch('dependencies').each do |dep|
   failures << "dependency #{dep['name']}: rev #{dep['rev']} differs from lake-manifest.json (#{locked[dep['name']].inspect})" \
     unless locked[dep['name']] == dep['rev']
@@ -69,9 +82,30 @@ library_targets = targets.reject { |t| t['kind'] == SANITY_CHECK }
 targets.each do |t|
   id = t.fetch('id')
   sanity = t['kind'] == SANITY_CHECK
-  required = sanity ? %w[title kind challenge source informal] : %w[title kind module declaration challenge source informal]
+  required = sanity ? %w[title kind source informal] : %w[title kind module declaration source informal]
   required.each do |k|
     failures << "#{id}: missing #{k}" unless t[k].is_a?(String) && !t[k].strip.empty?
+  end
+  # A target has its own workspace (`challenge`) or is checked inside other targets' workspaces
+  # (`checked_in`, a list of their `challenge` paths), whose challenge_theorems then include its own.
+  if t.key?('checked_in') == t.key?('challenge')
+    failures << "#{id}: exactly one of challenge and checked_in is required"
+  elsif t.key?('challenge')
+    failures << "#{id}: missing challenge" unless t['challenge'].is_a?(String) && !t['challenge'].strip.empty?
+  else
+    hosts = t['checked_in']
+    if !hosts.is_a?(Array) || hosts.empty?
+      failures << "#{id}: checked_in must be a nonempty list"
+    else
+      hosts.each do |path|
+        host = targets.find { |o| o['challenge'] == path }
+        if host.nil?
+          failures << "#{id}: checked_in #{path.inspect} is not another target's challenge"
+        elsif !(Array(t['challenge_theorems']) - Array(host['challenge_theorems'])).empty?
+          failures << "#{id}: #{host['id']}'s challenge_theorems do not include #{t['challenge_theorems'].inspect}"
+        end
+      end
+    end
   end
   failures << "#{id}: expected_axioms differ from axioms.expected" \
     unless t['expected_axioms'].is_a?(Array) && t['expected_axioms'].sort == expected_axioms.sort
@@ -107,9 +141,11 @@ external = manifest.fetch('comparator').fetch('external_challenges')
 allowed = external.fetch('permitted_axioms')
 failures << 'comparator permitted_axioms differ from axioms.expected' unless allowed.sort == expected_axioms.sort
 failures << 'external_challenges.toolchain differs from lean-toolchain' unless external['toolchain'] == root_toolchain
+failures << 'external_challenges.mathlib differs from the lakefile.toml mathlib rev' \
+  unless external['mathlib'] == lakefile_mathlib
 directory = external.fetch('directory')
 
-listed = targets.map { |t| t['challenge'] }
+listed = targets.map { |t| t['challenge'] }.compact
 failures << 'two targets share a challenge workspace' unless listed.uniq.length == listed.length
 on_disk = Dir.glob("#{directory}/*/config.json").map { |c| File.dirname(c) }.sort
 unless listed.sort == on_disk
@@ -118,29 +154,44 @@ unless listed.sort == on_disk
 end
 
 imports = lambda do |f|
-  # Accepts plain, `public`, `meta` and `public meta` imports (Lean module system).
-  File.file?(f) ? File.read(f).scan(/^\s*(?:public\s+)?(?:meta\s+)?import\s+(?:all\s+)?(\S+)/).flatten : []
+  # Accepts plain, `public`, `meta` and `public meta` imports (Lean module system). The module name
+  # must be an identifier, so a docstring line starting "import `Mathlib`" does not count.
+  return [] unless File.file?(f)
+  File.read(f).scan(/^\s*(?:public\s+)?(?:meta\s+)?import\s+(?:all\s+)?([A-Za-z_][A-Za-z0-9_'.]*)\s*$/).flatten
 end
 
 targets.each do |t|
+  next unless t['challenge']
   path = t['challenge'].to_s
   next unless File.directory?(path)
-  %w[Challenge.lean Solution.lean config.json lakefile.toml lake-manifest.json lean-toolchain].each do |f|
+  %w[Vocabulary.lean Challenge.lean Solution.lean config.json lakefile.toml lake-manifest.json
+     lean-toolchain].each do |f|
     failures << "#{path}: missing #{f}" unless File.file?(File.join(path, f))
   end
-  vocabulary = Dir.glob(File.join(path, 'Challenge', '*.lean')).sort
-  statement = File.join(path, 'Statement.lean')
-  vocabulary << statement if File.file?(statement)
-  failures << "#{path}: no trusted vocabulary (Challenge/*.lean or Statement.lean)" if vocabulary.empty?
-  vocabulary_modules = vocabulary.map do |f|
-    f == statement ? 'Statement' : "Challenge.#{File.basename(f, '.lean')}"
-  end
+  failures << "#{path}: Statement.lean is the old layout (use Vocabulary.lean)" \
+    if File.exist?(File.join(path, 'Statement.lean'))
+  failures << "#{path}: Challenge/ is the old layout (use Vocabulary.lean)" \
+    if File.exist?(File.join(path, 'Challenge'))
+  vocabulary = File.join(path, 'Vocabulary.lean')
+  vocabulary_modules = ['Vocabulary']
   toolchain = File.join(path, 'lean-toolchain')
   failures << "#{path}: lean-toolchain differs from the root" \
     if File.file?(toolchain) && File.read(toolchain).strip != root_toolchain
-  [File.join(path, 'Challenge.lean'), *vocabulary].each do |f|
-    bad = imports.call(f).reject { |m| m == 'Mathlib' || m.start_with?('Mathlib.') || vocabulary_modules.include?(m) }
-    failures << "#{f}: imports outside Mathlib and the workspace vocabulary: #{bad.inspect}" unless bad.empty?
+  ws_manifest = File.join(path, 'lake-manifest.json')
+  if File.file?(ws_manifest)
+    JSON.parse(File.read(ws_manifest)).fetch('packages').each do |pkg|
+      next unless pkg['type'] == 'git'
+      root_pkg = root_packages[pkg['name']]
+      if root_pkg.nil?
+        failures << "#{ws_manifest}: package #{pkg['name']} is not in the root lake-manifest.json"
+      elsif pkg['rev'] != root_pkg['rev'] || pkg['inputRev'] != root_pkg['inputRev']
+        failures << "#{ws_manifest}: #{pkg['name']} rev/inputRev differ from the root lake-manifest.json"
+      end
+    end
+  end
+  [File.join(path, 'Challenge.lean'), vocabulary].each do |f|
+    bad = imports.call(f).reject { |m| m == 'Mathlib' || m.start_with?('Mathlib.') }
+    failures << "#{f}: imports outside Mathlib: #{bad.inspect}" unless bad.empty?
   end
   solution_imports = imports.call(File.join(path, 'Solution.lean'))
   bad = solution_imports.reject do |m|

@@ -8,7 +8,8 @@ module
 public import PerronVariational.Semilinear.ProfileSuper
 public import PerronVariational.Registry.Semilinear
 public import PerronVariational.Semilinear.Profiles
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Parabolic.StatToPara
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.WellPrepared
@@ -177,7 +178,7 @@ theorem touch_compare (hS : ∀ᶠ y in 𝓝 p.1, (y, p.2) ∈ S)
       (hGd.sub hFd).differentiableAt
     have h := deriv_nonpos_of_le_left hdiff ha fun t ht ↦ by
       have := hsub ht
-      simp only [mem_setOf_eq] at this
+      simp only [Set.mem_ofPred_eq] at this
       change G (p.1, p.2) - F (p.1, p.2) ≤ G (p.1, t) - F (p.1, t)
       have : G (p.1, p.2) = F (p.1, p.2) := heq.symm
       linarith [hsub ht]

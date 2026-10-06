@@ -1,7 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this Lean formalization, please cite it using this metadata, and cite the paper it formalizes (listed under references)."
 title: "bernoulli-perron-variational: variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, in Lean"
-version: "0.1.0"
+version: "0.2.0"
+date-released: "2026-10-05"
 license: "Apache-2.0"
 repository-code: "https://github.com/willmfeldman/bernoulli-perron-variational"
 authors:

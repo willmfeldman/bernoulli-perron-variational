@@ -107,7 +107,7 @@ theorem integral_inner_gradient_eq_neg {U : Set (E d)} (hU : IsOpen U) {f : E d 
       (fun x ↦ fderiv ℝ f x (coordVec i) * fderiv ℝ φ x (coordVec i)) U := by
     intro i
     obtain ⟨C, hC⟩ := (hφic i).exists_bound_of_continuous (hφi i).continuous
-    refine IntegrableOn.of_forall_diff_eq_zero (s := tsupport φ) ?_ hU.measurableSet
+    refine IntegrableOn.of_forall_sdiff_eq_zero (s := tsupport φ) ?_ hU.measurableSet
       fun x hx ↦ ?_
     · refine IntegrableOn.of_bound hK.measure_lt_top
         ((measurable_fderiv_apply_const ℝ f _).mul
@@ -132,7 +132,7 @@ theorem integral_inner_gradient_eq_neg {U : Set (E d)} (hU : IsOpen U) {f : E d 
           by_contra h'
           exact hy (by simp [fderiv_of_notMem_tsupport ℝ fun h ↦ h' (hφiU i h)]))
           (isClosed_tsupport _)
-    refine IntegrableOn.of_forall_diff_eq_zero (s := tsupport φ) ?_ hU.measurableSet
+    refine IntegrableOn.of_forall_sdiff_eq_zero (s := tsupport φ) ?_ hU.measurableSet
       fun x hx ↦ ?_
     · exact ((hf.continuousOn.mono hφU).mul hc.continuousOn).integrableOn_compact hK
     · simp [image_eq_zero_of_notMem_tsupport fun h ↦ hx.2 (hcs h)]
@@ -169,7 +169,7 @@ theorem tendsto_setIntegral_mul_of_tendstoUniformlyOn {U : Set (E d)} (hU : Meas
   set K := tsupport ψ
   have hK : IsCompact K := hψc.isCompact
   have hred : ∀ g : E d → ℝ, ∫ x in U, g x * ψ x = ∫ x in K, g x * ψ x := fun g ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hU hψU fun x hx ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU hψU fun x hx ↦ by
       simp [image_eq_zero_of_notMem_tsupport hx.2]
   simp_rw [hred]
   set C := ∫ x in K, |ψ x|
@@ -211,7 +211,7 @@ theorem tendsto_integral_mul_of_lintegral_sq {μ : Measure (E d)} {W : ℕ → E
   set a : ℕ → ℝ := fun n ↦ ((∫⁻ x, ENNReal.ofReal (W n x ^ 2) ∂μ).toReal) ^ (1 / (2 : ℝ)) * c
   have ha : Tendsto a atTop (𝓝 0) := by
     have h1 : Tendsto (fun n ↦ (∫⁻ x, ENNReal.ofReal (W n x ^ 2) ∂μ).toReal) atTop (𝓝 0) := by
-      simpa using (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp h0
+      simpa [Function.comp_def] using (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp h0
     have h2 := ((Real.continuous_rpow_const (q := 1 / (2 : ℝ)) (by norm_num)).tendsto 0).comp h1
     rw [Real.zero_rpow (by norm_num)] at h2
     simpa [a] using h2.mul_const c

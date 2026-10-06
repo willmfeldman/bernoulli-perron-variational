@@ -59,7 +59,7 @@ theorem IsSemilinearSolOn.continuousOn_lapₓ {U : Set (E d)} {Q : E d → ℝ} 
     ContinuousOn (lapₓ v) (U ×ˢ I) := by
   refine (hv.2.2.2.2.2.1.add (((hQ.comp continuousOn_fst fun p hp ↦ hp.1).pow 2).mul
     ((hβ.continuous_betaEps ε).comp_continuousOn hv.1))).congr fun p hp ↦ ?_
-  simp only [Pi.add_apply, Pi.mul_apply, Function.comp_apply]
+  simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Function.comp_apply]
   rw [hv.2.2.2.2.2.2 p hp]
   ring
 

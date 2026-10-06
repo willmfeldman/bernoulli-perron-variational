@@ -189,9 +189,10 @@ theorem hasGradientAt_barrier {z y : E 2} (h1 : 1 / 400 ≤ ‖y - z‖ ^ 2)
   rw [hasGradientAt_iff_hasFDerivAt] at hw hG ⊢
   have := (hw.const_mul (10 * barB θ)).add hG
   convert this using 1
+  · rfl
   have hτ0 : ‖y - z‖ ^ 2 ≠ 0 := by linarith
   ext w
-  simp only [map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [map_smul, add_apply, smul_apply,
     toDual_apply_apply, smul_eq_mul]
   field_simp
   ring
@@ -228,7 +229,7 @@ theorem barrier_le_of_mem {V : E 2 → ℝ} (hV : V ∈ perronSuperClass domain 
   set K := {y : E 2 | 1 / 400 ≤ ‖y - z‖ ^ 2 ∧ ‖y - z‖ ^ 2 ≤ barR θ ^ 2} with hK
   have hKc : IsCompact K := by
     refine Metric.isCompact_of_isClosed_isBounded ?_ ?_
-    · simp only [hK, Set.setOf_and]
+    · simp only [hK, Set.ofPred_and]
       exact (isClosed_le continuous_const (by fun_prop)).inter
         (isClosed_le (by fun_prop) continuous_const)
     · refine (Metric.isBounded_closedBall (x := z) (r := 1)).subset fun w hw ↦ ?_
@@ -266,7 +267,7 @@ theorem barrier_le_of_mem {V : E 2 → ℝ} (hV : V ∈ perronSuperClass domain 
     isOpen_domain hV.2.1 hmU ((contDiff_barrier z θ).sub contDiff_const) ?_ (by rw [hM]; ring) ?_ ?_
   · filter_upwards [hnhds] with w hw
     have := hmax hw
-    simp only [mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     linarith
   · rw [show (fun w ↦ barrier z θ w - M) = fun w ↦ barrier z θ w + (-M) by funext w; ring,
       laplacian_add_const (contDiff_barrier z θ).contDiffAt,

@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Inner.SemilinearEstimates
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.ChiCompact
 import PerronVariational.Inner.ChiConverge
 import PerronVariational.Inner.ReactionBound
@@ -223,7 +224,8 @@ theorem chiEps_time_translation (S : Setting d) (hβ : IsReactionProfile β)
             (∫⁻ p in B', ‖S.Q (p + ((y, 0) : E d × ℝ)).1 ^ 2 - S.Q p.1 ^ 2‖ₑ) +
             ENNReal.ofReal Qm * ∫⁻ p in B',
               ‖chiEps β (ε n) (v n) (p + (y, 0)) - chiEps β (ε n) (v n) p‖ₑ := by
-          rw [lintegral_add_left' (hm1.add hm2), lintegral_add_left' hm1,
+          rw [lintegral_add_left' (f := fun p : E d × ℝ ↦ ‖Fn n (p + (y, 0)) - Fn n p‖ₑ +
+              ‖S.Q (p + (y, (0 : ℝ))).1 ^ 2 - S.Q p.1 ^ 2‖ₑ) (hm1.add hm2), lintegral_add_left' hm1,
             lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
       _ ≤ ENNReal.ofReal (η₁ / 3) + ENNReal.ofReal (η₁ / 3) +
             ENNReal.ofReal Qm * ENNReal.ofReal (η₁ / (3 * (Qm + 1))) := by

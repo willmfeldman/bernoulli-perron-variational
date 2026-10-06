@@ -6,10 +6,8 @@
 # the release comparator workflow.
 #
 # Targets of kind `sanity-check` have no library declaration: they are certified by their challenge
-# workspace alone.
-#
-# DRAFT (release phase E). TODO before release: the Comparator result (see challenges/README.md);
-# a check of every result number against arXiv:2609.14981.
+# workspace alone. A target with `checked_in` instead of `challenge` has no workspace of its own: its
+# challenge theorems are compared inside the listed workspaces.
 schema_version: "1"
 project:
   name: "PerronVariational"
@@ -20,8 +18,8 @@ project:
   license: "Apache-2.0"
   language: "Lean"
   theorem_prover: "Lean 4"
-  lean_toolchain: "leanprover/lean4:v4.30.0"
-  mathlib: "v4.30.0"
+  lean_toolchain: "leanprover/lean4:v4.35.0-rc3"
+  mathlib: "v4.35.0-rc3"
   description: >-
     Lean 4 formalization of F. Abedin, W. M. Feldman, K. Stinson, Variational properties of
     Perron's extremal solutions in the Bernoulli one-phase problem (arXiv:2609.14981). For the
@@ -34,28 +32,28 @@ project:
 dependencies:
   - name: "mathlib"
     url: "https://github.com/leanprover-community/mathlib4"
-    rev: "c5ea00351c28e24afc9f0f84379aa41082b1188f"
+    rev: "c55e6e786f49471c72fbddbec5415808896aec1e"
   - name: "viscosity_solns"
     url: "https://github.com/willmfeldman/viscosity-solution-theory"
-    rev: "3a9310934abe88875ed27fc6343ec1423f2850bc"
+    rev: "b9dc82d59e19c5689b6669b41e0c59168c1cdc84"
   - name: "AleksandrovDifferentiability"
     url: "https://github.com/willmfeldman/aleksandrov-differentiability"
-    rev: "730e7e9256c7e8018abad3bbc50a0598c656b61c"
+    rev: "5e5c2ec4cee4f8851387e9bb309eeb703cd72a25"
   - name: "parabolic_basic_theory"
     url: "https://github.com/willmfeldman/parabolic-basic-theory"
-    rev: "35be935ced4a87143ee33f1e718d3ba0951cb7c8"
+    rev: "1f685e27f2c8882b3f7bf3122436068a0c7f2584"
   - name: "bernoulli_parabolic_comparison"
     url: "https://github.com/willmfeldman/bernoulli-parabolic-comparison"
-    rev: "181494163728af0e23f44e0fa5b3817c4817b353"
+    rev: "fb1cbd1a28042da4c88091f804a707462682a93a"
   - name: "elliptic_bernoulli_foundations"
     url: "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
-    rev: "245f3210442ec4970675605aeef19119edf6de97"
+    rev: "2b64e837a591b32c8ab3c7608304057e556ec0aa"
   - name: "gmt_foundations"
     url: "https://github.com/willmfeldman/gmt-foundations"
-    rev: "5075a93696ec4e203cc6f3a886b21f3407eb6507"
+    rev: "45847e7fce2ff1c78a19a048befc3c418dd8b1fb"
   - name: "inner_variational"
     url: "https://github.com/willmfeldman/bernoulli-rectifiability"
-    rev: "807d9c7f8ef7fede9811e8630079a48796208b9f"
+    rev: "27cff843d8dddf4dd017c4349efb8aaa7d47f838"
 
 build:
   package_file: "lakefile.toml"
@@ -116,6 +114,7 @@ targets:
     challenge_theorems:
       - challenge_main_smallest
       - challenge_main_largest
+      - challenge_model_example
   - id: planar-structure
     kind: headline-theorem
     expected_axioms: [propext, Quot.sound, Classical.choice]
@@ -139,6 +138,7 @@ targets:
     challenge_theorems:
       - challenge_corollary_2d_smallest
       - challenge_corollary_2d_largest
+      - challenge_model_example
   - id: model-cases
     kind: model-example
     expected_axioms: [propext, Quot.sound, Classical.choice]
@@ -161,7 +161,9 @@ targets:
       ∂B_{1/10}((±1/10, 0)), which touch at 0. The proof uses Theorem 1.1 (u_min
       is a viscosity solution) and Corollary 1.2(ii) (u_max is classical, so it
       cannot have the two-plane point of u_min).
-    challenge: challenges/model-cases
+    checked_in:
+      - challenges/main-theorem
+      - challenges/planar-structure
     challenge_theorems:
       - challenge_model_example
 
@@ -169,17 +171,18 @@ comparator:
   external_challenges:
     directory: "challenges"
     purpose: >-
-      Standalone comparator challenge workspaces, one per target above (its challenge and
-      challenge_theorems fields). They share one trusted Statement.lean, which imports Mathlib
-      only and defines every notion the claims use; each Challenge.lean states the target's
-      claims with `sorry`. Each Solution.lean imports PerronVariational and proves the same statements from the
-      library.
+      Standalone comparator challenge workspaces, one per headline target above (its challenge
+      and challenge_theorems fields); the model example is checked in both. Each workspace has
+      its own trusted Vocabulary.lean, which imports Mathlib only and defines every notion its
+      claims use; each Challenge.lean repeats that vocabulary verbatim and states the claims with
+      `sorry`. Each Solution.lean imports Vocabulary and PerronVariational and proves the same
+      statements from the library.
     release_workflow: ".github/workflows/release-comparator.yml"
-    comparator_revision: "d03acab154d269c06e60e4de7e4cc85deebff94b"
-    lean4export_revision: "a3e35a584f59b390667db7269cd37fca8575e4bf"
-    landrun_revision: "5ed4a3db3a4ad930d577215c6b9abaa19df7f99f"
-    toolchain: "leanprover/lean4:v4.30.0"
-    mathlib: "v4.30.0"
+    comparator_revision: "fd5d5bcf14177b187f66d4502071268d877887c3"
+    lean4export_revision: "66f1fb4bc256072069767fce52d39480e4524869"
+    landrun_revision: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
+    toolchain: "leanprover/lean4:v4.35.0-rc3"
+    mathlib: "v4.35.0-rc3"
     permitted_axioms:
       - "propext"
       - "Classical.choice"

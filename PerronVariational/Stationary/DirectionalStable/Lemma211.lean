@@ -107,12 +107,12 @@ theorem energyJ_le_of_down (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d 
   have hs := half_le_annRad hR k
   have hsR := annRad_lt hR k
   have hBsR : ball x s ⊆ ball x R := ball_subset_ball hsR.le
-  have hAK : ball x R \ ball x s ⊆ closedBall x R := diff_subset.trans ball_subset_closedBall
+  have hAK : ball x R \ ball x s ⊆ closedBall x R := Set.sdiff_subset.trans ball_subset_closedBall
   have hstep := down_step D hu hv hvu hmin hP hs hsR
   have hA : energyJ (ball x R \ ball x s) Q u Gu ≤
       (∫⁻ y in ball x R \ ball x s, ENNReal.ofReal (‖Gu y‖ ^ 2)) +
         ∫⁻ _ in ball x R \ ball x s, ENNReal.ofReal (Qmax ^ 2) := by
-    rw [energyJ_eq_add (huK.2.1.mono_measure (Measure.restrict_mono hAK le_rfl))]
+    rw [energyJ_eq_add (huK.2.aestronglyMeasurable.mono_measure (Measure.restrict_mono hAK le_rfl))]
     refine add_le_add le_rfl (lintegral_mono_ae ?_)
     filter_upwards [ae_restrict_mem (measurableSet_ball.diff measurableSet_ball)] with y hy
     exact ENNReal.ofReal_le_ofReal (sq_mul_indicator_le (D.abs_Q_le (hAK hy)) _ y)
@@ -150,12 +150,12 @@ theorem energyJ_le_of_up (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d �
   have hs := half_le_annRad hR k
   have hsR := annRad_lt hR k
   have hBsR : ball x s ⊆ ball x R := ball_subset_ball hsR.le
-  have hAK : ball x R \ ball x s ⊆ closedBall x R := diff_subset.trans ball_subset_closedBall
+  have hAK : ball x R \ ball x s ⊆ closedBall x R := Set.sdiff_subset.trans ball_subset_closedBall
   have hstep := up_step D hu hv hvu hmin hP hs hsR
   have hA : energyJ (ball x R \ ball x s) Q u Gu ≤
       (∫⁻ y in ball x R \ ball x s, ENNReal.ofReal (‖Gu y‖ ^ 2)) +
         ∫⁻ _ in ball x R \ ball x s, ENNReal.ofReal (Qmax ^ 2) := by
-    rw [energyJ_eq_add (huK.2.1.mono_measure (Measure.restrict_mono hAK le_rfl))]
+    rw [energyJ_eq_add (huK.2.aestronglyMeasurable.mono_measure (Measure.restrict_mono hAK le_rfl))]
     refine add_le_add le_rfl (lintegral_mono_ae ?_)
     filter_upwards [ae_restrict_mem (measurableSet_ball.diff measurableSet_ball)] with y hy
     exact ENNReal.ofReal_le_ofReal (sq_mul_indicator_le (D.abs_Q_le (hAK hy)) _ y)
@@ -308,7 +308,7 @@ theorem harmonic_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ} {u
     have h1 := LongTime.integral_inner_gradient_eq_neg hV ((hunL n).mono hVU) hφ2 hφc hKV
     rw [integral_inner_gradient_eq_zero_of_harmonic hV (hc2 n) (hharm n) hφ hφc hKV,
       zero_eq_neg] at h1
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hVU fun y hy ↦ by
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hVU fun y hy ↦ by
       simp [image_eq_zero_of_notMem_tsupport fun h ↦ hy.2 (hKV (hLK h))]]
     exact h1
   have hlim : Tendsto (fun n ↦ ∫ x in U, un n x * LongTime.coordLap φ x) atTop
@@ -320,7 +320,7 @@ theorem harmonic_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ} {u
   have hzero : ∫ x in U, u x * LongTime.coordLap φ x = 0 :=
     tendsto_nhds_unique hlim (tendsto_const_nhds.congr' (hkey.mono fun n hn ↦ hn.symm))
   rw [LongTime.integral_inner_gradient_eq_neg hW (huL.mono hWU) hφ2 hφc hφW,
-    ← setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hWU fun y hy ↦ by
+    ← setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hWU fun y hy ↦ by
       simp [image_eq_zero_of_notMem_tsupport fun h ↦ hy.2 (hφW (hLK h))], hzero, neg_zero]
 
 /-- The data `StabData` for a ball `B̄_R(x) ⊆ U` and a fixed domain `Uₙ = U`. -/
@@ -472,7 +472,7 @@ theorem harmonic (hc2 : ∀ n, ContDiffOn ℝ 2 (un n) (posSet (un n) (Un n)))
         D.tendstoUniformlyOn_shift hK N)
       (fun k ↦ (hc2 _).mono (hpos k)) fun k z hz ↦ hharm _ z (hpos k hz)
   have hset : ∀ y, posSet v univ ∩ ball y 1 = posSet v (ball y 1) := fun y ↦ by
-    ext z; simp only [posSet, mem_inter_iff, mem_setOf_eq, mem_univ, true_and]; tauto
+    ext z; simp only [posSet, mem_inter_iff, Set.mem_ofPred_eq, mem_univ, true_and]; tauto
   refine ⟨contDiffOn_of_locally_contDiffOn fun y _ ↦ ⟨ball y 1, isOpen_ball,
     mem_ball_self one_pos, by rw [hset]; exact (hloc y).1⟩, fun y hy ↦ ?_⟩
   exact (hloc y).2 y ⟨mem_ball_self one_pos, hy.2⟩

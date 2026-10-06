@@ -79,7 +79,7 @@ theorem integral_mul_dₜ_eq_neg {U : Set (E d)} {f ψ : E d × ℝ → ℝ}
       have hq0 : 0 < q.2 := (hψs hqK).2
       exact ⟨q.2 / 2, half_pos hq0, fun p hp ↦ by
         have := hmin hp
-        simp only [mem_setOf_eq] at this
+        simp only [Set.mem_ofPred_eq] at this
         linarith⟩
   obtain ⟨B, hB⟩ := (hK.image continuous_snd).bddAbove
   set b := max B a + 1 with hbdef
@@ -168,11 +168,15 @@ theorem tendstoWeakL2_gradₓ {U : Set (E d)} (hU : IsOpen U) {v : ℕ → E d �
       (fun x ↦ gradₓ u (x, t)) atTop := by
     intro t ht
     have hmaps : MapsTo (fun x : E d ↦ (x, t)) U (UInf U) := fun x hx ↦ ⟨hx, ht⟩
-    have hc : ContinuousOn (fun x : E d ↦ (x, t)) U :=
-      (continuous_id.prodMk continuous_const).continuousOn
-    exact tendstoWeakL2_gradient_of_tendsto hU
-      (fun n ↦ locallyLipschitzOn_of_gradient hU (hvd n t ht) ((hvg n).comp hc hmaps))
-      (hulip.locallyLipschitzOn_slice ht) (hconv.comp _ hmaps hc) hE0 (fun n ↦ hbd n t ht)
+    have hc : ContinuousOn (fun x : E d ↦ (x, t)) U := by fun_prop
+    have hl : ∀ n, LocallyLipschitzOn U (fun x ↦ v n (x, t)) := fun n ↦
+      locallyLipschitzOn_of_gradient hU (hvd n t ht) ((hvg n).comp hc hmaps)
+    have hcv : TendstoLocallyUniformlyOn (fun n x ↦ v n (x, t)) (fun x ↦ u (x, t)) atTop U :=
+      hconv.comp _ hmaps hc
+    have key := tendstoWeakL2_gradient_of_tendsto hU hl (hulip.locallyLipschitzOn_slice ht) hcv
+      hE0 (fun n ↦ hbd n t ht)
+    unfold gradₓ
+    exact key
   have hubd : ∀ t > 0, ∫⁻ x in U, ENNReal.ofReal (‖gradₓ u (x, t)‖ ^ 2) ≤ E0 := by
     intro t ht
     have h := Registry.lintegral_weighted_sq_le_liminf volume U _ _ (hsl t ht) (fun _ ↦ 1)
@@ -204,7 +208,7 @@ theorem hasWeakTimeDeriv_of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ →
   refine ⟨hucont.locallyIntegrableOn hΩm, ?_, ?_⟩
   · rw [locallyIntegrableOn_iff hΩo.isLocallyClosed]
     intro k hk hkc
-    haveI : IsFiniteMeasure (volume.restrict k) :=
+    have : IsFiniteMeasure (volume.restrict k) :=
       isFiniteMeasure_restrict.2 hkc.measure_lt_top.ne
     have h := hw.2.1.restrict k
     rw [Measure.restrict_restrict_of_subset hk] at h
@@ -214,14 +218,14 @@ theorem hasWeakTimeDeriv_of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ →
     set K := tsupport ψ with hKdef
     have hK : IsCompact K := hψc
     have hKm : MeasurableSet K := (isClosed_tsupport ψ).measurableSet
-    haveI : IsFiniteMeasure (volume.restrict K) :=
+    have : IsFiniteMeasure (volume.restrict K) :=
       isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
     have hid : ∀ n, ∫ p in UInf U, v n p * dₜ ψ p = -∫ p in UInf U, dₜ (v n) p * ψ p :=
       fun n ↦ integral_mul_dₜ_eq_neg (fun p hp ↦ (hvd n p hp).hasDerivAt) (hvc n) (hvdc n)
         hψ1 hψc hψs
     -- the `u`-term: uniform convergence on `K`
     have hΩK : ∀ g : E d × ℝ → ℝ, ∫ p in UInf U, g p * dₜ ψ p = ∫ p in K, g p * dₜ ψ p :=
-      fun g ↦ setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩm hψs fun p hp ↦ by
+      fun g ↦ setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩm hψs fun p hp ↦ by
         simp [dₜ_eq_zero_of_notMem hψ1 hp.2]
     obtain ⟨Bu, hBu⟩ := hK.exists_bound_of_continuousOn (hucont.mono hψs)
     obtain ⟨Bψ, hBψ⟩ := hK.exists_bound_of_continuousOn (continuous_dₜ hψ1).continuousOn

@@ -11,7 +11,8 @@ import GMTFoundations.Sobolev.Cutoff
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.Analysis.Calculus.Rademacher
 import Mathlib.Analysis.InnerProductSpace.Trace
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.WeakHeat
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
@@ -90,7 +91,7 @@ theorem integral_fderiv_apply_eq_neg {U : Set (E d)} (hU : IsOpen U) {h : E d �
   set e := stdOrthonormalBasis ℝ (E d) with hedef
   set g : Fin (Module.finrank ℝ (E d)) → E d → ℝ := fun i x ↦ ⟪e i, Y x⟫ with hgdef
   have hgl : ∀ i, LipschitzWith (‖innerSL ℝ (e i)‖₊ * CY) (g i) := fun i ↦
-    (innerSL ℝ (e i)).lipschitz.comp hY
+    (innerSL ℝ (e i)).lipschitzWith.comp hY
   have hgsupp : ∀ i, Function.support (g i) ⊆ Function.support Y := fun i x hx h0 ↦
     hx (by simp [g, h0])
   have hgc : ∀ i, HasCompactSupport (g i) := fun i ↦ hYc.mono (hgsupp i)
@@ -237,9 +238,9 @@ theorem integral_innerVar_slice {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ
     have hsum : HasFDerivAt (fun x ↦ ∑ i, D i x * D i x)
         (∑ i, (D i x • fderiv ℝ (D i) x + D i x • fderiv ℝ (D i) x)) x :=
       HasFDerivAt.fun_sum fun i _ ↦ (hDd i).hasFDerivAt.mul (hDd i).hasFDerivAt
-    rw [hh', hsum.fderiv, ContinuousLinearMap.sum_apply, hG x, map_sum, Finset.mul_sum]
+    rw [hh', hsum.fderiv, sum_apply, hG x, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
-    rw [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul, map_smul,
+    rw [add_apply, smul_apply, smul_eq_mul, map_smul,
       smul_eq_mul, hdD i x hx v]
     ring
   -- `g = Df · X`
@@ -266,7 +267,7 @@ theorem integral_innerVar_slice {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ
       have hsymm := (hf.contDiffAt (hU.mem_nhds hxU)).isSymmSndFDerivAt (by simp)
       rw [real_inner_comm, inner_gradient_eq_fderiv,
         fderiv_clm_apply (hdf x hxU) (hX.differentiable one_ne_zero x), hdh x hxU]
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_comp',
+      simp only [add_apply, ContinuousLinearMap.coe_comp,
         Function.comp_apply, ContinuousLinearMap.flip_apply]
       rw [← inner_gradient_eq_fderiv, hsymm (∇ f x) (X x)]
       ring
@@ -299,7 +300,7 @@ theorem integral_innerVar_slice {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ
   have hp4 : ∀ x, fderiv ℝ c x (P x • X x) = 2 * (⟪X x, ∇ f x⟫ * (P x * r x)) := by
     intro x
     by_cases hx : x ∈ U
-    · rw [hcr x hx, ContinuousLinearMap.smul_apply, map_smul, smul_eq_mul, smul_eq_mul,
+    · rw [hcr x hx, smul_apply, map_smul, smul_eq_mul, smul_eq_mul,
         real_inner_comm, inner_gradient_eq_fderiv]
       ring
     · have hxK : x ∉ K := fun h' ↦ hx (hXU h')

@@ -9,7 +9,8 @@ public import PerronVariational.Inner.WeissTime.EnergyMoment
 public import PerronVariational.Inner.SliceHeat
 import GMTFoundations.Sobolev.Cutoff
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.Common
 
 /-!
@@ -109,7 +110,8 @@ theorem eventually_translation_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : Is
       _ = eLpNorm (f n - f₀) 1 (volume.restrict A') +
           eLpNorm (f N - f₀) 1 (volume.restrict A') := by
           rw [lintegral_add_left' (f := fun q ↦ ‖f n q - f₀ q‖ₑ) ((hfm n).sub hf₀m).enorm,
-            eLpNorm_one_eq_lintegral_enorm, eLpNorm_one_eq_lintegral_enorm]
+            eLpNorm_one_eq_lintegral_enorm ((hfm n).sub hf₀m),
+            eLpNorm_one_eq_lintegral_enorm ((hfm N).sub hf₀m)]
           rfl
       _ ≤ ENNReal.ofReal (η / 8) + ENNReal.ofReal (η / 8) := add_le_add (hN n hn) (hN N le_rfl)
       _ = ENNReal.ofReal (η / 4) := by
@@ -147,7 +149,8 @@ theorem eventually_translation_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : Is
             ‖f N p - f n p‖ₑ) := lintegral_mono hsplit
       _ = (∫⁻ p in A, ‖f n (p + w) - f N (p + w)‖ₑ) + (∫⁻ p in A, ‖f N (p + w) - f N p‖ₑ) +
             ∫⁻ p in A, ‖f N p - f n p‖ₑ := by
-          rw [lintegral_add_left' (hm1.add hm2), lintegral_add_left' hm1]
+          rw [lintegral_add_left' (f := fun p ↦ ‖f n (p + w) - f N (p + w)‖ₑ +
+            ‖f N (p + w) - f N p‖ₑ) (hm1.add hm2), lintegral_add_left' hm1]
       _ ≤ ENNReal.ofReal (η / 4) + ENNReal.ofReal (η / 4) + ENNReal.ofReal (η / 4) := by
           gcongr
       _ ≤ ENNReal.ofReal η := by
@@ -541,7 +544,10 @@ theorem lintegral_time_translate_of_energy {B B' : Set (E d × ℝ)} (hBm : Meas
         (∫⁻ p in B, ‖mm (p + (0, s)) - mm p‖ₑ) + (∫⁻ p in B, ‖mm p - e p‖ₑ) +
         ∫⁻ p in B, ‖Fn (p + (0, s)) - Fn p‖ₑ) := by
         rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top,
-          lintegral_add_left' ((ha1.add ha2).add ha3), lintegral_add_left' (ha1.add ha2),
+          lintegral_add_left' (f := fun p ↦ ‖e (p + (0, s)) - mm (p + (0, s))‖ₑ +
+            ‖mm (p + (0, s)) - mm p‖ₑ + ‖mm p - e p‖ₑ) ((ha1.add ha2).add ha3),
+          lintegral_add_left' (f := fun p ↦ ‖e (p + (0, s)) - mm (p + (0, s))‖ₑ +
+            ‖mm (p + (0, s)) - mm p‖ₑ) (ha1.add ha2),
           lintegral_add_left' ha1]
     _ ≤ ENNReal.ofReal (1 / m) * (ENNReal.ofReal η₁ + ENNReal.ofReal η₁ + ENNReal.ofReal η₁ +
         ENNReal.ofReal η₁) := by gcongr

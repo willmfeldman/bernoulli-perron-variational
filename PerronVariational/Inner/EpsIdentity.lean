@@ -9,7 +9,8 @@ public import PerronVariational.Defs.Parabolic
 import GMTFoundations.BV.TotalVariation
 import GMTFoundations.Sobolev.L2Inner
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # Passage to the limit in the inner-variation identity
@@ -102,11 +103,12 @@ omit [InnerProductSpace ℝ F] in
 /-- Bounded multiplier: if `‖h_i - h₀‖ ≤ c ‖f_i - f₀‖` a.e. then `L²` convergence transfers. -/
 theorem tendsto_eLpNorm_of_le_mul {ι G : Type*} [NormedAddCommGroup G] {l : Filter ι}
     {f : ι → X → F} {f₀ : X → F} {h : ι → X → G} {h₀ : X → G} {c : ℝ}
+    (hm : ∀ i, AEStronglyMeasurable (h i - h₀) μ)
     (hle : ∀ i, ∀ᵐ x ∂μ, ‖h i x - h₀ x‖ ≤ c * ‖f i x - f₀ x‖)
     (hfc : Tendsto (fun i ↦ eLpNorm (f i - f₀) 2 μ) l (𝓝 0)) :
     Tendsto (fun i ↦ eLpNorm (h i - h₀) 2 μ) l (𝓝 0) := by
   have hb : ∀ i, eLpNorm (h i - h₀) 2 μ ≤ ENNReal.ofReal c * eLpNorm (f i - f₀) 2 μ :=
-    fun i ↦ eLpNorm_le_mul_eLpNorm_of_ae_le_mul (by simpa using hle i) 2
+    fun i ↦ eLpNorm_le_mul_eLpNorm_of_ae_le_mul (hm i) (by simpa using hle i) 2
   have ht : Tendsto (fun i ↦ ENNReal.ofReal c * eLpNorm (f i - f₀) 2 μ) l (𝓝 0) := by
     simpa using ENNReal.Tendsto.const_mul hfc (Or.inr ENNReal.ofReal_ne_top)
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ht (fun _ ↦ bot_le) hb
@@ -135,7 +137,8 @@ theorem tendsto_integral_mul_of_tendsto_L1 {ι : Type*} {l : Filter ι} {b : X �
     refine h1.trans (le_of_eq ?_)
     rw [integral_const_mul]
     change B * ∫ a, ‖(χ i - χ₀) a‖ ∂μ = _
-    rw [integral_norm_eq_lintegral_enorm ((hχ i).sub hχ₀).1, eLpNorm_one_eq_lintegral_enorm]
+    rw [integral_norm_eq_lintegral_enorm ((hχ i).sub hχ₀).1,
+      eLpNorm_one_eq_lintegral_enorm ((hχ i).sub hχ₀).1]
   · have := ((ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hc).const_mul B
     simpa using this
 
@@ -188,8 +191,8 @@ theorem paraInnerVarIntegrand_eq (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ)
           (gradₓ u p)) +
         (Q p.1 ^ 2 * divₓ ξ p + fderiv ℝ (fun y ↦ Q y ^ 2) p.1 (ξ p)) * χ p -
         2 * (inner ℝ (ξ p) (gradₓ u p) * w p) := by
-  simp only [paraInnerVarIntegrand, ContinuousLinearMap.sub_apply,
-    ContinuousLinearMap.smul_apply, ContinuousLinearMap.id_apply, inner_sub_right,
+  simp only [paraInnerVarIntegrand, sub_apply,
+    smul_apply, ContinuousLinearMap.id_apply, inner_sub_right,
     inner_smul_right, real_inner_self_eq_norm_sq]
   ring
 
@@ -228,14 +231,14 @@ theorem paraInnerVar_integral_eq_zero_of_tendsto {Ω : Set (E d × ℝ)} (hΩ : 
   have hK : IsCompact K := hξc
   have hKm : MeasurableSet K := (isClosed_tsupport ξ).measurableSet
   set μ := volume.restrict K with hμ
-  haveI : IsFiniteMeasure μ := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure μ := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hμΩ : (volume.restrict Ω).restrict K = μ := Measure.restrict_restrict_of_subset hξs
   -- the coefficient fields
   set M : E d × ℝ → (E d →L[ℝ] E d) :=
     fun p ↦ divₓ ξ p • ContinuousLinearMap.id ℝ (E d) - (2 : ℝ) • fderivₓ ξ p with hMdef
   have hMc : Continuous M :=
     ((GMTFoundations.continuous_divₓ hξ).smul continuous_const).sub
-      (continuous_const.smul (continuous_fderivₓ hξ))
+      ((continuous_fderivₓ hξ).const_smul (2 : ℝ))
   obtain ⟨BM, hBM⟩ := hK.exists_bound_of_continuousOn hMc.continuousOn
   obtain ⟨Bξ, hBξ⟩ := hK.exists_bound_of_continuousOn hξ.continuous.continuousOn
   obtain ⟨Bdiv, hBdiv⟩ :=
@@ -273,14 +276,16 @@ theorem paraInnerVar_integral_eq_zero_of_tendsto {Ω : Set (E d × ℝ)} (hΩ : 
     intro g hg'
     refine hg'.of_le_mul (c := BM)
       ((continuous_fst.clm_apply continuous_snd).comp_aestronglyMeasurable₂
-        hMc.aestronglyMeasurable hg'.1) (ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
+        hMc.aestronglyMeasurable hg'.aestronglyMeasurable)
+      (ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
     refine (ContinuousLinearMap.le_opNorm _ _).trans ?_
     gcongr
     exact hBM p hp
   have hsg : ∀ g : E d × ℝ → E d, MemLp g 2 μ →
       MemLp (fun p ↦ inner ℝ (ξ p) (g p)) 2 μ := by
     intro g hg'
-    refine hg'.of_le_mul (c := Bξ) (hξ.continuous.aestronglyMeasurable.inner hg'.1)
+    refine hg'.of_le_mul (c := Bξ)
+      (hξ.continuous.aestronglyMeasurable.inner hg'.aestronglyMeasurable)
       (ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
     rw [Real.norm_eq_abs]
     refine (abs_real_inner_le_norm _ _).trans ?_
@@ -326,13 +331,15 @@ theorem paraInnerVar_integral_eq_zero_of_tendsto {Ω : Set (E d × ℝ)} (hΩ : 
   have hΩK : ∀ uu ww cc, ∫ p in Ω, paraInnerVarIntegrand Q uu ww cc ξ p =
       ∫ p, F (gradₓ uu) ww cc p ∂μ := by
     intro uu ww cc
-    rw [setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩ.measurableSet hξs
+    rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩ.measurableSet hξs
       (fun p hp ↦ paraInnerVarIntegrand_eq_zero_of_notMem hp.2), hFeq]
   -- convergence of the three terms
   have T1 : Tendsto (fun n ↦ ∫ p, inner ℝ (gradₓ (v n) p) (M p (gradₓ (v n) p)) ∂μ) atTop
       (𝓝 (∫ p, inner ℝ (gradₓ u p) (M p (gradₓ u p)) ∂μ)) := by
     refine tendsto_integral_inner_of_tendsto hg hg₀ (fun n ↦ hMg _ (hg n)) (hMg _ hg₀) hgc
-      (tendsto_eLpNorm_of_le_mul (c := BM) (fun n ↦ ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
+      (tendsto_eLpNorm_of_le_mul (c := BM)
+        (fun n ↦ ((hMg _ (hg n)).sub (hMg _ hg₀)).aestronglyMeasurable)
+        (fun n ↦ ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
         hgc)
     rw [← map_sub]
     refine (ContinuousLinearMap.le_opNorm _ _).trans ?_
@@ -358,7 +365,9 @@ theorem paraInnerVar_integral_eq_zero_of_tendsto {Ω : Set (E d × ℝ)} (hΩ : 
       (𝓝 (∫ p, s₀ p * w₀ p ∂μ)) := by
     refine tendsto_integral_mul_of_strong_weak (f := fun n p ↦ inner ℝ (ξ p) (gradₓ (v n) p))
       (fun n ↦ hsg _ (hg n)) (hsg _ hg₀) hwK
-      (tendsto_eLpNorm_of_le_mul (c := Bξ) (fun n ↦ ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
+      (tendsto_eLpNorm_of_le_mul (c := Bξ)
+        (fun n ↦ ((hsg _ (hg n)).sub (hsg _ hg₀)).aestronglyMeasurable)
+        (fun n ↦ ae_restrict_of_forall_mem hKm fun p hp ↦ ?_)
         hgc) B hB0 hBK hweak
     rw [← inner_sub_right, Real.norm_eq_abs]
     refine (abs_real_inner_le_norm _ _).trans ?_
@@ -375,7 +384,7 @@ theorem paraInnerVar_integral_eq_zero_of_tendsto {Ω : Set (E d × ℝ)} (hΩ : 
   · have hi : IntegrableOn (paraInnerVarIntegrand Q u w₀ χ₀ ξ) K volume := by
       rw [hFeq]
       exact hFint _ _ _ hg₀ hw₀K hχ₀int
-    exact hi.of_forall_diff_eq_zero hΩ.measurableSet
+    exact hi.of_forall_sdiff_eq_zero hΩ.measurableSet
       (fun p hp ↦ paraInnerVarIntegrand_eq_zero_of_notMem hp.2)
   · rw [hΩK, hFintegral _ _ _ hg₀ hw₀K hχ₀int]
     exact hL

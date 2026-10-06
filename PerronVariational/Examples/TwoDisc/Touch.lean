@@ -54,12 +54,12 @@ theorem norm_gradient_le_of_ray {φ W : E d → ℝ} {x G : E d} (hφ : Differen
     have hφ' : HasFDerivAt φ (toDual ℝ (E d) ξ) (x + (0 : ℝ) • ξ) := by
       rw [hx0]; exact hφ.hasGradientAt.hasFDerivAt
     have := hφ'.comp_hasDerivAt (0 : ℝ) hline
-    simpa using this
+    convert this using 1 <;> rfl
   have hg : HasDerivAt (fun t : ℝ ↦ W (x + t • ξ)) ⟪G, ξ⟫ 0 := by
     have hW' : HasFDerivAt W (toDual ℝ (E d) G) (x + (0 : ℝ) • ξ) := by
       rw [hx0]; exact hW.hasFDerivAt
     have := hW'.comp_hasDerivAt (0 : ℝ) hline
-    simpa using this
+    convert this using 1 <;> rfl
   have hsf := hf.tendsto_slope_zero_right
   have hsg := hg.tendsto_slope_zero_right
   simp only [zero_add, zero_smul, add_zero, hφx, hWx, sub_zero, smul_eq_mul] at hsf hsg

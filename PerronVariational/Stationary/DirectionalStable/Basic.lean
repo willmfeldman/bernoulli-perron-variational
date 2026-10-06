@@ -8,7 +8,8 @@ module
 public import PerronVariational.Basic.Sobolev
 import GMTFoundations.DeGiorgi.DeGiorgi
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Main.Directional
 import PerronVariational.Registry.FunctionalAnalysis
 
@@ -51,9 +52,9 @@ theorem memH1Loc_mono {U W : Set (E d)} {f : E d → ℝ} {G : E d → E d}
 
 /-- `‖G‖_{L²}` in terms of the lower integral of `‖G‖²`. -/
 theorem eLpNorm_two_eq {X : Type*} [MeasurableSpace X] {F : Type*} [NormedAddCommGroup F]
-    (G : X → F) (μ : Measure X) :
+    (G : X → F) (μ : Measure X) (hG : AEStronglyMeasurable G μ) :
     eLpNorm G 2 μ = (∫⁻ x, ENNReal.ofReal (‖G x‖ ^ 2) ∂μ) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hG]
   simp only [ENNReal.toReal_ofNat]
   congr 1
   refine lintegral_congr fun x ↦ ?_
@@ -105,7 +106,7 @@ theorem lintegral_norm_sq_le_liminf {W : Set (E d)} (hW : IsOpen W) (hWf : volum
     (hconv : ∀ δ > 0, ∀ᶠ n in atTop, ∀ᵐ x ∂(volume.restrict W), |f n x - f₀ x| ≤ δ) :
     ∫⁻ x in W, ENNReal.ofReal (‖F₀ x‖ ^ 2) ≤
       liminf (fun n ↦ ∫⁻ x in W, ENNReal.ofReal (‖F n x‖ ^ 2)) atTop := by
-  haveI : IsFiniteMeasure (volume.restrict W) := isFiniteMeasure_restrict.2 hWf
+  have : IsFiniteMeasure (volume.restrict W) := isFiniteMeasure_restrict.2 hWf
   by_contra hlt
   replace hlt := not_le.1 hlt
   obtain ⟨c, hc1, hc2⟩ := exists_between hlt
@@ -116,7 +117,8 @@ theorem lintegral_norm_sq_le_liminf {W : Set (E d)} (hW : IsOpen W) (hWf : volum
   have hbound : ∀ k, eLpNorm (F (ψ k)) 2 (volume.restrict W) ≤
       ENNReal.ofReal (c.toReal ^ (1 / (2 : ℝ))) := by
     intro k
-    rw [eLpNorm_two_eq, ← ENNReal.ofReal_rpow_of_nonneg ENNReal.toReal_nonneg (by norm_num),
+    rw [eLpNorm_two_eq _ _ (hFL _).aestronglyMeasurable,
+      ← ENNReal.ofReal_rpow_of_nonneg ENNReal.toReal_nonneg (by norm_num),
       ENNReal.ofReal_toReal hctop]
     exact ENNReal.rpow_le_rpow (hψc k).le (by norm_num)
   obtain ⟨φ₂, hφ₂, g₀, hg₀⟩ := Registry.exists_tendstoWeakL2_subseq volume W
@@ -232,7 +234,7 @@ theorem energyJ_le_liminf {W : Set (E d)} (hW : IsOpen W) (hWf : volume W ≠ �
     (hpos : ∀ᵐ x ∂(volume.restrict W), 0 < f₀ x → ∀ᶠ n in atTop, 0 < f n x) :
     energyJ W Q f₀ F₀ ≤ liminf (fun n ↦ energyJ W (Qn n) (f n) (F n)) atTop := by
   rw [energyJ_eq_add hF₀m]
-  simp_rw [energyJ_eq_add (hFL _).1]
+  simp_rw [energyJ_eq_add (hFL _).aestronglyMeasurable]
   refine le_trans (add_le_add (lintegral_norm_sq_le_liminf hW hWf hF hFL hF₀ hconv)
     (lintegral_indicator_le_liminf hW.measurableSet hfm hQm hQconv hpos)) ?_
   exact ennreal_liminf_add_le _ _
@@ -304,7 +306,9 @@ theorem tendsto_annRad {R : ℝ} : Tendsto (annRad R) atTop (𝓝 R) := by
   have h : Tendsto (fun k : ℕ ↦ R / ((k : ℝ) + 2)) atTop (𝓝 0) := by
     refine tendsto_const_nhds.div_atTop ?_
     exact tendsto_atTop_add_const_right _ _ tendsto_natCast_atTop_atTop
-  simpa [annRad] using (tendsto_const_nhds (x := R)).sub h
+  have h' := (tendsto_const_nhds (x := R)).sub h
+  rw [sub_zero] at h'
+  exact h'
 
 /-- `∫_{B_R \ B_{s_k}} g → 0` for `g` with finite integral on `B_R`. -/
 theorem tendsto_lintegral_annulus {x : E d} {R : ℝ} (hR : 0 < R) {g : E d → ℝ≥0∞}
@@ -315,11 +319,11 @@ theorem tendsto_lintegral_annulus {x : E d} {R : ℝ} (hR : 0 < R) {g : E d → 
       ∫⁻ y in ball x R \ ball x (annRad R k), g y := fun k ↦
     withDensity_apply _ (measurableSet_ball.diff measurableSet_ball)
   have hanti : Antitone fun k ↦ ball x R \ ball x (annRad R k) := fun a b hab ↦
-    diff_subset_diff_right (ball_subset_ball (annRad_mono hR hab))
+    Set.sdiff_subset_sdiff_right (ball_subset_ball (annRad_mono hR hab))
   have hfin : ∃ k, μ (ball x R \ ball x (annRad R k)) ≠ ⊤ := by
     refine ⟨0, ?_⟩
     rw [hμ]
-    exact ne_top_of_le_ne_top hg (lintegral_mono_set diff_subset)
+    exact ne_top_of_le_ne_top hg (lintegral_mono_set Set.sdiff_subset)
   have hempty : (⋂ k, ball x R \ ball x (annRad R k)) = ∅ := by
     refine eq_empty_of_forall_notMem fun y hy ↦ ?_
     have hyR : dist y x < R := (mem_iInter.1 hy 0).1
@@ -341,7 +345,7 @@ theorem lintegral_norm_sq_ne_top {X : Type*} [MeasurableSpace X] {F : Type*}
     [NormedAddCommGroup F] {G : X → F} {μ : Measure X} (hG : MemLp G 2 μ) :
     ∫⁻ x, ENNReal.ofReal (‖G x‖ ^ 2) ∂μ ≠ ⊤ := by
   have h := hG.eLpNorm_lt_top
-  rw [eLpNorm_two_eq] at h
+  rw [eLpNorm_two_eq _ _ hG.aestronglyMeasurable] at h
   exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 h |>.ne
 
 /-- The data of Lemma 2.12 near a ball `B_R(x)`, with `B̄_t(x) ⊆ U`, `t > R`: functions `uₙ`

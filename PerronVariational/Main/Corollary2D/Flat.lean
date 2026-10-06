@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Appendix.Nondegeneracy
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Order.CompletePartialOrder
 
 /-!
@@ -264,7 +265,7 @@ theorem flat_or_pos_of_halfPlane_blowup {U : Set (E d)} (hU : IsOpen U) {u : E d
   set P := posSet u U with hP
   set A := {y : E d | ⟪y, e⟫ < ⟪x₀, e⟫ - ε / 4 * s} ∩ ball x₀ (s / 2) with hA
   have hmemA : ∀ y ∈ ball x₀ (s / 2), ⟪y - x₀, e⟫ < -(ε / 4) * s → y ∈ A := fun y hy hye ↦
-    ⟨by simp only [mem_setOf_eq]; rw [inner_sub_left] at hye; linarith, hy⟩
+    ⟨by simp only [Set.mem_ofPred_eq]; rw [inner_sub_left] at hye; linarith, hy⟩
   have hAU : A ⊆ U := fun y hy ↦ hballU' hy.2
   -- no free boundary points in `A`
   have hnofb : ∀ z ∈ A, z ∉ frontier P := by
@@ -276,7 +277,7 @@ theorem flat_or_pos_of_halfPlane_blowup {U : Set (E d)} (hU : IsOpen U) {u : E d
     obtain ⟨y, hy, hcy⟩ := hnd z ⟨⟨hzfb, hAU hzA⟩, hzρ⟩ σ hσ0 hσρ
     rw [mem_closedBall] at hy
     have hze := hzA.1
-    simp only [mem_setOf_eq] at hze
+    simp only [Set.mem_ofPred_eq] at hze
     have hyz : ⟪y - z, e⟫ ≤ σ := by
       have := real_inner_le_norm (y - z) e
       rw [he, mul_one, ← dist_eq_norm] at this; linarith
@@ -334,7 +335,9 @@ theorem flat_or_pos_of_halfPlane_blowup {U : Set (E d)} (hU : IsOpen U) {u : E d
         rw [max_eq_left (by linarith : (0 : ℝ) ≤ t)] at habs
         linarith
     calc q * max (s * t - ε * (s / 2)) 0 = s * (q * max (t - ε / 2) 0) := by
-          rw [show s * t - ε * (s / 2) = s * t + (-(ε / 2)) * s by ring, hmax]; ring
+          rw [show s * t - ε * (s / 2) = s * t + (-(ε / 2)) * s by ring, hmax,
+            ← sub_eq_add_neg]
+          ring
       _ ≤ s * a := mul_le_mul_of_nonneg_left this hs.le
   · have : a ≤ q * max (t + ε / 2) 0 := by
       rcases le_or_gt (-(ε / 4)) t with htε | htε

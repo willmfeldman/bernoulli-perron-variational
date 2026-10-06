@@ -146,7 +146,7 @@ theorem IsInnerVarSolution.isViscSub {U : Set (E d)} {Q u χ : E d → ℝ} (hd 
       (T := highDensitySet u χ U) fun y hy ↦ hy.1.1
     refine hsub.2.2 φ hφ x ⟨?_, hx.2.1, hx.2.2.filter_mono (nhdsWithin_mono _ ?_)⟩
     · rw [hpos]; exact ⟨hx.1.1, hx.1.2, hxH⟩
-    · rw [hpos]; exact inter_subset_inter_right _ diff_subset
+    · rw [hpos]; exact inter_subset_inter_right _ Set.sdiff_subset
 
 end PerronVariational
 

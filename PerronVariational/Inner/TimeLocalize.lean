@@ -118,9 +118,9 @@ theorem ae_memL2_slice_and_exists_wSlice (h : IsParaInnerVarSolution U Q u w χ)
       ∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))),
         ∫⁻ x in U, ENNReal.ofReal (w (x, t) ^ 2) = G t := by
   have hw := h.timeDeriv_memL2
-  set w' := hw.1.mk w
-  have hw'm : StronglyMeasurable w' := hw.1.stronglyMeasurable_mk
-  have hweq : w =ᵐ[volume.restrict (UInf U)] w' := hw.1.ae_eq_mk
+  set w' := hw.aestronglyMeasurable.mk w
+  have hw'm : StronglyMeasurable w' := hw.aestronglyMeasurable.stronglyMeasurable_mk
+  have hweq : w =ᵐ[volume.restrict (UInf U)] w' := hw.aestronglyMeasurable.ae_eq_mk
   have hslice : ∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))), ∀ᵐ x ∂(volume.restrict U),
       w (x, t) = w' (x, t) := ae_slice_of_ae hweq
   have hfm : Measurable fun p : E d × ℝ ↦ ENNReal.ofReal (w' p ^ 2) :=
@@ -132,7 +132,7 @@ theorem ae_memL2_slice_and_exists_wSlice (h : IsParaInnerVarSolution U Q u w χ)
   have hfin : ∫⁻ t in Ioi 0, G t ≠ ⊤ := by
     rw [hint]
     have hw' : MemLp w' 2 (volume.restrict (UInf U)) := hw.ae_eq hweq
-    exact ((memLp_two_iff_integrable_sq hw'.1).1 hw').lintegral_lt_top.ne
+    exact ((memLp_two_iff_integrable_sq hw'.aestronglyMeasurable).1 hw').lintegral_lt_top.ne
   refine ⟨?_, G, hGm, hfin, ?_⟩
   · filter_upwards [hslice, ae_lt_top hGm hfin] with t ht hGt
     have hm : AEStronglyMeasurable (fun x ↦ w' (x, t)) (volume.restrict U) :=

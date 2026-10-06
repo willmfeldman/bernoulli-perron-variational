@@ -8,7 +8,8 @@ module
 public import PerronVariational.Statements.Intermediate
 public import PerronVariational.Registry.Semilinear
 public import PerronVariational.Semilinear.WellPrepared
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Registry.FunctionalAnalysis
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.NullLevelSet
@@ -212,15 +213,15 @@ theorem tendsto_eLpNorm_two_of_bound {X Y : Type*} [MeasurableSpace X] {μ : Mea
       (fun _ ↦ ENNReal.ofReal C ^ (2 : ℝ))
       (hmeas.mono fun ε h ↦ h.enorm.pow_const _)
       (hbd.mono fun ε h ↦ h.mono fun x hx ↦ by
-        simp only
         rw [← ofReal_norm]
         exact ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal hx) (by norm_num))
       hfin hlim'
     simpa using this
   have h3 := ((ENNReal.continuous_rpow_const (y := 1 / (2 : ℝ))).tendsto 0).comp key
   rw [ENNReal.zero_rpow_of_pos (by norm_num)] at h3
-  refine h3.congr fun ε ↦ ?_
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+  refine h3.congr' (hmeas.mono fun ε hε ↦ ?_)
+  simp only [Function.comp_apply]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hε]
   simp
 
 /-- The `L²` part of (i'): `|g_ε - g₊| ≤ ε` gives `g_ε → g₊` in `L²(U)`. -/
@@ -276,7 +277,7 @@ private theorem ae_ne_zero_or_gradient_eq_zero (S : Setting d) {g : E d → ℝ}
   have h1 : ∀ᵐ x ∂(volume : Measure (E d)), g x ≠ 0 ∨ ∇ g x = 0 := by
     rw [ae_iff]
     refine measure_mono_null (fun x hx ↦ ?_) hnull
-    simp only [mem_setOf_eq, not_or, not_not] at hx
+    simp only [Set.mem_ofPred_eq, not_or, not_not] at hx
     exact ⟨hx.1, (hg.differentiable one_ne_zero) x, hx.2⟩
   filter_upwards [ae_restrict_mem S.isOpen.measurableSet, ae_restrict_of_ae h1] with x hx h
   exact ⟨hx, h⟩
@@ -434,7 +435,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
     ∃ (ε₀ : ℝ) (gε : ℝ → E d → ℝ), IsWellPreparedData S g β increasing ε₀ gε := by
   cases increasing with
   | true =>
-    simp only [if_true] at hg
+    simp only [ite_true] at hg
     have hg1 : ContDiff ℝ 1 g := hg.1.of_le (by norm_num)
     obtain ⟨L, hL⟩ := exists_norm_gradient_le hg1 S
     obtain ⟨Kg, hKg⟩ := exists_lipschitzOnWith_closure hg1 S.isBounded
@@ -456,7 +457,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
         memH1 := fun ε hε ↦ memH1_gradient_of_lipschitzOnWith ((hW' ε hε).lipschitz Kg hKg)
           fun x hx ↦ ((hW' ε hε).norm_gradient_le x).trans (hL x (subset_closure hx))
         energy_le := fun ε hε ↦ (hW' ε hε).energy
-        visc := fun ε hε ↦ by simpa using (hW' ε hε).viscSub
+        visc := fun ε hε ↦ (hW' ε hε).viscSub
         le_of_nonpos := ⟨(1 - m) / 2, ⟨by linarith, by linarith⟩, fun ε hε x _ hx ↦
           (wellPreparedSubData_le hβ hδ₀ hε.1 hx).trans (by nlinarith [hε.1])⟩
         eq_zero_of_le := fun _ ↦ ⟨subConst (1 / (1 + δ₀)) + 1, by
@@ -468,7 +469,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
         memH1_pos := memH1_max_zero hg1
         tendsto_H1 := tendsto_H1_of_isWellPreparedSub S hg1 hε₀ hW }⟩
   | false =>
-    simp only [Bool.false_eq_true, if_false] at hg
+    simp only [Bool.false_eq_true, ite_false] at hg
     have hg1 : ContDiff ℝ 1 g := hg.1.of_le (by norm_num)
     obtain ⟨L, hL⟩ := exists_norm_gradient_le hg1 S
     obtain ⟨Kg, hKg⟩ := exists_lipschitzOnWith_closure hg1 S.isBounded
@@ -487,9 +488,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
         memH1 := fun ε hε ↦ memH1_gradient_of_lipschitzOnWith ((hW' ε hε).lipschitz Kg hKg)
           fun x hx ↦ ((hW' ε hε).norm_gradient_le x).trans (hL x (subset_closure hx))
         energy_le := fun ε hε ↦ (hW' ε hε).energy
-        visc := fun ε hε ↦ by
-          simpa using (⟨(hW' ε hε).classicalSuper.1.continuousOn, (hW' ε hε).viscSuper⟩ :
-            IsSemilinearViscSuperStat S.U S.Q β ε (wellPreparedSuperData β δ₀ ε g))
+        visc := fun ε hε ↦ ⟨(hW' ε hε).classicalSuper.1.continuousOn, (hW' ε hε).viscSuper⟩
         le_of_nonpos := ⟨(1 - m) / 2, ⟨by linarith, by linarith⟩, fun ε hε x _ hx ↦ by
           have hmono := (profileSuper_strictMono hβ hθh).monotone
             (show g x / ε ≤ 0 from div_nonpos_of_nonpos_of_nonneg hx hε.1.le)

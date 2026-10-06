@@ -201,7 +201,7 @@ theorem integral_window_swap {F' : Type*} [NormedAddCommGroup F'] [NormedSpace �
       ← Measure.volume_eq_prod]
     have h1 : IntegrableOn (Function.uncurry Φ) (K ×ˢ Icc a b) :=
       hΦ.integrableOn_compact (hK.prod isCompact_Icc)
-    refine (h1.mono_set (prod_mono le_rfl Ioc_subset_Icc_self)).of_forall_diff_eq_zero
+    refine (h1.mono_set (prod_mono le_rfl Ioc_subset_Icc_self)).of_forall_sdiff_eq_zero
       (MeasurableSet.univ.prod measurableSet_Ioc) fun p hp ↦ ?_
     have hpK : p.1 ∉ K := fun h ↦ hp.2 ⟨h, hp.1.2⟩
     exact hΦ0 p.1 hpK p.2
@@ -634,7 +634,9 @@ theorem integrableOn_inner_avgGrad (hU : IsOpen U) (hu : IsSemilinearSolution U 
     _ = (∫⁻ p in Ω, ENNReal.ofReal (‖avgGrad u h p‖ ^ 2)) +
           2 * (∫⁻ p in Ω, ENNReal.ofReal (‖gradₓ u (p.1, p.2 + h)‖ ^ 2)) +
             2 * ∫⁻ p in Ω, ENNReal.ofReal (‖gradₓ u p‖ ^ 2) := by
-        rw [lintegral_add_left' (hm1.add hm2), lintegral_add_left' hm1,
+        rw [lintegral_add_left' (f := fun p ↦ ENNReal.ofReal (‖avgGrad u h p‖ ^ 2) +
+            2 * ENNReal.ofReal (‖gradₓ u (p.1, p.2 + h)‖ ^ 2)) (hm1.add hm2),
+          lintegral_add_left' hm1,
           lintegral_const_mul' _ _ (by norm_num), lintegral_const_mul' _ _ (by norm_num)]
     _ < ⊤ := by
         refine ENNReal.add_lt_top.2 ⟨ENNReal.add_lt_top.2 ⟨hT1, ?_⟩, ?_⟩

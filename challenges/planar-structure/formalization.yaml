@@ -1,0 +1,108 @@
+# Entry metadata for the `planar-structure` workspace (format: mathlib-initiative formalization.yaml v0.4).
+# The root formalization.yaml keeps its own schema for the repository's checkers.
+# Keep comments outside block scalars (`>-`); anything inside one becomes public text.
+
+version: v0.4
+
+project:
+  name: "Free boundary structure of Perron's extremal solutions of the Bernoulli one-phase problem in the plane"
+  description: >-
+    A Lean 4 formalization of the planar corollary of Abedin, Feldman and
+    Stinson on Perron's extremal solutions of the one-phase Bernoulli free
+    boundary problem Δu = 0 in {u > 0} ∩ U, |∇u| = Q on ∂{u > 0} ∩ U. Let
+    U ⊂ ℝ² be open, bounded and connected with C² boundary, and let Q be
+    Lipschitz on the closure of U with 0 < Q_min ≤ Q ≤ Q_max. (i) For the
+    smallest supersolution u above a smooth strict subsolution g with g > 0
+    on ∂U, the free boundary ∂{u > 0} ∩ U is the disjoint union of a
+    relatively open set, near each point of which u is a classical
+    solution (a C^{1,γ} free boundary, u harmonic in {u > 0}, ∇u continuous
+    up to the free boundary with |∇u| = Q there), and a set at each point
+    x₀ of which every blow-up limit of u is the two-plane function
+    Q(x₀)|y · e| for some unit vector e. (ii) The largest subsolution below a
+    smooth strict supersolution is a classical solution near every free
+    boundary point. Every notion, including viscosity super- and
+    subsolutions, smooth strict sub- and supersolutions, Perron's classes,
+    blow-up limits and classical solutions, is written out from Mathlib
+    definitions. A third statement is a non-vacuity check, not a theorem
+    of the paper: in ℝ² with Q ≡ 1 there are a domain and data, with the
+    same boundary values for both problems, whose smallest supersolution
+    and largest subsolution are both nontrivial, with nonempty free
+    boundaries, and differ, and the origin is a two-plane point of the
+    smallest supersolution, so the second alternative of (i) occurs.
+  authors: ["William M. Feldman"]
+  responsible_maintainers: ["William M. Feldman"]
+  license: "Apache-2.0"
+
+classification:
+  arxiv: ["math.AP"]
+  msc2020: ["35R35", "35B65", "35D40", "35J25"]
+
+sources:
+  - title: "Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem"
+    authors: ["Farhan Abedin", "William M. Feldman", "Kerrek Stinson"]
+    type: paper
+    id: "arXiv:2609.14981"
+    location: "Corollary 1.2 (i) and (ii) (arXiv:2609.14981v1)"
+    relationship: formalizes
+    note: >-
+      Formalizes Corollary 1.2 (i) and (ii) of arXiv version 1, with the
+      notion of classical solution of its footnote, under the standing
+      assumptions of its Section 1 and the definitions of its Section 2.
+      The non-vacuity check is not in the paper. The differences are
+      listed under fidelity.
+
+related_formalizations: []
+
+automation:
+  methods:
+    - method: agent
+      models: ["Claude Opus"]
+      framework: "Claude Code"
+  notes: >-
+    The Lean proofs were written by AI coding agents (Claude, by Anthropic)
+    under the author's mathematical direction and review. The theorem
+    statements, definitions and proof routes were reviewed by the author;
+    correctness rests on Lean's kernel check and the comparator challenges.
+
+review:
+  status: "author-verified"
+  notes: >-
+    The author, a co-author of the paper, reviewed the definitions and the
+    statements of the compared theorems against arXiv:2609.14981v1,
+    including every difference recorded under fidelity, and the proof
+    routes against the paper. The proofs are checked by Lean's kernel and
+    by the comparator challenges in the repository.
+
+fidelity:
+  divergences: >-
+    The C² boundary of U is encoded by a global C² defining function (U =
+    {ρ < 0} with ∇ρ ≠ 0 on ∂U). Test functions in the viscosity
+    definitions are smooth on ℝ² rather than on U, which is equivalent
+    because the conditions are local; the data g are C² on ℝ² rather than
+    on the closure of U, and a C² function there extends. A classical
+    solution near x₀ is made explicit: on some ball B_r(x₀) ⊂ U the free
+    boundary is the graph of a C¹ function with γ-Hölder derivative,
+    0 < γ ≤ 1, over a line, u is C² and harmonic in {u > 0}, and ∇u extends
+    continuously to the closure of {u > 0} in the ball with |∇u| = Q on the
+    free boundary. Blow-up limits are locally uniform limits of
+    r⁻¹u(x₀ + r y) along sequences r → 0⁺, and the two-plane function is
+    written in the blow-up variable y (the paper writes Q(x₀)|(x − x₀) · e|).
+    Relative openness of the regular part is stated as its being the
+    intersection of an open set with the free boundary, and (ii) is stated
+    as classical near every free boundary point. Two intermediate results
+    used in the proof are corrected relative to arXiv version 1:
+    Proposition 5.3 and Corollary 5.4 are stated for the authors' corrected
+    set E*; the statement of Corollary 1.2 is unaffected. The non-vacuity
+    check is not a result of the paper.
+
+status:
+  main_results:
+    - declaration: "challenge_corollary_2d_smallest"
+      file: "challenges/planar-structure/Challenge.lean"
+      comparator_config: "challenges/planar-structure/config.json"
+    - declaration: "challenge_corollary_2d_largest"
+      file: "challenges/planar-structure/Challenge.lean"
+      comparator_config: "challenges/planar-structure/config.json"
+    - declaration: "challenge_model_example"
+      file: "challenges/planar-structure/Challenge.lean"
+      comparator_config: "challenges/planar-structure/config.json"

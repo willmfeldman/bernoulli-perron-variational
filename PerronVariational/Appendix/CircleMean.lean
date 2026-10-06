@@ -161,7 +161,7 @@ theorem circleMean_eq_of_harmonic {h : E 2 → ℝ} {x : E 2} {t s : ℝ} (hs : 
     rw [mem_closedBall, abs_of_nonneg hs] at hz
     rw [mem_ball, ← LinearIsometryEquiv.apply_symm_apply toE2 x, LinearIsometryEquiv.dist_map]
     exact hz.trans_lt hst
-  rw [circleMean, HarmonicOnNhd.circleAverage_eq hH]
+  rw [circleMean, InnerProductSpace.HarmonicOnNhd.circleAverage_eq hH]
   simp
 
 /-- **Strong minimum principle.** A non-negative harmonic function on `B_t(x)` vanishing at `x`

@@ -337,7 +337,7 @@ theorem isViscSuper_vSup : IsViscSuper domain (fun _ ↦ 1) vSup := by
   · left
     have hO : ∀ᶠ y in 𝓝 x, vSup y = wIn (-hole) y := by
       filter_upwards [hUn, (isOpen_lt_normsq (-hole) (1 / 100)).mem_nhds
-        (by rw [mem_setOf_eq, sq_sub_neg_hole]; exact B)] with y hyU hyB
+        (by rw [Set.mem_ofPred_eq, sq_sub_neg_hole]; exact B)] with y hyU hyB
       obtain ⟨-, -, hym⟩ := mem_domain_norm hyU
       rw [sq_sub_neg_hole] at hyB
       rw [vSup_eq_minus hyB.le, max_eq_left

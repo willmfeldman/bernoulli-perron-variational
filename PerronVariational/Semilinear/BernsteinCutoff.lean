@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Semilinear.BernsteinBound
 import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # The cutoff of Step 3
@@ -111,8 +112,8 @@ theorem dd_sigmaFun (a q : E d × ℝ) :
     funext q; simp only [sigmaFun]; ring
   simp only [PerronVariational.dd]
   rw [e, h.fderiv]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_fst', ContinuousLinearMap.neg_apply,
+  simp only [add_apply, smul_apply,
+    ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_fst', neg_apply,
     ContinuousLinearMap.coe_snd', innerSL_apply_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_ofNat]
   ring
 
@@ -138,7 +139,7 @@ theorem dd_dd_sigmaFun (a b q : E d × ℝ) :
   rw [show (fun q : E d × ℝ ↦ 2 / r ^ 2 * innerSL ℝ a.1 (q.1 - x₀) - κ * a.2 / r ^ 2) =
     fun q ↦ 2 / r ^ 2 * ((innerSL ℝ a.1) ∘ fun q : E d × ℝ ↦ q.1 - x₀) q - κ * a.2 / r ^ 2 from rfl,
     h2.fderiv]
-  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+  simp only [smul_apply, ContinuousLinearMap.comp_apply,
     ContinuousLinearMap.coe_fst', innerSL_apply_apply, smul_eq_mul]
   ring
 

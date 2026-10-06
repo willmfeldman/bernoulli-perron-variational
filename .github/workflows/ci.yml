@@ -14,35 +14,39 @@ jobs:
     timeout-minutes: 300
     steps:
       - uses: actions/checkout@v7
+      # The Mathlib cache plus seven upstream release archives exceed a hosted runner's default
+      # free space (dev CI 36875703242 ran out of disk). Remove preinstalled SDKs this job never
+      # uses, as the release comparator template does.
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
       - name: Install elan
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      # Mathlib and its dependencies come from `lake exe cache get`, so cache only this project's
-      # own build and the git dependencies that Mathlib's cache does not cover. Caching all of
-      # `.lake` exhausts runner disk.
+      # Mathlib comes from `lake exe cache get` and the tracked upstreams from their release build
+      # archives, so cache only this project's own build. A restored dependency folder stops Lake
+      # from downloading the archive, even when it is stale. Caching all of `.lake` exhausts runner
+      # disk.
       - name: Restore Lake artifacts
         uses: actions/cache/restore@v6
         with:
           path: |
             .lake/build
-            .lake/packages/viscosity_solns
-            .lake/packages/AleksandrovDifferentiability
-            .lake/packages/parabolic_basic_theory
-            .lake/packages/bernoulli_parabolic_comparison
-            .lake/packages/elliptic_bernoulli_foundations
-            .lake/packages/gmt_foundations
-            .lake/packages/inner_variational
           key: lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-${{ hashFiles('PerronVariational.lean', 'PerronVariational/**/*.lean') }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-
       - name: Fetch mathlib cache
         run: lake exe cache get
       # Warnings are errors: the release gate requires a warning-free build.
       - name: Build complete library
-        run: lake build --wfail
+        run: |
+          lake build --wfail
+          df -h /
       # Comments and strings are masked, so docstring prose does not trigger the scan.
-      - name: Check trusted library source for sorry, admit, axiom and native_decide
+      - name: Check trusted library source for sorry, admit, axiom and native_decide; every file is a module
         run: python3 scripts/check_integrity.py
       - name: Enforce library source-file size limit
         run: |
@@ -52,28 +56,21 @@ jobs:
       - name: Validate manifest, library Lean names, and exact target axioms
         run: ruby scripts/check-formalization-manifest.rb
       # Challenge.lean states the challenges with `sorry` by design; the trusted vocabulary
-      # (Challenge/*.lean or Statement.lean) and the solutions must contain none.
+      # (Vocabulary.lean) and the solutions must contain none.
       - name: Check challenge vocabulary and solutions for sorry, axioms, and native_decide
         run: |
-          shopt -s nullglob
-          files=(challenges/*/Challenge/*.lean challenges/*/Statement.lean challenges/*/Solution.lean)
-          ! grep -nE '\bsorry\b|^axiom |\badmit\b|native_decide' "${files[@]}"
+          ! grep -nE '\bsorry\b|^axiom |\badmit\b|native_decide' challenges/*/Vocabulary.lean challenges/*/Solution.lean
       # Elaboration shows each Challenge and Solution compiles against this
       # commit's library.  It is not a statement comparison; that is the
       # release Comparator workflow's job.
-      - name: Elaborate challenge workspaces (Challenge and Solution)
+      - name: Elaborate challenge workspaces (Vocabulary, Challenge and Solution)
         run: scripts/check-challenges.sh
+      - name: Check module headers, challenge vocabulary sync, imports and size
+        run: python3 scripts/challenge-prep.py check
       - name: Save Lake artifacts
         uses: actions/cache/save@v6
         if: always()
         with:
           path: |
             .lake/build
-            .lake/packages/viscosity_solns
-            .lake/packages/AleksandrovDifferentiability
-            .lake/packages/parabolic_basic_theory
-            .lake/packages/bernoulli_parabolic_comparison
-            .lake/packages/elliptic_bernoulli_foundations
-            .lake/packages/gmt_foundations
-            .lake/packages/inner_variational
           key: lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-${{ hashFiles('PerronVariational.lean', 'PerronVariational/**/*.lean') }}

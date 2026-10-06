@@ -8,7 +8,8 @@ module
 public import PerronVariational.Statements.Intermediate
 import GMTFoundations.BV.TotalVariation
 import GMTFoundations.Sobolev.Cutoff
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.MeasureTheory.Function.L2Space
 import PerronVariational.Inner.EnergyConv
 import PerronVariational.Inner.EpsIdentity
@@ -207,7 +208,7 @@ theorem integral_chiEps_divₓ_slice_le {U : Set (E d)} (hU : IsOpen U) {Q : E d
           ≤ |((2 : ℝ) • (betaEps β ε (u (x, t)) • fderiv ℝ (fun y ↦ u (y, t)) x)) (Y x)| :=
             neg_le_abs _
         _ = 2 * betaEps β ε (u (x, t)) * |fderiv ℝ (fun y ↦ u (y, t)) x (Y x)| := by
-            simp only [ContinuousLinearMap.smul_apply, smul_eq_mul, abs_mul, abs_two,
+            simp only [smul_apply, smul_eq_mul, abs_mul, abs_two,
               abs_of_nonneg (hβ0 x)]
             ring
         _ ≤ 2 * betaEps β ε (u (x, t)) * (L * θ x) := by
@@ -270,7 +271,7 @@ theorem memLp_two_of_continuousOn_of_zero {K : Set (E d × ℝ)} (hK : IsCompact
   have hKm : MeasurableSet K := hK.isClosed.measurableSet
   have heq : K.indicator g = g := indicator_eq_self.2 fun p hp ↦ by_contra fun h ↦ hp (h0 p h)
   rw [← heq, memLp_indicator_iff_restrict hKm]
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg
   exact MemLp.of_bound (hg.aestronglyMeasurable hKm) C ((ae_restrict_iff' hKm).2 (ae_of_all _ hC))
 

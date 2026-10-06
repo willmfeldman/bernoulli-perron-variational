@@ -119,12 +119,12 @@ theorem hasWeakGradient_of_contDiff_one {U : Set (E d)} {η : E d → ℝ} (hη 
   congr 1
   refine integral_congr_ae (Eventually.of_forall fun x ↦ ?_)
   simp only
-  rw [inner_gradient_left (hηd x)]
+  rw [inner_gradient_left]
 
 theorem memLp_two_restrict_compact_of_continuous {F : Type*} [NormedAddCommGroup F]
     [NormedSpace ℝ F] {K : Set (E d)} (hK : IsCompact K) {f : E d → F} (hf : Continuous f) :
     MemLp f 2 (volume.restrict K) := by
-  haveI : IsFiniteMeasure (volume.restrict K) :=
+  have : IsFiniteMeasure (volume.restrict K) :=
     isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have := GMTFoundations.memLp_smul_continuous hK (memLp_const (1 : ℝ)) hf
   simpa using this
@@ -154,7 +154,7 @@ theorem gradient_inner_const (e x : E d) : ∇ (fun y : E d ↦ inner ℝ y e) x
     rw [hasGradientAt_iff_hasFDerivAt]
     have := (innerSL ℝ e).hasFDerivAt (x := x)
     convert this using 1
-    · ext v; simp [real_inner_comm]
+    all_goals first | rfl | (ext v; simp [real_inner_comm])
   exact h.gradient
 
 theorem contDiff_inner_const {n : WithTop ℕ∞} (e : E d) :
@@ -175,12 +175,13 @@ theorem memH1Loc_twoPlane {U : Set (E d)} (hU : IsOpen U) (α : ℝ) (e : E d) :
   have h2 := GMTFoundations.memH1Loc_posPart hU hℓ.neg
   have h3 := (h1.add h2).const_mul' α
   convert h3 using 1
-  funext x
-  simp only [twoPlane]
-  congr 1
-  rcases le_total (inner ℝ x e) 0 with h | h
-  · rw [abs_of_nonpos h, max_eq_right h, max_eq_left (neg_nonneg.2 h), zero_add]
-  · rw [abs_of_nonneg h, max_eq_left h, max_eq_right (neg_nonpos.2 h), add_zero]
+  · funext x
+    simp only [twoPlane]
+    congr 1
+    rcases le_total (inner ℝ x e) 0 with h | h
+    · rw [abs_of_nonpos h, max_eq_right h, max_eq_left (neg_nonneg.2 h), zero_add]
+    · rw [abs_of_nonneg h, max_eq_left h, max_eq_right (neg_nonpos.2 h), add_zero]
+  · rfl
 
 theorem posSet_twoPlane (hα : 0 < α) (U : Set (E d)) :
     posSet (twoPlane α e) U = U ∩ {x | inner ℝ x e ≠ 0} := by

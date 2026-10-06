@@ -40,7 +40,7 @@ theorem deriv_nonpos_of_le_left {f : ℝ → ℝ} {a t₀ : ℝ} (hf : Different
   have ht := (hasDerivAt_iff_tendsto_slope.1 hf.hasDerivAt).mono_left
     (show 𝓝[<] t₀ ≤ 𝓝[≠] t₀ from nhdsWithin_mono t₀ fun t (ht : t < t₀) ↦ ne_of_lt ht)
   refine le_of_tendsto ht (Filter.mem_of_superset (Ioo_mem_nhdsLT ha) fun t htI ↦ ?_)
-  rw [mem_setOf_eq, slope_def_field]
+  rw [Set.mem_ofPred_eq, slope_def_field]
   exact div_nonpos_of_nonneg_of_nonpos (by linarith [h t htI]) (by linarith [htI.2])
 
 /-- If `f(t) ≤ f(t₀)` for `t ∈ (a, t₀)`, then `0 ≤ f'(t₀)`. -/
@@ -69,13 +69,13 @@ theorem exists_first_crossing {V : Set (E d)} {a b : ℝ} (hV : Bornology.IsBoun
   obtain ⟨p₀, hp₀, hmin⟩ := hCc.exists_isMinOn ⟨p, hp, hfp⟩ continuous_snd.continuousOn
   refine ⟨p₀, hp₀.1, hp₀.2, fun q hq hlt ↦ not_le.1 fun hfq ↦ ?_⟩
   have := hmin ⟨hq, hfq⟩
-  simp only [mem_setOf_eq] at this
+  simp only [Set.mem_ofPred_eq] at this
   linarith
 
 theorem posSetP_const (u : E d → ℝ) (U : Set (E d)) (I : Set ℝ) :
     posSetP (fun p : E d × ℝ ↦ u p.1) (U ×ˢ I) = posSet u U ×ˢ I := by
   ext p
-  simp only [posSetP, posSet, mem_prod, mem_setOf_eq]
+  simp only [posSetP, posSet, mem_prod, Set.mem_ofPred_eq]
   tauto
 
 /-! ### Remark 3.3 -/
@@ -157,7 +157,7 @@ theorem IsViscSub.isParaSub_const {U : Set (E d)} {Q u : E d → ℝ} (hu : IsVi
   · have hfr : (y₀, t₀) ∈ frontier {q | 0 < φ q} := by
       refine ⟨hcl, fun hint ↦ ?_⟩
       have := interior_subset hint
-      simp only [mem_setOf_eq] at this
+      simp only [Set.mem_ofPred_eq] at this
       have : ψ y₀ = φ (y₀, t₀) := rfl
       linarith
     exact (not_le.2 (hφ2 (y₀, t₀) ⟨hfr, hmem⟩)) hgrad
@@ -235,7 +235,7 @@ theorem IsViscSuper.isParaSuper_const {U : Set (E d)} {Q u : E d → ℝ} (hu : 
   · have hfr : (y₀, t₀) ∈ frontier {q | 0 < φ q} := by
       refine ⟨hp₀E, fun hint ↦ ?_⟩
       have := interior_subset hint
-      simp only [mem_setOf_eq] at this
+      simp only [Set.mem_ofPred_eq] at this
       have : ψ y₀ = φ (y₀, t₀) := rfl
       linarith
     exact (not_le.2 (hφ2 (y₀, t₀) ⟨hfr, hmem⟩)) hgrad

@@ -1,10 +1,12 @@
-import Statement
-import PerronVariational
+module
+
+public import Vocabulary
+public import PerronVariational
 
 /-!
-# Solution: Theorem 1.1
+# Solution: Theorem 1.1, and the two-disc model example
 
-The trusted vocabulary of `Statement.lean` is reconciled with the library's, then the library
+The trusted vocabulary of `Vocabulary.lean` is reconciled with the library's, then the library
 theorems `PerronVariational.main_smallest` and `PerronVariational.main_largest` are applied.
 
 * `HasC2Boundary`, `IsStrictSub`, `IsStrictSuper`, `perronSmallest`, `perronLargest`,
@@ -12,10 +14,16 @@ theorems `PerronVariational.main_smallest` and `PerronVariational.main_largest` 
   definitionally the library's.
 * `IsInnerVarSolution` has the same fields as the library's structure (`isInnerVarSolution_iff`);
   its integrand `innerVarIntegrand` is definitionally the library's.
+* `blowup` and `IsBlowupLimit` are definitionally the library's.
 * The unbundled hypotheses on `U` and `Q` are packed into the library's `Setting d`.
+* The model example: the library theorem `PerronVariational.TwoDisc.model_example` applies after
+  unpacking its `Setting`: the domain is `U = B₁(0) \ (B̄_{1/20}(p) ∪ B̄_{1/20}(-p))`,
+  `p = (1/10, 0)`, with `Q ≡ 1`.
 -/
 
 open Set Metric
+
+@[expose] public section
 
 namespace PerronVariationalChallenge.Bridge
 
@@ -56,6 +64,9 @@ theorem isDownwardMinimizer_iff (U : Set (E d)) (Q u : E d → ℝ) :
 theorem isUpwardMinimizer_iff (U : Set (E d)) (Q u : E d → ℝ) :
     IsUpwardMinimizer U Q u ↔ PerronVariational.IsUpwardMinimizer U Q u := Iff.rfl
 
+theorem isBlowupLimit_iff (u : E d → ℝ) (x₀ : E d) (v : E d → ℝ) :
+    IsBlowupLimit u x₀ v ↔ PerronVariational.IsBlowupLimit u x₀ v := Iff.rfl
+
 end PerronVariationalChallenge.Bridge
 
 open PerronVariationalChallenge PerronVariationalChallenge.Bridge
@@ -83,3 +94,12 @@ theorem challenge_main_largest (d : ℕ) : MainLargestClaim d := by
     fun x hx ↦ by
       obtain ⟨r, hr, hsub, hmin⟩ := h3 x hx
       exact ⟨r, hr, hsub, (isUpwardMinimizer_iff ..).2 hmin⟩⟩
+
+theorem challenge_model_example : ModelExampleClaim := by
+  obtain ⟨S, gsub, gsuper, hQ, hsub, hpos, hsup, hbd, h1, h2, h3, h4, h5, h6, h0, hlim, hbl, hne⟩ :=
+    PerronVariational.TwoDisc.model_example
+  rw [hQ] at hsub hsup h1 h2 h3 h4 h5 h6 h0 hlim hbl hne
+  exact ⟨S.U, gsub, gsuper, S.isOpen, S.isBounded, S.isConnected, (hasC2Boundary_iff _).2 S.c2,
+    ⟨0, (LipschitzWith.const (1 : ℝ)).lipschitzOnWith⟩, (isStrictSub_iff ..).2 hsub, hpos,
+    (isStrictSuper_iff ..).2 hsup, hbd, h1, h2, h3, h4, h5, h6, h0, hlim,
+    fun v hv ↦ hbl v ((isBlowupLimit_iff ..).1 hv), hne⟩

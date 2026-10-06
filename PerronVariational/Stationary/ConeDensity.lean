@@ -147,7 +147,7 @@ theorem exists_scaled_neg_of_fderiv_ne_zero {φ : E d → ℝ} (hφ : ContDiff �
     · rw [mem_ball_zero_iff, norm_smul, Real.norm_of_nonneg (by positivity)]
       field_simp
       norm_num
-    · rw [mem_setOf_eq, map_smul, norm_smul, Real.norm_of_nonneg (by positivity), smul_eq_mul]
+    · rw [Set.mem_ofPred_eq, map_smul, norm_smul, Real.norm_of_nonneg (by positivity), smul_eq_mul]
       have : 1 / (2 * ‖e‖) * L e + ε * (1 / (2 * ‖e‖) * ‖e‖)
           = 1 / (2 * ‖e‖) * (L e / 2) := by linear_combination (1 / (2 * ‖e‖)) * hεe
       rw [this]
@@ -165,7 +165,7 @@ theorem exists_scaled_neg_of_fderiv_ne_zero {φ : E d → ℝ} (hφ : ContDiff �
     have h1 : (fderiv ℝ φ (x + s • v) - L) v ≤ ε * ‖v‖ :=
       (le_abs_self _).trans ((ContinuousLinearMap.le_opNorm _ _).trans
         (mul_le_mul_of_nonneg_right hD.le (norm_nonneg v)))
-    rw [ContinuousLinearMap.sub_apply] at h1
+    rw [sub_apply] at h1
     have hv2 : L v + ε * ‖v‖ < 0 := hv.2
     linarith
 
@@ -200,7 +200,7 @@ theorem exists_scaled_neg_of_laplacian_neg {φ : E d → ℝ} (hφ : ContDiff �
       simp only [t]
       field_simp
       norm_num
-    · simp only [mem_setOf_eq, map_smul, ContinuousLinearMap.smul_apply, smul_eq_mul, norm_smul,
+    · simp only [Set.mem_ofPred_eq, map_smul, smul_apply, smul_eq_mul, norm_smul,
         Real.norm_of_nonneg ht.le]
       have : t * (t * B e e) + μ * (t * ‖e‖) ^ 2 = t ^ 2 * (B e e / 2) := by
         linear_combination t ^ 2 * hμe
@@ -224,7 +224,7 @@ theorem exists_scaled_neg_of_laplacian_neg {φ : E d → ℝ} (hφ : ContDiff �
     have h1 : (fderiv ℝ φ (x + s • v) - B (s • v)) v ≤ μ * (s * ‖v‖) * ‖v‖ :=
       (le_abs_self _).trans ((ContinuousLinearMap.le_opNorm _ _).trans
         (mul_le_mul_of_nonneg_right hD (norm_nonneg v)))
-    rw [ContinuousLinearMap.sub_apply, map_smul, ContinuousLinearMap.smul_apply,
+    rw [sub_apply, map_smul, smul_apply,
       smul_eq_mul] at h1
     have h2 : s * (B v v + μ * ‖v‖ ^ 2) < 0 := mul_neg_of_pos_of_neg hs.1 hv.2
     nlinarith

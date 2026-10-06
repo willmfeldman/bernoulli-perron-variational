@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Semilinear.BernsteinMax
 public import PerronVariational.Semilinear.BernsteinPhi
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
@@ -76,6 +77,7 @@ theorem hasDerivAt_betaEps (ε z : ℝ) :
   have h1 : HasDerivAt (fun z ↦ z / ε) (1 / ε) z := (hasDerivAt_id z).div_const ε
   have h2 := ((hβ.contDiff.differentiable (by simp) (z / ε)).hasDerivAt.comp z h1).div_const ε
   convert h2 using 1
+  · rfl
   rw [sq]; field_simp
 
 end IsReactionProfile

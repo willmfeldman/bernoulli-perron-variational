@@ -53,7 +53,7 @@ theorem measure_lt_mul_lintegral_le (μ : Measure α) {f : α → ℝ≥0∞} (h
   · have hae : f =ᵐ[μ] 0 := (lintegral_eq_zero_iff' hf).1 hI0
     have hnull : μ {t | 2 ^ (k + 2) * I < f t} = 0 := by
       refine measure_mono_null (fun t ht ↦ ?_) (ae_iff.1 hae)
-      simp only [hI0, mul_zero, mem_setOf_eq] at ht
+      simp only [hI0, mul_zero, Set.mem_ofPred_eq] at ht
       exact ht.ne'
     simp [hnull]
   by_cases hItop : I = ⊤
@@ -66,7 +66,7 @@ theorem measure_lt_mul_lintegral_le (μ : Measure α) {f : α → ℝ≥0∞} (h
     ENNReal.mul_ne_top (ENNReal.pow_ne_top ENNReal.ofNat_ne_top) hItop
   calc μ {t | 2 ^ (k + 2) * I < f t}
       ≤ μ {t | 2 ^ (k + 2) * I ≤ f t} :=
-        measure_mono fun t ht ↦ by simp only [mem_setOf_eq] at ht ⊢; exact ht.le
+        measure_mono fun t ht ↦ by simp only [Set.mem_ofPred_eq] at ht ⊢; exact ht.le
     _ ≤ I / (2 ^ (k + 2) * I) := meas_ge_le_lintegral_div hf hc0 hctop
     _ = 2⁻¹ ^ (k + 2) := by
       rw [ENNReal.div_eq_inv_mul, ENNReal.mul_inv (Or.inl (pow_ne_zero _ two_ne_zero))
@@ -107,7 +107,7 @@ theorem exists_good_time (a : ℝ) {N : Set ℝ} (hN : volume N = 0) (f : ℕ �
   have hsub : Ioo a (a + 1) ⊆ B := by
     intro t ht
     by_contra htB
-    simp only [B, mem_union, mem_iUnion, mem_setOf_eq, not_or, not_exists, not_lt] at htB
+    simp only [B, mem_union, mem_iUnion, Set.mem_ofPred_eq, not_or, not_exists, not_lt] at htB
     obtain ⟨k, hk⟩ := hcon t ht htB.1
     exact (not_le.2 hk) (htB.2 k)
   exact absurd (hμI ▸ measure_mono hsub : (1 : ℝ≥0∞) ≤ μ B) (not_le.2 hB)

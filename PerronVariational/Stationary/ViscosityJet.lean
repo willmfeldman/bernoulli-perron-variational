@@ -123,7 +123,9 @@ theorem deriv_deriv_comp_line {k : F → ℝ} (hk : ContDiff ℝ 2 k) (x v : F) 
     simpa using ((hasDerivAt_id (0 : ℝ)).smul_const v).const_add x
   have h2 := ((hk' _).hasFDerivAt.comp_hasDerivAt (0 : ℝ) hl)
   have h3 := ((ContinuousLinearMap.apply ℝ ℝ v).hasFDerivAt).comp_hasDerivAt (0 : ℝ) h2
-  simpa using h3.deriv
+  have h4 := h3.deriv
+  simp only [zero_smul, add_zero, ContinuousLinearMap.apply_apply] at h4
+  exact h4
 
 /-- A second-order expansion of `k ∈ C²` along the line `x + t • v` identifies `k x`, the
 directional derivative `Dk(x) v` and the second directional derivative `D²k(x)(v, v)`. -/
@@ -326,7 +328,7 @@ theorem exists_smooth_ge_of_contDiff_two {H : F → ℝ} (hH : ContDiff ℝ 2 H)
     intro w
     refine iteratedFDeriv_two_eq_of_isLittleO (hφs.of_le (by norm_cast))
       ((isLittleO_zero _ _).congr_left fun t ↦ ?_)
-    simp only [hφ, add_sub_cancel_left, map_smul, ContinuousLinearMap.smul_apply, smul_eq_mul,
+    simp only [hφ, add_sub_cancel_left, map_smul, smul_apply, smul_eq_mul,
       norm_smul, Real.norm_eq_abs, mul_pow, sq_abs]
     ring
   refine ⟨φ, hφs, (hjet 0).1, ?_, ?_, ?_⟩

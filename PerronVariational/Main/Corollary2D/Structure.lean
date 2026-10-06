@@ -9,7 +9,8 @@ public import PerronVariational.Appendix.Nondegeneracy
 public import PerronVariational.Statements.Intermediate
 public import PerronVariational.Statements.Main
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 import Mathlib.Topology.MetricSpace.UniformConvergence
@@ -184,7 +185,7 @@ theorem fb_structure_of_downward (S : Setting 2) {u χ : E 2 → ℝ}
         ∃ e : E 2, ‖e‖ = 1 ∧ ∀ y, v y = S.Q x₀ * |⟪y, e⟫| := by
   set FB := freeBoundary u S.U
   set FBreg := {x ∈ FB | IsClassicalNear S.U S.Q u x}
-  refine ⟨FBreg, FB \ FBreg, disjoint_sdiff_right, union_diff_cancel (sep_subset _ _),
+  refine ⟨FBreg, FB \ FBreg, disjoint_sdiff_right, Set.union_sdiff_cancel (sep_subset _ _),
     ⟨{x | IsClassicalNear S.U S.Q u x}, isOpen_setOf_isClassicalNear _ _ _, ?_⟩,
     fun x hx ↦ hx.2, ?_⟩
   · ext x; simp [FBreg, and_comm]
@@ -358,10 +359,10 @@ theorem not_frequently_pos_far (S : Setting 2) {u χ : E 2 → ℝ}
       rw [hy, indicator_of_notMem]
       have h1 := hv y
       have hye : ⟪y, e⟫ ≤ 0 := by
-        have := hyR.1; simp only [mem_setOf_eq] at this; linarith
+        have := hyR.1; simp only [Set.mem_ofPred_eq] at this; linarith
       simp only [hh, max_eq_right hye] at h1
       have : max ⟪y, e'⟫ 0 = 0 := (mul_left_cancel₀ hq.ne' h1).symm
-      simp only [mem_setOf_eq, not_lt]
+      simp only [Set.mem_ofPred_eq, not_lt]
       exact (le_max_left _ _).trans this.le
     · exfalso
       have h1 := hv e
@@ -391,7 +392,7 @@ theorem not_frequently_pos_far (S : Setting 2) {u χ : E 2 → ℝ}
     rw [add_sub_cancel_left, inner_smul_left]
     simp only [conj_trivial]
     have := hyR.1
-    simp only [mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     nlinarith
   -- the `L¹` distance on `R` is constant, equal to `|R| > 0`, and tends to `0`
   have hLpK := hLp (closedBall 0 1) (subset_univ _) (isCompact_closedBall _ _)
@@ -400,7 +401,7 @@ theorem not_frequently_pos_far (S : Setting 2) {u χ : E 2 → ℝ}
     intro k
     rw [eLpNorm_congr_ae (g := fun _ ↦ (1 : ℝ)) (by
       filter_upwards [hf k, hχ₀] with y h1 h2
-      simp [h1, h2]), eLpNorm_one_eq_lintegral_enorm]
+      simp [h1, h2]), eLpNorm_one_eq_lintegral_enorm aestronglyMeasurable_const]
     simp
   have hRsub : R ⊆ closedBall 0 1 := fun y hy ↦
     ball_subset_closedBall (ball_subset_ball (by norm_num) hy.2)

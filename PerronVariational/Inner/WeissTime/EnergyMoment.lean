@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Defs.Semilinear
 import GMTFoundations.Sobolev.Cutoff
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.Common
 import PerronVariational.Inner.WeakHeat
 import PerronVariational.Semilinear.Calculus
@@ -238,7 +239,8 @@ theorem hasDerivAt_energyMoment {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ
     -(slope (fun s ↦ v (x, s)) t₀ t) * (ψ x * (lapₓ v (x, t) + lapₓ v (x, t₀)) +
       ⟪gradₓ v (x, t) + gradₓ v (x, t₀), ∇ ψ x⟫) +
       Q x ^ 2 * slope (fun s ↦ chiEps β ε v (x, s)) t₀ t * ψ x with hSdef
-  have hS0 : ∀ t, ∀ x ∉ K, S t x = 0 := fun t x hx ↦ by simp [hSdef, hψ0 x hx, hgψ0 x hx]
+  have hS0 : ∀ t, ∀ x ∉ K, S t x = 0 := fun t x hx ↦ by
+    simp [hSdef, hψ0 x hx, hgψ0 x hx, -inner_gradient_right]
   have hχc : ContinuousOn (chiEps β ε v) (U ×ˢ Ioi 0) :=
     continuousOn_const.mul ((continuous_iff_continuousAt.2 fun z ↦
       (hβ.hasDerivAt_bigBEps ε z).continuousAt).comp_continuousOn hvc)
@@ -274,7 +276,7 @@ theorem hasDerivAt_energyMoment {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ
     have hintA : Integrable fun x ↦ (v (x, t) - v (x, t₀)) *
         (ψ x * (lapₓ v (x, t) + lapₓ v (x, t₀)) + ⟪gradₓ v (x, t) + gradₓ v (x, t₀), ∇ ψ x⟫) := by
       refine GMTFoundations.integrable_of_continuousOn_of_zero hK ?_ fun x hx ↦ by
-        simp [hψ0 x hx, hgψ0 x hx]
+        simp [hψ0 x hx, hgψ0 x hx, -inner_gradient_right]
       exact (((continuousOn_slice_of_prod hvc htU).sub (continuousOn_slice_of_prod hvc ht₀U)).mul
         ((hψ.continuous.continuousOn.mul ((continuousOn_slice_of_prod hlc htU).add
           (continuousOn_slice_of_prod hlc ht₀U))).add (((continuousOn_slice_of_prod hgc htU).add
@@ -333,11 +335,12 @@ theorem hasDerivAt_energyMoment {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ
           (tendsto_const_nhds (x := ∇ ψ x))))).add
         (((tendsto_const_nhds (x := Q x ^ 2)).mul T2).mul (tendsto_const_nhds (x := ψ x)))
       convert hL using 2
+      · rfl
       simp only [hS₀def]
       rw [heq (x, t₀) hpt, inner_add_left]
       ring
     · simp only [hS0 _ x hx]
-      have : S₀ x = 0 := by simp [hS₀def, hψ0 x hx, hgψ0 x hx]
+      have : S₀ x = 0 := by simp [hS₀def, hψ0 x hx, hgψ0 x hx, -inner_gradient_right]
       rw [this]
       exact tendsto_const_nhds
   set B := C * (C * (C + C) + (C + C) * C) + C ^ 2 * (2 * (C * C)) * C with hBdef
@@ -438,7 +441,7 @@ theorem enorm_energyMoment_sub_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → �
     · rw [indicator_of_mem hx]
       exact abs_energyMomentDeriv_le (hψb x) (hgψb x) (hL x hx τ hτ) hL0
     · rw [indicator_of_notMem hx]
-      simp [hS₀def, hψ0 x hx, hgψ0 x hx]
+      simp [hS₀def, hψ0 x hx, hgψ0 x hx, -inner_gradient_right]
   -- a bound for the derivative on `[t₁, t₂]`
   have hKc : IsCompact (tsupport ψ ×ˢ Icc t₁ t₂) := hψc.prod isCompact_Icc
   have hKcU : tsupport ψ ×ˢ Icc t₁ t₂ ⊆ U ×ˢ Ioi 0 :=
@@ -491,7 +494,7 @@ theorem enorm_energyMoment_sub_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → �
       _ = _ := by
           rw [ENNReal.ofReal_mul hc0, ENNReal.ofReal_add (sq_nonneg _) zero_le_one,
             ENNReal.ofReal_one]
-  · have : S₀ τ x = 0 := by simp [hS₀def, hψ0 x hx, hgψ0 x hx]
+  · have : S₀ τ x = 0 := by simp [hS₀def, hψ0 x hx, hgψ0 x hx, -inner_gradient_right]
     rw [this, enorm_zero]
     exact zero_le
 

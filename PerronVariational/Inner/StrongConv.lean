@@ -8,7 +8,8 @@ module
 public import PerronVariational.Inner.Common
 public import PerronVariational.Statements.Intermediate
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.MeasureTheory.Function.StronglyMeasurable.Inner
 import PerronVariational.Inner.EnergyConv
 import PerronVariational.Inner.StrongGrad
@@ -75,7 +76,7 @@ theorem memLp_two_of_bound_of_compact {Ω L : Set (E d × ℝ)} (hL : IsCompact 
     by_contra h
     exact hp (h0 p h)
   rw [← heq, memLp_indicator_iff_restrict hLm]
-  haveI : IsFiniteMeasure ((volume.restrict Ω).restrict L) :=
+  have : IsFiniteMeasure ((volume.restrict Ω).restrict L) :=
     isFiniteMeasure_restrict.2 ((Measure.restrict_apply_le _ _).trans_lt hL.measure_lt_top).ne
   exact MemLp.of_bound hm.restrict C (ae_restrict_of_forall_mem hLm hb)
 
@@ -89,7 +90,7 @@ theorem tendsto_setIntegral_of_dominated_compact {Ω L : Set (E d × ℝ)} (hΩ 
     Tendsto (fun n ↦ ∫ p in Ω, F n p) atTop (𝓝 (∫ p in Ω, F₀ p)) := by
   have hLm : MeasurableSet L := hL.isClosed.measurableSet
   have hred : ∀ G : E d × ℝ → ℝ, (∀ p ∉ L, G p = 0) → ∫ p in Ω, G p = ∫ p in L, G p :=
-    fun G hG ↦ setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩ hLΩ fun p hp ↦ hG p hp.2
+    fun G hG ↦ setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩ hLΩ fun p hp ↦ hG p hp.2
   rw [hred _ hF₀0]
   refine (tendsto_integral_filter_of_dominated_convergence g (Eventually.of_forall hm) ?_ hg
     (ae_restrict_of_forall_mem hLm hlim)).congr fun n ↦ (hred _ (hF0 n)).symm
@@ -99,6 +100,7 @@ theorem tendsto_setIntegral_of_dominated_compact {Ω L : Set (E d × ℝ)} (hΩ 
 /-- Uniformly small functions supported in a fixed compact set are small in `L²`. -/
 theorem tendsto_eLpNorm_of_uniform {Ω L : Set (E d × ℝ)} (hL : IsCompact L) {F : Type*}
     [NormedAddCommGroup F] {c : ℕ → E d × ℝ → F} (h0 : ∀ n, ∀ p ∉ L, c n p = 0)
+    (hcm : ∀ n, AEStronglyMeasurable (c n) (volume.restrict Ω))
     (hsmall : ∀ δ > 0, ∀ᶠ n in atTop, ∀ p ∈ L, ‖c n p‖ ≤ δ) :
     Tendsto (fun n ↦ eLpNorm (c n) 2 (volume.restrict Ω)) atTop (𝓝 0) := by
   have hLm : MeasurableSet L := hL.isClosed.measurableSet
@@ -112,8 +114,8 @@ theorem tendsto_eLpNorm_of_uniform {Ω L : Set (E d × ℝ)} (hL : IsCompact L) 
     have hsupp : Function.support (c n) ⊆ L := fun p hp ↦ by
       by_contra h
       exact hp (h0 n p h)
-    rw [← eLpNorm_restrict_eq_of_support_subset hsupp]
-    refine (eLpNorm_le_of_ae_bound (ae_restrict_of_forall_mem hLm hn)).trans ?_
+    rw [← eLpNorm_restrict_eq_of_support_subset (hcm n) hsupp]
+    refine (eLpNorm_le_of_ae_bound (hcm n).restrict (ae_restrict_of_forall_mem hLm hn)).trans ?_
     refine mul_le_mul_left (ENNReal.rpow_le_rpow ?_ (inv_nonneg.2 ENNReal.toReal_nonneg)) _
     rw [Measure.restrict_apply_univ]
     exact Measure.restrict_apply_le _ _
@@ -140,7 +142,8 @@ theorem eLpNorm_prod_le_of_slices {U : Set (E d)} {I : Set ℝ} (hIm : Measurabl
   have hle : eLpNorm F 2 (volume.restrict (U ×ˢ I)) ^ 2 ≤ E0 * volume I := by
     have hm : AEMeasurable (fun p ↦ ENNReal.ofReal (‖F p‖ ^ 2)) (volume.restrict (U ×ˢ I)) :=
       (hFm.norm.aemeasurable.pow_const 2).ennreal_ofReal
-    rw [eLpNorm_two_sq, volume_restrict_prod] at *
+    rw [eLpNorm_two_sq F hFm]
+    rw [volume_restrict_prod] at hm ⊢
     rw [lintegral_prod_symm _ hm]
     calc ∫⁻ t, ∫⁻ x, ENNReal.ofReal (‖F (x, t)‖ ^ 2) ∂volume.restrict U ∂volume.restrict I
         ≤ ∫⁻ _, E0 ∂volume.restrict I := by
@@ -168,7 +171,7 @@ theorem tendsto_setIntegral_inner_of_weak {U : Set (E d)} (hU : IsOpen U)
   have hsub : U ×ˢ Ioo 0 T ⊆ UInf U := prod_mono le_rfl Ioo_subset_Ioi_self
   have hred : ∀ A : E d × ℝ → E d,
       ∫ p in UInf U, ⟪A p, G p⟫ = ∫ p in U ×ˢ Ioo 0 T, ⟪A p, G p⟫ := fun A ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩm hsub fun p hp ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩm hsub fun p hp ↦ by
       rw [hG0 p fun h ↦ hp.2 (hLT h), inner_zero_right]
   simp only [hred]
   exact (ha T hT).2.2 G (memLp_two_of_bound_of_compact hL
@@ -266,7 +269,7 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
   set L := tsupport η with hLdef
   have hL : IsCompact L := hηc
   have hLm : MeasurableSet L := (isClosed_tsupport η).measurableSet
-  haveI : IsFiniteMeasure (volume.restrict L) := isFiniteMeasure_restrict.2 hL.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict L) := isFiniteMeasure_restrict.2 hL.measure_lt_top.ne
   obtain ⟨T, hT, hLT⟩ := exists_subset_prod_Ioo hL hηs
   have hUTm : MeasurableSet (S.U ×ˢ Ioo (0 : ℝ) T) := hU.measurableSet.prod measurableSet_Ioo
   have hUTΩ : S.U ×ˢ Ioo (0 : ℝ) T ⊆ Ω := prod_mono le_rfl Ioo_subset_Ioi_self
@@ -331,7 +334,7 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
       _ ≤ (Bu + 1) ^ 2 / 2 * Cd := by gcongr
   have hred : ∀ G : E d × ℝ → ℝ, (∀ p ∉ L, G p = 0) →
       ∫ p in Ω, G p = ∫ p in S.U ×ˢ Ioo 0 T, G p := fun G hG ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hΩm hUTΩ fun p hp ↦
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hΩm hUTΩ fun p hp ↦
       hG p fun h ↦ hp.2 (hLT h)
   have hgw := hgrad T hT
   have hBv : ∀ n, eLpNorm (gradₓ (v n)) 2 (volume.restrict (S.U ×ˢ Ioo 0 T)) ≤
@@ -348,7 +351,8 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
       fun p hp ↦ by simp [hgη0 p hp]
   have hbc : Tendsto (fun n ↦ eLpNorm ((fun p ↦ v n p • gradₓ η p) - fun p ↦ u p • gradₓ η p)
       2 (volume.restrict (S.U ×ˢ Ioo 0 T))) atTop (𝓝 0) := by
-    refine tendsto_eLpNorm_of_uniform hL (fun n p hp ↦ by simp [hgη0 p hp]) fun δ hδ ↦ ?_
+    refine tendsto_eLpNorm_of_uniform hL (fun n p hp ↦ by simp [hgη0 p hp])
+      (fun n ↦ ((hsmem _ (hv n).1).sub (hsmem u hucont)).aestronglyMeasurable) fun δ hδ ↦ ?_
     filter_upwards [hsmall (δ / (Cg + 1)) (by positivity)] with n hn p hp
     simp only [Pi.sub_apply, ← sub_smul, norm_smul, Real.norm_eq_abs]
     calc |v n p - u p| * ‖gradₓ η p‖ ≤ δ / (Cg + 1) * (Cg + 1) := by
@@ -379,7 +383,8 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
       fun p hp ↦ by simp [hη0' p hp]
   have hbc' : Tendsto (fun n ↦ eLpNorm ((fun p ↦ v n p * η p) - fun p ↦ u p * η p) 2
       (volume.restrict Ω)) atTop (𝓝 0) := by
-    refine tendsto_eLpNorm_of_uniform hL (fun n p hp ↦ by simp [hη0' p hp]) fun δ hδ ↦ ?_
+    refine tendsto_eLpNorm_of_uniform hL (fun n p hp ↦ by simp [hη0' p hp])
+      (fun n ↦ ((hηmem _ (hv n).1).sub (hηmem u hucont)).aestronglyMeasurable) fun δ hδ ↦ ?_
     filter_upwards [hsmall δ hδ] with n hn p hp
     simp only [Pi.sub_apply, ← sub_mul, norm_mul, Real.norm_eq_abs, abs_of_nonneg (hη0 p)]
     calc |v n p - u p| * η p ≤ δ * 1 := mul_le_mul (hn p hp) (hη01 p).2 (hη0 p) hδ.le
@@ -483,7 +488,7 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
             ⟪gradₓ u p, gradₓ (fun q ↦ max (u q - δs k) 0 * η q) p⟫ =
               η p * ‖gradₓ u p‖ ^ 2 + (u p - δs k) * ⟪gradₓ u p, gradₓ η p⟫ := by
           filter_upwards [hδ0.eventually (gt_mem_nhds hup)] with k hk
-          rw [hpt, if_pos hk]
+          rw [hpt, ite_eq_left hk]
         refine (tendsto_congr' hev).2 ?_
         have h := tendsto_const_nhds (x := η p * ‖gradₓ u p‖ ^ 2) |>.add
           (((tendsto_const_nhds (x := u p)).sub hδ0).mul_const ⟪gradₓ u p, gradₓ η p⟫)
@@ -588,7 +593,8 @@ theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ 
   have hle : ∀ n, eLpNorm (gradₓ (v n) - gradₓ u) 2 (volume.restrict K) ≤
       ENNReal.ofReal (Real.sqrt (∫ p in Ω, η p * ‖gradₓ (v n) p - gradₓ u p‖ ^ 2)) := by
     intro n
-    rw [← ENNReal.pow_le_pow_left_iff two_ne_zero, eLpNorm_two_sq,
+    rw [← ENNReal.pow_le_pow_left_iff two_ne_zero,
+      eLpNorm_two_sq _ (((hgvm n).sub hgum).mono_measure (Measure.restrict_mono hKΩ le_rfl)),
       ← ENNReal.ofReal_pow (Real.sqrt_nonneg _), Real.sq_sqrt (hI0 n),
       ofReal_integral_eq_lintegral_ofReal (iI n)
         (ae_of_all _ fun p ↦ mul_nonneg (hη0 p) (sq_nonneg _))]

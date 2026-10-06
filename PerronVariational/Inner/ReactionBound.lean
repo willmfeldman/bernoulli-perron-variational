@@ -7,7 +7,8 @@ module
 
 public import PerronVariational.Statements.Intermediate
 import GMTFoundations.Sobolev.Cutoff
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Inner.EnergyConv
 import PerronVariational.Inner.SemilinearEstimates
 import PerronVariational.Semilinear.Calculus

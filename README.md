@@ -19,13 +19,13 @@ In the plane this gives the structure of the free boundary: the largest subsolut
 and the smallest supersolution is classical except on a closed set where every blow-up is a
 two-plane solution.
 
-The library has about 51,200 lines of Lean in 151 files. It is
+The library has about 51,400 lines of Lean in 151 files. It is
 sorry-free, and the headline theorems depend only on the axioms `propext`, `Classical.choice` and
 `Quot.sound`.
 
 ## Headline theorems
 
-Result numbers are those of arXiv:2609.14981. Each statement is a `…Statement : Prop` in
+Result numbers are those of arXiv:2609.14981v1. Each statement is a `…Statement : Prop` in
 `PerronVariational/Statements/`, proved by the theorem listed. `formalization.yaml` states the
 certified results in words.
 
@@ -60,24 +60,9 @@ Each docstring states where its statement deviates from the paper. The main devi
   (`C^∞` would need a smooth `Q`).
 - **Weighted perimeter.** `∫ η |∇χ|` is defined by duality, as the supremum of `∫ χ div ψ` over
   `ψ ∈ C¹_c` with `|ψ| ≤ η`.
-- **Corrected statements.** In a few places the paper's statement or argument needs a
-  correction; each is explained at the corresponding declaration.
-  - Proposition 5.3 is false for the paper's set `E`. It is proved for `E = closure(U × (0, T])`,
-    and Corollary 5.4 is stated inside `U × [0, T]`.
-  - Theorem 3.10 also assumes boundedness, monotonicity in time, and the weak heat equation (4.5)
-    in `{u > 0}`; without the last, `1 + |x₁|` is a counterexample. Convergence is along a
-    sequence of good times.
-  - Lemma 2.10 needs a local `L^∞` bound on the sequence (`u_k ≡ k` is a counterexample
-    without it).
-  - Lemma 2.7: the intermediate claim `u > g` does not follow; the proof needs only `g < 0` at
-    free boundary points. The largest-subsolution case, not proved in the paper, is proved here
-    with a strict barrier.
-  - Lemma 6.3 carries additional hypotheses, and the continuity of the obstacle minimizer is proved
-    by a De Giorgi argument.
-  - Propositions 6.1 and 6.2: the continuity of the Perron solutions on `Ū` comes from the uniform
-    modulus of Proposition A.8.
-  - Corollary 1.2(ii): two-sided flatness at a half-plane blow-up uses the non-degeneracy of
-    Theorem B.1 and the convergence of the phases `χ` along the blow-up sequence.
+- **Corrected statements.** Several corrections were found in comparison with the arXiv preprint.
+  The authors plan to post an updated preprint incorporating them. The differences from arXiv v1
+  are explained at the corresponding declarations.
 
 ## Results from the literature
 
@@ -96,54 +81,61 @@ proofs.
 - **CI.** `.github/workflows/ci.yml` runs on every push and pull request. It:
   - fetches the Mathlib cache and builds the library, treating warnings as errors;
   - scans the library sources (comments and strings masked) for `sorry`, `admit`, `axiom` and
-    `native_decide` (`scripts/check_integrity.py`);
+    `native_decide`, and checks that every library file is a Lean module
+    (`scripts/check_integrity.py`);
   - checks that no library file reaches 1000 lines;
   - validates `formalization.yaml`: every Lean name resolves, each target depends on exactly the
     three axioms above, and the challenge inventory matches `challenges/*/config.json`
     (`scripts/check-formalization-manifest.rb`);
   - elaborates every challenge workspace and checks the axioms of every solution theorem
-    (`scripts/check-challenges.sh`).
+    (`scripts/check-challenges.sh`);
+  - checks that every `.lean` file in the repository is a module, that each `Challenge.lean`
+    repeats its workspace's vocabulary verbatim and imports Mathlib only, and the size of each
+    `Challenge.lean` (`scripts/challenge-prep.py check`).
 
 ## Comparator challenges
 
-`challenges/` holds standalone [Comparator](https://github.com/leanprover/comparator) workspaces.
-They restate the headline statements over Mathlib only, and `formalization.yaml` lists them. See
-[`challenges/README.md`](challenges/README.md) for the challenge set and the acceptance procedure.
+`challenges/` holds two standalone [Comparator](https://github.com/leanprover/comparator)
+workspaces, `main-theorem` (Theorem 1.1) and `planar-structure` (Corollary 1.2). Each restates its
+headline statements over Mathlib only, with its own vocabulary in `Vocabulary.lean`, and both also
+state a model example (not a result of the paper) as a non-vacuity check. `formalization.yaml` lists
+them. See [`challenges/README.md`](challenges/README.md) for the challenge set and the acceptance
+procedure.
 
 - Ordinary CI only elaborates these files.
 - The release workflow `.github/workflows/release-comparator.yml` (`scripts/release-comparator.sh`)
   establishes exact statement equality and the permitted-axiom check. It runs Comparator with
   pinned tool revisions and uploads an attestation.
 
-TODO: the Comparator release result.
+The result of the release run is recorded in [`challenges/README.md`](challenges/README.md).
 
 ## Building
 
 The toolchain and dependencies are pinned in `lean-toolchain`, `lakefile.toml` and
 `lake-manifest.json`:
 
-- Lean `v4.30.0`;
-- Mathlib `v4.30.0` (commit `c5ea003`),
+- Lean `v4.35.0-rc3`;
+- Mathlib `v4.35.0-rc3` (commit `c55e6e7`),
   [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4);
-- viscosity-solution-theory `v0.2.0` (Lake package `viscosity_solns`),
+- viscosity-solution-theory `v0.4.0` (Lake package `viscosity_solns`),
   [willmfeldman/viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory):
   viscosity solutions, Perron's method and Weyl's lemma. It pulls in
-  aleksandrov-differentiability (commit `730e7e9`),
+  aleksandrov-differentiability `v0.4.0`,
   [willmfeldman/aleksandrov-differentiability](https://github.com/willmfeldman/aleksandrov-differentiability);
-- parabolic-basic-theory `v0.1.0` (Lake package `parabolic_basic_theory`),
+- parabolic-basic-theory `v0.3.0` (Lake package `parabolic_basic_theory`),
   [willmfeldman/parabolic-basic-theory](https://github.com/willmfeldman/parabolic-basic-theory):
   semilinear parabolic well-posedness and comparison;
-- bernoulli-parabolic-comparison `v0.1.0` (Lake package `bernoulli_parabolic_comparison`),
+- bernoulli-parabolic-comparison `v0.3.0` (Lake package `bernoulli_parabolic_comparison`),
   [willmfeldman/bernoulli-parabolic-comparison](https://github.com/willmfeldman/bernoulli-parabolic-comparison):
   strict comparison for the parabolic one-phase problem;
-- elliptic-bernoulli-foundations `v0.1.0` (Lake package `elliptic_bernoulli_foundations`),
+- elliptic-bernoulli-foundations `v0.3.0` (Lake package `elliptic_bernoulli_foundations`),
   [willmfeldman/elliptic-bernoulli-foundations](https://github.com/willmfeldman/elliptic-bernoulli-foundations):
   obstacle problems, energy perturbations, the Lipschitz estimate, non-degeneracy, flatness
   regularity and the planar classification;
-- gmt-foundations `v0.1.0` (Lake package `gmt_foundations`),
+- gmt-foundations `v0.3.0` (Lake package `gmt_foundations`),
   [willmfeldman/gmt-foundations](https://github.com/willmfeldman/gmt-foundations): Sobolev and BV
   compactness, De Giorgi iteration;
-- bernoulli-rectifiability `v0.2.0` (Lake package `inner_variational`),
+- bernoulli-rectifiability `v0.4.0` (Lake package `inner_variational`),
   [willmfeldman/bernoulli-rectifiability](https://github.com/willmfeldman/bernoulli-rectifiability):
   the Kriventsov–Weiss theory for a Lipschitz coefficient.
 
@@ -232,9 +224,8 @@ Each Lean file's module docstring gives the full reference for the results it us
 
 ## Credits
 
-Some files contain code adapted from other Apache-2.0 Lean projects. Each such file keeps the
-upstream copyright line and has a `## Provenance` section, and
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) lists them.
+The library contains no code copied or adapted from other projects. Its Lake dependencies are
+listed under [Building](#building) and in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 The Lean proofs were written by AI coding agents (Claude, by Anthropic) under the author's
 mathematical direction and review. The theorem statements and proof routes were reviewed by the

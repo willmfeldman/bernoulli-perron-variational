@@ -44,7 +44,7 @@ support in `U`, is integrable on `U`. -/
 theorem integrableOn_mul_of_tsupport_subset {U : Set (E d)} (hU : IsOpen U) {g ψ : E d → ℝ}
     (hg : LocallyIntegrableOn g U) (hψ : Continuous ψ) (hψc : HasCompactSupport ψ)
     (hψU : tsupport ψ ⊆ U) : IntegrableOn (fun x ↦ g x * ψ x) U := by
-  refine IntegrableOn.of_forall_diff_eq_zero (s := tsupport ψ) ?_ hU.measurableSet fun x hx ↦ ?_
+  refine IntegrableOn.of_forall_sdiff_eq_zero (s := tsupport ψ) ?_ hU.measurableSet fun x hx ↦ ?_
   · exact (hg.integrableOn_compact_subset hψU hψc.isCompact).mul_continuousOn hψ.continuousOn
       hψc.isCompact
   · simp [image_eq_zero_of_notMem_tsupport hx.2]

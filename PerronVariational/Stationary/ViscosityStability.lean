@@ -256,7 +256,7 @@ theorem isViscSuper_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [l
     refine mem_nhdsWithin_of_mem_nhds ((isOpen_ball.mem_nhds hzρ)) |> fun h ↦
       Filter.mem_of_superset h fun y hy ↦ ?_
     have := hzmin ⟨mem_univ y, ball_subset_closedBall hy⟩
-    simp only [mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     change ψ y + c ≤ uk k y
     linarith
   have hres := hsup.2.2 _ (hψ.add contDiff_const) z (hBU hzB) htouch'
@@ -364,7 +364,8 @@ theorem isRelaxedSub_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [
   have hN : N ∈ 𝓝 x := by
     refine inter_mem (ball_mem_nhds x hρ) ?_
     have := Metric.tendsto_nhds.1 hcψ.tendsto (ρ ^ 4 / 8) (by positivity)
-    simpa [hu0, Real.dist_eq] using this
+    exact (by simpa [hu0, Real.dist_eq] using this :
+      ∀ᶠ y in 𝓝 x, |ψ y - u y| < ρ ^ 4 / 8)
   -- uniform approximation
   set ε := min (ρ ^ 4 / 8) (δ₀ / 4) with hε_def
   have hε : 0 < ε := by positivity
@@ -401,7 +402,7 @@ theorem isRelaxedSub_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [
     rw [eventually_nhdsWithin_iff]
     filter_upwards [isOpen_ball.mem_nhds hzρ] with y hy hyEU
     have := hzmin ⟨hyEU.1, ball_subset_closedBall hy⟩
-    simp only [mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     linarith
   have hres := hsub.2.2.2.2.2 _ (hψ.add contDiff_const) z htouch'
   rw [laplacian_add_const hψ2.contDiffAt, gradient_add_const] at hres

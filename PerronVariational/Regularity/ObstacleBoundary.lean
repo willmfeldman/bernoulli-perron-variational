@@ -91,7 +91,7 @@ theorem le_of_ae_le_of_continuousAt {f : E d → ℝ} {z y : E d} {δ c : ℝ}
   have hnull : volume {x | x ∈ ball z δ ∧ c < f x} = 0 := by
     rw [ae_restrict_iff' measurableSet_ball, ae_iff] at hae
     refine measure_mono_null (fun x hx ↦ ?_) hae
-    simp only [mem_setOf_eq, not_forall, not_le]
+    simp only [Set.mem_ofPred_eq, not_forall, not_le]
     exact ⟨hx.1, hx.2⟩
   exact hpos.ne' hnull
 

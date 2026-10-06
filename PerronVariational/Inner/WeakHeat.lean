@@ -9,7 +9,8 @@ public import PerronVariational.Defs.Parabolic
 public import PerronVariational.Defs.Semilinear
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Calculus.Rademacher
-import Mathlib.Data.Real.StarOrdered
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.MeasureTheory.Function.StronglyMeasurable.Inner
 import PerronVariational.Inner.EpsIdentity
 import PerronVariational.Inner.WeakGrad
@@ -401,9 +402,9 @@ theorem weakHeat_of_tendsto' {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} {
   have hUm : MeasurableSet (UInf U) := (hU.prod isOpen_Ioi).measurableSet
   have hred : ∀ G : E d × ℝ → E d,
       ∫ p in UInf U, ⟪G p, gradₓ φ p⟫ = ∫ p in K, ⟪G p, gradₓ φ p⟫ := fun G ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hKU fun p hp ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hKU fun p hp ↦ by
       simp [gradₓ_eq_zero_of_notMem hp.2]
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hgφ : MemLp (gradₓ φ) 2 (volume.restrict K) :=
     MemLp.of_bound (measurable_gradₓ hφcont).aestronglyMeasurable Kφ
       (Eventually.of_forall hKφ)

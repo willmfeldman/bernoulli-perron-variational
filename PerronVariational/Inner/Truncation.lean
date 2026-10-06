@@ -86,13 +86,13 @@ theorem fderiv_trunc_mul {g η : E d → ℝ} {x : E d} {δ : ℝ} (hg : Differe
   · have hev : (fun y ↦ max (g y - δ) 0 * η y) =ᶠ[𝓝 x] fun _ ↦ 0 := by
       filter_upwards [hg.continuousAt.eventually (gt_mem_nhds hlt)] with y hy
       simp [max_eq_right (by linarith : g y - δ ≤ 0)]
-    rw [hev.fderiv_eq, fderiv_fun_const, if_neg (not_lt.2 hlt.le),
+    rw [hev.fderiv_eq, fderiv_fun_const, ite_eq_right (not_lt.2 hlt.le),
       max_eq_right (by linarith : g x - δ ≤ 0)]
     simp
   · have hev : (fun y ↦ max (g y - δ) 0 * η y) =ᶠ[𝓝 x] fun y ↦ (g y - δ) * η y := by
       filter_upwards [hg.continuousAt.eventually (lt_mem_nhds hgt)] with y hy
       rw [max_eq_left (by linarith : 0 ≤ g y - δ)]
-    rw [hev.fderiv_eq, fderiv_fun_mul (hg.sub_const δ) hη, fderiv_sub_const, if_pos hgt,
+    rw [hev.fderiv_eq, fderiv_fun_mul (hg.sub_const δ) hη, fderiv_sub_const, ite_eq_left hgt,
       max_eq_left (by linarith : 0 ≤ g x - δ), one_smul, add_comm]
 
 /-- The product of two bounded Lipschitz functions is Lipschitz. -/
@@ -134,7 +134,7 @@ theorem integral_truncation_identity {U : Set (E d)} (hU : IsOpen U) {f : E d �
   have hK : IsCompact K := hηc.isCompact
   have hKm : MeasurableSet K := hK.measurableSet
   have hUm : MeasurableSet U := hU.measurableSet
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   obtain ⟨δ₀, hδ₀, hδ₀U⟩ := hK.exists_cthickening_subset_open hU hηU
   obtain ⟨L, hL⟩ := (hf.mono hδ₀U).exists_lipschitzOnWith_of_compact hK.cthickening
   obtain ⟨g, hg, hfg⟩ := hL.extend_real
@@ -174,7 +174,7 @@ theorem integral_truncation_identity {U : Set (E d)} (hU : IsOpen U) {f : E d �
   set F : ℝ → E d → ℝ := fun δ x ↦ (if δ < g x then (1 : ℝ) else 0) * (η x * ‖∇ f x‖ ^ 2) +
     max (f x - δ) 0 * inner ℝ (∇ f x) (∇ η x)
   have hA0 : ∀ δ, ∀ x ∉ K, A δ x = 0 := fun δ x hx ↦ by simp [A, hη0 x hx]
-  have hF0 : ∀ δ, ∀ x ∉ K, F δ x = 0 := fun δ x hx ↦ by simp [F, hη0 x hx, hgη0 x hx]
+  have hF0 : ∀ δ, ∀ x ∉ K, F δ x = 0 := fun δ x hx ↦ by simp [F, hη0 x hx, hDη0 x hx]
   -- Step 1: the identity for `ζ_δ = (f - δ)₊ η`, `|{g = δ}| = 0`
   have hstep : ∀ δ, 0 < δ → volume {x | g x = δ} = 0 →
       ∫ x in U, A δ x = -∫ x in U, F δ x := by
@@ -233,7 +233,7 @@ theorem integral_truncation_identity {U : Set (E d)} (hU : IsOpen U) {f : E d �
       with x hxd hxδ
     by_cases hxK : x ∈ K
     · rw [inner_gradient_eq_fderiv, fderiv_trunc_mul hxd (hηd x) hxδ]
-      simp only [F, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
+      simp only [F, add_apply, smul_apply, smul_eq_mul,
         ← hDfg x hxK, ← inner_gradient_eq_fderiv, real_inner_self_eq_norm_sq, hfgK x hxK]
     · have hx' : x ∉ tsupport ζ := fun h' ↦ hxK (hζsupp h').1
       rw [hF0 δ x hxK]
@@ -247,14 +247,14 @@ theorem integral_truncation_identity {U : Set (E d)} (hU : IsOpen U) {f : E d �
   have hδpos : ∀ j, 0 < δ j := fun j ↦ (hδI j).1
   have hδnull : ∀ j, volume {x | g x = δ j} = 0 := fun j ↦ by
     have := hδbad j
-    simp only [mem_compl_iff, mem_setOf_eq, not_lt, nonpos_iff_eq_zero] at this
+    simp only [mem_compl_iff, Set.mem_ofPred_eq, not_lt, nonpos_iff_eq_zero] at this
     exact this
   have hδlim : Tendsto δ atTop (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
       tendsto_one_div_add_atTop_nhds_zero_nat (fun j ↦ (hδpos j).le) fun j ↦ (hδI j).2.le
   -- reduce to integrals over `K`
   have hredU : ∀ φ : E d → ℝ, (∀ x ∉ K, φ x = 0) → ∫ x in U, φ x = ∫ x in K, φ x :=
-    fun φ hφ ↦ setIntegral_eq_of_subset_of_forall_diff_eq_zero hUm hηU fun x hx ↦ hφ x hx.2
+    fun φ hφ ↦ setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hUm hηU fun x hx ↦ hφ x hx.2
   have hmeasf : AEStronglyMeasurable f (volume.restrict K) :=
     (hf.continuousOn.mono hηU).aestronglyMeasurable hKm
   have hmeasDf : Measurable fun x ↦ ∇ f x :=

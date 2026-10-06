@@ -2,8 +2,8 @@
 # Elaborate every comparator challenge workspace in a trusted checkout, and check the axioms of
 # every solution theorem.
 #
-# For each challenges/*/config.json this builds the trusted modules (Challenge, with its vocabulary
-# files Challenge/*.lean, or Statement and Challenge) and Solution, then runs
+# For each challenges/*/config.json this builds the trusted modules (Vocabulary and Challenge) and
+# Solution, then runs
 # `#print axioms` on each theorem in the config and requires exactly the config's
 # permitted_axioms. It shows that the files elaborate and that the solutions are sorry-free. It
 # does NOT check that Challenge and Solution state the same theorems: only Comparator does that
@@ -15,8 +15,12 @@ status=0
 for config in "$ROOT"/challenges/*/config.json; do
   dir=$(dirname "$config")
   name=$(basename "$dir")
-  targets="Challenge Solution"
-  [ -f "$dir/Statement.lean" ] && targets="Statement $targets"
+  if [ ! -f "$dir/Vocabulary.lean" ] || [ -e "$dir/Statement.lean" ]; then
+    echo "$name: expected Vocabulary.lean and no Statement.lean" >&2
+    status=1
+    continue
+  fi
+  targets="Vocabulary Challenge Solution"
   echo "==> $name: lake build $targets"
   (cd "$dir" && lake build $targets)
   check=$(mktemp "${TMPDIR:-/tmp}/challenge-axioms-XXXXXX")
