@@ -47,13 +47,16 @@ dependencies:
     rev: "fb1cbd1a28042da4c88091f804a707462682a93a"
   - name: "elliptic_bernoulli_foundations"
     url: "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
-    rev: "2b64e837a591b32c8ab3c7608304057e556ec0aa"
+    rev: "07a60a6f1849d6af6aff34561bcad2fbc1801190"
+  - name: "basic_elliptic_theory"
+    url: "https://github.com/willmfeldman/elliptic-schauder-theory"
+    rev: "7f27afc285ef78cd54b28e036827c3e8308f3f5f"
   - name: "gmt_foundations"
     url: "https://github.com/willmfeldman/gmt-foundations"
     rev: "45847e7fce2ff1c78a19a048befc3c418dd8b1fb"
   - name: "inner_variational"
     url: "https://github.com/willmfeldman/bernoulli-rectifiability"
-    rev: "27cff843d8dddf4dd017c4349efb8aaa7d47f838"
+    rev: "fa255a8b5f2b904a0f4c23e19b52538e5d2b2c88"
 
 build:
   package_file: "lakefile.toml"

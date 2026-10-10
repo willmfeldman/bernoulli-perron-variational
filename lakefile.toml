@@ -1,5 +1,5 @@
 name = "perron_variational"
-version = "0.2.0"
+version = "0.2.1"
 description = "Lean 4 formalization of 'Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem' (Abedin, Feldman, Stinson)"
 keywords = ["math"]
 defaultTargets = ["PerronVariational"]
@@ -35,7 +35,7 @@ rev = "v0.3.0"
 [[require]]
 name = "elliptic_bernoulli_foundations"
 git = "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
-rev = "v0.3.0"
+rev = "v0.4.0"
 
 [[require]]
 name = "gmt_foundations"
@@ -48,4 +48,4 @@ name = "PerronVariational"
 [[require]]
 name = "inner_variational"
 git = "https://github.com/willmfeldman/bernoulli-rectifiability"
-rev = "v0.4.0"
+rev = "v0.4.2"

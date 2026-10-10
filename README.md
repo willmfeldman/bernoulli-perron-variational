@@ -128,14 +128,15 @@ The toolchain and dependencies are pinned in `lean-toolchain`, `lakefile.toml` a
 - bernoulli-parabolic-comparison `v0.3.0` (Lake package `bernoulli_parabolic_comparison`),
   [willmfeldman/bernoulli-parabolic-comparison](https://github.com/willmfeldman/bernoulli-parabolic-comparison):
   strict comparison for the parabolic one-phase problem;
-- elliptic-bernoulli-foundations `v0.3.0` (Lake package `elliptic_bernoulli_foundations`),
+- elliptic-bernoulli-foundations `v0.4.0` (Lake package `elliptic_bernoulli_foundations`),
   [willmfeldman/elliptic-bernoulli-foundations](https://github.com/willmfeldman/elliptic-bernoulli-foundations):
   obstacle problems, energy perturbations, the Lipschitz estimate, non-degeneracy, flatness
-  regularity and the planar classification;
+  regularity and the planar classification. It pulls in elliptic-schauder-theory `v0.1.0`,
+  [willmfeldman/elliptic-schauder-theory](https://github.com/willmfeldman/elliptic-schauder-theory);
 - gmt-foundations `v0.3.0` (Lake package `gmt_foundations`),
   [willmfeldman/gmt-foundations](https://github.com/willmfeldman/gmt-foundations): Sobolev and BV
   compactness, De Giorgi iteration;
-- bernoulli-rectifiability `v0.4.0` (Lake package `inner_variational`),
+- bernoulli-rectifiability `v0.4.2` (Lake package `inner_variational`),
   [willmfeldman/bernoulli-rectifiability](https://github.com/willmfeldman/bernoulli-rectifiability):
   the Kriventsov–Weiss theory for a Lipschitz coefficient.
 

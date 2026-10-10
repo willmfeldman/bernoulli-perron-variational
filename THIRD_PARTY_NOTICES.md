@@ -10,5 +10,6 @@ v0.4.0); parabolic-basic-theory (https://github.com/willmfeldman/parabolic-basic
 bernoulli-parabolic-comparison (https://github.com/willmfeldman/bernoulli-parabolic-comparison,
 v0.3.0); gmt-foundations (https://github.com/willmfeldman/gmt-foundations, v0.3.0);
 elliptic-bernoulli-foundations (https://github.com/willmfeldman/elliptic-bernoulli-foundations,
-v0.3.0); and bernoulli-rectifiability (https://github.com/willmfeldman/bernoulli-rectifiability,
-v0.4.0). All are Apache-2.0.
+v0.4.0), which pulls in elliptic-schauder-theory
+(https://github.com/willmfeldman/elliptic-schauder-theory, v0.1.0); and bernoulli-rectifiability
+(https://github.com/willmfeldman/bernoulli-rectifiability, v0.4.2). All are Apache-2.0.
