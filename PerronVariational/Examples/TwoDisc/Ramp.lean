@@ -156,21 +156,6 @@ theorem contDiff_ramp : ContDiff ℝ 2 ramp := by
   exact ⟨fun u ↦ (hasDerivAt_ramp u).differentiableAt, by simp,
     fun u ↦ (hasDerivAt_rampD u).differentiableAt, continuous_rampDD⟩
 
-theorem rampD_nonneg (u : ℝ) : 0 ≤ rampD u := by
-  rcases le_or_gt u 0 with h | h
-  · rw [rampD_of_nonpos h]
-  rcases le_or_gt u 1 with h1 | h1
-  · rw [rampD_of_mem_Icc ⟨h.le, h1⟩]; nlinarith [sq_nonneg u]
-  · rw [rampD_of_one_le h1.le]; norm_num
-
-theorem rampD_le_one (u : ℝ) : rampD u ≤ 1 := by
-  rcases le_or_gt u 0 with h | h
-  · rw [rampD_of_nonpos h]; norm_num
-  rcases le_or_gt u 1 with h1 | h1
-  · rw [rampD_of_mem_Icc ⟨h.le, h1⟩]
-    nlinarith [sq_nonneg (u - 1), mul_nonneg h.le (sq_nonneg (u - 1))]
-  · rw [rampD_of_one_le h1.le]
-
 theorem ramp_nonneg (u : ℝ) : 0 ≤ ramp u := by
   rcases le_or_gt u 0 with h | h
   · rw [ramp_of_nonpos h]
@@ -234,14 +219,6 @@ theorem hasDerivAt_floorCapD (hLf : Lf ≠ 0) (hLc : Lc ≠ 0) (t : ℝ) :
   simp only [floorCapDD]
   field_simp
   ring
-
-theorem deriv_floorCap (hLf : Lf ≠ 0) (hLc : Lc ≠ 0) :
-    deriv (floorCap tf Lf tc Lc) = floorCapD tf Lf tc Lc :=
-  funext fun t ↦ (hasDerivAt_floorCap hLf hLc t).deriv
-
-theorem deriv_floorCapD (hLf : Lf ≠ 0) (hLc : Lc ≠ 0) :
-    deriv (floorCapD tf Lf tc Lc) = floorCapDD tf Lf tc Lc :=
-  funext fun t ↦ (hasDerivAt_floorCapD hLf hLc t).deriv
 
 theorem contDiff_floorCap : ContDiff ℝ 2 (floorCap tf Lf tc Lc) := by
   unfold floorCap

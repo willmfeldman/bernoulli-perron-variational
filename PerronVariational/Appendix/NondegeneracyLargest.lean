@@ -20,29 +20,31 @@ import PerronVariational.Semilinear.Monotone
 import PerronVariational.Stationary.ViscosityLocal
 
 /-!
-# Theorem B.1: non-degeneracy of largest subsolutions in the plane
+# [Theorem 2.10](#AFS:t.largest-sub-non-degen): non-degeneracy of largest subsolutions in the plane
 
-**Thm B.1** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper"), due to B.
-Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a free boundary problem
-in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3-4, 937–962,
-doi:10.1007/s00526-013-0606-8. We follow the sketch of proof given in Appendix B of the paper.
+**[Thm 2.10](#AFS:t.largest-sub-non-degen)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+("the paper"), due to B. Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for
+a free boundary problem in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014),
+no. 3-4, 937–962, doi:10.1007/s00526-013-0606-8. We follow the sketch of proof given in
+[Section A.2](#AFS:s.largest-sub-nondegen) of the paper.
 
 * `le_zero_of_subharmonic_ball`: a weak maximum principle on balls, for functions that are `C²`
   and subharmonic where positive.
-* **Lemma B.4** (`exists_notMem_closure_posSet_sphere`): for a local largest subsolution
-  `u` with `x₀ ∈ ∂{u > 0}`, every sphere `∂B_t(x₀)` meets the complement of `\overline{{u > 0}}`.
-  Proof as in the sketch, via the harmonic lift (solvability of the Dirichlet problem, from the
-  dependency viscosity-solution-theory v0.2.0).
-* `mass_lower_bound_of_exteriorBall`: Lemma B.2 plus Lemma B.3 at an outer-regular free boundary
-  point `y` with exterior ball of radius `s`: `μ(B_{4s}(y)) ≥ c s`.
-* `mass_lower_bound_of_covering`: the Vitali covering step. The paper's sketch takes
-  `ρ_r = d(x, E)` where `d(x_r, E)` is meant; its Vitali subfamily of intervals
-  `(r_j - ρ_j, r_j + ρ_j)` does not give disjoint balls `B_{2ρ_j}(x_{r_j})`; and for `r` near `1`
-  these balls leave `B_1`. Here we use the distance from `x_r`, the enlarged intervals
-  `(r - 5ρ_r, r + 5ρ_r)`, and radii `r ∈ [T/2, T]` so that all balls stay in `B_{6T}(x₀)`.
-* `isNondegenerateAt_of_isLocalLargestSub`: Thm B.1 for local largest subsolutions.
-* `largestSub_nondegenerate_of`: Thm B.1 for Perron's largest subsolution, given Prop 6.2.
+* **[Lemma A.3](#AFS:l.largest-sub-sphere-exterior)** (`exists_notMem_closure_posSet_sphere`): for a
+  local largest subsolution `u` with `x₀ ∈ ∂{u > 0}`, every sphere `∂B_t(x₀)` meets the complement
+  of `\overline{{u > 0}}`. Proof as in the sketch, via the harmonic lift (solvability of the
+  Dirichlet problem, from the dependency viscosity-solution-theory v0.2.0).
+* `mass_lower_bound_of_exteriorBall`: [Lemma A.1](#AFS:l.outer-reg-non-degen) plus
+  [Lemma A.2](#AFS:l.nondegen-equivalences) at an outer-regular free boundary point `y` with
+  exterior ball of radius `s`: `μ(B_{4s}(y)) ≥ c s`.
+* `mass_lower_bound_of_covering`: the Vitali covering step. In the paper's sketch, for `r` near
+  `1` the balls `B_{2ρ_r}(x_r)` leave `B_1`. Here we use the intervals `(r - 5ρ_r, r + 5ρ_r)`
+  and radii `r ∈ [T/2, T]` so that all balls stay in `B_{6T}(x₀)`.
+* `isNondegenerateAt_of_isLocalLargestSub`: [Thm 2.10](#AFS:t.largest-sub-non-degen) for local
+  largest subsolutions.
+* `largestSub_nondegenerate_of`: [Thm 2.10](#AFS:t.largest-sub-non-degen) for Perron's largest
+  subsolution, given [Prop 6.2](#AFS:p.inner-largest).
 
 The Riesz measure `μ = Δu`, which the paper uses without proof, is constructed in
 `Appendix/RieszMeasure.lean`.
@@ -115,19 +117,18 @@ theorem le_zero_of_subharmonic_ball {w : E d → ℝ} {x₀ : E d} {t : ℝ} (hd
   have hdR : (1 : ℝ) ≤ d := by exact_mod_cast hd
   nlinarith
 
-/-! ### Lemma B.4 -/
+/-! ### [Lemma A.3](#AFS:l.largest-sub-sphere-exterior) -/
 
 section LemmaB4
 
 variable {Q u : E 2 → ℝ} {x₀ : E 2} {R : ℝ} {K : ℝ≥0}
 
-/-- **Lemma B.4.** Let `u` be a local largest subsolution in `B_R(x₀)`, Lipschitz, `C²`
-and harmonic in `{u > 0}`, with `x₀ ∈ ∂{u > 0}`. Then for `0 < t < R`, the sphere `∂B_t(x₀)`
-is not contained in `\overline{{u > 0}}`.
+/-- **[Lemma A.3](#AFS:l.largest-sub-sphere-exterior).** Let `u` be a local largest subsolution in
+`B_R(x₀)`, Lipschitz, `C²` and harmonic in `{u > 0}`, with `x₀ ∈ ∂{u > 0}`. Then for `0 < t < R`,
+the sphere `∂B_t(x₀)` is not contained in `\overline{{u > 0}}`.
 
-Proof (the paper's sketch, with two details made explicit: `v(x₀) > 0 = u(x₀)` suffices, rather than
-`v > u` in the ball, and the subsolution property of the glued function on `∂B_t(x₀)` uses `∂B_t(x₀)
-⊆ \overline{{u > 0}}`): otherwise let `h` be the harmonic lift of `u` in `B_t(x₀)` (solvability of
+Proof (the paper's sketch; `v(x₀) > 0 = u(x₀)` suffices, rather than `v > u` in the ball):
+otherwise let `h` be the harmonic lift of `u` in `B_t(x₀)` (solvability of
 the Dirichlet problem, `Registry.dirichlet_harmonic_modulus`). By the maximum principle `0 ≤ h` and
 `u ≤ h` in `B_t(x₀)`. The glued function `v = h` in `B_t(x₀)`, `v = u` outside, is a subsolution:
 inside `B_t(x₀)` it is harmonic where positive (and `x ∉ \overline{{v > 0}}` where `h = 0`, by the
@@ -290,12 +291,14 @@ theorem exists_notMem_closure_posSet_sphere (hll : IsLocalLargestSub (ball x₀ 
 
 end LemmaB4
 
-/-! ### Mass at outer-regular points (Lemmas B.2 and B.3) -/
+/-! ### Mass at outer-regular points
 
-/-- The non-degeneracy constant of Lemma B.2 in `d = 2`. -/
+This uses Lemmas [A.1](#AFS:l.outer-reg-non-degen) and [A.2](#AFS:l.nondegen-equivalences). -/
+
+/-- The non-degeneracy constant of [Lemma A.1](#AFS:l.outer-reg-non-degen) in `d = 2`. -/
 noncomputable def outerRegConst (q₀ : ℝ) : ℝ := q₀ / (32 * ((2 : ℕ) : ℝ) * Real.exp (3 * (2 : ℕ)))
 
-/-- The circle-mean constant `A` of Lemma B.3 ((ii) ⇒ (i)). -/
+/-- The circle-mean constant `A` of [Lemma A.2](#AFS:l.nondegen-equivalences) ((ii) ⇒ (i)). -/
 noncomputable def meanConst (q₀ L : ℝ) : ℝ :=
   min (outerRegConst q₀ / (8 * L)) π * (outerRegConst q₀ / 4) / (2 * π)
 
@@ -322,11 +325,12 @@ theorem massConst_pos {q₀ L : ℝ} (hq₀ : 0 < q₀) (hL : 0 < L) : 0 < massC
 /-- **Mass at an outer-regular free boundary point.** Let `μ` be the Riesz measure of `u` in `Ω`,
 `y ∈ ∂{u > 0}` with an exterior ball `B_s(p)` touching at `y` (`|y - p| = s`, `u = 0` in
 `B_s(p)`), `u` an `L`-Lipschitz subsolution in `B_{4s}(y) ⊆ Ω` with `Q ≥ q₀`. Then
-`μ(B_{4s}(y)) ≥ c s` (paper, proof of Thm B.1: Lemma B.2 and Lemma B.3).
+`μ(B_{4s}(y)) ≥ c s` (paper, proof of [Thm 2.10](#AFS:t.largest-sub-non-degen):
+[Lemma A.1](#AFS:l.outer-reg-non-degen) and [Lemma A.2](#AFS:l.nondegen-equivalences)).
 
-Proof: Lemma B.2 gives `z ∈ B_{4s}(y)` with `u(z) ≥ c₂ s`; with `r' = |z - y| ≥ c₂ s / L`,
-`u(z) ≥ c₂ r'/4`, so `⨍_{∂B_{r'}(y)} u ≥ A r'` (`le_circleMean_of_lipschitz`) and
-`μ(B_{r'}(y)) ≥ κ π A r'` (`IsRieszMeasure.mass_lower_bound`). -/
+Proof: [Lemma A.1](#AFS:l.outer-reg-non-degen) gives `z ∈ B_{4s}(y)` with `u(z) ≥ c₂ s`; with
+`r' = |z - y| ≥ c₂ s / L`, `u(z) ≥ c₂ r'/4`, so `⨍_{∂B_{r'}(y)} u ≥ A r'`
+(`le_circleMean_of_lipschitz`) and `μ(B_{r'}(y)) ≥ κ π A r'` (`IsRieszMeasure.mass_lower_bound`). -/
 theorem mass_lower_bound_of_exteriorBall {Ω : Set (E 2)} {Q u : E 2 → ℝ} {μ : Measure (E 2)}
     (hμ : IsRieszMeasure Ω u μ) {q₀ L s : ℝ} (hq₀ : 0 < q₀) (hL : 0 < L) (hs : 0 < s)
     {y p : E 2} (hΩ : ball y (4 * s) ⊆ Ω) (hsub : IsViscSub (ball y (4 * s)) Q u)
@@ -373,8 +377,8 @@ theorem mass_lower_bound_of_exteriorBall {Ω : Set (E 2)} {Q u : E 2 → ℝ} {�
 
 /-! ### The covering step -/
 
-/-- **The Vitali covering step** (proof of Thm B.1, with the corrections listed in the module
-docstring). For
+/-- **The Vitali covering step** (proof of [Thm 2.10](#AFS:t.largest-sub-non-degen), with the
+changes listed in the module docstring). For
 `t ∈ [T/2, T]` let `X t ∈ ∂B_t(x₀)` and `0 < ρ t ≤ t` with `μ(B_{5ρ(t)}(X t)) ≥ c ρ(t)`. Then
 `μ(B_{6T}(x₀)) ≥ c T / 80`.
 
@@ -442,9 +446,9 @@ theorem mass_lower_bound_of_covering {μ : Measure (E 2)} {x₀ : E 2} {T c : �
     _ ≤ ∑ b ∈ G, μ (ball (X b) (5 * ρ b)) := Finset.sum_le_sum fun b hb ↦ hmass b (hGI b hb)
     _ ≤ μ (ball x₀ (6 * T)) := h2
 
-/-! ### Theorem B.1 -/
+/-! ### [Theorem 2.10](#AFS:t.largest-sub-non-degen) -/
 
-/-- **Thm B.1** for local largest subsolutions. Let `u` be a
+/-- **[Thm 2.10](#AFS:t.largest-sub-non-degen)** for local largest subsolutions. Let `u` be a
 local largest subsolution in `B_R(x₀) ⊆ ℝ²` with `Q ≥ q₀ > 0`, Lipschitz, `C²` and harmonic in
 `{u > 0}`, and `x₀ ∈ ∂{u > 0}`. Then `u` is non-degenerate at `x₀`.
 
@@ -452,11 +456,12 @@ Quantitative form: `sup_{B̄_r(x₀)} u ≥ c r` for `r ≤ R/2`, with `c` depen
 the Lipschitz constant `K`.
 
 Proof (the paper's sketch): with `μ = Δu` (`exists_isRieszMeasure`), for `T ≤ R/7` and each
-`t ∈ [T/2, T]`, Lemma B.4 gives `x_t ∈ ∂B_t(x₀) \ \overline{{u > 0}}`; with
-`ρ_t = d(x_t, \overline{{u > 0}}) ∈ (0, t]` and a nearest point `y_t`, the exterior ball
-`B_{ρ_t}(x_t)` touches at `y_t ∈ ∂{u > 0}`, so `μ(B_{5ρ_t}(x_t)) ≥ μ(B_{4ρ_t}(y_t)) ≥ c ρ_t`.
-The covering step gives `μ(B_{6T}(x₀)) ≥ c T / 80`, i.e. condition (iii) of Lemma B.3 at `x₀`;
-then (iii) ⇒ (i) ⇒ (ii). -/
+`t ∈ [T/2, T]`, [Lemma A.3](#AFS:l.largest-sub-sphere-exterior) gives
+`x_t ∈ ∂B_t(x₀) \ \overline{{u > 0}}`; with `ρ_t = d(x_t, \overline{{u > 0}}) ∈ (0, t]` and a
+nearest point `y_t`, the exterior ball `B_{ρ_t}(x_t)` touches at `y_t ∈ ∂{u > 0}`, so
+`μ(B_{5ρ_t}(x_t)) ≥ μ(B_{4ρ_t}(y_t)) ≥ c ρ_t`. The covering step gives `μ(B_{6T}(x₀)) ≥ c T / 80`,
+i.e. condition (iii) of [Lemma A.2](#AFS:l.nondegen-equivalences) at `x₀`; then (iii) ⇒ (i) ⇒
+(ii). -/
 theorem exists_le_of_isLocalLargestSub {Q u : E 2 → ℝ} {x₀ : E 2} {R q₀ : ℝ}
     {K : ℝ≥0} (_hR : 0 < R) (hq₀ : 0 < q₀) (hQ : ∀ y ∈ ball x₀ R, q₀ ≤ Q y)
     (hll : IsLocalLargestSub (ball x₀ R) Q u) (hLip : LipschitzOnWith K u (ball x₀ R))
@@ -559,7 +564,7 @@ theorem exists_le_of_isLocalLargestSub {Q u : E 2 → ℝ} {x₀ : E 2} {R q₀ 
     nlinarith [mul_pos hc₅pos hr]
   linarith
 
-/-- **Thm B.1**, local form. -/
+/-- **[Thm 2.10](#AFS:t.largest-sub-non-degen)**, local form. -/
 theorem isNondegenerateAt_of_isLocalLargestSub {Q u : E 2 → ℝ} {x₀ : E 2} {R q₀ : ℝ}
     {K : ℝ≥0} (hR : 0 < R) (hq₀ : 0 < q₀) (hQ : ∀ y ∈ ball x₀ R, q₀ ≤ Q y)
     (hll : IsLocalLargestSub (ball x₀ R) Q u) (hLip : LipschitzOnWith K u (ball x₀ R))
@@ -568,8 +573,9 @@ theorem isNondegenerateAt_of_isLocalLargestSub {Q u : E 2 → ℝ} {x₀ : E 2} 
   ⟨_, div_pos (div_pos (massConst_pos hq₀ (by positivity)) (by norm_num)) (by positivity),
     R / 2, by positivity, exists_le_of_isLocalLargestSub hR hq₀ hQ hll hLip hC2 hΔ hx₀⟩
 
-/-- **Thm B.1** for Perron's largest subsolution, from Prop 6.2 (viscosity solution, inner
-variational solution, continuous on `Ū`) and the dual of Lemma 2.7
+/-- **[Thm 2.10](#AFS:t.largest-sub-non-degen)** for Perron's largest subsolution, from
+[Prop 6.2](#AFS:p.inner-largest) (viscosity solution, inner variational solution, continuous on `Ū`)
+and the dual of [Lemma 2.8](#AFS:l.local-minimality)
 (`Setting.perronLargest_isLocalLargestSub_near_fb`). -/
 theorem largestSub_nondegenerate_of (h62 : InnerLargestStatement) :
     LargestSubNondegenerateStatement := by
@@ -625,8 +631,8 @@ theorem mem_freeBoundary_ball {U : Set (E d)} {u : E d → ℝ} {z : E d}
       (⟨hρU hy.1, hy.2⟩ : y ∈ posSet u U)) hint
 
 /-- **Uniform non-degeneracy of Perron's largest subsolution at free boundary points** near a free
-boundary point `x₀` (Thm B.1 with constants depending only on `q₀`, the Lipschitz constant and the
-radius of the local largest subsolution property). -/
+boundary point `x₀` ([Thm 2.10](#AFS:t.largest-sub-non-degen) with constants depending only on `q₀`,
+the Lipschitz constant and the radius of the local largest subsolution property). -/
 theorem Setting.perronLargest_nondegenerate_near_fb (h62 : InnerLargestStatement)
     (S : Setting 2) {g : E 2 → ℝ} (hg : IsStrictSuper S.U S.Q g) {x₀ : E 2}
     (hx₀ : x₀ ∈ freeBoundary (perronLargest S.U S.Q g) S.U) :

@@ -12,23 +12,25 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Stationary.ViscosityJet
 
 /-!
-# Locality of viscosity solutions and Lemma 2.7
+# Locality of viscosity solutions and [Lemma 2.8](#AFS:l.local-minimality)
 
-Lemma 2.7 and its dual, from F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+[Lemma 2.8](#AFS:l.local-minimality) and its dual, from F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
 * Locality: the viscosity super/subsolution properties are local (`IsViscSuper.mono`,
   `isViscSuper_of_locally`, `IsViscSub.mono`, `isViscSub_of_locally`), and supersolutions can be
   glued along a closed set (`isViscSuper_piecewise`, `isViscSub_piecewise`).
 * At a zero of a viscosity supersolution lying above a smooth strict subsolution `g`, one
   has `g < 0` (`IsViscSuper.strictSub_lt_zero`), proved with an explicit polynomial test function
-  (`IsViscSuper.false_of_touch_strictSub`). The proof of Lemma 2.7 in the paper claims "`u > g` in
-  `U`", which does not follow: Definition 2.2 only gives `Δg ≥ 0`, which is not strict, and `g` is
-  only `C²`. Only `g < 0` at free boundary points is needed.
-* **Lemma 2.7**: `perronSmallest_isLocalSmallestSuper_near_fb`.
+  (`IsViscSuper.false_of_touch_strictSub`). The proof of [Lemma 2.8](#AFS:l.local-minimality) in the
+  paper uses "`u > g` in `U`", which relies on the strict bound `Δg ≥ δ₀` of the paper's
+  [Definition 2.3](#AFS:d.strict-sub); `IsStrictSub` only assumes `Δg ≥ 0`, which is not strict, and
+  `g` is only `C²`. Only `g < 0` at free boundary points is needed.
+* **[Lemma 2.8](#AFS:l.local-minimality)**: `perronSmallest_isLocalSmallestSuper_near_fb`.
 * Comparison with strict `C²` barriers (`IsViscSub.le_max_of_barrier`,
-  `IsViscSub.le_max_of_isStrictSuperWith`) and the **dual of Lemma 2.7**, which the paper uses
-  but does not prove: `perronLargest_isLocalLargestSub_near_fb`.
+  `IsViscSub.le_max_of_isStrictSuperWith`) and the **dual of [Lemma 2.8](#AFS:l.local-minimality)**:
+  `perronLargest_isLocalLargestSub_near_fb`.
 -/
 
 open Set Filter Topology Metric Asymptotics
@@ -306,8 +308,9 @@ theorem IsViscSuper.false_of_touch_strictSub {U : Set (E d)} {Q u g : E d → �
   · linarith
 
 /-- If `u` is a viscosity supersolution in `U` with `u ≥ g` in `U`, where `g` is a smooth
-strict subsolution and `Q > 0`, then `g(x) < 0` at every zero `x ∈ U` of `u`. (This replaces the
-claim "`u > g` in `U`" in the proof of Lemma 2.7, which does not follow: `Δg ≥ 0` is not strict.) -/
+strict subsolution and `Q > 0`, then `g(x) < 0` at every zero `x ∈ U` of `u`. (This replaces
+"`u > g` in `U`" in the proof of [Lemma 2.8](#AFS:l.local-minimality), which needs `Δg > 0`;
+`IsStrictSub` only gives `Δg ≥ 0`.) -/
 theorem IsViscSuper.strictSub_lt_zero {U : Set (E d)} {Q u g : E d → ℝ} (hU : IsOpen U)
     (hu : IsViscSuper U Q u) (hg : IsStrictSub U Q g) (hgu : ∀ y ∈ U, g y ≤ u y) {x : E d}
     (hx : x ∈ U) (hux : u x = 0) (hQ : 0 < Q x) : g x < 0 := by
@@ -320,13 +323,13 @@ theorem IsViscSuper.strictSub_lt_zero {U : Set (E d)} {Q u g : E d → ℝ} (hU 
   exact hu.false_of_touch_strictSub hU hx hux hgu hg2 hgx hQ
     (lt_of_pow_lt_pow_left₀ 2 (norm_nonneg _) hlt)
 
-/-! ### Lemma 2.7 -/
+/-! ### [Lemma 2.8](#AFS:l.local-minimality) -/
 
 open Classical in
-/-- **Lemma 2.7**. Let `u` be Perron's smallest supersolution above a
-smooth strict subsolution `g`. Assume (outputs of Proposition 6.1) that `u` is a viscosity
-supersolution in `U` and continuous on `Ū`. Then every free boundary point `x` has a ball
-`B_r(x) ⊂⊂ U` in which `u` is a local smallest supersolution.
+/-- **[Lemma 2.8](#AFS:l.local-minimality)**. Let `u` be Perron's smallest supersolution above a
+smooth strict subsolution `g`. Assume (outputs of [Proposition 6.1](#AFS:p.inner-smallest)) that `u`
+is a viscosity supersolution in `U` and continuous on `Ū`. Then every free boundary point `x` has a
+ball `B_r(x) ⊂⊂ U` in which `u` is a local smallest supersolution.
 
 Proof: `g(x) < 0` by `IsViscSuper.strictSub_lt_zero`, so `g < 0` on some `B̄_r(x) ⊆ U`;
 a competitor `v` on `B_r(x)` extended by `u` lies in `𝒮_g`, hence `v ≥ u`. -/
@@ -383,8 +386,8 @@ theorem perronSmallest_isLocalSmallestSuper_near_fb {U : Set (E d)} {Q g : E d �
   have := perronSmallest_le hwS (subset_closure (hbU hz))
   rwa [hw, piecewise_eq_of_mem _ _ _ hz] at this
 
-/-- **Lemma 2.7** in the standing setting: the positivity of `Q` and the nonemptiness of `𝒮_g`
-are automatic. -/
+/-- **[Lemma 2.8](#AFS:l.local-minimality)** in the standing setting: the positivity of `Q` and the
+nonemptiness of `𝒮_g` are automatic. -/
 theorem Setting.perronSmallest_isLocalSmallestSuper_near_fb (S : Setting d) {g : E d → ℝ}
     (hg : IsStrictSub S.U S.Q g) (hsuper : IsViscSuper S.U S.Q (perronSmallest S.U S.Q g))
     (hcont : ContinuousOn (perronSmallest S.U S.Q g) (closure S.U)) {x : E d}
@@ -395,7 +398,7 @@ theorem Setting.perronSmallest_isLocalSmallestSuper_near_fb (S : Setting d) {g :
     (fun y hy ↦ S.Qmin_pos.trans_le (S.Q_mem y (subset_closure hy)).1) hg
     (S.perronSuperClass_nonempty hg.1.continuous.continuousOn) hsuper hcont hx
 
-/-! ### Comparison with strict `C²` barriers and the dual of Lemma 2.7 -/
+/-! ### Comparison with strict `C²` barriers and the dual of [Lemma 2.8](#AFS:l.local-minimality) -/
 
 
 /-- **Comparison with a strict barrier.** Let `v` be a viscosity subsolution in an open `W`,
@@ -460,10 +463,11 @@ theorem IsViscSub.le_max_of_barrier {W K : Set (E d)} {Q v H : E d → ℝ} (hd 
     rw [hφg] at h2
     linarith
 
-/-- **Barrier step of the dual of Lemma 2.7.** Let `g` be a strict supersolution with constants
-`a₀, δ₀`, and `B̄_r(x) ⊆ U` a ball on which `g > -a₀/2` and `Q ≥ q₀ > 0`. If `v` is a viscosity
-subsolution in `B_r(x)`, `K ⊆ B_r(x)` is compact and `v ≤ g₊` on `B_r(x) \ K`, then `v ≤ g₊` on
-`K`. (Comparison with the barriers `g + ε(r² - |y - x|²)`, `ε → 0`.) -/
+/-- **Barrier step of the dual of [Lemma 2.8](#AFS:l.local-minimality).** Let `g` be a strict
+supersolution with constants `a₀, δ₀`, and `B̄_r(x) ⊆ U` a ball on which `g > -a₀/2` and
+`Q ≥ q₀ > 0`. If `v` is a viscosity subsolution in `B_r(x)`, `K ⊆ B_r(x)` is compact and `v ≤ g₊` on
+`B_r(x) \ K`, then `v ≤ g₊` on `K`. (Comparison with the barriers `g + ε(r² - |y - x|²)`,
+`ε → 0`.) -/
 theorem IsViscSub.le_max_of_isStrictSuperWith {U : Set (E d)} {Q g v : E d → ℝ} (hd : 0 < d)
     {a₀ δ₀ : ℝ} (hg : IsStrictSuperWith U Q g a₀ δ₀) {x : E d} {r : ℝ}
     (hBU : closedBall x r ⊆ U) (hga : ∀ y ∈ closedBall x r, -a₀ / 2 < g y) {q₀ : ℝ}
@@ -593,13 +597,16 @@ theorem IsViscSub.le_max_of_isStrictSuperWith {U : Set (E d)} {Q g v : E d → �
   linarith
 
 open Classical in
-/-- **Dual of Lemma 2.7** (not proved in the paper; needed for Theorem 1.1(iii), largest case,
-where Lemma 6.3 needs a local largest subsolution). The dual argument needs the glued competitor
-to satisfy `v ≤ g₊` in the ball; a test function at `x` alone fails when `g(x) = 0 = |∇g(x)|`, so
-we compare with strict barriers. Let `u` be Perron's largest subsolution below a smooth strict
-supersolution `g`, and assume (outputs of Proposition 6.2) that `u` is a viscosity subsolution
-in `U` and continuous on `Ū`. Then every free boundary point `x` has a ball `B_r(x) ⊂⊂ U` in
-which `u` is a local largest subsolution.
+/-- **Dual of [Lemma 2.8](#AFS:l.local-minimality)** (needed for
+[Theorem 1.1(iii)](#AFS:part.downward), largest case, where [Proposition 6.3](#AFS:p.downward) needs
+a local largest subsolution). The dual argument needs the glued competitor to satisfy `v ≤ g₊` in
+the ball. Since `IsStrictSuper` only assumes `Δg ≤ 0` (the paper's
+[Definition 2.3](#AFS:d.strict-sub) has `Δg ≤ -δ₀`), a test function at `x` alone fails when
+`g(x) = 0 = |∇g(x)|`, so we compare with strict barriers. Let `u` be Perron's largest subsolution
+below a smooth strict supersolution `g`, and assume (outputs of
+[Proposition 6.2](#AFS:p.inner-largest)) that `u` is a viscosity subsolution in `U` and continuous
+on `Ū`. Then every free boundary point `x` has a ball `B_r(x) ⊂⊂ U` in which `u` is a local largest
+subsolution.
 
 Proof: `g(x) ≥ 0` since `x ∈ \overline{{u > 0}}` and `u ≤ g₊`. Choose `B̄_r(x) ⊆ U` with
 `g > -a₀/2` there. For a competitor `v` in `B_r(x)`, equal to `u` off `B ⊂⊂ B_r(x)`, comparison
@@ -679,7 +686,7 @@ theorem perronLargest_isLocalLargestSub_near_fb {U : Set (E d)} {Q g : E d → �
   have := le_perronLargest hwS (subset_closure (hbU hz))
   rwa [hw, piecewise_eq_of_mem _ _ _ hz] at this
 
-/-- **Dual of Lemma 2.7** in the standing setting. -/
+/-- **Dual of [Lemma 2.8](#AFS:l.local-minimality)** in the standing setting. -/
 theorem Setting.perronLargest_isLocalLargestSub_near_fb (S : Setting d) {g : E d → ℝ}
     (hg : IsStrictSuper S.U S.Q g) (hsub : IsViscSub S.U S.Q (perronLargest S.U S.Q g))
     (hcont : ContinuousOn (perronLargest S.U S.Q g) (closure S.U)) {x : E d}

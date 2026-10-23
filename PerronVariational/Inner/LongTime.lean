@@ -8,42 +8,48 @@ module
 public import PerronVariational.Statements.Intermediate
 import Mathlib.Algebra.Order.Ring.Star
 import PerronVariational.Inner.GoodTimes
+import PerronVariational.Inner.LongTimeMonotone
 import PerronVariational.Inner.LongTimeSteps
+import PerronVariational.Inner.LongTimeSubseq
 import PerronVariational.Inner.LongTimeUniform
 import PerronVariational.Registry.FunctionalAnalysis
 
 /-!
-# Theorem 3.10: long-time limit, variational form (assembly)
+# [Theorem 3.14](#AFS:t.longtime-inner): long-time limit, variational form (assembly)
 
-**Theorem 3.10** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+**[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
-## The added weak heat equation hypothesis
+## The weak heat equation hypothesis
 
-The paper assumes only that `(u, χ)` is a parabolic inner variational solution (Definition 3.7);
-here we assume in addition the weak heat equation (4.5) in `{u > 0}` (`WeakHeatInPos S.U u w`),
-because the theorem is false without it. Take `u(x, t) = 1 + |x₁|`, `w = 0`, `χ ≡ 1`, `Q`
-constant. This is a time-independent parabolic inner variational solution (the integrand of (3.3)
-is `(Q² + 1) div ξ - 2 ∂₁ξ₁` a.e., whose integral vanishes), bounded, monotone in time, and
-satisfies (3.11)–(3.13) for suitable constants; but `u_∞ = 1 + |x₁|` is not `C²` in
-`{u_∞ > 0} = U`, so `(u_∞, χ_∞)` is not an inner variational solution (Definition 2.8(i)). The
-paper's proof uses (4.5) for the flow (Step 2: "in the same way that one shows `u` satisfies the
-heat equation in its positivity set"), but (4.5) is proved in §4 only for the `ε → 0` limit and
-is not part of Definition 3.7. The flows to which the paper applies the theorem (Theorem 3.9)
-satisfy (4.5).
+[Definition 3.8(iv)](#AFS:d.parabolic-inner) of the paper requires the heat equation in `{u > 0}`;
+`IsParaInnerVarSolution` does not include it, and here its weak form [(4.6)](#AFS:eqn:weakHeat) in
+`{u > 0}` is assumed separately (`WeakHeatInPos S.U u w`). The theorem is false without it. Take
+`u(x, t) = 1 + |x₁|`, `w = 0`, `χ ≡ 1`, `Q` constant. This is a time-independent parabolic inner
+variational solution (the integrand of [(3.3)](#AFS:e.parabolic-inner-var) is
+`(Q² + 1) div ξ - 2 ∂₁ξ₁` a.e., whose integral vanishes), bounded, and satisfies
+[(3.12)](#AFS:eqn:diss2)–[(3.14)](#AFS:eqn:chiEst2) for suitable constants; but `u_∞ = 1 + |x₁|` is
+not `C²` in `{u_∞ > 0} = U`, so `(u_∞, χ_∞)` is not an inner variational solution
+([Definition 2.11(i)](#AFS:d.stationary-inner)). The flows to which the theorem is applied
+([Theorem 3.13](#AFS:t.parabolic-existence)) satisfy [(4.6)](#AFS:eqn:weakHeat).
 
-The other differences from the paper's statement are recorded at `LongtimeInnerStatement`: the
-flow is assumed monotone in time (the paper's Step 1 claims that `u(·, t)` is Cauchy in `L²`,
-which does not follow from `∂ₜu ∈ L²(U_∞)`; the flows in Propositions 6.1 and 6.2 are monotone),
-and the strong gradient convergence is stated along a sequence of good times `tᵢ → ∞`.
+As in the paper, the flow is not assumed monotone in time, and the conclusions hold along a
+sequence `tᵢ → ∞`. The proof follows the paper's Steps 1–4: the good times `sᵢ` are selected first
+(Step 3: `∫_U |∂ₜu(sᵢ)|² → 0`, the slice relations, perimeter bounds), then Step 1 (Arzelà–Ascoli,
+`exists_subseq_tendstoLocallyUniformlyOn`) and the `BV` compactness are applied along `sᵢ`, and
+Steps 2 and 4 along the resulting subsequence. [(3.15)](#AFS:eqn:inftyLip) for the limit uses the
+time regularity of `Inner/LongTimeTimeReg.lean` (see `norm_gradient_le_of_tendsto_seq`).
 
 ## Main results
 
 * `PerronVariational.LongTime.LongtimeInnerHeatStatement`: the statement with the weak heat
   equation hypothesis (the same as `LongtimeInnerStatement`).
 * `PerronVariational.LongTime.longtime_innerVar_of_weakHeat`: its proof from the sub-lemmas of
-  `Inner/LongTimeUniform.lean` (Step 1), `Inner/TimeLocalize.lean`, `Inner/GoodTimes.lean` and
+  `Inner/LongTimeSubseq.lean` (Step 1), `Inner/TimeLocalize.lean`, `Inner/GoodTimes.lean` and
   `Inner/LongTimeSteps.lean` (Steps 2–4).
+* `PerronVariational.longtime_innerVar`, `PerronVariational.longtime_innerVar_monotone`:
+  [Theorem 3.14](#AFS:t.longtime-inner) (`LongtimeInnerStatement`) and its form for flows monotone
+  in time (`LongtimeInnerMonotoneStatement`, via `Inner/LongTimeMonotone.lean`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -55,27 +61,28 @@ namespace PerronVariational
 
 namespace LongTime
 
-/-- **Theorem 3.10**, with the additional hypothesis (4.5) `WeakHeatInPos S.U u w` (weak heat
-equation in `{u > 0}`), which the paper's proof uses (Step 2) and which holds for the flows of
-Theorem 3.9 (proof of Lemma 4.2). See the module docstring. -/
+/-- **[Theorem 3.14](#AFS:t.longtime-inner)**, with the hypothesis [(4.6)](#AFS:eqn:weakHeat)
+`WeakHeatInPos S.U u w` (weak heat equation in `{u > 0}`, the weak form of
+[Definition 3.8(iv)](#AFS:d.parabolic-inner)), which the proof uses (Step 2) and which holds for the
+flows of [Theorem 3.13](#AFS:t.parabolic-existence) (proof of [Lemma 4.2](#AFS:lem:strongGrad)). See
+the module docstring. -/
 def LongtimeInnerHeatStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (M : ℝ) (E0 : ℝ≥0∞) (C : ℝ) (Cper : ℝ → ℝ → ℝ), E0 ≠ ⊤ →
     ∃ CV : Set (E d) → ℝ, ∀ u w χ : E d × ℝ → ℝ,
       IsParaInnerVarSolution S.U S.Q u w χ → WeakHeatInPos S.U u w →
       (∀ p ∈ UInf S.U, u p ≤ M) →
-      (MonotoneInTime u S.U (Ioi 0) ∨ AntitoneInTime u S.U (Ioi 0)) →
       DissipationIneq S.U S.Q u w χ E0 → InteriorLipEst S.U u C →
       WeightedPerimeterEst S.U χ Cper →
-      ∃ uInf : E d → ℝ, TendstoLocallyUniformlyOn (fun t x ↦ u (x, t)) uInf atTop S.U ∧
-        ∃ (t : ℕ → ℝ) (χInf : E d → ℝ), Tendsto t atTop atTop ∧
-          TendstoLpLoc 2 volume S.U (fun i x ↦ gradₓ u (x, t i)) (∇ uInf) atTop ∧
-          TendstoLpLoc 1 volume S.U (fun i x ↦ χ (x, t i)) χInf atTop ∧
-          IsInnerVarSolution S.U S.Q uInf χInf ∧
-          (∀ (x : E d) (r : ℝ), 0 < r → r ≤ 1 → ball x (2 * r) ⊆ S.U →
-            ∀ M' : ℝ, (∀ y ∈ ball x (2 * r), |uInf y| ≤ M') →
-              ∀ y ∈ ball x r, ‖∇ uInf y‖ ≤ C * (M' / r + 1)) ∧
-          ∀ V : Set (E d), CompactlyContained V S.U →
-            totalVariationOn V χInf ≤ ENNReal.ofReal (CV V)
+      ∃ (t : ℕ → ℝ) (uInf χInf : E d → ℝ), Tendsto t atTop atTop ∧
+        TendstoLocallyUniformlyOn (fun i x ↦ u (x, t i)) uInf atTop S.U ∧
+        TendstoLpLoc 2 volume S.U (fun i x ↦ gradₓ u (x, t i)) (∇ uInf) atTop ∧
+        TendstoLpLoc 1 volume S.U (fun i x ↦ χ (x, t i)) χInf atTop ∧
+        IsInnerVarSolution S.U S.Q uInf χInf ∧
+        (∀ (x : E d) (r : ℝ), 0 < r → r ≤ 1 → ball x (2 * r) ⊆ S.U →
+          ∀ M' : ℝ, (∀ y ∈ ball x (2 * r), |uInf y| ≤ M') →
+            ∀ y ∈ ball x r, ‖∇ uInf y‖ ≤ C * (M' / r + 1)) ∧
+        ∀ V : Set (E d), CompactlyContained V S.U →
+          totalVariationOn V χInf ≤ ENNReal.ofReal (CV V)
 
 private theorem two_pow_mul_ofReal (k : ℕ) (c : ℝ) :
     (2 : ℝ≥0∞) ^ (k + 3) * ENNReal.ofReal c = ENNReal.ofReal (2 ^ (k + 3) * max c 0) := by
@@ -92,18 +99,15 @@ theorem setting_compl_nonempty {d : ℕ} (S : Setting d) : S.Uᶜ.Nonempty := by
   rw [not_nonempty_iff_eq_empty, compl_empty_iff] at h
   exact NormedSpace.unbounded_univ ℝ (E d) (h ▸ S.isBounded)
 
-/-- **Theorem 3.10** (with the weak heat equation hypothesis), assembled from Steps 1–4. -/
+/-- **[Theorem 3.14](#AFS:t.longtime-inner)** (with the weak heat equation hypothesis), assembled
+from Steps 1–4. -/
 theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
   intro d S M E0 C Cper _hE0
   obtain ⟨R, Cχ, hR, hperim⟩ := perimeter_slices S Cper
   classical
   let kOf : Set (E d) → ℕ := fun V ↦ if h : ∃ k, V ⊆ innerSet S.U k then Nat.find h else 0
   refine ⟨fun V ↦ 2 ^ (kOf V + 3) * max (Cχ (kOf V)) 0, ?_⟩
-  intro u w χ hsol hheat hM hmono hdiss hlip hper
-  -- Step 1: the locally uniform limit
-  obtain ⟨uInf, hconv, hnn, hlocLip⟩ :=
-    exists_tendstoLocallyUniformlyOn S.isOpen hsol hM hmono hlip
-  refine ⟨uInf, hconv, ?_⟩
+  intro u w χ hsol hheat hM hdiss hlip hper
   -- the null set of bad times
   obtain ⟨-, G, hGm, hGfin, hGeq⟩ := ae_memL2_slice_and_exists_wSlice hsol
   have hae := (ae_isGoodSlice S.isOpen hsol (locallyLipschitzOn_Q_sq S) hdiss hheat).and hGeq
@@ -139,7 +143,6 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
       fun i ↦ ?_
     rw [(hsgood i).2]
     simpa [f] using hsf i 0
-  have hseq : IsGoodSeq S.U S.Q u w χ E0 uInf s := ⟨hstend, fun i ↦ (hsgood i).1, hw0, hconv⟩
   -- perimeter bounds along the good times
   have hTVk : ∀ i k, totalVariationOn (innerSet S.U k) (fun x ↦ χ (x, s i)) ≤
       2 ^ (k + 3) * ENNReal.ofReal (Cχ k) := by
@@ -154,15 +157,24 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
   have hne := setting_compl_nonempty S
   have hmeasχ : ∀ t, Measurable (fun x ↦ χ (x, t)) := fun t ↦
     hsol.meas.comp (measurable_id.prodMk measurable_const)
+  -- Step 1 along the good times: the locally uniform limit (Arzelà–Ascoli)
+  obtain ⟨φ₁, hφ₁, uInf, hconv₁, hnn, hlocLip⟩ :=
+    exists_subseq_tendstoLocallyUniformlyOn S.isOpen hsol hM hlip hstend
   -- BV compactness
-  obtain ⟨φ, hφ, χ₀, hχ₀m, hχ₀⟩ := bv_select S.isOpen (fun n x ↦ χ (x, s n))
+  obtain ⟨φ₂, hφ₂, χ₀, hχ₀m, hχ₀⟩ := bv_select S.isOpen (fun n x ↦ χ (x, s (φ₁ n)))
     (fun n ↦ hmeasχ _)
     (fun n x hx ↦ by
-      rcases hsol.zero_one (x, s n) (mk_mem_prod hx (hspos n)) with h | h <;> simp [h])
+      rcases hsol.zero_one (x, s (φ₁ n)) (mk_mem_prod hx (hspos _)) with h | h <;> simp [h])
     fun V _ hV ↦ by
       obtain ⟨k, hk⟩ := exists_subset_innerSet S.isOpen hne hV
       exact ⟨2 ^ (k + 3) * max (Cχ k) 0, fun n ↦ (totalVariationOn_mono hk _).trans
-        ((hTVk n k).trans (two_pow_mul_ofReal k (Cχ k)).le)⟩
+        ((hTVk _ k).trans (two_pow_mul_ofReal k (Cχ k)).le)⟩
+  set φ : ℕ → ℕ := φ₁ ∘ φ₂ with hφdef
+  have hφ : StrictMono φ := hφ₁.comp hφ₂
+  have hconv : TendstoLocallyUniformlyOn (fun n x ↦ u (x, s (φ n))) uInf atTop S.U :=
+    fun V hV x hx ↦
+      let ⟨t, ht, hev⟩ := hconv₁ V hV x hx
+      ⟨t, ht, hφ₂.tendsto_atTop.eventually hev⟩
   -- `χ_∞`: a `{0, 1}`-valued Borel representative
   have hvals := ae_zero_or_one_of_tendstoLpLoc S.isOpen (fun n x ↦ χ (x, s (φ n)))
     (fun n ↦ hmeasχ _) (fun n x hx ↦ hsol.zero_one _ (mk_mem_prod hx (hspos _))) hχ₀m hχ₀
@@ -173,15 +185,15 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
     hvals.mono fun x hx ↦ by rcases hx with h | h <;> simp [χInf, h]
   have hχconv : TendstoLpLoc 1 volume S.U (fun n x ↦ χ (x, s (φ n))) χInf atTop :=
     fun K hK hKc ↦ (hχ₀ K hK hKc).congr' (Eventually.of_forall fun n ↦ eLpNorm_congr_ae
-      ((ae_restrict_of_ae_restrict_of_subset hK hχae).mono fun x hx ↦ by simp [hx]))
+      ((ae_restrict_of_ae_restrict_of_subset hK hχae).mono fun x hx ↦ by simp [hx, hφdef]))
   have hχInfb : ∀ x, |χInf x| ≤ 1 := fun x ↦ by by_cases h : χ₀ x = 1 <;> simp [χInf, h]
   -- Steps 2 and 4 along the subsequence
   have hseq' : IsGoodSeq S.U S.Q u w χ E0 uInf (s ∘ φ) :=
-    ⟨hstend.comp hφ.tendsto_atTop, fun n ↦ hseq.good _, hw0.comp hφ.tendsto_atTop, hconv⟩
+    ⟨hstend.comp hφ.tendsto_atTop, fun n ↦ (hsgood _).1, hw0.comp hφ.tendsto_atTop, hconv⟩
   have hharm := harmonic_limit S hsol hlocLip hseq'
   have hgrad := strong_grad S hsol hlip hM hlocLip hseq'
-  refine ⟨s ∘ φ, χInf, hseq'.tendsto, hgrad, hχconv, ?_,
-    norm_gradient_le_of_tendsto S.isOpen hsol hmono hlip hconv, ?_⟩
+  refine ⟨s ∘ φ, uInf, χInf, hseq'.tendsto, hconv, hgrad, hχconv, ?_,
+    norm_gradient_le_of_tendsto_seq S.isOpen hsol hM hlip hseq'.tendsto hconv, ?_⟩
   · exact
       { nonneg := hnn
         locLip := hlocLip
@@ -192,7 +204,7 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
         pos_le := pos_le_limit S hseq' hlocLip hχconv hχInfm
         stationary := innerVar_lipschitz S hlocLip hχInfm hχInfb
           (innerVar_limit S hsol hlip hM hseq' hgrad hχconv hχInfm) }
-  · -- (3.15): lower semicontinuity of the total variation
+  · -- [(3.16)](#AFS:eqn:inftyPerim): lower semicontinuity of the total variation
     intro V hV
     have hex : ∃ k, V ⊆ innerSet S.U k := exists_subset_innerSet S.isOpen hne hV
     have hk : kOf V = Nat.find hex := dite_eq_left hex
@@ -217,10 +229,18 @@ theorem longtime_innerVar_of_weakHeat : LongtimeInnerHeatStatement := by
 
 end LongTime
 
-/-- **Theorem 3.10**, in the form `LongtimeInnerStatement` (with the weak heat equation
-hypothesis (4.5), see the module docstring of `Inner/LongTime.lean`). -/
+/-- **[Theorem 3.14](#AFS:t.longtime-inner)**, in the form `LongtimeInnerStatement` (with the weak
+heat equation hypothesis [(4.6)](#AFS:eqn:weakHeat), see the module docstring of
+`Inner/LongTime.lean`). -/
 theorem longtime_innerVar : LongtimeInnerStatement :=
   LongTime.longtime_innerVar_of_weakHeat
+
+/-- **[Theorem 3.14](#AFS:t.longtime-inner) for flows monotone in time**
+(`LongtimeInnerMonotoneStatement`): the full limit `u(·, t) → u_∞` as `t → ∞`, used in Propositions
+[6.1](#AFS:p.inner-smallest), [6.2](#AFS:p.inner-largest) and
+[Lemma 5.8](#AFS:l.subsolution-inner-limit). -/
+theorem longtime_innerVar_monotone : LongtimeInnerMonotoneStatement :=
+  longtime_innerVar.monotone
 
 end PerronVariational
 

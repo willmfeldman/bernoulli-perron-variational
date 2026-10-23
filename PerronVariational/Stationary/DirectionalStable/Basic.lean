@@ -16,12 +16,12 @@ import PerronVariational.Registry.FunctionalAnalysis
 /-!
 # Stability of directional minimality: preliminaries
 
-Part of the proof of **Lemma 2.12** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
-of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: elementary
-Sobolev helpers, the lower semicontinuity of the Dirichlet energy `energyJ_le_liminf` (weak
-compactness and Fatou), the lattice identity `energyJ_add_le_of_swap`, shrinking annuli, the
-approximating data `StabData`, the competitors `v_n = u_n ∓ φ (u_n - v)_±` and the energy on the
-annulus `B_R \ B_s`.
+Part of the proof of **[Lemma 2.16](#AFS:l.directionalStable)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: elementary Sobolev helpers, the lower semicontinuity of the Dirichlet energy
+`energyJ_le_liminf` (weak compactness and Fatou), the lattice identity `energyJ_add_le_of_swap`,
+shrinking annuli, the approximating data `StabData`, the competitors `v_n = u_n ∓ φ (u_n - v)_±` and
+the energy on the annulus `B_R \ B_s`.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -348,11 +348,12 @@ theorem lintegral_norm_sq_ne_top {X : Type*} [MeasurableSpace X] {F : Type*}
   rw [eLpNorm_two_eq _ _ hG.aestronglyMeasurable] at h
   exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 h |>.ne
 
-/-- The data of Lemma 2.12 near a ball `B_R(x)`, with `B̄_t(x) ⊆ U`, `t > R`: functions `uₙ`
-defined on open sets `Uₙ ⊇ B̄_t(x)`, locally Lipschitz on `Uₙ` with gradients bounded uniformly
-on `B_t(x)`, converging uniformly on `B̄_R(x)` to `u`, and coefficients `Qₙ` continuous and bounded
-on `B̄_R(x)`, converging pointwise to `Q`. (For Lemma 2.12 itself `Uₙ = U`; the general `Uₙ`
-serve Corollary 2.13.) -/
+/-- The data of [Lemma 2.16](#AFS:l.directionalStable) near a ball `B_R(x)`, with `B̄_t(x) ⊆ U`,
+`t > R`: functions `uₙ` defined on open sets `Uₙ ⊇ B̄_t(x)`, locally Lipschitz on `Uₙ` with
+gradients bounded uniformly on `B_t(x)`, converging uniformly on `B̄_R(x)` to `u`, and coefficients
+`Qₙ` continuous and bounded on `B̄_R(x)`, converging pointwise to `Q`. (For
+[Lemma 2.16](#AFS:l.directionalStable) itself `Uₙ = U`; the general `Uₙ` serve
+[Corollary 2.18](#AFS:c.blow-up-directional).) -/
 structure StabData (U : Set (E d)) (x : E d) (R t : ℝ) (u Q : E d → ℝ) (un Qn : ℕ → E d → ℝ)
     (Un : ℕ → Set (E d)) (L : ℝ≥0) (Qmax : ℝ) : Prop where
   isOpen : IsOpen U

@@ -21,16 +21,17 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# The weighted perimeter bound at level `ε` ((4.7))
+# The weighted perimeter bound at level `ε` ([(4.7)](#AFS:eqn:chiEpsBV))
 
-The perimeter estimate (4.7) (Section 4.3) of F. Abedin, W. M. Feldman, K. Stinson,
+The perimeter estimate [(4.7)](#AFS:eqn:chiEpsBV) ([Section 4.3](#AFS:s.perimeter-chi-compactness))
+of F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
-arXiv:2609.14981. For a solution `u` of (3.4) and `χ_ε = 2 𝓑_ε(u)`, for every admissible weight
-`η` and test field `ψ` with `|ψ| ≤ η`:
+arXiv:2609.14981. For a solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) and
+`χ_ε = 2 𝓑_ε(u)`, for every admissible weight `η` and test field `ψ` with `|ψ| ≤ η`:
 `∫ χ_ε div ψ = -∫ ∇χ_ε · ψ ≤ 2 L ∫ η β_ε(u) ≤ (2L / Q_min²) ∫ η Q² β_ε(u)
   = (2L / Q_min²) ∫ (-∇η · ∇u - η ∂ₜu) ≤ C(d_η, ℓ_η) ‖η‖_{L²H¹}`,
-where `L = L(d_η)` is the interior Lipschitz bound (3.9) on `spt η` and the last step uses
-Cauchy–Schwarz and the dissipation estimate (3.8).
+where `L = L(d_η)` is the interior Lipschitz bound [(3.10)](#AFS:e.localEst) on `spt η` and the last
+step uses Cauchy–Schwarz and the dissipation estimate [(3.9)](#AFS:e.dissipation-eps).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -147,7 +148,7 @@ theorem hasFDerivAt_chiEps_slice {U : Set (E d)} (hU : IsOpen U) {β : ℝ → �
 
 set_option maxHeartbeats 800000 in
 -- many integrability side conditions
-/-- **The perimeter computation on a time slice** ((4.7)). -/
+/-- **The perimeter computation on a time slice** ([(4.7)](#AFS:eqn:chiEpsBV)). -/
 theorem integral_chiEps_divₓ_slice_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
     (hQ : ContinuousOn Q U) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ} (hε : 0 < ε)
     {u : E d × ℝ → ℝ} (hsol : IsSemilinearSolOn U Q β ε (Ioi 0) u) {m : ℝ} (hm : 0 < m)
@@ -275,14 +276,11 @@ theorem memLp_two_of_continuousOn_of_zero {K : Set (E d × ℝ)} (hK : IsCompact
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg
   exact MemLp.of_bound (hg.aestronglyMeasurable hKm) C ((ae_restrict_iff' hKm).2 (ae_of_all _ hC))
 
-/-- **Weighted perimeter bound at level `ε`** ((4.7)): there are `ε₁ > 0` and, for every `M` and
-finite energy bound `E0`, a function `Cper` (depending only on the setting, `β`, `M`, `E0`) such
-that `χ_ε = 2 𝓑_ε(u)` satisfies (3.13) with `Cper` for every solution with data `0 ≤ gε ≤ M`,
-`gε ∈ H¹(U)`, `∫_U |Gε|² + Q_max² |U| ≤ E0`, `0 < ε < ε₁`.
-
-The paper's (3.13) lets the constant `C_η` depend on `T_η = sup {t : (x, t) ∈ spt η}`; here it
-depends on `d_η` and on the time-length `ℓ_η` of `spt η`, because Step 3 of the proof of
-Theorem 3.10 needs a bound uniform in time, and the paper's proof of (4.7) gives this form. -/
+/-- **Weighted perimeter bound at level `ε`** ([(4.7)](#AFS:eqn:chiEpsBV)): there are `ε₁ > 0` and,
+for every `M` and finite energy bound `E0`, a function `Cper` (depending only on the setting, `β`,
+`M`, `E0`) such that `χ_ε = 2 𝓑_ε(u)` satisfies [(3.14)](#AFS:eqn:chiEst2) with `Cper` for every
+solution with data `0 ≤ gε ≤ M`, `gε ∈ H¹(U)`, `∫_U |Gε|² + Q_max² |U| ≤ E0`, `0 < ε < ε₁`.
+The constant `C_η` depends on `d_η` and on the time-length `ℓ_η` of `spt η`. -/
 theorem semilinear_weightedPerimeterEst (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) :
     ∃ ε₁ : ℝ, 0 < ε₁ ∧ ∀ (M : ℝ) (E0 : ℝ≥0∞), E0 ≠ ⊤ → ∃ Cper : ℝ → ℝ → ℝ,
       ∀ ε ∈ Ioo 0 ε₁, ∀ (gε : E d → ℝ) (Gε : E d → E d) (u : E d × ℝ → ℝ),

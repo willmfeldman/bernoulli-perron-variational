@@ -12,13 +12,14 @@ import PerronVariational.Semilinear.Profiles
 /-!
 # Energy dissipation, part 4: the limit `h → 0` (Step C) and the main theorem
 
-The energy dissipation inequality (A.1), i.e. (3.8) of Proposition 3.8(iii), of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981,
-for data in `H¹`. This is a result from the literature (L. C. Evans, *Partial Differential
-Equations*, 2nd ed., AMS, 2010, doi:10.1090/gsm/019, §7.1.3, Theorem 5), proved here. The proof
-has three steps: Step A, the energy bound near `t = 0` (`EnergyDissipationStepA`); Step B, the
-Steklov-averaged energy identity (`EnergyDissipationStepB`); and Step C, in this file.
+The energy dissipation inequality [(B.1)](#AFS:eqn:dissipation), i.e.
+[(3.9)](#AFS:e.dissipation-eps) of [Proposition 3.12(ii)](#AFS:part.H1-continuity), of F. Abedin,
+W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981, for data in `H¹`. This is a result from the literature (L. C.
+Evans, *Partial Differential Equations*, 2nd ed., AMS, 2010, doi:10.1090/gsm/019, §7.1.3, Theorem
+5), proved here. The proof has three steps: Step A, the energy bound near `t = 0`
+(`EnergyDissipationStepA`); Step B, the Steklov-averaged energy identity (`EnergyDissipationStepB`);
+and Step C, in this file.
 
 Step C. Divide the Steklov identity (Step B) by `h²` and take
 `t₀ = h²`:
@@ -554,10 +555,6 @@ noncomputable def step (n : ℕ) : ℝ := 1 / ((n : ℝ) + 2)
 
 theorem step_pos (n : ℕ) : 0 < step n := by unfold step; positivity
 
-theorem step_le_half (n : ℕ) : step n ≤ 1 / 2 := by
-  unfold step
-  exact one_div_le_one_div_of_le (by norm_num) (by linarith [(n.cast_nonneg : (0 : ℝ) ≤ n)])
-
 theorem tendsto_step : Tendsto step atTop (𝓝 0) := by
   have := tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)
   have h2 : Tendsto (fun n : ℕ ↦ n + 1) atTop atTop := tendsto_add_atTop_nat 1
@@ -730,10 +727,11 @@ set_option maxHeartbeats 1600000 in
 -- The final assembly (limits, Fatou, and the energy bookkeeping) is long.
 open EnergyDissipation in
 /-- **Energy dissipation inequality** (the statement of
-`Registry.semilinear_energy_dissipation`; (A.1), i.e. (3.8), with `≤`). The paper states equality;
-here we prove only `≤`, because only the inequality is used. Under the standing assumptions, for
-`ε > 0`, data `g ∈ H¹(U)` with weak gradient `G`, and a solution `u` of (3.4) (so `g = u(·, 0)`
-is continuous on `Ū`), for every `T > 0`,
+`Registry.semilinear_energy_dissipation`; [(B.1)](#AFS:eqn:dissipation), i.e.
+[(3.9)](#AFS:e.dissipation-eps), with `≤`). The paper states equality; here we prove only `≤`,
+because only the inequality is used. Under the standing assumptions, for `ε > 0`, data `g ∈ H¹(U)`
+with weak gradient `G`, and a solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) (so
+`g = u(·, 0)` is continuous on `Ū`), for every `T > 0`,
 `½ J(u(T), χ_ε(T); U) + ∫₀ᵀ ∫_U (∂ₜu)² ≤ ½ J(g, χ_ε(0); U)`.
 
 Proof: truncation in the values and Steklov averages, so that every

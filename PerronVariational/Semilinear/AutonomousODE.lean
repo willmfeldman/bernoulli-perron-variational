@@ -17,9 +17,9 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 For a continuous vector field `F : ℝ → ℝ` with `0 < F ≤ K`, the autonomous ODE `T' = F(T)`,
 `T(0) = a`, has the global solution `T = G⁻¹`, where `G(z) = ∫ₐᶻ dw / F(w)` is the *time map*.
-This is the construction used in the proofs of Lemmas A.2 and A.3 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981.
+This is the construction used in the proofs of Lemmas [3.9](#AFS:l.profile-sub) and
+[3.10](#AFS:l.profile-super) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 It avoids ODE existence theory: `G` is a `C¹` strictly increasing bijection of `ℝ`
 (since `G' = 1/F ≥ 1/K`), and the inverse function theorem in one variable gives `T' = F(T)`.
 
@@ -119,10 +119,6 @@ theorem odeSol_hasDerivAt (hF : Continuous F) (hpos : ∀ t, 0 < F t) (hK : ∀ 
     (odeTimeMap_hasDerivAt hF hpos (odeSol F a s)) (inv_ne_zero (hpos _).ne')
     (Eventually.of_forall fun y ↦ odeTimeMap_odeSol hF hpos hK y)
   rwa [inv_inv] at h
-
-theorem odeSol_deriv (hF : Continuous F) (hpos : ∀ t, 0 < F t) (hK : ∀ t, F t ≤ K) :
-    deriv (odeSol F a) = F ∘ odeSol F a :=
-  funext fun s ↦ (odeSol_hasDerivAt hF hpos hK s).deriv
 
 end ODE
 

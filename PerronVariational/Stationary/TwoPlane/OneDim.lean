@@ -14,10 +14,11 @@ import PerronVariational.Stationary.TwoPlane.Basic
 /-!
 # Two-plane functions: the one-dimensional problem
 
-Part of **Proposition 2.14** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
-of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, Step 3: the
-one-dimensional downward minimality for absolutely continuous competitors (`oneDim_core`,
-`oneDim_downward`) and weak derivatives on the line (`exists_primitive_of_weakDeriv`).
+Part of **[Proposition 2.20](#AFS:p.two-plane-minimizing-props)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981, Step 3: the one-dimensional downward minimality for absolutely continuous
+competitors (`oneDim_core`, `oneDim_downward`) and weak derivatives on the line
+(`exists_primitive_of_weakDeriv`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -65,8 +66,8 @@ theorem ratio_ineq_scaled {α q T x : ℝ} (hx : 0 < x) (hxT : x ≤ T) (hqα : 
   rw [e1, mul_comm]
   exact mul_le_mul_of_nonneg_left h hT.le
 
-/-- **Proposition 2.14, Step 3, one side**. On `[c, T]` with `0 ≤ c ≤ T`, a continuous
-`w = ∫ g` with `w ≤ α|s|`, `w(T) = αT`, and `w(c) ≤ 0` or `w(c) = αc`, has
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props), Step 3, one side**. On `[c, T]` with
+`0 ≤ c ≤ T`, a continuous `w = ∫ g` with `w ≤ α|s|`, `w(T) = αT`, and `w(c) ≤ 0` or `w(c) = αc`, has
 `∫_c^T g² + q² 1_{w > 0} ≥ (α² + q²)(T - c)` when `0 < q ≤ α`. -/
 theorem oneDim_core {α q c T : ℝ} (hq : 0 < q) (hqα : q ≤ α) (hc : 0 ≤ c) (hcT : c ≤ T)
     {w g : ℝ → ℝ} (hwg : ∀ a b, IntervalIntegrable g volume a b ∧ w b - w a = ∫ s in a..b, g s)
@@ -199,8 +200,9 @@ theorem setLIntegral_Ioo_comp_neg (f : ℝ → ℝ≥0∞) (c T : ℝ) :
   rw [hpre] at h
   exact h
 
-/-- **Proposition 2.14, Step 3** in one dimension: if `0 < q ≤ α` and `w = ∫ g` is a
-downward competitor for `α|s|` on `(a, b)` (`w ≤ α|s|` a.e., `w = α|s|` a.e. off `(a, b)`), then
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props), Step 3** in one dimension: if
+`0 < q ≤ α` and `w = ∫ g` is a downward competitor for `α|s|` on `(a, b)` (`w ≤ α|s|` a.e.,
+`w = α|s|` a.e. off `(a, b)`), then
 `∫_a^b g² + q² 1_{w > 0} ≥ (α² + q²)(b - a) = J(α|·|; (a, b))`. -/
 theorem oneDim_downward {α q a b : ℝ} (hq : 0 < q) (hqα : q ≤ α) (hab : a ≤ b)
     {w g : ℝ → ℝ} (hwg : ∀ a b, IntervalIntegrable g volume a b ∧ w b - w a = ∫ s in a..b, g s)

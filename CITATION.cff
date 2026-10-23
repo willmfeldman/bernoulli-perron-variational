@@ -1,13 +1,14 @@
 cff-version: 1.2.0
 message: "If you use this Lean formalization, please cite it using this metadata, and cite the paper it formalizes (listed under references)."
 title: "bernoulli-perron-variational: variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, in Lean"
-version: "0.2.1"
-date-released: "2026-10-10"
+version: "0.3.0"
+date-released: "2026-10-23"
 license: "Apache-2.0"
 repository-code: "https://github.com/willmfeldman/bernoulli-perron-variational"
 authors:
   - family-names: Feldman
     given-names: "William M."
+    orcid: "https://orcid.org/0000-0001-6038-4569"
 abstract: >-
   Lean 4 / Mathlib formalization of Abedin, Feldman and Stinson, "Variational properties of
   Perron's extremal solutions in the Bernoulli one-phase problem" (arXiv:2609.14981). For the

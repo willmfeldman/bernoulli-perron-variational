@@ -11,18 +11,19 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Monotone
 
 /-!
-# Subsolutions from the sub-profile (parabolic version of Lemma A.4(iii))
+# Subsolutions from the sub-profile (parabolic version of [Lemma 3.11(iii)](#AFS:part.gep-3))
 
 If `W` is a classical subsolution of the heat equation, `∂ₜW - ΔW ≤ 0`, whose spatial gradient
 satisfies `Q² ≤ θ |∇W|²` wherever `ε s₀ < W < ε` (the transition layer of the profile), then
 `(Φ_{ε,θ}(W))₊` is a viscosity subsolution of `∂ₜu = Δu - Q² β_ε(u)`. This is the computation
-(A.6) in the proof of Lemma A.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
-of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, for
-time-dependent `W`:
+[(B.5)](#AFS:e.chain-sub) in the proof of [Lemma 3.11](#AFS:l.well-prepared) of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981, for time-dependent `W`:
 `(∂ₜ - Δ)Φ(W) = Φ'(W)(∂ₜ - Δ)W - Φ''(W)|∇W|² ≤ -θ β_ε(Φ(W)) |∇W|² ≤ -Q² β_ε(Φ(W))`,
-using `Φ_ε'' = θ β_ε(Φ_ε)` (Lemma A.2(i)).
+using `Φ_ε'' = θ β_ε(Φ_ε)` ([Lemma 3.9(i)](#AFS:part.profile-sub-a)).
 
-Used for the lower barriers of the attainment estimate (Proposition A.8, Lemma A.9).
+Used for the lower barriers of the attainment estimate ([Proposition B.5](#AFS:p.attainment),
+[Lemma B.6](#AFS:l.attainment-lateral)).
 -/
 
 open Set Filter Topology

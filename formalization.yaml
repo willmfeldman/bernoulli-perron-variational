@@ -102,27 +102,31 @@ targets:
     informal: >
       Let U ⊂ ℝᵈ be a bounded domain with C² boundary and Q Lipschitz on the
       closure of U with 0 < Qmin ≤ Q ≤ Qmax. If g is a smooth strict
-      subsolution with g > 0 on ∂U, the smallest supersolution above g is a
+      subsolution with g > 0 on ∂U (in a class of data larger than the
+      paper's, which allows harmonic data; see DEVIATIONS.md), the smallest supersolution above g is a
       viscosity solution of Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0}, is an
       inner variational solution for some χ, and near every free boundary
       point is a downward minimizer of the Alt–Caffarelli energy on a ball.
       If g is a smooth strict supersolution, the largest subsolution below g
       is a viscosity solution, an inner variational solution, and near every
       free boundary point an upward minimizer. The related declarations are
-      the main steps of the proof: parabolic existence (Theorem 3.9),
-      semilinear well-posedness (Proposition 3.8), the singular limit
-      (Proposition 4.1), the long-time limit (Theorem 3.10) and directional
-      minimality (Lemma 6.3).
-    challenge: challenges/main-theorem
+      the main steps of the proof: parabolic existence (Theorem 3.13),
+      semilinear well-posedness (Proposition 3.12), the singular limit
+      (Proposition 4.1), the long-time limit (Theorem 3.14) and directional
+      minimality (Proposition 6.3). Result numbers are those of
+      arXiv:2609.14981v2.
+    challenge: challenges/main-results
     challenge_theorems:
       - challenge_main_smallest
       - challenge_main_largest
-      - challenge_model_example
+      - challenge_corollary_2d_smallest
+      - challenge_corollary_2d_largest
+      - challenge_necklace_example
   - id: planar-structure
     kind: headline-theorem
     expected_axioms: [propext, Quot.sound, Classical.choice]
     title: Structure of the free boundary of Perron's extremal solutions in the plane
-    source: "F. Abedin, W. M. Feldman, K. Stinson, Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, arXiv:2609.14981, Corollary 1.2 and Theorem B.1"
+    source: "F. Abedin, W. M. Feldman, K. Stinson, Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, arXiv:2609.14981, Corollary 1.2 and Theorem 2.10"
     module: PerronVariational.Main.Corollary2D.Structure
     declaration: PerronVariational.corollary_2d_smallest
     related_declarations:
@@ -136,50 +140,54 @@ targets:
       of which every blow-up limit is Q(x₀)|y · e| for a unit vector e; the
       largest subsolution is classical near every free boundary point. The
       related declaration is the non-degeneracy of the largest subsolution
-      (Theorem B.1, after Orcan-Ekmekci).
-    challenge: challenges/planar-structure
+      (Theorem 2.10, after Orcan-Ekmekci).
+    checked_in:
+      - challenges/main-results
     challenge_theorems:
       - challenge_corollary_2d_smallest
       - challenge_corollary_2d_largest
-      - challenge_model_example
-  - id: model-cases
+  - id: necklace-example
     kind: model-example
     expected_axioms: [propext, Quot.sound, Classical.choice]
-    title: "A two-disc model example: a two-plane point, and distinct smallest and largest solutions"
-    source: "Not a result of arXiv:2609.14981: a model example for its Theorem 1.1 and Corollary 1.2"
-    module: PerronVariational.Examples.TwoDisc.Main
-    declaration: PerronVariational.TwoDisc.model_example
+    title: "The necklace example: the smallest supersolution, the energy minimizer and the largest subsolution are pairwise distinct"
+    source: "F. Abedin, W. M. Feldman, K. Stinson, Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem, arXiv:2609.14981, Figure 1 (a numerical example; here with different parameters)"
+    module: PerronVariational.Examples.Necklace.Main
+    declaration: PerronVariational.Necklace.necklace_example
     informal: >
       In ℝ² with Q ≡ 1 there are a domain U and data g_sub, g_super meeting
-      the hypotheses of Theorem 1.1 (g_sub a smooth strict subsolution with
-      g_sub > 0 on ∂U, g_super a smooth strict supersolution), with
-      g_sub = g_super on ∂U, such that the smallest supersolution u_min above
-      g_sub and the largest subsolution u_max below g_super are both
-      nontrivial (positive somewhere, zero somewhere, nonempty free boundary),
-      0 is a two-plane point of u_min (its blow-ups at 0 converge to |y₁|
-      locally uniformly, so every blow-up limit is |y₁|), and u_min ≠ u_max in
-      U. The domain is the unit disc minus two closed discs of radius 1/20
-      centred at (±1/10, 0), with boundary value (log 2)/10 on both inner
-      circles, so that the two radial solutions have free boundaries
-      ∂B_{1/10}((±1/10, 0)), which touch at 0. The proof uses Theorem 1.1 (u_min
-      is a viscosity solution) and Corollary 1.2(ii) (u_max is classical, so it
-      cannot have the two-plane point of u_min).
+      the hypotheses of main_smallest and main_largest (in the larger data
+      class), with g_sub = g_super on ∂U, such that
+      the smallest supersolution u_min above g_sub and the largest
+      subsolution u_max below g_super are both nontrivial (positive
+      somewhere, zero somewhere, nonempty free boundary), u_min has a
+      two-plane point, u_min and u_max differ on a set of positive measure,
+      a minimizer of the Alt–Caffarelli energy J_1(·; U) among H¹(U)
+      functions with boundary values g_sub exists, and every such minimizer
+      differs from u_min and from u_max on sets of positive measure. The
+      domain is the disc B₄(0) minus a ring of 100 closed discs of radius
+      1/20 centred on the circle of radius (1/10)/sin(π/100), with data such
+      that the radial solutions from neighbouring holes have touching free
+      boundaries. Figure 1 of the paper shows the same configuration
+      numerically, with 18 holes and no outer circle; the parameters are
+      changed so that an explicit energy comparison separates u_max from
+      the minimizer. The proof uses Theorem 1.1, Corollary 1.2(ii),
+      Corollary 2.18 and Proposition 2.20.
     checked_in:
-      - challenges/main-theorem
-      - challenges/planar-structure
+      - challenges/main-results
     challenge_theorems:
-      - challenge_model_example
+      - challenge_necklace_example
 
 comparator:
   external_challenges:
     directory: "challenges"
     purpose: >-
-      Standalone comparator challenge workspaces, one per headline target above (its challenge
-      and challenge_theorems fields); the model example is checked in both. Each workspace has
-      its own trusted Vocabulary.lean, which imports Mathlib only and defines every notion its
-      claims use; each Challenge.lean repeats that vocabulary verbatim and states the claims with
-      `sorry`. Each Solution.lean imports Vocabulary and PerronVariational and proves the same
-      statements from the library.
+      One standalone comparator challenge workspace, challenges/main-results, for all the
+      targets above: it is the main-theorem target's challenge, and the planar-structure and
+      necklace-example targets are checked in it (their checked_in fields). Its trusted
+      Vocabulary.lean imports Mathlib only and defines every notion the claims use; its
+      Challenge.lean repeats that vocabulary verbatim and states the claims with `sorry`. Its
+      Solution.lean imports Vocabulary and PerronVariational and proves the same statements from
+      the library.
     release_workflow: ".github/workflows/release-comparator.yml"
     comparator_revision: "fd5d5bcf14177b187f66d4502071268d877887c3"
     lean4export_revision: "66f1fb4bc256072069767fce52d39480e4524869"

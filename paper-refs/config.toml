@@ -1,0 +1,25 @@
+format = 1
+include = ["**/*.lean"]
+
+[papers.AFS]
+title   = "Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem"
+arxiv   = "2609.14981"
+version = "v2"
+draft   = false
+aliases = ["AFS", "Abedin"]
+references = { "v1" = "paper-refs/AFS-v1.json" }
+
+[papers.AFS.decisions."v1->v2"]
+reviewed = "8eec0e2"
+accept_moved = ["s.largest-sub-nondegen", "p.semilinear-wellposed", "f.necklace", "subsec:paraInnerVar"]
+retarget = { "eqn:statToPara" = "r.statToPara", "l.downward" = "p.downward", "l.subsolution-limit" = "p.subsolution-limit", "l.supersolution-limit" = "p.supersolution-limit" }
+
+[bootstrap]
+external = ["Giusti", "Kriventsov", "Weiss", "Evans", "Gilbarg", "Trudinger", "Velichkov", "Caffarelli", "Salsa", "Maggi", "Ambrosio", "LSU", "Lieberman", "Jerison", "Kamburov", "De Silva"]
+cited_default = "v1"
+cited_files = { "v2" = ["PerronVariational/Stationary/LocalExtremalUnif.lean"] }
+exempt = [
+  { file = "PerronVariational/Parabolic/BernoulliComparisonBridge.lean", text = "Theorem 2.2", other_work = true },
+  { file = "PerronVariational/Registry/KriventsovWeiss.lean", text = "Prop 4.2", other_work = true },
+  { file = "PerronVariational/Stationary/ViscosityStability.lean", text = "Lemma 3.1", other_work = true },
+]

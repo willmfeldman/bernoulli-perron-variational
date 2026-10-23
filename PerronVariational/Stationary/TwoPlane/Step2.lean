@@ -13,12 +13,13 @@ import Mathlib.Order.CompletePartialOrder
 import PerronVariational.Semilinear.Calculus
 
 /-!
-# Two-plane functions: the competitors of Proposition 2.14 (1) and Step 2
+# Two-plane functions: the first-variation competitor and Step 2
 
-Part of **Proposition 2.14** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the
-first-variation competitor `φ_α + t η` for part (1), coordinates adapted to a unit vector `e`
-(`coordEquiv`, `lintegral_eq_lintegral_coord`), the cut-off `cylBump` and Step 2 (the case `α < q`).
+Part of **[Proposition 2.20](#AFS:p.two-plane-minimizing-props)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the first-variation competitor `φ_α + t η` for part (1), coordinates adapted to a
+unit vector `e` (`coordEquiv`, `lintegral_eq_lintegral_coord`), the cut-off `cylBump` and Step 2
+(the case `α < q`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -30,7 +31,7 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-! ### The first-variation competitor for Proposition 2.14 (1) -/
+/-! ### First-variation competitor for [Proposition 2.20](#AFS:p.two-plane-minimizing-props) (1) -/
 
 section Bump
 
@@ -408,7 +409,8 @@ section Step2Main
 
 variable {n : ℕ}
 
-/-- **Proposition 2.14 (2), `α < q`, Step 2** in dimension `n + 1`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (2), `α < q`, Step 2** in dimension
+`n + 1`. -/
 theorem twoPlane_not_downwardMinimizer_of_lt_aux {α q : ℝ} (hα : 0 < α) (hαq : α < q)
     {e : E (n + 1)} (he : ‖e‖ = 1) :
     ¬ IsDownwardMinimizer univ (fun _ ↦ q) (twoPlane α e) := by

@@ -14,16 +14,18 @@ import PerronVariational.Registry.FunctionalAnalysis
 /-!
 # Weak and strong convergence of derivatives
 
-Section 4.2 and Lemma 4.2 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. Named analytic
-steps of the compactness argument of Proposition 4.1, for a sequence `v_n` converging locally
-uniformly on `U_∞` to `u`:
+[Section 4.2](#AFS:subsec:strongGrad) and [Lemma 4.2](#AFS:lem:strongGrad) of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981. Named analytic steps of the compactness argument of
+[Proposition 4.1](#AFS:p.eps-inner-limit), for a sequence `v_n` converging locally uniformly on
+`U_∞` to `u`:
 * `Inner.tendstoWeakL2_gradₓ`: `∇v_n ⇀ ∇u` weakly in `L²(U × (0, T))` (identification of the weak
   limit on time slices, through Rademacher's theorem: the a.e. gradient of a locally Lipschitz
   function is its weak gradient);
 * `Inner.hasWeakTimeDeriv_of_tendsto`: a weak `L²` limit of `∂ₜv_n` is the weak time derivative
   of `u`;
-* Lemma 4.2 (strong `L²_loc` convergence of `∇v_n`) is proved in `Inner/StrongConv.lean`.
+* [Lemma 4.2](#AFS:lem:strongGrad) (strong `L²_loc` convergence of `∇v_n`) is proved in
+  `Inner/StrongConv.lean`.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -142,10 +144,9 @@ theorem integral_mul_dₜ_eq_neg {U : Set (E d)} {f ψ : E d × ℝ → ℝ}
   · have hnK : ∀ t, (x, t) ∉ K := fun t h ↦ hx (hψs h).1
     simp [F, G, hψ0 _ (hnK _), hdψ0 _ (hnK _)]
 
-/-- **Weak convergence of spatial gradients** (Section 4.2: "`u_ε` is uniformly bounded in
-`H¹(U × (0, T))` ... weakly converges"). Proposition 4.1(i) of the paper states weak convergence
-in `L²(U_∞)`; here it is in `L²(U × (0, T))` for every `T`, because `∇u` is in general only in
-`L^∞_t L²_x`, not in `L²(U_∞)`. If `v_n → u`
+/-- **Weak convergence of spatial gradients** ([Section 4.2](#AFS:subsec:strongGrad): "`u_ε` is
+uniformly bounded in `H¹(U × (0, T))` ... weakly converges"). The convergence is in `L²(U × (0, T))`
+for every `T`, because `∇u` is in general only in `L^∞_t L²_x`, not in `L²(U_∞)`. If `v_n → u`
 locally uniformly on `U_∞`, the time slices of `v_n` are differentiable with `∇ₓv_n` continuous on
 `U_∞`, `u` is continuous and locally Lipschitz in space on `U_∞`, and
 `∫_U |∇v_n(·, t)|² ≤ E` for all `t > 0` and `n`, then `∇v_n ⇀ ∇u` weakly in `L²(U × (0, T))` for
@@ -192,10 +193,10 @@ theorem tendstoWeakL2_gradₓ {U : Set (E d)} (hU : IsOpen U) {v : ℕ → E d �
     (memLp_prod_of_slices hIm hI hum hE0 fun t ht ↦ hubd t ht.1) hE0
     (fun n t ht ↦ hbd n t ht.1) fun t ht ↦ hsl t ht.1
 
-/-- **The weak limit of `∂ₜv_n` is `∂ₜu`** (proof of Proposition 4.1, Section 4.4). If `v_n` are
-`C¹` in time on `U_∞` (with continuous `∂ₜv_n`), `v_n → u` locally uniformly on `U_∞`, and
-`∂ₜv_n ⇀ w` weakly in `L²(U_∞)`, then `w` is the weak time derivative of `u` in `U_∞` (integrate by
-parts in `t` and pass to the limit). -/
+/-- **The weak limit of `∂ₜv_n` is `∂ₜu`** (proof of [Proposition 4.1](#AFS:p.eps-inner-limit),
+[Section 4.4](#AFS:subsec:paraInnerVar)). If `v_n` are `C¹` in time on `U_∞` (with continuous
+`∂ₜv_n`), `v_n → u` locally uniformly on `U_∞`, and `∂ₜv_n ⇀ w` weakly in `L²(U_∞)`, then `w` is the
+weak time derivative of `u` in `U_∞` (integrate by parts in `t` and pass to the limit). -/
 theorem hasWeakTimeDeriv_of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → E d × ℝ → ℝ}
     {u w : E d × ℝ → ℝ}
     (hvd : ∀ n, ∀ p ∈ UInf U, DifferentiableAt ℝ (fun s ↦ v n (p.1, s)) p.2)

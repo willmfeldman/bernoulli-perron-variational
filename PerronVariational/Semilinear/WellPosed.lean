@@ -13,34 +13,37 @@ import PerronVariational.Semilinear.Monotone
 import PerronVariational.Semilinear.PositivityTrace
 
 /-!
-# Semilinear well-posedness (Proposition 3.8)
+# Semilinear well-posedness ([Proposition 3.12](#AFS:p.semilinear-wellposed))
 
-Assembly of **Proposition 3.8** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
-of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, from its
-parts:
+Assembly of **[Proposition 3.12](#AFS:p.semilinear-wellposed)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981, from its parts:
 
-* data (i), (i'): `exists_isWellPreparedData` (Lemma A.4);
+* data: `exists_isWellPreparedData` ([Lemma 3.11](#AFS:l.well-prepared));
 * existence of the solution: `Registry.semilinear_exists` (classical well-posedness, from
   parabolic-basic-theory v0.1.0);
-* (ii) monotonicity and `L^∞` bounds: `IsSemilinearSolution.monotoneInTime`,
-  `IsSemilinearSolution.antitoneInTime`, `IsSemilinearSolution.mem_Icc` (Lemma A.1, via the
-  comparison principle);
-* (iii) dissipation: `IsSemilinearSolution.dissipation` (the energy dissipation inequality,
+* (i) monotonicity and `L^∞` bounds: `IsSemilinearSolution.monotoneInTime`,
+  `IsSemilinearSolution.antitoneInTime`, `IsSemilinearSolution.mem_Icc`
+  ([Lemma B.1](#AFS:l.monotone), via the comparison principle);
+* (ii) dissipation: `IsSemilinearSolution.dissipation` (the energy dissipation inequality,
   proved in `EnergyDissipation.lean`);
-* (iv) interior Lipschitz bounds: `exists_interiorLipEst` (Proposition A.5),
-  `exists_norm_gradₓ_le` (Lemma A.7), by smooth approximation of `Q` from the smooth Bernstein
-  estimates `bernstein_interior_smooth`, `bernstein_initial_smooth` and, for Lemma A.7, the
-  regularity of `∇u` at `t = 0` for smooth data (from parabolic-basic-theory v0.1.0);
-* (v) modulus of continuity: `exists_modulus` (Proposition A.8; barriers and Lemma A.7);
-* (vi) positivity trace: `IsWellPreparedData.positivity_trace` (from Lemma A.11);
-* (vi*) (increasing case) below every level `κ ε`:
-  `IsWellPreparedData.positivity_trace_small` (PositivityTrace.lean). This strengthening of (vi)
-  is needed for Corollary 5.4 with the authors' corrected set `E*`.
+* (iii) interior Lipschitz bounds: `exists_interiorLipEst` ([Proposition B.2](#AFS:p.localLip)),
+  `exists_norm_gradₓ_le` ([Lemma B.4](#AFS:l.lipschitz-initial)), by smooth approximation of `Q`
+  from the smooth Bernstein estimates `bernstein_interior_smooth`, `bernstein_initial_smooth` and,
+  for [Lemma B.4](#AFS:l.lipschitz-initial), the regularity of `∇u` at `t = 0` for smooth data (from
+  parabolic-basic-theory v0.1.0);
+* (iv) modulus of continuity: `exists_modulus` ([Proposition B.5](#AFS:p.attainment); barriers and
+  [Lemma B.4](#AFS:l.lipschitz-initial));
+* (v) positivity trace: `IsWellPreparedData.positivity_trace` (from
+  [Lemma B.8](#AFS:l.positivity-trace));
+* (v*) (increasing case) below every level `κ ε`:
+  `IsWellPreparedData.positivity_trace_small` (PositivityTrace.lean), the form of (v) needed
+  for [Corollary 5.4](#AFS:cor:increasing) with the set `E*`.
 
-The paper states (3.8) as an equality; here (iii) is the inequality `≤`, which is all that is
-used. The paper asserts `u_ε ∈ C^∞(U_∞)`; here solutions are classical `C^{2,1}`, because with `Q`
-only Lipschitz the appendix gives no more. The family is restricted to `0 < ε < min ε₀ 1`, since
-Lemma A.7 and Proposition A.8 are stated for `ε ≤ 1`.
+The paper states [(3.9)](#AFS:e.dissipation-eps) as an equality; here (ii) is the inequality `≤`,
+which is all that is used. Solutions are classical `C^{2,1}`. The family is restricted to
+`0 < ε < min ε₀ 1`, since [Lemma B.4](#AFS:l.lipschitz-initial) and
+[Proposition B.5](#AFS:p.attainment) are stated for `ε ≤ 1`.
 -/
 
 open Set Filter Topology MeasureTheory
@@ -65,8 +68,8 @@ theorem abs_le_on_closure {U : Set (E d)} {g : E d → ℝ} (hg : Continuous g) 
     (hM : ∀ x ∈ U, |g x| ≤ M) : ∀ x ∈ closure U, |g x| ≤ M := fun _ hx ↦
   closure_minimal hM (isClosed_le (continuous_abs.comp hg) continuous_const) hx
 
-/-- **Proposition 3.8** for a well-prepared family of data and the corresponding solutions of
-(3.4). -/
+/-- **[Proposition 3.12](#AFS:p.semilinear-wellposed)** for a well-prepared family of data and the
+corresponding solutions of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear). -/
 theorem isWellPreparedFamily_of_data (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     {g : E d → ℝ} (hgC : ContDiff ℝ 2 g) {increasing : Bool} {ε₀ : ℝ} {gε : ℝ → E d → ℝ}
     (h : IsWellPreparedData S g β increasing ε₀ gε) (hε₀ : ε₀ ≤ 1)
@@ -83,7 +86,7 @@ theorem isWellPreparedFamily_of_data (S : Setting d) {β : ℝ → ℝ} (hβ : I
   have hMg0 : 0 ≤ Mg := le_max_right _ _
   have hcont : ∀ ε ∈ Ioo 0 ε₀, ContinuousOn (gε ε) (closure S.U) := fun ε hε ↦
     (hK ε hε).continuousOn
-  -- `L^∞` bounds (3.7), by comparison with the constants `0` and `M + ε`
+  -- `L^∞` bounds [(3.8)](#AFS:e.Linfty), by comparison with the constants `0` and `M + ε`
   have hbd : ∀ ε ∈ Ioo 0 ε₀, ∀ M : ℝ, (∀ x ∈ closure S.U, |g x| ≤ M) → 0 ≤ M →
       ∀ p ∈ closure S.U ×ˢ Ici 0, 0 ≤ uε ε p ∧ uε ε p ≤ M + ε := by
     intro ε hε M hM hM0
@@ -101,17 +104,16 @@ theorem isWellPreparedFamily_of_data (S : Setting d) {β : ℝ → ℝ} (hβ : I
   have hε1 : ∀ ε ∈ Ioo 0 ε₀, ε ∈ Ioc (0 : ℝ) 1 := fun ε hε ↦ ⟨hε.1, hε.2.le.trans hε₀⟩
   refine ⟨h.pos, fun ε hε ↦ ⟨hu ε hε, ⟨K, hK ε hε⟩, h.bounds ε hε,
     fun M hM x hx ↦ (h.norm_gradient_le ε hε x hx).trans (hM x hx), h.memH1 ε hε, ?_, ?_, ?_,
-    fun T hT ↦ (hu ε hε).dissipation S hβ hε.1 ⟨K, hK ε hε⟩ hT, h.lipschitz ε hε⟩, h.memH1_pos,
-    h.tendsto_H1,
+    fun T hT ↦ (hu ε hε).dissipation S hβ hε.1 ⟨K, hK ε hε⟩ hT, h.lipschitz ε hε⟩,
     ?_, ?_, ?_, h.positivity_trace hβ hg1 hu, ?_⟩
-  · -- (i) energy of the data: `χ⁰_ε = 2 𝓑_ε(g_ε)` since `u_ε(·, 0) = g_ε`
+  · -- data: energy of the data, `χ⁰_ε = 2 𝓑_ε(g_ε)` since `u_ε(·, 0) = g_ε`
     have heq : energyJχ S.U S.Q (∇ (gε ε)) (fun x ↦ chiEps β ε (uε ε) (x, 0)) =
         energyJχ S.U S.Q (∇ (gε ε)) (fun x ↦ 2 * bigBEps β ε (gε ε x)) := by
       refine setLIntegral_congr_fun S.isOpen.measurableSet fun x hx ↦ ?_
       simp only [chiEps, (hu ε hε).2.2.1 x (subset_closure hx)]
     rw [heq]
     exact h.energy_le ε hε
-  · -- (ii) monotonicity (Lemma A.1)
+  · -- (i) monotonicity ([Lemma B.1](#AFS:l.monotone))
     have hv := h.visc ε hε
     cases increasing with
     | true =>
@@ -122,29 +124,28 @@ theorem isWellPreparedFamily_of_data (S : Setting d) {β : ℝ → ℝ} (hβ : I
       simp only [Bool.false_eq_true, ite_false] at hv ⊢
       exact (hu ε hε).antitoneInTime hβ hε.1
         ((hu ε hε).le_of_viscSuperStat hβ hε.1 hv (hcont ε hε))
-  · -- (ii) the bound (3.7)
+  · -- (i) the bound [(3.8)](#AFS:e.Linfty)
     intro M hM
     obtain ⟨x₀, hx₀⟩ := S.isConnected.nonempty
     exact hbd ε hε M (abs_le_on_closure hgC.continuous hM) ((abs_nonneg _).trans (hM x₀ hx₀))
-  · -- (iv) interior Lipschitz bound (3.9) (Proposition A.5)
+  · -- (iii) interior Lipschitz bound [(3.10)](#AFS:e.localEst) ([Proposition B.2](#AFS:p.localLip))
     obtain ⟨C, hC⟩ := exists_interiorLipEst S hβ
     exact ⟨C, fun ε hε ↦ hC ε hε.1 (gε ε) (uε ε) ⟨K, hK ε hε⟩ (fun x hx ↦ h.nonneg hε hx)
       (hu ε hε)⟩
-  · -- (iv) global-in-time interior gradient bound (Lemma A.7)
+  · -- (iii) global-in-time interior gradient bound ([Lemma B.4](#AFS:l.lipschitz-initial))
     intro V hV
     obtain ⟨CV, hCV⟩ := exists_norm_gradₓ_le S hβ hV K (Mg + 1)
     exact ⟨CV, fun ε hε ↦ hCV ε (hε1 ε hε) (gε ε) (uε ε) (hK ε hε) (hgε_le ε hε) (hu ε hε)⟩
-  · -- (v) uniform modulus of continuity (Proposition A.8)
+  · -- (iv) uniform modulus of continuity ([Proposition B.5](#AFS:p.attainment))
     obtain ⟨ϖ, hϖ, hmod⟩ := exists_modulus S hβ K (Mg + 1)
     exact ⟨ϖ, hϖ, fun ε hε ↦ hmod ε (hε1 ε hε) (gε ε) (uε ε) (hK ε hε) (hgε_le ε hε) (hu ε hε)⟩
-  · -- (vi*) below every level `κ ε`
+  · -- (v*) below every level `κ ε`
     intro hinc
     subst hinc
     exact h.positivity_trace_small S hβ (hsub rfl) hu
 
-/-- **Proposition 3.8**: `SemilinearWellposedStatement`. The paper asserts `C^∞` solutions;
-here they are classical `C^{2,1}` (joint continuity of `∇ₓu`, `D²ₓu`, `∂ₜu`), because `Q` is only
-Lipschitz. -/
+/-- **[Proposition 3.12](#AFS:p.semilinear-wellposed)**: `SemilinearWellposedStatement`. Solutions
+are classical `C^{2,1}` (joint continuity of `∇ₓu`, `D²ₓu`, `∂ₜu`). -/
 theorem semilinear_wellposed : SemilinearWellposedStatement := by
   intro d S g β hβ
   have key : ∀ increasing : Bool,

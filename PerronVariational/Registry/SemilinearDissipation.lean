@@ -10,8 +10,10 @@ public import PerronVariational.Semilinear.EnergyDissipation
 /-!
 # Registry: the semilinear energy dissipation inequality
 
-The energy dissipation inequality (A.1), i.e. (3.8) of Prop 3.8(iii), for the semilinear equation
-`∂ₜu = Δu - Q(x)² β_ε(u)` (first line of (3.4) in F. Abedin, W. M. Feldman, K. Stinson,
+The energy dissipation inequality [(B.1)](#AFS:eqn:dissipation), i.e.
+[(3.9)](#AFS:e.dissipation-eps) of [Prop 3.12(ii)](#AFS:part.H1-continuity), for the semilinear
+equation `∂ₜu = Δu - Q(x)² β_ε(u)` (first line of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) in
+F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981, "the paper").
 
@@ -20,8 +22,9 @@ Mathematics 19, AMS, 2010, doi:10.1090/gsm/019; O. A. Ladyženskaja, V. A. Solon
 N. N. Ural'ceva, *Linear and quasilinear equations of parabolic type*, Translations of
 Mathematical Monographs 23, AMS, 1968 ("LSU").
 
-* `Registry.semilinear_energy_dissipation`: the energy dissipation inequality (A.1)/(3.8) for `H¹`
-  data (Evans §7.1, LSU Ch. III). Proved here (`Semilinear/EnergyDissipation.lean`).
+* `Registry.semilinear_energy_dissipation`: the energy dissipation inequality
+  [(B.1)](#AFS:eqn:dissipation)/[(3.9)](#AFS:e.dissipation-eps) for `H¹` data (Evans §7.1, LSU Ch.
+  III). Proved here (`Semilinear/EnergyDissipation.lean`).
 
 This entry is kept apart from `PerronVariational.Registry.Semilinear` so that modules that only
 need the viscosity notions and well-posedness do not wait for the energy-dissipation proof.
@@ -42,14 +45,16 @@ namespace Registry
 
 /-- **Energy dissipation inequality.** Under the standing assumptions, let `ε > 0`, let the
 time-independent data `g ∈ H¹(U)` have weak gradient `G` (carried as explicit data), and let `u`
-solve (3.4) in the sense of `IsSemilinearSolution` (so `g = u(·, 0)` is continuous on `Ū`). Then for
-every `T > 0`, `½ J(u(T), χ_ε(T); U) + ∫₀ᵀ ∫_U (∂ₜu)² ≤ ½ J(g, χ_ε(0); U)`, where `χ_ε = 2 𝓑_ε(u)`
-and `J` is computed with the classical gradient of `u(·, T)` and with `G` for the data.
+solve [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) in the sense of `IsSemilinearSolution` (so
+`g = u(·, 0)` is continuous on `Ū`). Then for every `T > 0`,
+`½ J(u(T), χ_ε(T); U) + ∫₀ᵀ ∫_U (∂ₜu)² ≤ ½ J(g, χ_ε(0); U)`, where `χ_ε = 2 𝓑_ε(u)` and `J` is
+computed with the classical gradient of `u(·, T)` and with `G` for the data.
 
-This is the energy dissipation (A.1), i.e. (3.8) of Prop 3.8(iii). The paper states it as an
-equality; here we prove the inequality `≤`, because only the inequality is used. It also covers
-arbitrary `H¹` data, which the proof of Prop 4.1 uses: the paper asserts the estimates there "for
-any solution", but proves them only for well-prepared data.
+This is the energy dissipation [(B.1)](#AFS:eqn:dissipation), i.e. [(3.9)](#AFS:e.dissipation-eps)
+of [Prop 3.12(ii)](#AFS:part.H1-continuity). The paper states it as an equality; here we prove the
+inequality `≤`, because only the inequality is used. It also covers arbitrary `H¹` data, which the
+proof of [Prop 4.1](#AFS:p.eps-inner-limit) uses: the paper asserts the estimates there "for any
+solution", but proves them only for well-prepared data.
 
 A result from the literature: Evans, §7.1.3, Theorem 5; LSU Chapter III §§2–4.
 Proved here: `PerronVariational.semilinear_energy_dissipation`

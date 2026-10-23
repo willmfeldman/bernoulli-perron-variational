@@ -16,9 +16,10 @@ Generic lemmas on a finite-dimensional real inner product space `F` (used with `
 
 * `laplacian_eq_sum_fderiv_fderiv`: `Δf(x) = ∑ᵢ D²f(x)(eᵢ, eᵢ)` for an orthonormal basis;
 * `laplacian_comp`: the chain rule `Δ(f ∘ g) = f''(g)|∇g|² + f'(g) Δg` at a point, for
-  `f : ℝ → ℝ` and `g : F → ℝ` both `C²` near the relevant points (used in the proof of Lemma A.4,
-  equations (A.6) and (A.7), of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-  Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981);
+  `f : ℝ → ℝ` and `g : F → ℝ` both `C²` near the relevant points (used in the proof of
+  [Lemma 3.11](#AFS:l.well-prepared), equations [(B.5)](#AFS:e.chain-sub) and
+  [(B.6)](#AFS:e.chain-super-goal), of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+  of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981);
 * `laplacian_nonneg_of_isLocalMin`: at an interior local minimum of a `C²` function the Laplacian
   is nonnegative (no multi-dimensional second-derivative test exists in Mathlib);
 * `laplacian_le_of_eventually_le`: touching comparison of Laplacians of `C²` functions;

@@ -220,9 +220,9 @@ theorem classification_homogeneous_planar {q : ℝ} (hq : 0 < q) {v χ : E 2 →
 `EllipticBernoulli.isClassicalNear_of_flat : FlatClassicalStatement` of
 elliptic-bernoulli-foundations v0.1.0, which proves D. De Silva, *Free boundary regularity for a
 problem with right hand side*, Interfaces Free Bound. 13 (2011), no. 2, 223–238,
-doi:10.4171/IFB/255, Thm 1.1, together with the passage from a `C^{1,γ}` free boundary to a
-classical solution. It is applied with the `Setting` fields `two_le`, `isOpen`, `lip`, `Qmin_pos`
-and `Q_mem` (restricted from `closure U` to `U`). -/
+doi:10.4171/IFB/255, [Thm 1.1](#AFS:t.main), together with the passage from a `C^{1,γ}` free
+boundary to a classical solution. It is applied with the `Setting` fields `two_le`, `isOpen`, `lip`,
+`Qmin_pos` and `Q_mem` (restricted from `closure U` to `U`). -/
 theorem isClassicalNear_of_flat (S : Setting d) :
     ∃ εbar > 0, ∀ (u : E d → ℝ) (x₀ e : E d) (r : ℝ), IsViscSolution S.U S.Q u →
       x₀ ∈ freeBoundary u S.U → ‖e‖ = 1 → 0 < r → r ≤ εbar → ball x₀ r ⊆ S.U →

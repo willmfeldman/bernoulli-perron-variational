@@ -17,15 +17,15 @@ import PerronVariational.Inner.WeissTime.Translation
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Lemma 4.3: temporal translations of `χ_ε`
+# [Lemma 4.3](#AFS:lem:chiConverge): temporal translations of `χ_ε`
 
-**Lemma 4.3** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the temporal
-translation estimate `chiEps_time_translation` and the compactness statement
+**[Lemma 4.3](#AFS:lem:chiConverge)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the
+temporal translation estimate `chiEps_time_translation` and the compactness statement
 `exists_tendstoLpLoc_chiEps_subseq`. The translation estimate is the paper's localization of the
 argument of G. S. Weiss, *A singular limit arising in combustion theory: fine properties of the
 free boundary*, Calc. Var. Partial Differential Equations 17 (2003), 311–340,
-doi:10.1007/s00526-002-0171-z, Proposition 4.1.
+doi:10.1007/s00526-002-0171-z, [Proposition 4.1](#AFS:p.eps-inner-limit).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -39,7 +39,7 @@ namespace Inner
 
 variable {d : ℕ}
 
-/-! ### Lemma 4.3: temporal translations of `χ_ε` -/
+/-! ### [Lemma 4.3](#AFS:lem:chiConverge): temporal translations of `χ_ε` -/
 
 section ChiEps
 
@@ -47,10 +47,11 @@ variable {β : ℝ → ℝ}
 
 set_option maxHeartbeats 1000000 in
 -- long assembly proof with many compact sets, constants and estimates
-/-- **Temporal translation estimate for `χ_ε`** (proof of Lemma 4.3, (4.8)–(4.10)): uniformly in `n`
-(large), `∫_A |χ_n(x, t + s) - χ_n(x, t)|` is small for small `s`. Uses the time derivative of the
-mollified energy density `e_n = |∇v_n|² + Q² χ_n`, the spatial estimate, and the strong convergence
-of `∇v_n` (Lemma 4.2). -/
+/-- **Temporal translation estimate for `χ_ε`** (proof of [Lemma 4.3](#AFS:lem:chiConverge),
+[(A.6)](#AFS:eqn:timeDerivative)–[(A.8)](#AFS:eqn:nablaEst)): uniformly in `n` (large),
+`∫_A |χ_n(x, t + s) - χ_n(x, t)|` is small for small `s`. Uses the time derivative of the mollified
+energy density `e_n = |∇v_n|² + Q² χ_n`, the spatial estimate, and the strong convergence of `∇v_n`
+([Lemma 4.2](#AFS:lem:strongGrad)). -/
 theorem chiEps_time_translation (S : Setting d) (hβ : IsReactionProfile β)
     {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0)) {g : ℕ → E d → ℝ}
     {G : ℕ → E d → E d} {v : ℕ → E d × ℝ → ℝ} {u : E d × ℝ → ℝ} {M : ℝ} {E0 : ℝ≥0∞}
@@ -355,11 +356,11 @@ theorem chiEps_time_translation (S : Setting d) (hβ : IsReactionProfile β)
   rw [hη₁def]
   field_simp
 
-/-- **Lemma 4.3, compactness part** (proof: time regularity of the mollified energy density plus
-the Fréchet–Kolmogorov compactness criterion, from gmt-foundations v0.1.0). For solutions
-`v_n` of (3.4) with `ε_n → 0⁺`, data `0 ≤ g_n ≤ M`, `g_n ∈ H¹(U)` with energy bound `E0 < ∞`,
-`v_n → u` locally uniformly on `U_∞` (`u` continuous, locally Lipschitz in space) and
-`∇v_n → ∇u` in `L²_loc(U_∞)`: along a subsequence
+/-- **[Lemma 4.3](#AFS:lem:chiConverge), compactness part** (proof: time regularity of the mollified
+energy density plus the Fréchet–Kolmogorov compactness criterion, from gmt-foundations v0.1.0). For
+solutions `v_n` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `ε_n → 0⁺`, data
+`0 ≤ g_n ≤ M`, `g_n ∈ H¹(U)` with energy bound `E0 < ∞`, `v_n → u` locally uniformly on `U_∞` (`u`
+continuous, locally Lipschitz in space) and `∇v_n → ∇u` in `L²_loc(U_∞)`: along a subsequence
 `χ_{ε_n}(v_n) → χ₀` in `L¹_loc(U_∞)`, for some measurable `χ₀`. -/
 theorem exists_tendstoLpLoc_chiEps_subseq (S : Setting d) (hβ : IsReactionProfile β)
     {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0)) {g : ℕ → E d → ℝ}

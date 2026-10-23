@@ -179,6 +179,6 @@
    "inputRev": "v4.35.0-rc3",
    "inherited": true,
    "configFile": "lakefile.toml"}],
- "name": "main_theorem",
+ "name": "main_results",
  "lakeDir": ".lake",
  "fixedToolchain": false}

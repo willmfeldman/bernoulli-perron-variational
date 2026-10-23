@@ -18,8 +18,7 @@ jobs:
       matrix:
         include:
           # PARAM: one line per submitted workspace; `id` is exactly 12 lowercase letters/digits.
-          - { workspace: main-theorem, id: perronmain01 }
-          - { workspace: planar-structure, id: perronplanar }
+          - { workspace: main-results, id: perronmain01 }
     uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@65f0154ed776cd26c224254aa57b379137f28b0d
     with:
       repository: ${{ github.repository }}

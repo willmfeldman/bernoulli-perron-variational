@@ -16,12 +16,13 @@ import PerronVariational.Inner.StrongGrad
 import PerronVariational.Inner.WeakGrad
 
 /-!
-# Lemma 4.2: strong `L²_loc` convergence of the spatial gradients
+# [Lemma 4.2](#AFS:lem:strongGrad): strong `L²_loc` convergence of the spatial gradients
 
-Lemma 4.2 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. Proof of
-`Inner.tendstoLpLoc_gradₓ_semilinear` by the energy argument (4.3)–(4.6) of the paper,
-arranged so that no chain rule in time is needed for the limit `u`:
+[Lemma 4.2](#AFS:lem:strongGrad) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. Proof of
+`Inner.tendstoLpLoc_gradₓ_semilinear` by the energy argument
+[(4.3)](#AFS:eqn:limsupForGrad)–[(4.5)](#AFS:eqn:limsupForGradFinal) of the paper, arranged so that
+no chain rule in time is needed for the limit `u`:
 
 1. the `ε`-level energy inequality `∫ η |∇v_n|² ≤ ∫ (v_n²/2) ∂ₜη - ∫ v_n ∇v_n · ∇η`
    (`energy_ineq_semilinear`), whose right-hand side converges to
@@ -232,17 +233,18 @@ theorem inner_gradₓ_posPart_mul {u η : E d × ℝ → ℝ} (hη : ContDiff �
         exact mul_nonneg (le_max_right _ _) (hη0 _)
     rw [gradₓ_eq_zero_of_isLocalMin (φ := fun q ↦ max (u q - δ) 0 * η q) hmin, inner_zero_right]
 
-/-! ### Lemma 4.2 -/
+/-! ### [Lemma 4.2](#AFS:lem:strongGrad) -/
 
-/-- **Lemma 4.2**: strong `L²_loc(U_∞)` convergence of the spatial
-gradients. Let `v_n ≥ 0` be classical solutions of (3.4) with `ε_n → 0⁺`, converging locally
-uniformly on `U_∞` to `u` (continuous, locally Lipschitz in space), with `∇v_n ⇀ ∇u` weakly in
-`L²(U × (0, T))` for all `T`, uniformly bounded slice energies `∫_U |∇v_n(·, t)|² ≤ E₀`, and
-`∂ₜv_n ⇀ w` weakly in `L²(U_∞)` with `‖∂ₜv_n‖_{L²(U_∞)} ≤ B`. Then `∇v_n → ∇u` in `L²_loc(U_∞)`
-(along the whole sequence).
+/-- **[Lemma 4.2](#AFS:lem:strongGrad)**: strong `L²_loc(U_∞)` convergence of the spatial
+gradients. Let `v_n ≥ 0` be classical solutions of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear)
+with `ε_n → 0⁺`, converging locally uniformly on `U_∞` to `u` (continuous, locally Lipschitz in
+space), with `∇v_n ⇀ ∇u` weakly in `L²(U × (0, T))` for all `T`, uniformly bounded slice energies
+`∫_U |∇v_n(·, t)|² ≤ E₀`, and `∂ₜv_n ⇀ w` weakly in `L²(U_∞)` with `‖∂ₜv_n‖_{L²(U_∞)} ≤ B`. Then
+`∇v_n → ∇u` in `L²_loc(U_∞)` (along the whole sequence).
 
-Proof: (4.3)–(4.6) of the paper, see the module docstring. The time chain rule for `u` used in
-the paper's derivation of (4.4) is avoided: `∫ w u η = -∫ (u²/2) ∂ₜη` is obtained as the limit of
+Proof: [(4.3)](#AFS:eqn:limsupForGrad)–[(4.5)](#AFS:eqn:limsupForGradFinal) of the paper, see the
+module docstring. The time chain rule for `u` used in the paper's derivation of
+[(4.4)](#AFS:eqn:heatEqnRelation) is avoided: `∫ w u η = -∫ (u²/2) ∂ₜη` is obtained as the limit of
 the classical identity for `v_n`. -/
 theorem tendstoLpLoc_gradₓ_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0))

@@ -9,14 +9,16 @@ public import PerronVariational.Defs.Semilinear
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Small helpers shared by the Section 4 files
+# Small helpers shared by the [Section 4](#AFS:s.inner-limits) files
 
-Helpers for Section 4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, kept in one small early
-module so that the files that need only them do not wait for the semilinear estimates:
+Helpers for [Section 4](#AFS:s.inner-limits) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981,
+kept in one small early module so that the files that need only them do not wait for the semilinear
+estimates:
 
 * `LocLipₓ`: local spatial Lipschitz continuity on a space-time set (the form of
-  `∇u ∈ L^∞_loc` used in Definition 3.7(i)); re-exported by `Inner.SemilinearEstimates`;
+  `∇u ∈ L^∞_loc` used in [Definition 3.8(i)](#AFS:d.parabolic-inner)); re-exported by
+  `Inner.SemilinearEstimates`;
 * `continuousOn_slice_of_prod`, `IsSemilinearSolOn.continuousOn_lapₓ`: continuity of time slices
   and of the spatial Laplacian of a classical solution;
 * `setLIntegral_comp_add_le`: translating the domain of a set lintegral (with the instance
@@ -35,9 +37,9 @@ namespace Inner
 variable {d : ℕ}
 
 /-- Local spatial Lipschitz continuity on a space-time set `Ω`, uniform in time near each point
-(the form of `∇u ∈ L^∞_loc` used in Definition 3.7(i)). The paper assumes `∇u ∈ L^∞_loc`; here we
-assume local spatial Lipschitz bounds, uniform in time near each point, which is equivalent for
-continuous `u`. -/
+(the form of `∇u ∈ L^∞_loc` used in [Definition 3.8(i)](#AFS:d.parabolic-inner)). The paper assumes
+`∇u ∈ L^∞_loc`; here we assume local spatial Lipschitz bounds, uniform in time near each point,
+which is equivalent for continuous `u`. -/
 def LocLipₓ (Ω : Set (E d × ℝ)) (u : E d × ℝ → ℝ) : Prop :=
   ∀ p ∈ Ω, ∃ K : ℝ, ∃ N ∈ 𝓝 p, ∀ q ∈ N, ∀ q' ∈ N, q.2 = q'.2 → |u q - u q'| ≤ K * ‖q.1 - q'.1‖
 

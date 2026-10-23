@@ -17,12 +17,12 @@ import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 import Mathlib.Topology.Algebra.Ring.Real
 
 /-!
-# Upper Kuratowski limits: API and Lemmas 5.1–5.2
+# Upper Kuratowski limits: API and two technical lemmas
 
 Basic API for `upperKLimit` (the `limsup*` of sets) along an arbitrary filter, and the two
-technical lemmas (Lemmas 5.1 and 5.2) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
-("the paper").
+technical lemmas (Lemmas [5.1](#AFS:l.limit-max) and [5.2](#AFS:l.prec-ordering-convergence)) of F.
+Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
 
 ## Main results
 
@@ -32,15 +32,16 @@ properties of Perron's extremal solutions in the Bernoulli one-phase problem*, a
   `mem_upperKLimit_atTop_iff`: sequential characterizations (first-countable spaces).
 * `inter_upperKLimit_nonempty_of_isCompact`: if `A i` meets a compact `K` frequently, then
   `upperKLimit A l` meets `K`.
-* `eventually_forall_lt_of_tendstoUniformlyOn`: the "upper half" of Lemma 5.1.
-* `limsup_max_eq`: Lemma 5.1, stated with `EReal`-valued suprema, so
+* `eventually_forall_lt_of_tendstoUniformlyOn`: the "upper half" of [Lemma 5.1](#AFS:l.limit-max).
+* `limsup_max_eq`: [Lemma 5.1](#AFS:l.limit-max), stated with `EReal`-valued suprema, so
   that it also covers the case `E* ∩ F = ∅` ignored by the paper.
-* `precOn_eventually_of_tendsto`: Lemma 5.2, for an
+* `precOn_eventually_of_tendsto`: [Lemma 5.2](#AFS:l.prec-ordering-convergence), for an
   arbitrary filter.
 * `upperKLimit_iInter_subset_closure_iUnion`: the inclusion `E_∞ ⊆ closure (⋃ t, E_t)` used in
-  Cor 5.7.
+  [Cor 5.7](#AFS:c.monotone-long-time).
 
-No countability assumptions are needed for Lemmas 5.1–5.2: the compactness step uses finite
+No countability assumptions are needed for Lemmas
+[5.1](#AFS:l.limit-max)–[5.2](#AFS:l.prec-ordering-convergence): the compactness step uses finite
 subcovers rather than subsequences.
 -/
 
@@ -137,7 +138,8 @@ theorem upperKLimit_inter_subset_closure (F : Set X) :
   subset_inter (upperKLimit_mono fun _ ↦ inter_subset_left)
     (upperKLimit_subset_closure_of_eventually (Eventually.of_forall fun _ ↦ inter_subset_right))
 
-/-- `limsup* (A_i ∩ F) ⊆ (limsup* A_i) ∩ F` for closed `F` (used in Prop 5.3). -/
+/-- `limsup* (A_i ∩ F) ⊆ (limsup* A_i) ∩ F` for closed `F` (used in
+[Prop 5.3](#AFS:p.semilinear-limit-viscosity)). -/
 theorem upperKLimit_inter_subset {F : Set X} (hF : IsClosed F) :
     upperKLimit (fun i ↦ A i ∩ F) l ⊆ upperKLimit A l ∩ F :=
   fun _ hx ↦ let h := upperKLimit_inter_subset_closure F hx; ⟨h.1, hF.closure_subset h.2⟩
@@ -237,7 +239,7 @@ theorem eventually_inter_eq_empty_of_isCompact (hK : IsCompact K)
   exact (inter_upperKLimit_nonempty_of_isCompact hK hev).ne_empty h
 
 /-- `limsup* A ∩ K` is compact for compact `K` (so continuous functions attain their maximum on
-it, as used in the paper's Lemma 5.1). -/
+it, as used in the paper's [Lemma 5.1](#AFS:l.limit-max)). -/
 theorem isCompact_upperKLimit_inter (hK : IsCompact K) : IsCompact (upperKLimit A l ∩ K) :=
   hK.inter_left isClosed_upperKLimit
 
@@ -266,7 +268,7 @@ theorem le_of_mem_upperKLimit (hw : ContinuousOn w F) (hws : TendstoUniformlyOn 
   rw [Real.dist_eq, abs_lt] at h2
   linarith
 
-/-- Upper half of Lemma 5.1: if `w < c` on `E* ∩ F` with
+/-- Upper half of [Lemma 5.1](#AFS:l.limit-max): if `w < c` on `E* ∩ F` with
 `E* = limsup* E_i`, `F` compact, `w` continuous on `F` and `ws i → w` uniformly on `F`, then
 eventually `ws i < c` on `E i ∩ F`. -/
 theorem eventually_forall_lt_of_tendstoUniformlyOn (hF : IsCompact F) (hw : ContinuousOn w F)
@@ -284,8 +286,9 @@ theorem eventually_forall_lt_of_tendstoUniformlyOn (hF : IsCompact F) (hw : Cont
   by_contra! hcp
   exact (eq_empty_iff_forall_notMem.1 hi) p ⟨⟨hp, hcp⟩, hp.2⟩
 
-/-- Lower half of Lemma 5.1: if `p ∈ E* ∩ F` and `c < w p`, then frequently some point of
-`E i ∩ F` has `c < ws i`. Needs `E i ⊆ F` eventually (the paper's "`E_j` closed in `F`"). -/
+/-- Lower half of [Lemma 5.1](#AFS:l.limit-max): if `p ∈ E* ∩ F` and `c < w p`, then frequently some
+point of `E i ∩ F` has `c < ws i`. Needs `E i ⊆ F` eventually (the paper's "`E_j` closed in
+`F`"). -/
 theorem frequently_exists_lt_of_mem_upperKLimit (hEF : ∀ᶠ i in l, E i ⊆ F)
     (hw : ContinuousOn w F) (hws : TendstoUniformlyOn ws w l F) {x : X}
     (hx : x ∈ upperKLimit E l ∩ F) {c : ℝ} (hc : c < w x) :
@@ -303,7 +306,7 @@ theorem frequently_exists_lt_of_mem_upperKLimit (hEF : ∀ᶠ i in l, E i ⊆ F)
   rw [Real.dist_eq, abs_lt] at h2
   exact ⟨p, ⟨hpE, hpF⟩, by linarith⟩
 
-/-- **Lemma 5.1**. Let `F` be compact, `E i ⊆ F` eventually,
+/-- **[Lemma 5.1](#AFS:l.limit-max)**. Let `F` be compact, `E i ⊆ F` eventually,
 `w` continuous on `F`, and `ws i → w` uniformly on `F`. With `E* = limsup* E_i`,
 `sup_{E* ∩ F} w = limsup_i sup_{E i ∩ F} ws i`.
 
@@ -334,13 +337,12 @@ end Uniform
 
 section PrecOn
 
-/-- **Lemma 5.2**. Let `F` be compact, `u, v` continuous
+/-- **[Lemma 5.2](#AFS:l.prec-ordering-convergence)**. Let `F` be compact, `u, v` continuous
 on `F` with `u ≺_E v` on `F`, `us i → u` and `vs i → v` uniformly on `F`, and
 `limsup* E' ⊆ E` along the filter `l`. Then eventually `us i ≺_{E' i} vs i` on `F`.
 
 Stated for an arbitrary filter `l` (used with `j → ∞`, `t → ∞` and `δ → 0⁺`). The paper's
-hypothesis "`E` closed in `F`" is not needed. The paper's proof has `v` in place of `v_j` in its
-last line; here the statement is proved with `vs i`. -/
+hypothesis "`E` closed in `F`" is not needed. -/
 theorem precOn_eventually_of_tendsto {l : Filter ι} {F E : Set X} {E' : ι → Set X}
     {u v : X → ℝ} {us vs : ι → X → ℝ} (hF : IsCompact F) (hu : ContinuousOn u F)
     (hv : ContinuousOn v F) (huv : PrecOn u v E F) (hus : TendstoUniformlyOn us u l F)
@@ -356,25 +358,12 @@ section Iinter
 
 variable {ι : Type*} [Preorder ι] {S : ι → Set X}
 
-/-- The inclusion `E_∞ ⊆ closure (⋃ t, E_t)` of Cor 5.7, for any filter. No
-monotonicity of `S` is needed. -/
+/-- The inclusion `E_∞ ⊆ closure (⋃ t, E_t)` of [Cor 5.7](#AFS:c.monotone-long-time), for any
+filter. No monotonicity of `S` is needed. -/
 theorem upperKLimit_iInter_subset_closure_iUnion (l : Filter ι) :
     upperKLimit (fun T ↦ ⋂ t ≥ T, S t) l ⊆ closure (⋃ t, S t) :=
   upperKLimit_subset_closure_of_eventually <| Eventually.of_forall fun T ↦
     (biInter_subset_of_mem le_rfl).trans (subset_iUnion S T)
-
-/-- Variant of `upperKLimit_iInter_subset_closure_iUnion` with the union over `t ≥ a`. -/
-theorem upperKLimit_iInter_subset_closure_biUnion_ge (a : ι) :
-    upperKLimit (fun T ↦ ⋂ t ≥ T, S t) atTop ⊆ closure (⋃ t ≥ a, S t) :=
-  upperKLimit_subset_closure_of_eventually <| (eventually_ge_atTop a).mono fun _ hT ↦
-    (biInter_subset_of_mem le_rfl).trans (subset_biUnion_of_mem (u := S) hT)
-
-/-- Variant of `upperKLimit_iInter_subset_closure_iUnion` with the union over `t > a`
-(e.g. `⋃ t > 0` as in Cor 5.7). -/
-theorem upperKLimit_iInter_subset_closure_biUnion_gt [NoMaxOrder ι] (a : ι) :
-    upperKLimit (fun T ↦ ⋂ t ≥ T, S t) atTop ⊆ closure (⋃ t > a, S t) :=
-  upperKLimit_subset_closure_of_eventually <| (eventually_gt_atTop a).mono fun _ hT ↦
-    (biInter_subset_of_mem le_rfl).trans (subset_biUnion_of_mem (u := S) hT)
 
 end Iinter
 

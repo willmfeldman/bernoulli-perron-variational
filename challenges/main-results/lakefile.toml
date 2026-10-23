@@ -1,5 +1,5 @@
-name = "main_theorem"
-version = "0.2.0"
+name = "main_results"
+version = "0.3.0"
 # Only the trusted modules are default targets: under Comparator's threat model the (untrusted)
 # Solution is not compiled before Comparator processes it. During development build it with
 #   lake build Solution

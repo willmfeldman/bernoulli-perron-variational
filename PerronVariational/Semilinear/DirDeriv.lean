@@ -12,11 +12,11 @@ import PerronVariational.Semilinear.Calculus
 /-!
 # Directional derivatives of smooth functions (calculus for the Bernstein argument)
 
-Steps 1 and 3 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4):
-the computation of the equation (A.8) for `w = |∇v|²` and the derivative tests at a maximum of
-`z = η² w`.
+Steps 1 and 3 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)): the computation of the [equation (B.7)](#AFS:e.w-eq) for
+`w = |∇v|²` and the derivative tests at a maximum of `z = η² w`.
 
 We work with directional derivatives `D_a f(p) = Df(p) a` (`dd a f`) of functions `f : X → ℝ`
 which are `C^∞` on an open set `O`, stating the calculus rules as equalities of functions on `O`
@@ -73,9 +73,6 @@ theorem dd_const_mul (hf : DifferentiableAt ℝ f p) (c : ℝ) (a : X) :
   simp only [PerronVariational.dd, fderiv_const_mul hf, smul_apply,
     smul_eq_mul]
 
-theorem dd_const (c : ℝ) (a : X) : dd a (fun _ ↦ c) p = 0 := by
-  simp [PerronVariational.dd]
-
 theorem dd_sum {ι : Type*} (s : Finset ι) {F : ι → X → ℝ}
     (hF : ∀ i ∈ s, DifferentiableAt ℝ (F i) p) (a : X) :
     dd a (fun q ↦ ∑ i ∈ s, F i q) p = ∑ i ∈ s, dd a (F i) p := by
@@ -115,14 +112,6 @@ theorem _root_.ContDiffOn.contDiffAt_two (hf : ContDiffOn ℝ ∞ f O) (hO : IsO
 
 variable (hO : IsOpen O)
 include hO
-
-theorem dd_mul_eqOn (hf : ContDiffOn ℝ ∞ f O) (hg : ContDiffOn ℝ ∞ g O) (a : X) :
-    EqOn (dd a (fun q ↦ f q * g q)) (fun q ↦ f q * dd a g q + g q * dd a f q) O :=
-  fun _ hq ↦ dd_mul (hf.differentiableAt' hO hq) (hg.differentiableAt' hO hq) a
-
-theorem dd_sq_eqOn (hf : ContDiffOn ℝ ∞ f O) (a : X) :
-    EqOn (dd a (fun q ↦ f q ^ 2)) (fun q ↦ 2 * f q * dd a f q) O :=
-  fun _ hq ↦ dd_sq (hf.differentiableAt' hO hq) a
 
 theorem dd_comp_eqOn {Φ : ℝ → ℝ} (hΦ : ContDiff ℝ ∞ Φ) (hf : ContDiffOn ℝ ∞ f O) (a : X) :
     EqOn (dd a (fun q ↦ Φ (f q))) (fun q ↦ deriv Φ (f q) * dd a f q) O :=

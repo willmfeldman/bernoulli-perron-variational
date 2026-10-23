@@ -11,23 +11,23 @@ public import PerronVariational.Semilinear.Profiles
 import PerronVariational.Semilinear.Calculus
 
 /-!
-# Well-prepared data (Lemma A.4)
+# Well-prepared data ([Lemma 3.11](#AFS:l.well-prepared))
 
-Lemma A.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+[Lemma 3.11](#AFS:l.well-prepared) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
-For a smooth strict subsolution (resp. supersolution) `g` (Definition 2.2, with parameters
-`a₀, δ₀`), `θ = 1/(1 + δ₀)` (resp. `θ̂ = 1/(1 - δ₀)`) and
+For a smooth strict subsolution (resp. supersolution) `g` ([Definition 2.3](#AFS:d.strict-sub), with
+parameters `a₀, δ₀`), `θ = 1/(1 + δ₀)` (resp. `θ̂ = 1/(1 - δ₀)`) and
 
   `g_ε = (Φ_{ε,θ}(g))₊`   (resp. `g_ε = Ψ_{ε,θ̂}(g)`),
 
 there is `ε₀ > 0`, depending only on the listed parameters, such that for `ε ∈ (0, ε₀]` the five
-items of Lemma A.4 hold. The statements quantify `ε₀` *before* the data `(U, Q, g)`, which makes
-the dependence of `ε₀` explicit: on `(a₀, δ₀, β)` in the subsolution case, and on
-`(a₀, δ₀, Q_min, β, L, D)` with `|∇g| ≤ L`, `|Δg| ≤ D` on `U` in the supersolution case
+items of [Lemma 3.11](#AFS:l.well-prepared) hold. The statements quantify `ε₀` *before* the data
+`(U, Q, g)`, which makes the dependence of `ε₀` explicit: on `(a₀, δ₀, β)` in the subsolution case,
+and on `(a₀, δ₀, Q_min, β, L, D)` with `|∇g| ≤ L`, `|Δg| ≤ D` on `U` in the supersolution case
 (the paper: `‖g‖_{C²(Ū)}`).
 
-Conventions and deviations:
+Conventions:
 * Item (i): the gradient bound is proved pointwise everywhere, `|∇g_ε(x)| ≤ |∇g(x)|` (with the
   convention `∇f(x) = 0` where `f` is not differentiable), which implies the `L^∞` bound; the
   Lipschitz property is: every Lipschitz constant of `g` on `Ū` is one for `g_ε`.
@@ -37,14 +37,10 @@ Conventions and deviations:
   Supersolution case: `g_ε ∈ C²` and the classical inequality `Δg_ε ≤ Q² β_ε(g_ε)` in `U`, plus
   the corresponding viscosity form (test functions touching from below).
 * Item (iv): `E₀ = ∫_U (|∇g|² + Q_max²)`.
-* Case 2 of the paper's supersolution proof uses `|∇g|² ≤ Q² - δ₀`, whereas Definition 2.2 gives
-  `|∇g|² ≤ (1 - δ₀)Q²`; here we use Definition 2.2 as written, with `θ̂ = 1/(1 - δ₀)`, and the
-  computation goes through. The paper leaves `δ₀ < 1` implicit; we assume it (WLOG, since
-  `δ₀ ≥ 1` forces `∇g = 0` on `{|g| ≤ a₀}`, and the wrapper `exists_wellPrepared_super` shrinks
-  `δ₀`).
-* The supersolution proof's case split is `g > -a₀` / `g ≤ -a₀` (the paper's `-a₀ ≤ g < ε` uses
-  `Δg ≤ 0` at `g = -a₀`, where Definition 2.2 gives no information; the exponential case covers
-  it).
+* Supersolution case: `θ̂ = 1/(1 - δ₀)` with `|∇g|² ≤ (1 - δ₀)Q²` from
+  [Definition 2.3](#AFS:d.strict-sub); we assume `δ₀ < 1` (WLOG, since `δ₀ ≥ 1` forces `∇g = 0` on
+  `{|g| ≤ a₀}`, and the wrapper `exists_wellPrepared_super` shrinks `δ₀`). The case split is
+  `g > -a₀` / `g ≤ -a₀`, the second case handled by the exponential decay of the profile.
 -/
 
 open Set Filter Topology MeasureTheory
@@ -64,7 +60,7 @@ noncomputable def wellPreparedSubData (β : ℝ → ℝ) (δ₀ ε : ℝ) (g : E
 noncomputable def wellPreparedSuperData (β : ℝ → ℝ) (δ₀ ε : ℝ) (g : E d → ℝ) : E d → ℝ :=
   fun x ↦ profileSuperEps β (1 / (1 - δ₀)) ε (g x)
 
-/-- The conclusions of **Lemma A.4** in the subsolution case, for
+/-- The conclusions of **[Lemma 3.11](#AFS:l.well-prepared)** in the subsolution case, for
 `g_ε` with zero level `s₀` of the profile and constant `c_θ`. -/
 structure IsWellPreparedSub (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ) (ε Qmax : ℝ)
     (g gε : E d → ℝ) (s₀ cθ : ℝ) : Prop where
@@ -90,7 +86,7 @@ structure IsWellPreparedSub (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ)
   pos_subset : ∀ x, 0 < g x → 0 < gε x
   subset_pos : ∀ x, 0 < gε x → -(cθ * ε) < g x
 
-/-- The conclusions of **Lemma A.4** in the supersolution case. -/
+/-- The conclusions of **[Lemma 3.11](#AFS:l.well-prepared)** in the supersolution case. -/
 structure IsWellPreparedSuper (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ) (ε Qmax : ℝ)
     (g gε : E d → ℝ) (κ : ℝ) : Prop where
   /-- (i) Lipschitz constants of `g` on `Ū` are Lipschitz constants of `g_ε`. -/
@@ -150,13 +146,13 @@ theorem exp_neg_div_le {c a ε : ℝ} (hc : 0 < c) (ha : 0 < a) (hε : 0 < ε) :
   rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by positivity), inv_div]
   linarith
 
-/-! ### Lemma A.4, subsolution case -/
+/-! ### [Lemma 3.11](#AFS:l.well-prepared), subsolution case -/
 
-/-- **Lemma A.4**, subsolution case. Given `a₀, δ₀ > 0` there is
+/-- **[Lemma 3.11](#AFS:l.well-prepared)**, subsolution case. Given `a₀, δ₀ > 0` there is
 `ε₀ = a₀/(1 + c_θ) > 0` (`θ = 1/(1 + δ₀)`) such that for every open `U`, every `g ∈ C²` satisfying
-the strict subsolution conditions of Definition 2.2 with parameters `a₀, δ₀`, every `Q` with
-`|Q| ≤ Q_max` on `U`, and every `ε ∈ (0, ε₀]`, the datum `g_ε = (Φ_{ε,θ}(g))₊` satisfies
-(i)–(v). -/
+the strict subsolution conditions of [Definition 2.3](#AFS:d.strict-sub) with parameters `a₀, δ₀`,
+every `Q` with `|Q| ≤ Q_max` on `U`, and every `ε ∈ (0, ε₀]`, the datum `g_ε = (Φ_{ε,θ}(g))₊`
+satisfies (i)–(v). -/
 theorem wellPrepared_sub {β : ℝ → ℝ} (hβ : IsReactionProfile β) {a₀ δ₀ Qmax : ℝ}
     (ha₀ : 0 < a₀) (hδ₀ : 0 < δ₀) :
     ∃ ε₀ > 0, ∀ {d : ℕ} (U : Set (E d)) (Q g : E d → ℝ), IsOpen U → ContDiff ℝ 2 g →
@@ -280,14 +276,14 @@ theorem wellPrepared_sub {β : ℝ → ℝ} (hβ : IsReactionProfile β) {a₀ �
       profileSubEps_pos_iff hβ hθ hθ1 hε0] at hx
     linarith
 
-/-! ### Lemma A.4, supersolution case -/
+/-! ### [Lemma 3.11](#AFS:l.well-prepared), supersolution case -/
 
-/-- **Lemma A.4**, supersolution case. Given `a₀ > 0`,
+/-- **[Lemma 3.11](#AFS:l.well-prepared)**, supersolution case. Given `a₀ > 0`,
 `δ₀ ∈ (0, 1)`, `Q_min > 0`, and bounds `L, D`, there is `ε₀ > 0` (depending only on these and
 `β`) such that for every open `U`, every `g ∈ C²` satisfying the strict supersolution
-conditions of Definition 2.2 with parameters `a₀, δ₀` and `|∇g| ≤ L`, `|Δg| ≤ D` on `U`, every
-`Q` with `Q_min ≤ Q`, `|Q| ≤ Q_max` on `U`, and every `ε ∈ (0, ε₀]`, the datum `g_ε = Ψ_{ε,θ̂}(g)`
-(`θ̂ = 1/(1 - δ₀)`) satisfies (i)–(iv) and `g_ε > εκ`. -/
+conditions of [Definition 2.3](#AFS:d.strict-sub) with parameters `a₀, δ₀` and `|∇g| ≤ L`,
+`|Δg| ≤ D` on `U`, every `Q` with `Q_min ≤ Q`, `|Q| ≤ Q_max` on `U`, and every `ε ∈ (0, ε₀]`, the
+datum `g_ε = Ψ_{ε,θ̂}(g)` (`θ̂ = 1/(1 - δ₀)`) satisfies (i)–(iv) and `g_ε > εκ`. -/
 theorem wellPrepared_super {β : ℝ → ℝ} (hβ : IsReactionProfile β) {a₀ δ₀ Qmin Qmax L D : ℝ}
     (ha₀ : 0 < a₀) (hδ₀ : 0 < δ₀) (hδ₀1 : δ₀ < 1) (hQmin : 0 < Qmin) :
     ∃ ε₀ > 0, ∀ {d : ℕ} (U : Set (E d)) (Q g : E d → ℝ), IsOpen U → ContDiff ℝ 2 g →
@@ -462,15 +458,16 @@ theorem wellPrepared_super {β : ℝ → ℝ} (hβ : IsReactionProfile β) {a₀
     exact (laplacian_le_of_eventually_le hψ.contDiffAt hgεc.contDiffAt hψx hle).trans
       (hmain x hxU)
 
-/-! ### Wrappers from Definition 2.2 in the standing setting -/
+/-! ### Wrappers from [Definition 2.3](#AFS:d.strict-sub) in the standing setting -/
 
 theorem Setting.abs_Q_le (S : Setting d) {x : E d} (hx : x ∈ S.U) : |S.Q x| ≤ S.Qmax := by
   obtain ⟨h1, h2⟩ := S.Q_mem x (subset_closure hx)
   rw [abs_of_nonneg (S.Qmin_pos.le.trans h1)]; exact h2
 
-/-- **Lemma A.4**, subsolution case, in the standing setting: for a smooth strict subsolution
-`g` (Definition 2.2) there are `δ₀ > 0` (a parameter of Definition 2.2) and `ε₀ > 0` such that
-`g_ε = (Φ_{ε,1/(1+δ₀)}(g))₊` satisfies (i)–(v) for `ε ∈ (0, ε₀]`. -/
+/-- **[Lemma 3.11](#AFS:l.well-prepared)**, subsolution case, in the standing setting: for a smooth
+strict subsolution `g` ([Definition 2.3](#AFS:d.strict-sub)) there are `δ₀ > 0` (a parameter of
+[Definition 2.3](#AFS:d.strict-sub)) and `ε₀ > 0` such that `g_ε = (Φ_{ε,1/(1+δ₀)}(g))₊` satisfies
+(i)–(v) for `ε ∈ (0, ε₀]`. -/
 theorem exists_wellPrepared_sub {β : ℝ → ℝ} (hβ : IsReactionProfile β) (S : Setting d)
     {g : E d → ℝ} (hg : IsStrictSub S.U S.Q g) :
     ∃ δ₀ > 0, ∃ ε₀ > 0, ∀ ε ∈ Ioc 0 ε₀,
@@ -480,10 +477,10 @@ theorem exists_wellPrepared_sub {β : ℝ → ℝ} (hβ : IsReactionProfile β) 
   obtain ⟨ε₀, hε₀, h⟩ := wellPrepared_sub (Qmax := S.Qmax) hβ ha₀ hδ₀
   exact ⟨δ₀, hδ₀, ε₀, hε₀, h S.U S.Q g S.isOpen hg2 hΔ hgrad (fun x hx ↦ S.abs_Q_le hx)⟩
 
-/-- **Lemma A.4**, supersolution case, in the standing setting: for a smooth strict
-supersolution `g` (Definition 2.2) there are `δ₀ ∈ (0, 1)` (a parameter of Definition 2.2,
-shrunk if necessary) and `ε₀ > 0` such that `g_ε = Ψ_{ε,1/(1-δ₀)}(g)` satisfies (i)–(iv) for
-`ε ∈ (0, ε₀]`. -/
+/-- **[Lemma 3.11](#AFS:l.well-prepared)**, supersolution case, in the standing setting: for a
+smooth strict supersolution `g` ([Definition 2.3](#AFS:d.strict-sub)) there are `δ₀ ∈ (0, 1)` (a
+parameter of [Definition 2.3](#AFS:d.strict-sub), shrunk if necessary) and `ε₀ > 0` such that
+`g_ε = Ψ_{ε,1/(1-δ₀)}(g)` satisfies (i)–(iv) for `ε ∈ (0, ε₀]`. -/
 theorem exists_wellPrepared_super {β : ℝ → ℝ} (hβ : IsReactionProfile β) (S : Setting d)
     {g : E d → ℝ} (hg : IsStrictSuper S.U S.Q g) :
     ∃ δ₀ ∈ Ioo (0 : ℝ) 1, ∃ ε₀ > 0, ∀ ε ∈ Ioc 0 ε₀,

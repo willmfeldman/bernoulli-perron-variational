@@ -11,13 +11,13 @@ public import Mathlib.Analysis.MeanInequalities
 /-!
 # The Bernstein inequality at a maximum point (Step 3, algebraic part)
 
-Step 3 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4),
-inequality (A.10).
+Step 3 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)), inequality [(B.9)](#AFS:e.zmax-ineq).
 
 At a positive maximum `(x̂, t̂)` of `z = η² w`, `w = |∇v|²`, relative to the parabolic past, the
-derivative tests (`∂ₜz ≥ 0`, `∇z = 0`, `Δz ≤ 0`) and the equation (A.8) for `w` give
+derivative tests (`∂ₜz ≥ 0`, `∇z = 0`, `Δz ≤ 0`) and the [equation (B.7)](#AFS:e.w-eq) for `w` give
 
   `|ℓ'| η² w ≤ C_η + 2 η² (|k_v| + |∇ₓk|)`   when `w ≥ 1`,
 
@@ -25,8 +25,8 @@ with `C_η = 16|∇η|² + 2|∂ₜη| + 2|Δη|`. This file contains the purely
 derivatives at the point replaced by real numbers.
 
 Compared with the paper we use the first-order test `∇z = 0` also in the cross term
-`-2∇η²·∇w = 8w|∇η|²`, so that the Hessian term `-2|D²v|²` of (A.8) is simply dropped and no
-Young inequality with `|D²v|` is needed.
+`-2∇η²·∇w = 8w|∇η|²`, so that the Hessian term `-2|D²v|²` of [(B.7)](#AFS:e.w-eq) is simply dropped
+and no Young inequality with `|D²v|` is needed.
 -/
 
 open Finset
@@ -35,10 +35,10 @@ open Finset
 
 namespace PerronVariational
 
-/-- **The Bernstein inequality at a maximum point** (algebraic core of (A.10)).
+/-- **The Bernstein inequality at a maximum point** (algebraic core of [(B.9)](#AFS:e.zmax-ineq)).
 Notation (all at the maximum point): `G i = ∂ᵢv`, `W = ∑ Gᵢ²` (`= w`), `h i = ∂ᵢη`,
 `ηxx i = ∂ᵢ²η`, `ηt = ∂ₜη`, `wx i = ∂ᵢw`, `wxx i = ∂ᵢ²w`, `wt = ∂ₜw`, `ℓ = ℓ(v)`, `a = -ℓ'(v)`,
-`kv = ∂ᵥk`, `kx i = ∂ᵢk`. Hypotheses: (A.8) with the Hessian term dropped (`hB`), the
+`kv = ∂ᵥk`, `kx i = ∂ᵢk`. Hypotheses: [(B.7)](#AFS:e.w-eq) with the Hessian term dropped (`hB`), the
 first-order spatial test for `z` (`hC`), the second-order spatial test (`hD`), the time test
 (`hE`), and (e) `ℓ² ≤ 2|ℓ'|`. -/
 theorem bernstein_point_algebra {ι : Type*} [Fintype ι] (G h ηxx wx wxx kx : ι → ℝ)

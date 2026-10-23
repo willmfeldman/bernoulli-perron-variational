@@ -12,21 +12,24 @@ import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
 import PerronVariational.Inner.SliceFubini
 
 /-!
-# Time localization of the parabolic inner variation identity (3.3)
+# Time localization of the parabolic inner variation identity [(3.3)](#AFS:e.parabolic-inner-var)
 
-Proof of **Theorem 3.10**, Step 4 ((4.17)), of F. Abedin, W. M. Feldman, K. Stinson,
+Proof of **[Theorem 3.14](#AFS:t.longtime-inner)**, Step 4 ([(4.8)](#AFS:eqn:innerVarLocalized)),
+of F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981: for a parabolic inner variational solution, for a.e. `t > 0`, the time-sliced
-integrand of (3.3) is integrable over `U` with zero integral for every `ξ ∈ C¹_c(U; ℝᵈ)`.
+integrand of [(3.3)](#AFS:e.parabolic-inner-var) is integrable over `U` with zero integral for every
+`ξ ∈ C¹_c(U; ℝᵈ)`.
 
-Proof: (3.3) tested with `ψ(s) ρₙ(x - q) eᵢ` and du Bois-Reymond in time give the slice identity
-for all translated bumps times coordinate vectors outside a common null set of times; the
-coordinate decomposition of the integrand (`Inner/InnerVarLinear.lean`) and the density of
-translated bumps (`firstOrderFunctional_eq_zero_of_bumps`) conclude.
+Proof: [(3.3)](#AFS:e.parabolic-inner-var) tested with `ψ(s) ρₙ(x - q) eᵢ` and du Bois-Reymond in
+time give the slice identity for all translated bumps times coordinate vectors outside a common null
+set of times; the coordinate decomposition of the integrand (`Inner/InnerVarLinear.lean`) and the
+density of translated bumps (`firstOrderFunctional_eq_zero_of_bumps`) conclude.
 
 ## Main definitions
 
-* `PerronVariational.LongTime.sliceInnerVarIntegrand`: the integrand of (4.17).
+* `PerronVariational.LongTime.sliceInnerVarIntegrand`: the integrand of
+  [(4.8)](#AFS:eqn:innerVarLocalized).
 
 ## Main results
 
@@ -45,8 +48,8 @@ namespace LongTime
 
 variable {d : ℕ}
 
-/-- The integrand of the time-localized inner variation identity (4.17) at time `t`, for a
-spatial vector field `ξ`. -/
+/-- The integrand of the time-localized inner variation identity
+[(4.8)](#AFS:eqn:innerVarLocalized) at time `t`, for a spatial vector field `ξ`. -/
 noncomputable def sliceInnerVarIntegrand (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ) (t : ℝ)
     (ξ : E d → E d) (x : E d) : ℝ :=
   innerVarIntegrand Q (fun y ↦ u (y, t)) (fun y ↦ χ (y, t)) ξ x
@@ -88,7 +91,7 @@ theorem sliceInnerVarIntegrand_eq_zero (Q : E d → ℝ) (u w χ : E d × ℝ �
   simp [sliceInnerVarIntegrand, innerVarIntegrand, divergence,
     fderiv_of_notMem_tsupport ℝ hx, image_eq_zero_of_notMem_tsupport hx]
 
-/-- The space-time integrand of (3.3) for `ξ(x, s) = ψ(s) η(x)`. -/
+/-- The space-time integrand of [(3.3)](#AFS:e.parabolic-inner-var) for `ξ(x, s) = ψ(s) η(x)`. -/
 theorem paraInnerVarIntegrand_timeProd (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ) (ψ : ℝ → ℝ)
     {η : E d → E d} (hη : Differentiable ℝ η) (x : E d) (s : ℝ) :
     paraInnerVarIntegrand Q u w χ (fun p ↦ ψ p.2 • η p.1) (x, s) =
@@ -139,7 +142,8 @@ section InnerVar
 
 variable {U : Set (E d)} {Q : E d → ℝ} {u w χ : E d × ℝ → ℝ}
 
-/-- The slice identity (4.17) for one translated bump times a fixed vector, for a.e. time. -/
+/-- The slice identity [(4.8)](#AFS:eqn:innerVarLocalized) for one translated bump times a fixed
+vector, for a.e. time. -/
 theorem ae_innerVar_slice_bump (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ) (n : ℕ)
     (q : E d) (hB : closedBall q (bumpRad n) ⊆ U) (e : E d) :
     ∀ᵐ s, s ∈ Ioi (0 : ℝ) →
@@ -362,8 +366,9 @@ theorem integrableOn_ivCoeffG_slice (h : IsParaInnerVarSolution U Q u w χ)
   exact integrableOn_ivCoeffG (Q := Q) hK (hQ.continuousOn.mono hKU) hχm
     (fun x hx ↦ abs_chi_slice_le_one h hs (hKU hx)) hB' e
 
-/-- **The slice identity (4.17) at a fixed time `s`**, from the identities for translated bumps
-times coordinate vectors; for Lipschitz fields `ξ` with compact support in `U`. -/
+/-- **The slice identity [(4.8)](#AFS:eqn:innerVarLocalized) at a fixed time `s`**, from the
+identities for translated bumps times coordinate vectors; for Lipschitz fields `ξ` with compact
+support in `U`. -/
 theorem innerVar_slice_of_bumps (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
     (hQ : LocallyLipschitzOn U fun y ↦ Q y ^ 2) {D : Set (E d)} (hD : Dense D) {s : ℝ}
     (hs : 0 < s) (hmem : MemLp (fun x ↦ w (x, s)) 2 (volume.restrict U))

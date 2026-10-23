@@ -12,10 +12,11 @@ import PerronVariational.Semilinear.Calculus
 /-!
 # Two-plane functions: definition and regularity
 
-Part of **Proposition 2.14** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the
-one-dimensional calculus of Steps 1 and 3 (`oneDim_energy_competitor`, `ratio_ineq`), the two-plane
-function `twoPlane α e = α |x · e|`, `C¹` functions are `H¹_loc`, and the regularity of `twoPlane`.
+Part of **[Proposition 2.20](#AFS:p.two-plane-minimizing-props)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the one-dimensional calculus of Steps 1 and 3 (`oneDim_energy_competitor`,
+`ratio_ineq`), the two-plane function `twoPlane α e = α |x · e|`, `C¹` functions are `H¹_loc`, and
+the regularity of `twoPlane`.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -29,8 +30,8 @@ variable {d : ℕ}
 
 /-! ### One-dimensional calculus (Steps 1 and 3) -/
 
-/-- **Proposition 2.14, Step 1**, with general `q`: the energy of the one-dimensional
-competitor `φ^ε_α(s) = α/(1-ε) (|s| - ε)₊` on `[-1, 1]` is
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props), Step 1**, with general `q`: the energy
+of the one-dimensional competitor `φ^ε_α(s) = α/(1-ε) (|s| - ε)₊` on `[-1, 1]` is
 `2 [α²/(1-ε) + q²(1-ε)] = 2(α² + q²) - 2ε/(1-ε) (q²(1-ε) - α²)`. -/
 theorem oneDim_energy_competitor (α q ε : ℝ) (hε : ε ≠ 1) :
     2 * (α ^ 2 / (1 - ε) + q ^ 2 * (1 - ε)) =
@@ -39,8 +40,9 @@ theorem oneDim_energy_competitor (α q ε : ℝ) (hε : ε ≠ 1) :
   field_simp
   ring
 
-/-- **Proposition 2.14, Step 3**, with general `q`: for `x ∈ (0, 1]` and `q² ≤ α²`,
-`α²/x + q² x ≥ α² + q²`. Multiplying by `x`, this is `(1 - x)(α² - q² x) ≥ 0`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props), Step 3**, with general `q`: for
+`x ∈ (0, 1]` and `q² ≤ α²`, `α²/x + q² x ≥ α² + q²`. Multiplying by `x`, this is
+`(1 - x)(α² - q² x) ≥ 0`. -/
 theorem ratio_ineq {α q x : ℝ} (hx : 0 < x) (hx1 : x ≤ 1) (hqα : q ^ 2 ≤ α ^ 2) :
     α ^ 2 + q ^ 2 ≤ α ^ 2 / x + q ^ 2 * x := by
   rw [div_add' _ _ _ hx.ne', le_div_iff₀ hx]
@@ -50,7 +52,8 @@ theorem ratio_ineq {α q x : ℝ} (hx : 0 < x) (hx1 : x ≤ 1) (hqα : q ^ 2 ≤
 
 /-! ### The two-plane function -/
 
-/-- The two-plane solution `φ_α(x) = α |x · e|` (Proposition 2.14: `φ_α(x_d)` with `e = e_d`). -/
+/-- The two-plane solution `φ_α(x) = α |x · e|`
+([Proposition 2.20](#AFS:p.two-plane-minimizing-props): `φ_α(x_d)` with `e = e_d`). -/
 noncomputable def twoPlane (α : ℝ) (e : E d) (x : E d) : ℝ := α * |inner ℝ x e|
 
 /-- The (a.e.) gradient of `twoPlane α e`: `α e` on `{x · e > 0}`, `-α e` on `{x · e < 0}`,

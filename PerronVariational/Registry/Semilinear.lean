@@ -12,11 +12,11 @@ public import PerronVariational.Semilinear.ParabolicBasicBridge
 /-!
 # Registry: the semilinear equation
 
-Viscosity notions for the semilinear equation `∂ₜu = Δu - Q(x)² β_ε(u)` (first line of (3.4) in
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
-the Bernoulli one-phase problem*, arXiv:2609.14981, "the paper") and its stationary version
-`Δv = Q(x)² β_ε(v)`, and the well-posedness facts from the literature cited at the beginning of
-the paper's Appendix A.
+Viscosity notions for the semilinear equation `∂ₜu = Δu - Q(x)² β_ε(u)` (first line of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) in F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981,
+"the paper") and its stationary version `Δv = Q(x)² β_ε(v)`, and the well-posedness facts from the
+literature cited at the beginning of the paper's [Appendix B](#AFS:s.semilinear).
 
 References: O. A. Ladyženskaja, V. A. Solonnikov and N. N. Ural'ceva, *Linear and quasilinear
 equations of parabolic type*, Translations of Mathematical Monographs 23, AMS, 1968 ("LSU");
@@ -27,7 +27,8 @@ Mathematics 19, AMS, 2010, doi:10.1090/gsm/019; M. G. Crandall, H. Ishii and P.-
 Math. Soc. (N.S.) 27 (1992), 1–67, doi:10.1090/S0273-0979-1992-00266-5.
 
 * `IsSemilinearViscSubStat`, `IsSemilinearViscSuperStat`: stationary continuous viscosity
-  sub/supersolutions (used in Lemma A.4 and in the attainment argument of Lemma A.9).
+  sub/supersolutions (used in [Lemma 3.11](#AFS:l.well-prepared) and in the attainment argument of
+  [Lemma B.6](#AFS:l.attainment-lateral)).
 * `IsSemilinearViscSubOn`, `IsSemilinearViscSuperOn`: parabolic continuous viscosity
   sub/supersolutions in `U × I`, touching relative to the parabolic past `{s ≤ t}`.
 * `Registry.semilinear_exists`, `Registry.semilinear_unique`,
@@ -68,9 +69,10 @@ variable {d : ℕ}
 functions): `v` is continuous on `U`, and whenever a `C²` function `ψ` touches `v` from above in `U`
 at `x ∈ U`, `Q(x)² β_ε(v(x)) ≤ Δψ(x)`.
 
-Used in Lemma A.4, where `(Φ_{ε,θ}(g))₊` is shown to be a stationary subsolution of (3.4), and in
-the proof of Lemma A.9. A stationary subsolution is a
-time-independent parabolic subsolution of `∂ₜu = Δu - Q² β_ε(u)`. -/
+Used in [Lemma 3.11](#AFS:l.well-prepared), where `(Φ_{ε,θ}(g))₊` is shown to be a stationary
+subsolution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear), and in the proof of
+[Lemma B.6](#AFS:l.attainment-lateral). A stationary subsolution is a time-independent parabolic
+subsolution of `∂ₜu = Δu - Q² β_ε(u)`. -/
 def IsSemilinearViscSubStat (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ)
     (v : E d → ℝ) : Prop :=
   ContinuousOn v U ∧ ∀ ψ : E d → ℝ, ContDiff ℝ 2 ψ → ∀ x ∈ U, TouchesAbove ψ v U x →
@@ -80,8 +82,9 @@ def IsSemilinearViscSubStat (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ)
 functions): `v` is continuous on `U`, and whenever a `C²` function `ψ` touches `v` from below in `U`
 at `x ∈ U`, `Δψ(x) ≤ Q(x)² β_ε(v(x))`.
 
-Used in Lemma A.4 (supersolution case with `Ψ_{ε,θ̂}`) and in the proof of Lemma A.9 (the
-harmonic function `h_ε` is a stationary supersolution). -/
+Used in [Lemma 3.11](#AFS:l.well-prepared) (supersolution case with `Ψ_{ε,θ̂}`) and in the proof of
+[Lemma B.6](#AFS:l.attainment-lateral) (the harmonic function `h_ε` is a stationary
+supersolution). -/
 def IsSemilinearViscSuperStat (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ)
     (v : E d → ℝ) : Prop :=
   ContinuousOn v U ∧ ∀ ψ : E d → ℝ, ContDiff ℝ 2 ψ → ∀ x ∈ U, TouchesBelow ψ v U x →
@@ -96,8 +99,9 @@ a `C²` function `ψ` touches `u` from above at `p = (x, t) ∈ U × I`, relativ
 
 Touching relative to the parabolic past (rather than a full space-time neighbourhood) makes this
 notion *stronger* than the standard one, so comparison (`Registry.semilinear_comparison`) for it
-follows from the standard theory. Used in Prop 5.3 and Appendix A (Lemma A.1, Lemma A.9,
-Cor A.12). -/
+follows from the standard theory. Used in [Prop 5.3](#AFS:p.semilinear-limit-viscosity) and
+[Appendix B](#AFS:s.semilinear) ([Lemma B.1](#AFS:l.monotone),
+[Lemma B.6](#AFS:l.attainment-lateral), [Cor B.9](#AFS:c.positivity-no-jump)). -/
 def IsSemilinearViscSubOn (U : Set (E d)) (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ) (I : Set ℝ)
     (u : E d × ℝ → ℝ) : Prop :=
   ContinuousOn u (U ×ˢ I) ∧ ∀ ψ : E d × ℝ → ℝ, ContDiff ℝ 2 ψ → ∀ p ∈ U ×ˢ I,
@@ -136,21 +140,22 @@ namespace Registry
 
 /-- **Semilinear well-posedness: existence.** Let `U` satisfy the standing assumptions (bounded,
 connected, `C²` boundary; `Q` Lipschitz on `Ū` with `0 < Q_min ≤ Q ≤ Q_max`), `β` a reaction profile
-(3.5) and `ε > 0`. For time-independent parabolic data `g` that is Lipschitz on `Ū`, the problem
-(3.4) has a solution `u ∈ C(Ū × [0, ∞)) ∩ C^{2,1}(U_∞)` in the sense of `IsSemilinearSolution`
-(classical in `U_∞`, `u = g` on `∂_P U_∞`). The paper's Prop 3.8 asserts `u_ε ∈ C^∞(U_∞)`; here
-solutions are classical `C^{2,1}`, because `Q` is only Lipschitz, and the appendix itself gets `C^∞`
-only for smooth `Q`.
+[(3.5)](#AFS:e.beta-conditions) and `ε > 0`. For time-independent parabolic data `g` that is
+Lipschitz on `Ū`, the problem [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) has a solution
+`u ∈ C(Ū × [0, ∞)) ∩ C^{2,1}(U_∞)` in the sense of `IsSemilinearSolution` (classical in `U_∞`,
+`u = g` on `∂_P U_∞`). Solutions are classical `C^{2,1}`, because `Q` is only Lipschitz; `C^∞` holds
+for smooth `Q` (`semilinear_contDiffOn_of_contDiff`).
 
 A result from the literature: LSU, Chapter V (§6, Theorem 6.1, together with approximation of
 the Lipschitz data); Lieberman, Chapter IX (the Cauchy–Dirichlet problem for semilinear
 equations with Lipschitz nonlinearity). The nonlinearity `f(x, z) = -Q(x)² β_ε(z)` is bounded
 and Lipschitz in `z` uniformly in `x`; the data are compatible because they are time-independent.
 
-Paper: beginning of Appendix A ("standard existence and uniqueness theory ... yields a solution
-`u_ε ∈ C(Ū × [0, ∞)) ∩ C^{2,1}(U_∞)`"); used for Prop 3.8.
-Proved in parabolic-basic-theory v0.1.0: `ParabolicBasic.semilinear_exists` with
-`f(x, z) = Q(x)² β_ε(z)`, with `hfx`, `hfz`, `hfb` from `semilinearReactionHyp` on `Ū`. -/
+Paper: beginning of [Appendix B](#AFS:s.semilinear) ("standard existence and uniqueness theory ...
+yields a solution `u_ε ∈ C(Ū × [0, ∞)) ∩ C^{2,1}(U_∞)`"); used for
+[Prop 3.12](#AFS:p.semilinear-wellposed). Proved in parabolic-basic-theory v0.1.0:
+`ParabolicBasic.semilinear_exists` with `f(x, z) = Q(x)² β_ε(z)`, with `hfx`, `hfz`, `hfb` from
+`semilinearReactionHyp` on `Ū`. -/
 theorem semilinear_exists (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ}
     (hε : 0 < ε) {g : E d → ℝ} (hg : ∃ L, LipschitzOnWith L g (closure S.U)) :
     ∃ u : E d × ℝ → ℝ, IsSemilinearSolution S.U S.Q β ε g u :=
@@ -158,13 +163,14 @@ theorem semilinear_exists (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionPr
   ParabolicBasic.semilinear_exists S.isOpen S.isBounded S.c2 hf.holder_x hf.lip_z hf.bounded hg
 
 /-- **Semilinear well-posedness: uniqueness.** Under the hypotheses of `semilinear_exists`, two
-solutions of (3.4) with the same Lipschitz data `g` agree on `Ū × [0, ∞)`.
+solutions of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with the same Lipschitz data `g` agree
+on `Ū × [0, ∞)`.
 
 A result from the literature: LSU Chapter V (uniqueness via the maximum principle for the
 linearized equation); Lieberman, Chapter IX; equivalently a consequence of the comparison
-principle `Registry.semilinear_comparison`. Paper: beginning of Appendix A ("existence and
-uniqueness"), used in Lemma A.1 ("the unique classical solution").
-Proved in parabolic-basic-theory v0.1.0: `ParabolicBasic.semilinear_unique` with
+principle `Registry.semilinear_comparison`. Paper: beginning of [Appendix B](#AFS:s.semilinear)
+("existence and uniqueness"), used in [Lemma B.1](#AFS:l.monotone) ("the unique classical
+solution"). Proved in parabolic-basic-theory v0.1.0: `ParabolicBasic.semilinear_unique` with
 `f(x, z) = Q(x)² β_ε(z)`, with `hfx`, `hfz` from `semilinearReactionHyp` on `Ū` (the Lipschitz
 hypothesis on `g` is not needed). -/
 theorem semilinear_unique (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ}
@@ -182,11 +188,12 @@ theorem semilinear_unique (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionPr
 
 A result from the literature: interior parabolic Schauder estimates and bootstrap; LSU
 Chapter IV §10 and Chapter V §6; Lieberman Chapter IV (Theorem 4.9) and Chapter IX. Paper:
-beginning of Appendix A ("If `Q` is smooth then the interior regularity can be upgraded to
-`u_ε ∈ C^∞(U_∞)`"), used for the Bernstein argument (Props A.5–A.6), which approximates `Q` by
-smooth coefficients.
-Proved in parabolic-basic-theory v0.1.0: `ParabolicBasic.semilinear_contDiffOn_of_contDiff` with
-`f(x, z) = Q(x)² β_ε(z)`, using `contDiff_semilinearReaction`. -/
+beginning of [Appendix B](#AFS:s.semilinear) ("If `Q` is smooth then the interior regularity can be
+upgraded to `u_ε ∈ C^∞(U_∞)`"), used for the Bernstein argument (Props
+[B.2](#AFS:p.localLip)–[B.3](#AFS:p.localLip-initial-data)), which approximates `Q` by smooth
+coefficients. Proved in parabolic-basic-theory v0.1.0:
+`ParabolicBasic.semilinear_contDiffOn_of_contDiff` with `f(x, z) = Q(x)² β_ε(z)`, using
+`contDiff_semilinearReaction`. -/
 theorem semilinear_contDiffOn_of_contDiff {U : Set (E d)} {I : Set ℝ} {Q : E d → ℝ}
     {β : ℝ → ℝ} {ε : ℝ} {u : E d × ℝ → ℝ} (hU : IsOpen U) (hI : IsOpen I)
     (hQ : ContDiff ℝ ∞ Q) (hβ : IsReactionProfile β) (_hε : 0 < ε)
@@ -198,12 +205,13 @@ theorem semilinear_contDiffOn_of_contDiff {U : Set (E d)} {I : Set ℝ} {Q : E d
 /-! ### Gradient regularity up to the initial time -/
 
 /-- **Regularity of the gradient up to `t = 0` for smooth data.** If `Q` and the data `g` are
-`C^∞`, the spatial gradient of the solution of (3.4) is continuous on `U × [0, ∞)`.
+`C^∞`, the spatial gradient of the solution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) is
+continuous on `U × [0, ∞)`.
 
 This is interior (in space) parabolic Schauder regularity up to the initial time, an extension of
 `semilinear_contDiffOn_of_contDiff`, which gives regularity only in `U_∞`. The paper uses it
-silently in the proof of Lemma A.7 ("mollification argument": "∇u_ε is continuous at t = 0 on
-V" for smooth data).
+silently in the proof of [Lemma B.4](#AFS:l.lipschitz-initial) ("mollification argument": "∇u_ε is
+continuous at t = 0 on V" for smooth data).
 
 A result from the literature: LSU, Chapter IV §10 (local estimates near the lower base of the
 cylinder); Lieberman, Chapter IV.
@@ -225,10 +233,10 @@ left neighbourhood `(t - δ, t] ⊆ I`, and `u` is a classical `C^{2,1}` solutio
 `U × I`.
 
 A standard result (first- and second-order conditions at a one-sided local maximum of `u - ψ`);
-see Crandall–Ishii–Lions, §8. Paper: implicit throughout Appendix A (e.g. Lemma A.1 and the proof
-of Lemma A.9, where the classical solution `u_ε` is compared with viscosity barriers).
-Proved in parabolic-basic-theory v0.1.0: `ParabolicBasic.isSemilinearViscSubOn_of_solOn` with
-`f(x, z) = Q(x)² β_ε(z)`. -/
+see Crandall–Ishii–Lions, §8. Paper: implicit throughout [Appendix B](#AFS:s.semilinear) (e.g.
+[Lemma B.1](#AFS:l.monotone) and the proof of [Lemma B.6](#AFS:l.attainment-lateral), where the
+classical solution `u_ε` is compared with viscosity barriers). Proved in parabolic-basic-theory
+v0.1.0: `ParabolicBasic.isSemilinearViscSubOn_of_solOn` with `f(x, z) = Q(x)² β_ε(z)`. -/
 theorem isSemilinearViscSubOn_of_solOn {U : Set (E d)} {I : Set ℝ} {Q : E d → ℝ} {β : ℝ → ℝ}
     {ε : ℝ} {u : E d × ℝ → ℝ} (hU : IsOpen U) (hI : ∀ t ∈ I, ∃ δ > 0, Ioc (t - δ) t ⊆ I)
     (hu : IsSemilinearSolOn U Q β ε I u) : IsSemilinearViscSubOn U Q β ε I u :=

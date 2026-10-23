@@ -11,15 +11,17 @@ import PerronVariational.Stationary.ViscosityJet
 /-!
 # Basic facts about Perron's method
 
-Elementary facts behind Definition 2.2 and the Perron classes (2.1)–(2.4) of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981.
+Elementary facts behind [Definition 2.3](#AFS:d.strict-sub) and the Perron classes
+[(2.1)](#AFS:eqn:S^g)–[(2.4)](#AFS:e.perron-def-super) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
-* Constants `c ≥ 0` are viscosity supersolutions; hence `max g ∈ 𝒮_g` (the remark after (2.4)).
+* Constants `c ≥ 0` are viscosity supersolutions; hence `max g ∈ 𝒮_g` (the remark after
+  [(2.4)](#AFS:e.perron-def-super)).
 * The bounds `g₊ ≤ u ≤ max g` for the smallest supersolution and `0 ≤ u ≤ g₊` for the largest
-  subsolution (the paper, after (2.4): "`0 ≤ u ≤ max g` in both cases").
+  subsolution (the paper, after [(2.4)](#AFS:e.perron-def-super): "`0 ≤ u ≤ max g` in both cases").
 * Shifts `g + a`, `|a| ≤ a₀/2`, of smooth strict sub/supersolutions (the remark after
-  Definition 2.2).
+  [Definition 2.3](#AFS:d.strict-sub)).
 -/
 
 open Set Filter Topology Metric
@@ -52,7 +54,8 @@ theorem TouchesAbove.eventually_le_of_isOpen {U : Set (E d)} {φ u : E d → ℝ
 
 /-! ### Constants and nonemptiness of the Perron classes -/
 
-/-- A nonnegative constant is a viscosity supersolution in an open set (the remark after (2.4)). -/
+/-- A nonnegative constant is a viscosity supersolution in an open set (the remark after
+[(2.4)](#AFS:e.perron-def-super)). -/
 theorem isViscSuper_const {U : Set (E d)} {Q : E d → ℝ} (hU : IsOpen U) {c : ℝ} (hc : 0 ≤ c) :
     IsViscSuper U Q (fun _ ↦ c) := by
   refine ⟨continuousOn_const, fun _ _ ↦ hc, ?_⟩
@@ -63,13 +66,15 @@ theorem isViscSuper_const {U : Set (E d)} {Q : E d → ℝ} (hU : IsOpen U) {c :
     rw [h.2.1]; exact hy
   exact IsLocalMax.laplacian_nonpos (contDiff_two_of_smooth hφ) hmax
 
-/-- A constant `c ≥ max(g, 0)` on `Ū` belongs to `𝒮_g` (the remark after (2.4): `max g ∈ 𝒮_g`). -/
+/-- A constant `c ≥ max(g, 0)` on `Ū` belongs to `𝒮_g` (the remark after
+[(2.4)](#AFS:e.perron-def-super): `max g ∈ 𝒮_g`). -/
 theorem const_mem_perronSuperClass {U : Set (E d)} {Q g : E d → ℝ} (hU : IsOpen U) {c : ℝ}
     (hc : 0 ≤ c) (hg : ∀ x ∈ closure U, g x ≤ c) :
     (fun _ ↦ c) ∈ perronSuperClass U Q g :=
   ⟨continuousOn_const, isViscSuper_const hU hc, fun x hx ↦ max_le (hg x hx) hc⟩
 
-/-- `𝒮_g` is nonempty as soon as `g` is bounded above on `Ū` (the remark after (2.4)). -/
+/-- `𝒮_g` is nonempty as soon as `g` is bounded above on `Ū` (the remark after
+[(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronSuperClass_nonempty {U : Set (E d)} {Q g : E d → ℝ} (hU : IsOpen U)
     (hg : BddAbove (g '' closure U)) : (perronSuperClass U Q g).Nonempty := by
   obtain ⟨c, hc⟩ := hg
@@ -82,7 +87,7 @@ theorem Setting.perronSuperClass_nonempty (S : Setting d) {g : E d → ℝ}
   PerronVariational.perronSuperClass_nonempty S.isOpen
     (S.isBounded.isCompact_closure.bddAbove_image hg)
 
-/-- `𝒮^g` is nonempty: it contains `0` (the remark after (2.4)). -/
+/-- `𝒮^g` is nonempty: it contains `0` (the remark after [(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronSubClass_nonempty (U : Set (E d)) (Q g : E d → ℝ) :
     (perronSubClass U Q g).Nonempty :=
   ⟨0, zero_mem_perronSubClass U Q g⟩
@@ -112,13 +117,13 @@ theorem le_perronSmallest' (hne : (perronSuperClass U Q g).Nonempty) (hx : x ∈
     g x ≤ perronSmallest U Q g x :=
   (le_max_left _ _).trans (le_perronSmallest hne hx)
 
-/-- `0 ≤ u` on `Ū` (when `𝒮_g ≠ ∅`) (the remark after (2.4)). -/
+/-- `0 ≤ u` on `Ū` (when `𝒮_g ≠ ∅`) (the remark after [(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronSmallest_nonneg (hne : (perronSuperClass U Q g).Nonempty) (hx : x ∈ closure U) :
     0 ≤ perronSmallest U Q g x :=
   (le_max_right _ _).trans (le_perronSmallest hne hx)
 
 /-- `u ≤ c` whenever `0 ≤ c` and `g ≤ c` on `Ū`; in particular `u ≤ max g`
-(the remark after (2.4)). -/
+(the remark after [(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronSmallest_le_const (hU : IsOpen U) {c : ℝ} (hc : 0 ≤ c)
     (hg : ∀ y ∈ closure U, g y ≤ c) (hx : x ∈ closure U) : perronSmallest U Q g x ≤ c :=
   perronSmallest_le (const_mem_perronSuperClass hU hc hg) hx
@@ -145,27 +150,29 @@ theorem perronLargest_le (hx : x ∈ closure U) : perronLargest U Q g x ≤ max 
   csSup_le ((perronSubClass_nonempty U Q g).image _)
     (by rintro _ ⟨w, hw, rfl⟩; exact hw.2.2 x hx)
 
-/-- `0 ≤ u` on `Ū` (the remark after (2.4)). -/
+/-- `0 ≤ u` on `Ū` (the remark after [(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronLargest_nonneg (hx : x ∈ closure U) : 0 ≤ perronLargest U Q g x :=
   le_perronLargest (zero_mem_perronSubClass U Q g) hx
 
 /-- `u ≤ c` whenever `0 ≤ c` and `g ≤ c` on `Ū`; in particular `u ≤ max g`
-(the remark after (2.4)). -/
+(the remark after [(2.4)](#AFS:e.perron-def-super)). -/
 theorem perronLargest_le_const {c : ℝ} (hc : 0 ≤ c) (hg : ∀ y ∈ closure U, g y ≤ c)
     (hx : x ∈ closure U) : perronLargest U Q g x ≤ c :=
   (perronLargest_le hx).trans (max_le (hg x hx) hc)
 
 end Largest
 
-/-! ### Shifts of strict sub/supersolutions (the remark after Definition 2.2) -/
+/-! ### Shifts of strict sub/supersolutions (remark after [Definition 2.3](#AFS:d.strict-sub)) -/
 
-/-- `g` is a smooth strict subsolution (Definition 2.2) with the explicit constants `a₀, δ₀`. -/
+/-- `g` is a smooth strict subsolution ([Definition 2.3](#AFS:d.strict-sub)) with the explicit
+constants `a₀, δ₀`. -/
 def IsStrictSubWith (U : Set (E d)) (Q g : E d → ℝ) (a₀ δ₀ : ℝ) : Prop :=
   ContDiff ℝ 2 g ∧ 0 < a₀ ∧ 0 < δ₀ ∧
     (∀ x ∈ closure U, -a₀ < g x → 0 ≤ Δ g x) ∧
     ∀ x ∈ closure U, |g x| ≤ a₀ → (1 + δ₀) * Q x ^ 2 ≤ ‖∇ g x‖ ^ 2
 
-/-- `g` is a smooth strict supersolution (Definition 2.2) with the explicit constants `a₀, δ₀`. -/
+/-- `g` is a smooth strict supersolution ([Definition 2.3](#AFS:d.strict-sub)) with the explicit
+constants `a₀, δ₀`. -/
 def IsStrictSuperWith (U : Set (E d)) (Q g : E d → ℝ) (a₀ δ₀ : ℝ) : Prop :=
   ContDiff ℝ 2 g ∧ 0 < a₀ ∧ 0 < δ₀ ∧
     (∀ x ∈ closure U, -a₀ < g x → Δ g x ≤ 0) ∧
@@ -183,8 +190,8 @@ theorem isStrictSuper_iff {U : Set (E d)} {Q g : E d → ℝ} :
   · rintro ⟨hg, a₀, ha₀, δ₀, hδ₀, h1, h2⟩; exact ⟨a₀, δ₀, hg, ha₀, hδ₀, h1, h2⟩
   · rintro ⟨a₀, δ₀, hg, ha₀, hδ₀, h1, h2⟩; exact ⟨hg, a₀, ha₀, δ₀, hδ₀, h1, h2⟩
 
-/-- The remark after Definition 2.2: for `|a| ≤ a₀/2`, the shift `g + a` of a strict
-subsolution is a strict subsolution with `a₀` replaced by `a₀/2` and the same `δ₀`. -/
+/-- The remark after [Definition 2.3](#AFS:d.strict-sub): for `|a| ≤ a₀/2`, the shift `g + a` of a
+strict subsolution is a strict subsolution with `a₀` replaced by `a₀/2` and the same `δ₀`. -/
 theorem IsStrictSubWith.add_const {U : Set (E d)} {Q g : E d → ℝ} {a₀ δ₀ : ℝ}
     (h : IsStrictSubWith U Q g a₀ δ₀) {a : ℝ} (ha : |a| ≤ a₀ / 2) :
     IsStrictSubWith U Q (fun x ↦ g x + a) (a₀ / 2) δ₀ := by
@@ -198,8 +205,8 @@ theorem IsStrictSubWith.add_const {U : Set (E d)} {Q g : E d → ℝ} {a₀ δ�
     have := abs_le.1 hgx
     rw [abs_le]; constructor <;> linarith
 
-/-- The remark after Definition 2.2: for `|a| ≤ a₀/2`, the shift `g + a` of a strict
-supersolution is a strict supersolution with `a₀` replaced by `a₀/2` and the same `δ₀`. -/
+/-- The remark after [Definition 2.3](#AFS:d.strict-sub): for `|a| ≤ a₀/2`, the shift `g + a` of a
+strict supersolution is a strict supersolution with `a₀` replaced by `a₀/2` and the same `δ₀`. -/
 theorem IsStrictSuperWith.add_const {U : Set (E d)} {Q g : E d → ℝ} {a₀ δ₀ : ℝ}
     (h : IsStrictSuperWith U Q g a₀ δ₀) {a : ℝ} (ha : |a| ≤ a₀ / 2) :
     IsStrictSuperWith U Q (fun x ↦ g x + a) (a₀ / 2) δ₀ := by
@@ -214,14 +221,14 @@ theorem IsStrictSuperWith.add_const {U : Set (E d)} {Q g : E d → ℝ} {a₀ δ
     rw [abs_le]; constructor <;> linarith
 
 /-- Shifts of a strict subsolution by small constants are strict subsolutions (the remark
-after Definition 2.2). -/
+after [Definition 2.3](#AFS:d.strict-sub)). -/
 theorem IsStrictSub.exists_add_const {U : Set (E d)} {Q g : E d → ℝ} (h : IsStrictSub U Q g) :
     ∃ a₀ > 0, ∀ a : ℝ, |a| ≤ a₀ / 2 → IsStrictSub U Q (fun x ↦ g x + a) := by
   obtain ⟨a₀, δ₀, hw⟩ := isStrictSub_iff.1 h
   exact ⟨a₀, hw.2.1, fun a ha ↦ isStrictSub_iff.2 ⟨_, _, hw.add_const ha⟩⟩
 
 /-- Shifts of a strict supersolution by small constants are strict supersolutions
-(the remark after Definition 2.2). -/
+(the remark after [Definition 2.3](#AFS:d.strict-sub)). -/
 theorem IsStrictSuper.exists_add_const {U : Set (E d)} {Q g : E d → ℝ}
     (h : IsStrictSuper U Q g) :
     ∃ a₀ > 0, ∀ a : ℝ, |a| ≤ a₀ / 2 → IsStrictSuper U Q (fun x ↦ g x + a) := by

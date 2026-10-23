@@ -13,11 +13,11 @@ public import PerronVariational.Defs.Stationary
 Equation numbers refer to F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
-The integrand `innerVarIntegrand Q v χ ξ x` of (2.5) depends linearly on `(ξ(x), Dξ(x))`. We
-record additivity (at differentiability points) and the formula for the fields `ζ eᵢ`:
-`innerVarIntegrand Q v χ (ζ eᵢ) x = aᵢ(x) ζ(x) + Dζ(x) gᵢ(x)` with
+The integrand `innerVarIntegrand Q v χ ξ x` of [(2.5)](#AFS:e.stationary-inner-var) depends linearly
+on `(ξ(x), Dξ(x))`. We record additivity (at differentiability points) and the formula for the
+fields `ζ eᵢ`: `innerVarIntegrand Q v χ (ζ eᵢ) x = aᵢ(x) ζ(x) + Dζ(x) gᵢ(x)` with
 `aᵢ = ∂ᵢ(Q²) χ` and `gᵢ = (|∇v|² + Q²χ) eᵢ - 2 ∂ᵢv ∇v`. This reduces the density arguments of
-the proof of **Theorem 3.10** for vector fields to the scalar ones.
+the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** for vector fields to the scalar ones.
 
 ## Main definitions
 

@@ -15,9 +15,9 @@ import Mathlib.MeasureTheory.Measure.SeparableMeasure
 /-!
 # Slicing the spatial perimeter in time
 
-Tool for **Theorem 3.10**, Step 3, of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
-the partial variation `∫ η |∇ₓχ|` of a space-time
+Tool for **[Theorem 3.14](#AFS:t.longtime-inner)**, Step 3, of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the partial variation `∫ η |∇ₓχ|` of a space-time
 function controls the time integral of the variations of its time slices,
 `∫ ψ(t) ∫_V |∇χ(·, t)| dt ≤ ∫ η |∇ₓχ|` for `η(x, t) = φ(x) ψ(t)` with `φ = 1` on `V`.
 
@@ -34,8 +34,8 @@ maximizer, smooth the indicators `1_{B_j}` by mollification, test the partial va
 * `PerronVariational.LongTime.totalVariationOn_le_sliceTV`: `∫_V |∇χ(·, t)| ≤ F(t)` for `t > 0`.
 * `PerronVariational.LongTime.setLIntegral_sliceTV_le`: `∫_{(a, b)} F ≤ ∫_{U_∞} η |∇ₓχ|`.
 * `PerronVariational.LongTime.weightDist_prodWeight`, `weightTimeLength_prodWeight`,
-  `l2H1Norm_prodWeight`: the parameters of (3.13) for `η(x, t) = θ(x) ψ(t - c)` do not depend
-  on the time shift `c` once `c ≥ diam U + 2`.
+  `l2H1Norm_prodWeight`: the parameters of [(3.14)](#AFS:eqn:chiEst2) for `η(x, t) = θ(x) ψ(t - c)`
+  do not depend on the time shift `c` once `c ≥ diam U + 2`.
 -/
 
 open Set Function Filter Topology MeasureTheory Metric InnerProductSpace ContinuousLinearMap
@@ -467,8 +467,8 @@ theorem sliceVal_zero (χ : E d × ℝ → ℝ) (hφ0 : φ 0 = fun _ ↦ 0) (t :
     sliceVal χ φ 0 t = 0 := by
   simp [sliceVal, hφ0, divergence]
 
-/-- **Slicing of the partial variation** (Theorem 3.10, Step 3): if `η ≥ 1` on
-`V × [a - 1/4, b + 1/4]`, then `∫_{(a, b)} F ≤ ∫_{U_∞} η |∇ₓχ|`, where `F = sliceTV χ φ`
+/-- **Slicing of the partial variation** ([Theorem 3.14](#AFS:t.longtime-inner), Step 3): if `η ≥ 1`
+on `V × [a - 1/4, b + 1/4]`, then `∫_{(a, b)} F ≤ ∫_{U_∞} η |∇ₓχ|`, where `F = sliceTV χ φ`
 dominates the total variations `∫_V |∇χ(·, t)|` (`totalVariationOn_le_sliceTV`). -/
 theorem setLIntegral_sliceTV_le (hVU : V ⊆ U) (hχm : Measurable χ)
     (hχ : ∀ p ∈ UInf U, |χ p| ≤ 1) (hφ : ∀ j, IsTVTestField V 1 (φ j))
@@ -567,7 +567,7 @@ theorem setLIntegral_sliceTV_le (hVU : V ⊆ U) (hχm : Measurable χ)
     (Eventually.of_forall hnn)]
   exact (ENNReal.ofReal_le_ofReal hlimle).trans (ENNReal.ofReal_toReal_le)
 
-/-! ### Product weights `η(x, t) = θ(x) ψ(t - c)` and their parameters in (3.13) -/
+/-! ### Product weights `η(x, t) = θ(x) ψ(t - c)` and parameters in [(3.14)](#AFS:eqn:chiEst2) -/
 
 /-- The time cutoff `ψ_c`: a bump centered at `c`, `= 1` on `[c - 1, c + 1]`, supported in
 `[c - 2, c + 2]`. -/

@@ -14,12 +14,13 @@ import Mathlib.Order.CompletePartialOrder
 import PerronVariational.Appendix.PlanarGreen
 
 /-!
-# Existence of the Riesz measure (Appendix B)
+# Existence of the Riesz measure ([Section A.2](#AFS:s.largest-sub-nondegen))
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper"). The
-proof of Lemma B.3 in Appendix B of the paper uses without proof that `Δu` is a non-negative (Riesz)
-measure, together with the derivative formula for spherical means. Here we prove it in the plane.
+proof of [Lemma A.2](#AFS:l.nondegen-equivalences) in [Section A.2](#AFS:s.largest-sub-nondegen) of
+the paper uses without proof that `Δu` is a non-negative (Riesz) measure, together with the
+derivative formula for spherical means. Here we prove it in the plane.
 
 Let `Ω ⊆ ℝ²` be open and `u ≥ 0` continuous on `Ω`, `C²` and harmonic in `{u > 0}`. We construct
 the Riesz measure `μ = Δu` of `u` on `Ω` and prove the Riesz–Jensen formula of `IsRieszMeasure`
@@ -849,9 +850,9 @@ continuous and non-negative on `Ω`, `C²` and harmonic in `{u > 0}`. Then `u` h
 `⨍_{∂B_r(x)} u - u(x) = (1/2π) ∫₀^r μ(B_s(x)) / s ds` (`IsRieszMeasure`).
 
 This is the fact "since `Δu` is a non-negative measure" together with the formula
-`d/dr ⨍_{∂B_r} u = |∂B_1|⁻¹ r^{1-d} ∫_{B_r} Δu` used without proof in the proof of Lemma B.3.
-The construction is described in the module docstring. Normalization check: `u = |x|²` gives
-`μ = 4 dx` and both sides equal `r²`. -/
+`d/dr ⨍_{∂B_r} u = |∂B_1|⁻¹ r^{1-d} ∫_{B_r} Δu` used without proof in the proof of
+[Lemma A.2](#AFS:l.nondegen-equivalences). The construction is described in the module docstring.
+Normalization check: `u = |x|²` gives `μ = 4 dx` and both sides equal `r²`. -/
 theorem exists_isRieszMeasure {Ω : Set (E 2)} (hΩ : IsOpen Ω) {u : E 2 → ℝ}
     (hu : ContinuousOn u Ω) (hnn : ∀ x ∈ Ω, 0 ≤ u x) (hC2 : ContDiffOn ℝ 2 u (posSet u Ω))
     (hΔ : ∀ x ∈ posSet u Ω, Δ u x = 0) : ∃ μ : Measure (E 2), IsRieszMeasure Ω u μ :=

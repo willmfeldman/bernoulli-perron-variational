@@ -1,5 +1,5 @@
 name = "perron_variational"
-version = "0.2.1"
+version = "0.3.0"
 description = "Lean 4 formalization of 'Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem' (Abedin, Feldman, Stinson)"
 keywords = ["math"]
 defaultTargets = ["PerronVariational"]

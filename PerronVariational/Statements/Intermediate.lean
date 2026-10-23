@@ -19,12 +19,12 @@ module that carries the corresponding result.
 Where a statement differs from the paper, its docstring says how and why.
 
 Uniformity of constants. Where the paper calls a constant "universal" and later uses it
-uniformly over a family of data (the shifts `g + a` in Propositions 6.1 and 6.2), the constant
-is quantified *before* the data: the interior Lipschitz constant `C` of (3.12) depends only on
-the setting (and on `β`), the perimeter constant of (3.13) only on the setting and bounds `M`
-(sup-norm) and `E0` (energy) of the data, and the constants of (3.14)–(3.15) only on the
-constants of the hypotheses. The paper's statements do not say this explicitly, but its proofs
-of Propositions 6.1 and 6.2 need it.
+uniformly over a family of data (the shifts `g + a` in Propositions [6.1](#AFS:p.inner-smallest) and
+[6.2](#AFS:p.inner-largest)), the constant is quantified *before* the data: the interior Lipschitz
+constant `C` of [(3.13)](#AFS:eqn:LipEst) depends only on the setting (and on `β`), the perimeter
+constant of [(3.14)](#AFS:eqn:chiEst2) only on the setting and bounds `M` (sup-norm) and `E0`
+(energy) of the data, and the constants of [(3.15)](#AFS:eqn:inftyLip)–[(3.16)](#AFS:eqn:inftyPerim)
+only on the constants of the hypotheses.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -37,47 +37,46 @@ namespace PerronVariational
 variable {d : ℕ}
 
 /-- The energy bound `∫_U |G|² + Q_max² |U|` for data with (weak) gradient `G`; for `G = ∇g` this
-is `E₀` of Proposition 3.8(i). -/
+is `E₀` of [Lemma 3.11(iv)](#AFS:part.gep-4). -/
 noncomputable def energyBound (S : Setting d) (G : E d → E d) : ℝ≥0∞ :=
   ∫⁻ x in S.U, ENNReal.ofReal (‖G x‖ ^ 2 + S.Qmax ^ 2)
 
-/-! ### Proposition 3.8 (semilinear well-posedness) -/
+/-! ### [Proposition 3.12](#AFS:p.semilinear-wellposed) (semilinear well-posedness) -/
 
-/-- The conclusions (i)–(vi) of **Proposition 3.8** for a family `(gε ε, uε ε)`, `0 < ε < ε₀`,
-with `increasing = true` for strict subsolution data (resp. `false` for strict supersolution
-data).
-* (solution) `uε ε` solves (3.4) with data `gε ε ∈ C^{0,1}(Ū)`;
-* (i) `g₊ ≤ gε ≤ g₊ + ε` on `Ū`, `‖∇gε‖_{L^∞(U)} ≤ ‖∇g‖_{L^∞(U)}`, `J(gε, χ⁰_ε; U) ≤ E₀`, and
-  (Lipschitz form) every Lipschitz constant of `g` on `Ū` is one of `gε`, which makes the
-  modulus of Proposition A.8 depend on `g` only through `(Lip g, sup |g|)`;
-* (i') `gε ∈ H¹(U)` and `gε → g₊` in `H¹(U)` as `ε → 0⁺`;
-* (ii) `t ↦ uε(x, t)` monotone for `x ∈ Ū`, and (3.7): `0 ≤ uε ≤ ‖g‖_{L^∞(U)} + ε` on
-  `Ū × [0, ∞)`;
-* (iii) the energy dissipation inequality (3.8), with `≤`, for every `T > 0`;
-* (iv) the interior Lipschitz bound (3.9) with a constant `C` independent of `ε`, and
-  `sup_{t > 0} ‖∇uε(·, t)‖_{L^∞(V)} ≤ C_V` for `V ⊂⊂ U`, `C_V` independent of `ε`;
-* (v) a modulus of continuity `ϖ` on `Ū × [0, ∞)` independent of `ε` (`uε = gε` on `∂_P U_∞` is
+/-- The conclusions (data, (i)–(v)) of **[Proposition 3.12](#AFS:p.semilinear-wellposed)** for a
+family `(gε ε, uε ε)`, `0 < ε < ε₀`, with `increasing = true` for strict subsolution data (resp.
+`false` for strict supersolution data).
+* (solution) `uε ε` solves [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data
+  `gε ε ∈ C^{0,1}(Ū)`;
+* (data, [Lemma 3.11](#AFS:l.well-prepared)) `g₊ ≤ gε ≤ g₊ + ε` on `Ū`,
+  `‖∇gε‖_{L^∞(U)} ≤ ‖∇g‖_{L^∞(U)}`, `J(gε, χ⁰_ε; U) ≤ E₀`, and (Lipschitz form) every Lipschitz
+  constant of `g` on `Ū` is one of `gε`, which makes the modulus of
+  [Proposition B.5](#AFS:p.attainment) depend on `g` only through `(Lip g, sup |g|)`;
+  `gε ∈ H¹(U)` with weak gradient its pointwise gradient;
+* (i) `t ↦ uε(x, t)` monotone for `x ∈ Ū`, and [(3.8)](#AFS:e.Linfty): `0 ≤ uε ≤ ‖g‖_{L^∞(U)} + ε`
+  on `Ū × [0, ∞)`;
+* (ii) the energy dissipation inequality [(3.9)](#AFS:e.dissipation-eps), with `≤`, for every
+  `T > 0`;
+* (iii) the interior Lipschitz bound [(3.10)](#AFS:e.localEst) with a constant `C` independent of
+  `ε`, and `sup_{t > 0} ‖∇uε(·, t)‖_{L^∞(V)} ≤ C_V` for `V ⊂⊂ U`, `C_V` independent of `ε`;
+* (iv) a modulus of continuity `ϖ` on `Ū × [0, ∞)` independent of `ε` (`uε = gε` on `∂_P U_∞` is
   part of the solution property);
-* (vi) for `K ⊂⊂ Ū \ \overline{{g > 0}}` there is `τ > 0` with `K ⊆ {uε(·, t) < ε}` for
+* (v) for `K ⊂⊂ Ū \ \overline{{g > 0}}` there is `τ > 0` with `K ⊆ {uε(·, t) < ε}` for
   `0 ≤ t ≤ τ` and all sufficiently small `ε`;
-* (vi*) (increasing case only) for compact `K ⊆ U \ \overline{{g > 0}}` there is `τ > 0` such
+* (v*) (increasing case only) for compact `K ⊆ U \ \overline{{g > 0}}` there is `τ > 0` such
   that for **every** `κ > 0`, `K ⊆ {uε(·, t) < κ ε}` for `0 ≤ t ≤ τ` and all sufficiently small
-  `ε` (depending on `κ`). Same barrier as Lemma A.11, with the super-profile parameter `θ̂ ↓ 1`
-  so that its floor `κ_θ̂ ↓ 0`; it uses `gε = 0` near `K`.
+  `ε` (depending on `κ`). Same barrier as [Lemma B.8](#AFS:l.positivity-trace), with the
+  super-profile parameter `θ̂ ↓ 1` so that its floor `κ_θ̂ ↓ 0`; it uses `gε = 0` near `K`.
 
 Differences from the paper:
-* The paper asserts `uε ∈ C^∞(U_∞)`; here solutions are classical `C^{2,1}`, because `Q` is only
-  Lipschitz, which gives `C^{2,1}` and not `C^∞` regularity.
-* The paper states (3.8) as an equality; here it is the inequality `≤`, because only `≤` is used
-  later, and the inequality is what the truncation argument for classical solutions with `H¹`
-  data proves.
-* Item (i') is added: the proof of Theorem 3.9 applies Proposition 4.1, which needs `gε → g₊`
-  in `H¹`, but the paper does not check this (it holds for the explicit data of Lemma A.4).
-* The Lipschitz form of (i) is added: the modulus in (v) must be uniform over the shifts `g + a`
-  in Propositions 6.1 and 6.2, and it depends on `g` only through `(Lip g, sup |g|)`.
-* Item (vi*) is added, for the corrected set `E*` of Proposition 5.3 and Corollary 5.4 (see
-  `semilinearLimitSetStar`): Corollary 5.4 then needs the positivity set to stay below every
-  level `κ ε`, not just below `ε`, near `{g < 0}` for short times. -/
+* The paper states [(3.9)](#AFS:e.dissipation-eps) as an equality; here it is the inequality `≤`,
+  because only `≤` is used later, and the inequality is what the truncation argument for classical
+  solutions with `H¹` data proves.
+* The Lipschitz form of the data clause is added: the paper states in (iv) that the modulus
+  depends on `g` only through `‖g‖_{L^∞}` and `‖∇g‖_{L^∞}`; here (iv) only asserts a modulus for
+  the family, and the dependence on `g` only through `(Lip g, sup |g|)`, which makes the modulus
+  uniform over the shifts `g + a` in Propositions [6.1](#AFS:p.inner-smallest) and
+  [6.2](#AFS:p.inner-largest), is carried by the Lipschitz form of the data clause. -/
 def IsWellPreparedFamily (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (increasing : Bool)
     (ε₀ : ℝ) (gε : ℝ → E d → ℝ) (uε : ℝ → E d × ℝ → ℝ) : Prop :=
   0 < ε₀ ∧
@@ -96,13 +95,8 @@ def IsWellPreparedFamily (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (i
       energyJχ S.U S.Q (fun x ↦ gradₓ (uε ε) (x, T)) (fun x ↦ chiEps β ε (uε ε) (x, T)) / 2 +
           ∫⁻ p in S.U ×ˢ Ioc 0 T, ENNReal.ofReal (dₜ (uε ε) p ^ 2) ≤
         energyJχ S.U S.Q (∇ (gε ε)) (fun x ↦ chiEps β ε (uε ε) (x, 0)) / 2) ∧
-    -- (i), Lipschitz form: Lipschitz constants of `g` on `Ū` are ones of `gε`
+    -- data, Lipschitz form: Lipschitz constants of `g` on `Ū` are ones of `gε`
     ∀ K : NNReal, LipschitzOnWith K g (closure S.U) → LipschitzOnWith K (gε ε) (closure S.U)) ∧
-  -- (i') `gε → g₊` in `H¹(U)` (needed to apply Prop 4.1 in the proof of Thm 3.9)
-  MemH1 S.U (fun x ↦ max (g x) 0) ({x | 0 < g x}.indicator (∇ g)) ∧
-  Tendsto (fun ε ↦ eLpNorm (fun x ↦ gε ε x - max (g x) 0) 2 (volume.restrict S.U) +
-      eLpNorm (fun x ↦ ∇ (gε ε) x - {x | 0 < g x}.indicator (∇ g) x) 2 (volume.restrict S.U))
-    (𝓝[>] 0) (𝓝 0) ∧
   (∃ C : ℝ, ∀ ε ∈ Ioo 0 ε₀, InteriorLipEst S.U (uε ε) C) ∧
   (∀ V : Set (E d), CompactlyContained V S.U → ∃ CV : ℝ, ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ V, ∀ t : ℝ,
     0 < t → ‖gradₓ (uε ε) (x, t)‖ ≤ CV) ∧
@@ -111,16 +105,16 @@ def IsWellPreparedFamily (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (i
       |uε ε p - uε ε q| ≤ ϖ (‖p.1 - q.1‖ + |p.2 - q.2|)) ∧
   (∀ K : Set (E d), IsCompact K → K ⊆ closure S.U \ closure (posSet g (closure S.U)) →
     ∃ τ > 0, ∃ ε₁ > 0, ∀ ε ∈ Ioo 0 ε₁, ε < ε₀ → ∀ x ∈ K, ∀ t ∈ Icc 0 τ, uε ε (x, t) < ε) ∧
-  -- (vi*) (increasing case): below every level `κ ε` near `{g < 0}` for short times
+  -- (v*) (increasing case): below every level `κ ε` near `{g < 0}` for short times
   (increasing = true → ∀ K : Set (E d), IsCompact K → K ⊆ S.U \ closure (posSet g (closure S.U)) →
     ∃ τ > 0, ∀ κ > 0, ∃ ε₁ > 0, ∀ ε ∈ Ioo 0 ε₁, ε < ε₀ → ∀ x ∈ K, ∀ t ∈ Icc 0 τ,
       uε ε (x, t) < κ * ε)
 
-/-- **Proposition 3.8**. For a reaction profile `β` and a smooth strict subsolution (resp.
-supersolution) `g`, for all sufficiently small `ε > 0` there are data `gε` and solutions `uε` of
-(3.4) with properties (i)–(vi) (monotone increasing, resp. decreasing, in time). For the
-differences from the paper (`C^{2,1}` regularity, (3.8) as an inequality, the added items) see
-`IsWellPreparedFamily`. -/
+/-- **[Proposition 3.12](#AFS:p.semilinear-wellposed)**. For a reaction profile `β` and a smooth
+strict subsolution (resp. supersolution) `g`, for all sufficiently small `ε > 0` there are data `gε`
+and solutions `uε` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with the data properties and
+(i)–(v) (monotone increasing, resp. decreasing, in time). For the differences from the paper
+([(3.9)](#AFS:e.dissipation-eps) as an inequality, the added items) see `IsWellPreparedFamily`. -/
 def SemilinearWellposedStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ), IsReactionProfile β →
     (IsStrictSub S.U S.Q g →
@@ -130,12 +124,14 @@ def SemilinearWellposedStatement : Prop :=
       ∃ (ε₀ : ℝ) (gε : ℝ → E d → ℝ) (uε : ℝ → E d × ℝ → ℝ),
         IsWellPreparedFamily S g β false ε₀ gε uε)
 
-/-! ### Theorem 3.9 (parabolic existence) -/
+/-! ### [Theorem 3.13](#AFS:t.parabolic-existence) (parabolic existence) -/
 
-/-- The common conclusions (i), (iii), (v) of **Theorem 3.9** for `(u, χ)` with `∂ₜu = w`:
-`u ∈ C(Ū × [0, ∞))` with `u = g₊` on `∂_P U_∞`; `(u, χ)` is a parabolic inner variational
-solution; the weak heat equation (4.5) in `{u > 0}`; the estimates (3.11) (with right-hand side
-`E₀ = energyBound S (∇g)`), (3.12) (constant `C`) and (3.13) (constant function `Cper`). -/
+/-- The common conclusions (i), (iii), (v) of **[Theorem 3.13](#AFS:t.parabolic-existence)** for
+`(u, χ)` with `∂ₜu = w`: `u ∈ C(Ū × [0, ∞))` with `u = g₊` on `∂_P U_∞`; `(u, χ)` is a parabolic
+inner variational solution; the weak heat [equation (4.6)](#AFS:eqn:weakHeat) in `{u > 0}`; the
+estimates [(3.12)](#AFS:eqn:diss2) (with right-hand side `E₀ = energyBound S (∇g)`),
+[(3.13)](#AFS:eqn:LipEst) (constant `C`) and [(3.14)](#AFS:eqn:chiEst2) (constant function
+`Cper`). -/
 def ParabolicExistenceCommon (S : Setting d) (g : E d → ℝ) (C : ℝ) (Cper : ℝ → ℝ → ℝ)
     (u w χ : E d × ℝ → ℝ) : Prop :=
   ContinuousOn u (closure S.U ×ˢ Ici 0) ∧ (∀ p ∈ parBdryInf S.U, u p = max (g p.1) 0) ∧
@@ -143,67 +139,90 @@ def ParabolicExistenceCommon (S : Setting d) (g : E d → ℝ) (C : ℝ) (Cper :
     DissipationIneq S.U S.Q u w χ (energyBound S (∇ g)) ∧
     InteriorLipEst S.U u C ∧ WeightedPerimeterEst S.U χ Cper
 
-/-- **Theorem 3.9**. For a smooth strict subsolution (resp. supersolution) `g` there is `(u, χ)`
-with (i) `u ∈ C(Ū × [0, ∞))`, `u = g₊` on `∂_P U_∞`; (ii) `u` monotone increasing (resp.
-decreasing) in time; (iii) `(u, χ)` a parabolic inner variational solution; (iv) `u` a viscosity
-solution (resp. `(u, E)` a relaxed viscosity solution for some `E`) in `U_∞`; (v) the estimates
-(3.11)–(3.13).
+/-- **[Theorem 3.13](#AFS:t.parabolic-existence)**. For a smooth strict subsolution (resp.
+supersolution) `g` there is `(u, χ)` with (i) `u ∈ C(Ū × [0, ∞))`, `u = g₊` on `∂_P U_∞`; (ii) `u`
+monotone increasing (resp. decreasing) in time; (iii) `(u, χ)` a parabolic inner variational
+solution; (iv) `u` a viscosity solution (resp. `(u, E)` a relaxed viscosity solution for some `E`)
+in `U_∞`; (v) the estimates [(3.12)](#AFS:eqn:diss2)–[(3.14)](#AFS:eqn:chiEst2).
 
 Differences from the paper:
-* In (3.11) the paper's right-hand side `½ J(u(0), χ(0); U)` is replaced by the larger `½ E₀`,
-  `E₀ = ∫_U |∇g|² + Q_max² |U|` (the bound of Proposition 3.8(i)), because Definition 3.7
-  defines `χ` only on `U_∞`, so `χ(0)` has no meaning.
-* (3.13) is in the form the paper's proof gives (see `WeightedPerimeterEst`).
-* The weak heat equation (4.5) in `{u > 0}` is an extra conclusion, because Theorem 3.10 needs it
-  as a hypothesis (see `WeakHeatInPos`).
+* The heat equation in `{u > 0}`, which the paper includes in
+  [Definition 3.8](#AFS:d.parabolic-inner), is exported separately in its weak form
+  [(4.6)](#AFS:eqn:weakHeat) (see `WeakHeatInPos`).
 * In the increasing case we also export that `u` vanishes near `t = 0` on compact sets away from
-  `\overline{{g > 0}}`. This follows from Proposition 3.8(vi), and the proof of Proposition 6.1
-  needs it (without saying so) to get the strict ordering of Theorem 3.6 on a neighbourhood of
-  the parabolic boundary.
-* The constant `C` of (3.12) is universal (depends only on the setting), and the function `Cper`
-  of (3.13) depends only on the setting and on bounds `M ≥ sup_U |g|`, `E0 ≥ E₀` (`E0 < ∞`); see
-  the module docstring. -/
+  `\overline{{g > 0}}`. This follows from [Proposition 3.12(v)](#AFS:part.trace); the proof of
+  [Proposition 6.1](#AFS:p.inner-smallest) uses it (citing [Proposition 3.12(v)](#AFS:part.trace)
+  directly) to get the strict ordering of [Theorem 3.7](#AFS:t.comparison) on a neighbourhood of the
+  parabolic boundary.
+* The constant `C` of [(3.13)](#AFS:eqn:LipEst) is universal (depends only on the setting), and the
+  function `Cper` of [(3.14)](#AFS:eqn:chiEst2) depends only on the setting and on bounds
+  `M ≥ sup_U |g|`, `E0 ≥ E₀` (`E0 < ∞`); see the module docstring. -/
 def ParabolicExistenceStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d), ∃ C : ℝ, ∀ (M : ℝ) (E0 : ℝ≥0∞), E0 ≠ ⊤ → ∃ Cper : ℝ → ℝ → ℝ,
     ∀ g : E d → ℝ, (∀ x ∈ S.U, |g x| ≤ M) → energyBound S (∇ g) ≤ E0 →
       (IsStrictSub S.U S.Q g → ∃ u w χ : E d × ℝ → ℝ,
         ParabolicExistenceCommon S g C Cper u w χ ∧ MonotoneInTime u (closure S.U) (Ici 0) ∧
           IsParaSolution S.U S.Q (Ioi 0) u ∧
-          -- no outward jump of `{u > 0}` at `t = 0` (from Prop 3.8(vi); used in Prop 6.1)
+          -- no outward jump of `{u > 0}` at `t = 0` (from [Prop 3.12(v)](#AFS:part.trace); used in
+          -- [Prop 6.1](#AFS:p.inner-smallest))
           ∀ K : Set (E d), IsCompact K → K ⊆ closure S.U \ closure (posSet g (closure S.U)) →
             ∃ τ > 0, ∀ x ∈ K, ∀ t ∈ Icc 0 τ, u (x, t) = 0) ∧
       (IsStrictSuper S.U S.Q g → ∃ u w χ : E d × ℝ → ℝ,
         ParabolicExistenceCommon S g C Cper u w χ ∧ AntitoneInTime u (closure S.U) (Ici 0) ∧
           ∃ Eset : Set (E d × ℝ), IsParaRelaxedSolution S.U S.Q (Ioi 0) u Eset)
 
-/-! ### Theorem 3.10 (long-time limit, variational form) -/
+/-! ### [Theorem 3.14](#AFS:t.longtime-inner) (long-time limit, variational form) -/
 
-/-- **Theorem 3.10**. Let `(u, χ)` (with `∂ₜu = w`) be a parabolic inner variational solution in
-`U_∞`, bounded by `M`, satisfying the weak heat equation (4.5) in `{u > 0}`, (3.11) with a finite
-energy bound `E0`, (3.12) with constant `C` and (3.13) with constant function `Cper`, and
-**monotone in time** (increasing or decreasing). Then `u(·, t) → u_∞` locally uniformly in `U` as
-`t → ∞`; along some `tᵢ → ∞`, `∇u(·, tᵢ) → ∇u_∞` in `L²_loc(U)` and `χ(·, tᵢ) → χ_∞` in
-`L¹_loc(U)`, and `(u_∞, χ_∞)` is an inner variational solution in `U`; (3.14) and (3.15) hold.
+/-- **[Theorem 3.14](#AFS:t.longtime-inner)**. Let `(u, χ)` (with `∂ₜu = w`) be a parabolic inner
+variational solution in `U_∞`, bounded by `M`, satisfying the weak heat
+[equation (4.6)](#AFS:eqn:weakHeat) in `{u > 0}`, [(3.12)](#AFS:eqn:diss2) with a finite energy
+bound `E0`, [(3.13)](#AFS:eqn:LipEst) with constant `C` and [(3.14)](#AFS:eqn:chiEst2) with constant
+function `Cper`. Then there are a sequence `tᵢ → ∞` and functions `u_∞`, `χ_∞` such that
+`u(·, tᵢ) → u_∞` locally uniformly in `U`, `∇u(·, tᵢ) → ∇u_∞` in `L²_loc(U)` (with the uniform
+convergence, `u(·, tᵢ) → u_∞` in `H¹_loc(U)`), `χ(·, tᵢ) → χ_∞` in `L¹_loc(U)`, and `(u_∞, χ_∞)` is
+an inner variational solution in `U`; [(3.15)](#AFS:eqn:inftyLip) and [(3.16)](#AFS:eqn:inftyPerim)
+hold, with the constant `C` of [(3.13)](#AFS:eqn:LipEst) in [(3.15)](#AFS:eqn:inftyLip) and `C_V`
+depending only on `V` and `M, E0, C, Cper`.
+
+As in the paper, no time monotonicity is assumed. For flows monotone in time the limit holds as
+`t → ∞` along all times: `LongtimeInnerMonotoneStatement`.
 
 Differences from the paper:
-* The paper's hypotheses mention data `g_ε → g` in `H¹`, although the flow `(u, χ)` does not
-  depend on `ε`; here the hypotheses are stated directly for the flow (bounded, finite initial
-  energy, (3.11)–(3.13)).
-* The paper assumes no time monotonicity; here we assume it, because Step 1 of the paper's proof
-  ("by (3.11), `u(·, t)` is Cauchy in `L²`") does not follow: `∂ₜu ∈ L²(U_∞)` only gives
-  `‖u(t) - u(s)‖_{L²} ≤ |t - s|^{1/2} ‖∂ₜu‖_{L²}`. Both applications (Propositions 6.1 and 6.2)
-  have monotone flows, for which the limit exists by monotonicity.
-* The weak heat equation (4.5) is an extra hypothesis, because the theorem is false without it
-  (see `WeakHeatInPos`).
-* The paper claims `H¹_loc` convergence along all `t → ∞`; its proof (Step 2) gives strong
-  gradient convergence only along the good times `tᵢ`, and that is what we state.
-* (3.14) is stated as in its proof and use: the same constant `C` as in (3.12) and the ball
-  `B_{2r}` on the right-hand side, for `B_{2r}(x) ⊆ U`, `r ≤ 1`. The literal (3.14) has `B_r` on
-  both sides and a constant depending on `V`, which is nearly vacuous and not what
-  Propositions 6.1 and 6.2 use.
-* (3.15): `C_V` depends only on `V` and the constants `M, E0, C, Cper` (the paper:
-  `C_V = C_V(‖g‖_{H¹})`). -/
+* The heat equation in `{u > 0}`, which the paper includes in
+  [Definition 3.8](#AFS:d.parabolic-inner), is a separate hypothesis here, in its weak form
+  [(4.6)](#AFS:eqn:weakHeat) (see `WeakHeatInPos`).
+* In [(3.15)](#AFS:eqn:inftyLip), `‖u_∞‖_{L^∞(B_{2r}(x))}` is replaced by any bound `M'` of `|u_∞|`
+  on `B_{2r}(x)` (equivalent). -/
 def LongtimeInnerStatement : Prop :=
+  ∀ (d : ℕ) (S : Setting d) (M : ℝ) (E0 : ℝ≥0∞) (C : ℝ) (Cper : ℝ → ℝ → ℝ), E0 ≠ ⊤ →
+    ∃ CV : Set (E d) → ℝ, ∀ u w χ : E d × ℝ → ℝ,
+      IsParaInnerVarSolution S.U S.Q u w χ → WeakHeatInPos S.U u w → (∀ p ∈ UInf S.U, u p ≤ M) →
+      DissipationIneq S.U S.Q u w χ E0 → InteriorLipEst S.U u C →
+      WeightedPerimeterEst S.U χ Cper →
+      ∃ (t : ℕ → ℝ) (uInf χInf : E d → ℝ), Tendsto t atTop atTop ∧
+        TendstoLocallyUniformlyOn (fun i x ↦ u (x, t i)) uInf atTop S.U ∧
+        TendstoLpLoc 2 volume S.U (fun i x ↦ gradₓ u (x, t i)) (∇ uInf) atTop ∧
+        TendstoLpLoc 1 volume S.U (fun i x ↦ χ (x, t i)) χInf atTop ∧
+        IsInnerVarSolution S.U S.Q uInf χInf ∧
+        (∀ (x : E d) (r : ℝ), 0 < r → r ≤ 1 → ball x (2 * r) ⊆ S.U →
+          ∀ M' : ℝ, (∀ y ∈ ball x (2 * r), |uInf y| ≤ M') →
+            ∀ y ∈ ball x r, ‖∇ uInf y‖ ≤ C * (M' / r + 1)) ∧
+        ∀ V : Set (E d), CompactlyContained V S.U →
+          totalVariationOn V χInf ≤ ENNReal.ofReal (CV V)
+
+/-- **[Theorem 3.14](#AFS:t.longtime-inner) for flows monotone in time**: under the hypotheses of
+`LongtimeInnerStatement` and time monotonicity (increasing or decreasing), `u(·, t) → u_∞` locally
+uniformly in `U` as `t → ∞` along all times, and the other conclusions of
+[Theorem 3.14](#AFS:t.longtime-inner) hold along some `tᵢ → ∞`.
+
+This is the form used in Propositions [6.1](#AFS:p.inner-smallest) and [6.2](#AFS:p.inner-largest)
+(which set `u_{a,∞} := lim_{t→∞} 𝔲_a(·, t)`) and in [Lemma 5.8](#AFS:l.subsolution-inner-limit) /
+[Theorem 3.16(ii)](#AFS:part.longtime-viscosity-2). The paper justifies the full limit in the remark
+after [Lemma 5.8](#AFS:l.subsolution-inner-limit) (label `l.subsolution-inner-limit`; for monotone
+flows the limit as `t → ∞` exists, and it is locally uniform by Arzelà–Ascoli and
+[(3.13)](#AFS:eqn:LipEst)). It follows from `LongtimeInnerStatement`
+(`LongtimeInnerStatement.monotone`, `Inner/LongTimeMonotone.lean`). -/
+def LongtimeInnerMonotoneStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (M : ℝ) (E0 : ℝ≥0∞) (C : ℝ) (Cper : ℝ → ℝ → ℝ), E0 ≠ ⊤ →
     ∃ CV : Set (E d) → ℝ, ∀ u w χ : E d × ℝ → ℝ,
       IsParaInnerVarSolution S.U S.Q u w χ → WeakHeatInPos S.U u w → (∀ p ∈ UInf S.U, u p ≤ M) →
@@ -221,11 +240,13 @@ def LongtimeInnerStatement : Prop :=
           ∀ V : Set (E d), CompactlyContained V S.U →
             totalVariationOn V χInf ≤ ENNReal.ofReal (CV V)
 
-/-! ### Theorem 3.12 (long-time limit, viscosity form) -/
+/-! ### [Theorem 3.16](#AFS:t.longtime-viscosity) (long-time limit, viscosity form) -/
 
-/-- **Theorem 3.12(i)** (proved via Lemma 5.6 and Corollary 5.7). A bounded viscosity solution
-of (3.1) in `U × (0, ∞)`, monotonically increasing in time, with `u(·, t) ↗ u_∞` locally
-uniformly in `U`: then `u_∞` is a viscosity solution of (1.1) in `U`. -/
+/-- **[Theorem 3.16(i)](#AFS:part.longtime-viscosity-1)** (proved via
+[Proposition 5.6](#AFS:p.supersolution-limit) and [Corollary 5.7](#AFS:c.monotone-long-time)). A
+bounded viscosity solution of [(3.1)](#AFS:e.bernoulli-parabolic) in `U × (0, ∞)`, monotonically
+increasing in time, with `u(·, t) ↗ u_∞` locally uniformly in `U`: then `u_∞` is a viscosity
+solution of [(1.1)](#AFS:e.bernoulli-basic) in `U`. -/
 def LongtimeViscIncreasingStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (u : E d × ℝ → ℝ) (uInf : E d → ℝ),
     IsParaSolution S.U S.Q (Ioi 0) u → (∃ M : ℝ, ∀ p ∈ UInf S.U, u p ≤ M) →
@@ -233,11 +254,14 @@ def LongtimeViscIncreasingStatement : Prop :=
     TendstoLocallyUniformlyOn (fun t x ↦ u (x, t)) uInf atTop S.U →
     IsViscSolution S.U S.Q uInf
 
-/-- **Theorem 3.12(ii)** (Lemma 5.8). A bounded parabolic inner variational solution `(u, χ)`,
-monotone in time, which is a viscosity supersolution and satisfies (4.5) and (3.11)–(3.13): along
-some `tᵢ → ∞`, `u(·, tᵢ) → u_∞` locally uniformly, `χ(·, tᵢ) → χ_∞` in `L¹_loc`, and `u_∞`
-is a viscosity solution of (1.1). Time monotonicity and the weak heat equation (4.5) are
-hypotheses here for the same reasons as in `LongtimeInnerStatement` (Theorem 3.10). -/
+/-- **[Theorem 3.16(ii)](#AFS:part.longtime-viscosity-2)**
+([Lemma 5.8](#AFS:l.subsolution-inner-limit)). A bounded parabolic inner variational solution
+`(u, χ)`, monotone in time, which is a viscosity supersolution and satisfies
+[(4.6)](#AFS:eqn:weakHeat) and [(3.12)](#AFS:eqn:diss2)–[(3.14)](#AFS:eqn:chiEst2): along some
+`tᵢ → ∞`, `u(·, tᵢ) → u_∞` locally uniformly, `χ(·, tᵢ) → χ_∞` in `L¹_loc`, and `u_∞` is a viscosity
+solution of [(1.1)](#AFS:e.bernoulli-basic). Time monotonicity is a hypothesis, as in the paper; the
+weak heat [equation (4.6)](#AFS:eqn:weakHeat) is a separate hypothesis, as in
+`LongtimeInnerStatement` ([Theorem 3.14](#AFS:t.longtime-inner)). -/
 def LongtimeViscInnerStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (u w χ : E d × ℝ → ℝ) (M : ℝ) (E0 : ℝ≥0∞) (C : ℝ)
     (Cper : ℝ → ℝ → ℝ),
@@ -250,34 +274,47 @@ def LongtimeViscInnerStatement : Prop :=
       TendstoLpLoc 1 volume S.U (fun i x ↦ χ (x, t i)) χInf atTop ∧
       IsViscSolution S.U S.Q uInf
 
-/-! ### Proposition 4.1 (ε → 0 limit, variational form) -/
+/-! ### [Proposition 4.1](#AFS:p.eps-inner-limit) (ε → 0 limit, variational form) -/
 
-/-- **Proposition 4.1**. Assume (3.5), `gε → g` in `H¹(U; [0, ∞))` as `ε → 0⁺` (weak gradients
-`Gε ε`, `Gg` as data) with `sup_ε ‖gε‖_{L^∞(U)} ≤ M`, and let `uε ε` solve (3.4) with data
-`gε ε` for `0 < ε < ε₀`. Then along some `ε_j ↓ 0` there is `(u, χ)` (with `∂ₜu = w`) such
-that
+/-- **[Proposition 4.1](#AFS:p.eps-inner-limit)**. Assume [(3.5)](#AFS:e.beta-conditions), `gε → g`
+weakly in `H¹(U; [0, ∞))` as `ε → 0⁺` (weak gradients `Gε ε`, `Gg` as data) with
+`sup_ε ‖gε‖_{L^∞(U)} ≤ M`, and let `uε ε` solve [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with
+data `gε ε` for `0 < ε < ε₀`. Let `E0` bound the initial energies, `J(gε, χ⁰_ε; U) ≤ E0`
+([Lemma 3.11(iv)](#AFS:part.gep-4)). Then along some `ε_j ↓ 0` there is `(u, χ)` (with
+`∂ₜu = w`) such that
 (i) `uε ε_j → u` locally uniformly in `U_∞`, `∇uε ε_j ⇀ ∇u` weakly in `L²(U × (0, T))` for every
     `T > 0`, `χ_{ε_j} → χ` in `L¹_loc(U_∞)` and a.e., `χ ∈ {0, 1}` a.e.;
 (ii) `(u, χ)` is a parabolic inner variational solution in `U_∞`, and it satisfies the weak heat
-equation (4.5) in `{u > 0}` (proved in §4.2 of the paper; recorded here because Theorem 3.10
-needs it, see `WeakHeatInPos`);
-(iii) (3.11) (with right-hand side `E0 = ∫_U |∇g|² + Q_max² |U|`, cf. Proposition 3.8(i)),
-(3.12) and (3.13) hold. The constant `C` of (3.12) depends only on the setting and `β`; `Cper`
-only on these and the bounds `M`, `Ebd < ∞`.
+[equation (4.6)](#AFS:eqn:weakHeat) in `{u > 0}` (proved in [§4.2](#AFS:subsec:strongGrad) of the
+paper; recorded here because [Theorem 3.14](#AFS:t.longtime-inner) needs it, see `WeakHeatInPos`);
+(iii) [(3.12)](#AFS:eqn:diss2) with right-hand side `E0`, [(3.13)](#AFS:eqn:LipEst) and
+[(3.14)](#AFS:eqn:chiEst2) hold. The constant `C` of [(3.13)](#AFS:eqn:LipEst) depends only on the
+setting and `β`; `Cper` only on these and the bounds `M`, `Ebd ≥ E0`, `Ebd < ∞`.
 
-The paper states weak convergence in `L²(U_∞)` (and has the typo `→ u` for `→ ∇u`); here it is
-stated on `U × (0, T)` for every `T`, because `∇u` is in general only in `L^∞_t L²_x`, not in
-`L²(U × (0, ∞))`, and this is what the proof, via (3.8), gives. -/
+Weak `H¹(U)` convergence is written out: `∫_U gε φ → ∫_U g φ` and `∫_U Gε · Φ → ∫_U Gg · Φ` for
+all `φ, Φ ∈ L²(U)`. (`TendstoWeakL2` asks for `L²` membership at every index, and `gε ε` is only
+given for `0 < ε < ε₀`.)
+
+Differences from the paper:
+* The limit `g` and the weak convergence `gε ⇀ g` are extra hypotheses. The paper's statement
+  does not have them, and the proof does not use them.
+* The paper's (i) also states strong convergence of `∇uε_j` in `L²_loc(U_∞)`
+  ([Lemma 4.2](#AFS:lem:strongGrad), proved in `Inner/StrongConv.lean`); here (i) records only the
+  weak convergence in `L²(U × (0, T))` for every `T`. -/
 def EpsInnerLimitStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (β : ℝ → ℝ), IsReactionProfile β →
     ∃ C : ℝ, ∀ (M : ℝ) (Ebd : ℝ≥0∞), Ebd ≠ ⊤ → ∃ Cper : ℝ → ℝ → ℝ,
     ∀ (ε₀ : ℝ) (g : E d → ℝ) (Gg : E d → E d) (gε : ℝ → E d → ℝ) (Gε : ℝ → E d → E d)
-      (uε : ℝ → E d × ℝ → ℝ), 0 < ε₀ →
+      (uε : ℝ → E d × ℝ → ℝ) (E0 : ℝ≥0∞), 0 < ε₀ →
       MemH1 S.U g Gg → (∀ ε ∈ Ioo 0 ε₀, MemH1 S.U (gε ε) (Gε ε)) →
-      Tendsto (fun ε ↦ eLpNorm (gε ε - g) 2 (volume.restrict S.U) +
-        eLpNorm (Gε ε - Gg) 2 (volume.restrict S.U)) (𝓝[>] 0) (𝓝 0) →
+      (∀ φ : E d → ℝ, MemLp φ 2 (volume.restrict S.U) →
+        Tendsto (fun ε ↦ ∫ x in S.U, gε ε x * φ x) (𝓝[>] 0) (𝓝 (∫ x in S.U, g x * φ x))) →
+      (∀ Φ : E d → E d, MemLp Φ 2 (volume.restrict S.U) →
+        Tendsto (fun ε ↦ ∫ x in S.U, inner ℝ (Gε ε x) (Φ x)) (𝓝[>] 0)
+          (𝓝 (∫ x in S.U, inner ℝ (Gg x) (Φ x)))) →
       (∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ S.U, 0 ≤ gε ε x ∧ gε ε x ≤ M) →
-      energyBound S Gg ≤ Ebd →
+      E0 ≤ Ebd →
+      (∀ ε ∈ Ioo 0 ε₀, energyJχ S.U S.Q (Gε ε) (fun x ↦ chiEps β ε (uε ε) (x, 0)) ≤ E0) →
       (∀ ε ∈ Ioo 0 ε₀, IsSemilinearSolution S.U S.Q β ε (gε ε) (uε ε)) →
       ∃ (εs : ℕ → ℝ) (u w χ : E d × ℝ → ℝ),
         (∀ j, εs j ∈ Ioo 0 ε₀) ∧ StrictAnti εs ∧ Tendsto εs atTop (𝓝 0) ∧
@@ -291,39 +328,40 @@ def EpsInnerLimitStatement : Prop :=
         (∀ᵐ p ∂(volume.restrict (UInf S.U)), χ p = 0 ∨ χ p = 1) ∧
         -- (ii) existence
         IsParaInnerVarSolution S.U S.Q u w χ ∧
-        -- (4.5) weak heat equation in the positivity set (needed by Theorem 3.10)
+        -- [(4.6)](#AFS:eqn:weakHeat) weak heat equation in the positivity set (needed by
+        -- [Theorem 3.14](#AFS:t.longtime-inner))
         WeakHeatInPos S.U u w ∧
         -- (iii) estimates
-        DissipationIneq S.U S.Q u w χ (energyBound S Gg) ∧ InteriorLipEst S.U u C ∧
+        DissipationIneq S.U S.Q u w χ E0 ∧ InteriorLipEst S.U u C ∧
         WeightedPerimeterEst S.U χ Cper
 
-/-! ### Proposition 5.3 and Corollary 5.4 (ε → 0 limit, viscosity form) -/
+/-! ### The ε → 0 limit, viscosity form
 
-/-- The set `E = limsup* {uε_j > ε_j}` of Proposition 5.3 in arXiv v1, the sets taken in
-`U × I`. -/
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity) and [Corollary 5.4](#AFS:cor:increasing). -/
+
+/-- The set `E = limsup* {uε_j > ε_j}`, the sets taken in `U × I` (the term `κ = 1` of
+`semilinearLimitSetStar`). -/
 def semilinearLimitSet (U : Set (E d)) (I : Set ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) :
     Set (E d × ℝ) :=
   upperKLimit (fun j ↦ {p ∈ U ×ˢ I | εs j < us j p}) atTop
 
-/-- The set `E* = \overline{⋃_{0 < κ ≤ 1} limsup* {uε_j > κ ε_j}}`, which replaces the set `E` of
-Proposition 5.3 in arXiv v1 (that `E` does not make the limit a relaxed subsolution; see
-`SemilinearLimitRelaxedStatement`). This replacement is the authors' correction. It contains
-`semilinearLimitSet` (`κ = 1`) and, unlike it, every point where the `uε_j` are not `o(ε_j)`. -/
+/-- The set `E* = \overline{⋃_{0 < κ ≤ 1} limsup* {uε_j > κ ε_j}}` of
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity). It contains `semilinearLimitSet` (`κ = 1`)
+and, unlike it, every point where the `uε_j` are not `o(ε_j)`. -/
 def semilinearLimitSetStar (U : Set (E d)) (I : Set ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) :
     Set (E d × ℝ) :=
   closure (⋃ κ ∈ Ioc (0 : ℝ) 1, upperKLimit (fun j ↦ {p ∈ U ×ˢ I | κ * εs j < us j p}) atTop)
 
-/-- **Proposition 5.3**, **corrected**. If `u_j` (nonnegative) solve the semilinear equation
-with `ε_j → 0` in `U × (0, T]` and `u_j → u` locally uniformly in `U × (0, T]`, then `(u, E*)` is
-a relaxed viscosity solution of (3.1) in `U × (0, T]`, where
-`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (`semilinearLimitSetStar`).
+/-- **[Proposition 5.3](#AFS:p.semilinear-limit-viscosity)**. If `u_j` (nonnegative) solve the
+semilinear equation with `ε_j → 0` in `U × (0, T]` and `u_j → u` locally uniformly in `U × (0, T]`,
+then `(u, E*)` is a relaxed viscosity solution of [(3.1)](#AFS:e.bernoulli-parabolic) in
+`U × (0, T]`, where `E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (`semilinearLimitSetStar`).
 
-Difference from arXiv v1: there the set is `E = limsup* {u_j > ε_j}` (`semilinearLimitSet`), and
-with that set the statement is **false**: for `U = B₁`, `Q ≡ 1`, `u_j = ε_j (1 + h)` with `h ≥ 0`
-the heat kernel from a point outside `Ū` switched on at time `t₀` (a solution since `β = 0` on
-`[1, ∞)`), one gets `u ≡ 0` and `E = Ū × [t₀, T]`, and the strict supersolution
-`φ = A(|x|² - ρ²) + B(t - t₀)` violates the relaxed subsolution property at `(0, t₀)`. The
-authors' corrected set `E*` also contains the points where the `u_j` are not `o(ε_j)`. -/
+With the smaller set `E = limsup* {u_j > ε_j}` (`semilinearLimitSet`) the statement fails: for
+`U = B₁`, `Q ≡ 1`, `u_j = ε_j (1 + h)` with `h ≥ 0` the heat kernel from a point outside `Ū`
+switched on at time `t₀` (a solution since `β = 0` on `[1, ∞)`), one gets `u ≡ 0` and
+`E = Ū × [t₀, T]`, and the strict supersolution `φ = A(|x|² - ρ²) + B(t - t₀)` violates the
+relaxed subsolution property at `(0, t₀)`. -/
 def SemilinearLimitRelaxedStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (β : ℝ → ℝ), IsReactionProfile β →
     ∀ (T : ℝ) (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (u : E d × ℝ → ℝ), 0 < T →
@@ -333,17 +371,11 @@ def SemilinearLimitRelaxedStatement : Prop :=
       TendstoLocallyUniformlyOn us u atTop (S.U ×ˢ Ioc 0 T) →
       IsParaRelaxedSolution S.U S.Q (Ioc 0 T) u (semilinearLimitSetStar S.U (Ioc 0 T) εs us)
 
-/-- **Corollary 5.4**. If the `uε` are as in Proposition 3.8 with `g` a strict subsolution,
-`uε ε_j → u` with `ε_j → 0`, and `E = E* = \overline{⋃_{0<κ≤1} limsup* {uε ε_j > κ ε_j}}`
-(`semilinearLimitSetStar`), then `u` is monotone increasing in `t`, `E = \overline{{u > 0}}`
-inside `U × [0, T]`, and `u` is a viscosity solution of (3.1) in `U × (0, T]`.
-
-Differences from arXiv v1:
-* arXiv v1 uses `E = limsup* {uε ε_j > ε_j}`; here we use the authors' corrected set `E*`,
-  because with the set of arXiv v1 the relaxed subsolution property of Proposition 5.3 fails (see
-  `SemilinearLimitRelaxedStatement`).
-* arXiv v1 claims `E = \overline{{u > 0}}` everywhere, but never treats the points of `E` over
-  `∂U`; we state the equality inside `U × [0, T]`, which is all that is used. -/
+/-- **[Corollary 5.4](#AFS:cor:increasing)**. If the `uε` are as in
+[Proposition 3.12](#AFS:p.semilinear-wellposed) with `g` a strict subsolution, `uε ε_j → u` with
+`ε_j → 0`, and `E = E* = \overline{⋃_{0<κ≤1} limsup* {uε ε_j > κ ε_j}}` (`semilinearLimitSetStar`),
+then `u` is monotone increasing in `t`, `E = \overline{{u > 0}}` inside `U × [0, T]`, and `u` is a
+viscosity solution of [(3.1)](#AFS:e.bernoulli-parabolic) in `U × (0, T]`. -/
 def SemilinearLimitIncreasingStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (ε₀ : ℝ) (gε : ℝ → E d → ℝ)
     (uε : ℝ → E d × ℝ → ℝ), IsReactionProfile β → IsStrictSub S.U S.Q g →
@@ -356,15 +388,18 @@ def SemilinearLimitIncreasingStatement : Prop :=
           closure (posSetP u (S.U ×ˢ Ioc 0 T)) ∩ (S.U ×ˢ Icc 0 T) ∧
         IsParaSolution S.U S.Q (Ioc 0 T) u
 
-/-! ### Propositions 6.1, 6.2 and Lemma 6.3 -/
+/-! ### Extremal solutions
 
-/-- **Proposition 6.1**. If `g` is a smooth strict subsolution with
+Propositions [6.1](#AFS:p.inner-smallest), [6.2](#AFS:p.inner-largest) and
+[Proposition 6.3](#AFS:p.downward). -/
+
+/-- **[Proposition 6.1](#AFS:p.inner-smallest)**. If `g` is a smooth strict subsolution with
 `g > 0` on `∂U`, the smallest supersolution above `g` is both an inner variational and a
-viscosity solution of (1.1) in `U`. We also export that it is continuous on `Ū`: the paper's
-"sandwich" argument uses that the limit `û`, extended by `g₊`, lies in `𝒮_g`, which needs
-continuity up to `∂U`, and Lemma 2.7 needs `u ∈ C(Ū)`; neither is stated in the paper. The proof
-gets it from the modulus of Proposition 3.8(v), which is uniform in `ε`, `t` and the shifts
-`g + a`. -/
+viscosity solution of [(1.1)](#AFS:e.bernoulli-basic) in `U`. We also export that it is continuous
+on `Ū`: the "sandwich" argument uses that the limit `û`, extended by `g₊`, lies in `𝒮_g`, which
+needs continuity up to `∂U`, and [Lemma 2.8](#AFS:l.local-minimality) needs `u ∈ C(Ū)`. The proof
+gets it from the modulus of [Proposition 3.12(iv)](#AFS:part.attainment), which is uniform in `ε`,
+`t` and the shifts `g + a`. -/
 def InnerSmallestStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (g : E d → ℝ), IsStrictSub S.U S.Q g →
     (∀ x ∈ frontier S.U, 0 < g x) →
@@ -372,24 +407,26 @@ def InnerSmallestStatement : Prop :=
       (∃ χ : E d → ℝ, IsInnerVarSolution S.U S.Q (perronSmallest S.U S.Q g) χ) ∧
       ContinuousOn (perronSmallest S.U S.Q g) (closure S.U)
 
-/-- **Proposition 6.2**. If `g` is a smooth strict supersolution, the largest subsolution below
-`g` is both an inner variational and a viscosity solution of (1.1) in `U`. As in
-Proposition 6.1, we also export that it is continuous on `Ū`. -/
+/-- **[Proposition 6.2](#AFS:p.inner-largest)**. If `g` is a smooth strict supersolution, the
+largest subsolution below `g` is both an inner variational and a viscosity solution of
+[(1.1)](#AFS:e.bernoulli-basic) in `U`. As in [Proposition 6.1](#AFS:p.inner-smallest), we also
+export that it is continuous on `Ū`. -/
 def InnerLargestStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (g : E d → ℝ), IsStrictSuper S.U S.Q g →
     IsViscSolution S.U S.Q (perronLargest S.U S.Q g) ∧
       (∃ χ : E d → ℝ, IsInnerVarSolution S.U S.Q (perronLargest S.U S.Q g) χ) ∧
       ContinuousOn (perronLargest S.U S.Q g) (closure S.U)
 
-/-- **Lemma 6.3**, with extra hypotheses: a local smallest supersolution (resp. largest
-subsolution) `u` in the sense of Definition 2.6 which is moreover locally Lipschitz in `U` and
-`C²` and harmonic in `{u > 0}` is a downward (resp. upward) minimizer of `J_Q(·; U)`
-(Definition 2.11, in the form of `IsDownwardMinimizer`).
+/-- **[Proposition 6.3](#AFS:p.downward)**, with extra hypotheses: a local smallest supersolution
+(resp. largest subsolution) `u` in the sense of [Definition 2.7](#AFS:d.largest-smallest) which is
+moreover locally Lipschitz in `U` and `C²` and harmonic in `{u > 0}` is a downward (resp. upward)
+minimizer of `J_Q(·; U)` ([Definition 2.15](#AFS:d.directional), in the form of
+`IsDownwardMinimizer`).
 
-The paper states the lemma for local extremal solutions only, but its proof takes harmonicity in
-`{u > 0}` from Propositions 6.1 and 6.2, which apply to Perron solutions, and it also needs
-`u ∈ H¹_loc`. We therefore add these properties as hypotheses; Theorem 1.1(iii) supplies them
-from Theorem 1.1(ii). -/
+The paper states the lemma for local extremal solutions only, and its proof obtains these
+properties by citation (local extremal solutions are locally Lipschitz viscosity solutions, after
+Feldman–Kim). Here they are hypotheses; [Theorem 1.1(iii)](#AFS:part.downward) supplies them from
+[Theorem 1.1(ii)](#AFS:part.inner). -/
 def DirectionalStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d) (u : E d → ℝ),
     LocallyLipschitzOn S.U u → ContDiffOn ℝ 2 u (posSet u S.U) →

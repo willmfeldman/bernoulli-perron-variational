@@ -16,23 +16,25 @@ import PerronVariational.Semilinear.PositivityTrace
 import PerronVariational.Semilinear.ProfileBarrier
 
 /-!
-# Barriers for the attainment estimate (Proposition A.8)
+# Barriers for the attainment estimate ([Proposition B.5](#AFS:p.attainment))
 
-Barriers for the proof of Lemma A.9 of
+Barriers for the proof of [Lemma B.6](#AFS:l.attainment-lateral) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.5).
+in the Bernoulli one-phase problem*, arXiv:2609.14981 ([Appendix B.5](#AFS:ss.attainment)).
 
-Tools for the uniform modulus of continuity of Proposition A.8, all uniform in `ε ∈ (0, 1]`:
+Tools for the uniform modulus of continuity of [Proposition B.5](#AFS:p.attainment), all uniform in
+`ε ∈ (0, 1]`:
 
 * `max_profileSubEps_le`, `le_max_profileSubEps`: `w ≤ Φ_ε(w)₊ ≤ (w + c_θ ε)₊`;
 * `IsSemilinearSolution.le_of_profileBarrier`: the lower barrier `(Φ_{ε,θ}(W))₊`
   (`isSemilinearViscSubOn_max_profileSubEps`) compared with a solution on a finite horizon;
-* `IsSemilinearSolution.shift`: the time translate `u(·, · + s)` solves (3.4) with data `u(·, s)`;
+* `IsSemilinearSolution.shift`: the time translate `u(·, · + s)` solves
+  [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data `u(·, s)`;
 * `IsSemilinearSolution.le_add_of_quadratic`: the caloric upper barrier
   `g(y) + σ + A|x - y|² + 2dAt`;
 * `Setting.exists_exteriorBarrier`: a smooth strictly superharmonic barrier `η` at every
   boundary point, with `c|x - x₀|² ≤ η ≤ C|x - x₀|` and `|∇η| ≥ G` on `Ū` (from the uniform
-  exterior ball, (A.12)).
+  exterior ball, [(B.11)](#AFS:e.exterior-ball)).
 -/
 
 open Set Filter Topology Metric
@@ -114,7 +116,8 @@ namespace IsSemilinearSolution
 
 variable {S : Setting d} {β : ℝ → ℝ} {ε : ℝ} {g : E d → ℝ} {u : E d × ℝ → ℝ}
 
-/-- The time translate `u(·, · + s)` of a solution of (3.4) solves (3.4) with data `u(·, s)`. -/
+/-- The time translate `u(·, · + s)` of a solution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear)
+solves [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data `u(·, s)`. -/
 theorem shift (hu : IsSemilinearSolution S.U S.Q β ε g u) {s : ℝ} (hs : 0 ≤ s) :
     IsSemilinearSolution S.U S.Q β ε (fun y ↦ u (y, s)) (fun q ↦ u (q.1, q.2 + s)) := by
   refine ⟨?_, ?_, fun x _ ↦ by simp, fun x hx t ht ↦ ?_⟩
@@ -129,7 +132,7 @@ theorem shift (hu : IsSemilinearSolution S.U S.Q β ε g u) {s : ℝ} (hs : 0 �
 subsolution of the heat equation in `U × (0, T]` satisfying the layer condition
 `Q² ≤ θ |∇W|²` on `{ε s₀ < W < ε}`, and `(W + c_θ ε)₊ ≤ g` on the parabolic boundary, then
 `W ≤ u` on `Ū × [0, T]`. Comparison of `u` with `(Φ_{ε,θ}(W))₊`, by the comparison principle for
-(3.4) (from parabolic-basic-theory v0.1.0). -/
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) (from parabolic-basic-theory v0.1.0). -/
 theorem le_of_profileBarrier (hβ : IsReactionProfile β) (hε : 0 < ε)
     (hu : IsSemilinearSolution S.U S.Q β ε g u) {θ : ℝ} (hθ : 0 < θ) (hθ1 : θ < 1) {T : ℝ}
     (hT : 0 < T) {W : E d × ℝ → ℝ} (hWc : Continuous W)
@@ -200,7 +203,7 @@ end IsSemilinearSolution
 
 set_option maxHeartbeats 1000000 in
 -- many `set` abbreviations with nonlinear real arithmetic in one declaration
-/-- **Exterior barrier** (from the uniform exterior ball (A.12)): there are
+/-- **Exterior barrier** (from the uniform exterior ball [(B.11)](#AFS:e.exterior-ball)): there are
 constants `c, C, G, l > 0` such that every `x₀ ∈ ∂U` carries a smooth `η` with `η(x₀) = 0` and,
 on `Ū`, `c |x - x₀|² ≤ η(x) ≤ C |x - x₀|`, `|∇η| ≥ G` and `Δη ≤ -l`. Here
 `η(x) = e^{(d+1)/2} - e^{(d+1)(1 - |x - y₀|²/(2ρ₀²))}` (a shifted `trapBarrier` centred at the

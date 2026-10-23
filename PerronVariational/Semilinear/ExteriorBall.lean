@@ -11,20 +11,18 @@ import Mathlib.Order.CompletePartialOrder
 /-!
 # Uniform exterior balls for a `C²` domain
 
-The uniform exterior ball condition (A.12) in the proof of Proposition A.8 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981.
+The uniform exterior ball condition [(B.11)](#AFS:e.exterior-ball) in the proof of
+[Proposition B.5](#AFS:p.attainment) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
 For `U = {ρ < 0}` with `ρ ∈ C²` and `∇ρ ≠ 0` on `∂U`, `U` bounded, there is `ρ₀ > 0` such
 that every boundary point `x₀` has an exterior ball `B_{ρ₀}(y₀)`, `|y₀ - x₀| = ρ₀`, with the
-quantitative separation `|x - y₀|² ≥ ρ₀² + ½|x - x₀|²` for all `x ∈ Ū` (the paper's (A.12)).
-The paper assumes that `∂U` is a `C²` hypersurface; here `U = {ρ < 0}` as above, which is the
-standard equivalent description used throughout this library.
+quantitative separation `|x - y₀|² ≥ ρ₀² + ½|x - x₀|²` for all `x ∈ Ū` (the paper's
+[(B.11)](#AFS:e.exterior-ball)). The paper assumes that `∂U` is a `C²` hypersurface; here
+`U = {ρ < 0}` as above, which is the standard equivalent description used throughout this library.
 
 The proof follows the paper: a uniform second-order Taylor bound for `ρ` on a ball containing `Ū`
 and a positive lower bound for `|∇ρ|` on the compact set `∂U`.
-
-Also: `Setting.mem_of_norm_sub_lt_infDist` (balls avoiding `∂U` around points of `U` lie in `U`).
 -/
 
 open Set Filter Topology Metric
@@ -75,9 +73,9 @@ theorem exists_pos_forall_le_of_isCompact {X : Type*} [TopologicalSpace X] {K : 
   · obtain ⟨x₀, hx₀, hmin⟩ := hK.exists_isMinOn hne hf
     exact ⟨f x₀, hpos x₀ hx₀, fun x hx ↦ hmin hx⟩
 
-/-- **Uniform exterior ball** (the paper's (A.12)): there is `ρ₀ > 0` such that for
-every `x₀ ∈ ∂U` there is `y₀` with `|x₀ - y₀| = ρ₀` and `ρ₀² + ½|x - x₀|² ≤ |x - y₀|²` for all
-`x ∈ Ū`. -/
+/-- **Uniform exterior ball** (the paper's [(B.11)](#AFS:e.exterior-ball)): there is `ρ₀ > 0` such
+that for every `x₀ ∈ ∂U` there is `y₀` with `|x₀ - y₀| = ρ₀` and `ρ₀² + ½|x - x₀|² ≤ |x - y₀|²` for
+all `x ∈ Ū`. -/
 theorem Setting.exists_uniformExteriorBall (S : Setting d) :
     ∃ ρ₀ > 0, ∀ x₀ ∈ frontier S.U, ∃ y₀ : E d, ‖x₀ - y₀‖ = ρ₀ ∧
       ∀ x ∈ closure S.U, ρ₀ ^ 2 + ‖x - x₀‖ ^ 2 / 2 ≤ ‖x - y₀‖ ^ 2 := by
@@ -152,28 +150,6 @@ theorem Setting.exists_uniformExteriorBall (S : Setting d) :
         _ = (2 * ρ₀ * C) * ‖x - x₀‖ ^ 2 := by ring
         _ ≤ 1 / 2 * ‖x - x₀‖ ^ 2 := mul_le_mul_of_nonneg_right hρC (sq_nonneg _)
     nlinarith
-
-/-- Around a point `x ∈ U`, the ball of radius `dist(x, ∂U)` lies in `U`. -/
-theorem Setting.mem_of_norm_sub_lt_infDist (S : Setting d) {x z : E d} (hx : x ∈ S.U)
-    (hz : ‖z - x‖ < infDist x (frontier S.U)) : z ∈ S.U := by
-  set r := infDist x (frontier S.U)
-  have hB : ball x r ⊆ S.U := by
-    have hdisj : Disjoint S.U (closure S.U)ᶜ :=
-      disjoint_compl_right.mono_right (compl_subset_compl.2 subset_closure)
-    refine (convex_ball x r).isPreconnected.subset_left_of_subset_union S.isOpen
-      isClosed_closure.isOpen_compl hdisj (fun w hw ↦ ?_)
-      ⟨x, mem_ball_self ((norm_nonneg _).trans_lt (by simpa using hz)), hx⟩
-    by_cases hwc : w ∈ closure S.U
-    · left
-      rw [closure_eq_interior_union_frontier, S.isOpen.interior_eq] at hwc
-      rcases hwc with h | h
-      · exact h
-      · exfalso
-        have := infDist_le_dist_of_mem (x := x) h
-        rw [mem_ball, dist_comm] at hw
-        linarith
-    · right; exact hwc
-  exact hB (by rw [mem_ball, dist_eq_norm]; exact hz)
 
 end PerronVariational
 

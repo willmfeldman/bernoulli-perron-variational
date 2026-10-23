@@ -12,18 +12,18 @@ import Mathlib.Order.CompletePartialOrder
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Limits of `χ_ε` (Lemma 4.3 and the proof of Proposition 4.1)
+# Limits of `χ_ε`
 
-This file formalizes parts of Lemma 4.3 and of the proof of Proposition 4.1 of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
-Bernoulli one-phase problem*, arXiv:2609.14981.
+This file formalizes parts of [Lemma 4.3](#AFS:lem:chiConverge) and of the proof of
+[Proposition 4.1](#AFS:p.eps-inner-limit) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
 Pointwise facts about `χ_ε = 2 𝓑_ε(u_ε)` and their consequences for an a.e. limit `χ`:
 * `Inner.chiEps_eq_one_of_le`: `χ_ε = 1` where `u_ε ≥ ε`;
-* `Inner.chi_eq_one_of_pos`, `Inner.ae_chi_eq_one_of_pos`: `1_{u > 0} ≤ χ` (proof of Proposition
-  4.1(ii));
+* `Inner.chi_eq_one_of_pos`, `Inner.ae_chi_eq_one_of_pos`: `1_{u > 0} ≤ χ` (proof of [Proposition
+  4.1(ii)](#AFS:part.eps-inner));
 * `Inner.ae_zero_or_one_of_tendsto`: `χ ∈ {0, 1}` a.e., from a local bound on `∫ β_ε(u_ε)`
-  (end of the proof of Lemma 4.3, (4.11)).
+  (end of the proof of [Lemma 4.3](#AFS:lem:chiConverge), [(A.9)](#AFS:eqn:chi1)).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -52,8 +52,8 @@ theorem chiEps_mem_Icc (hβ : IsReactionProfile β) {ε : ℝ} (hε : 0 < ε) (u
   simp only [chiEps, mem_Icc]
   constructor <;> linarith
 
-/-- **`1_{u > 0} ≤ χ`, pointwise** (proof of Proposition 4.1(ii)): if `u_n(p) → u(p) > 0`,
-`ε_n → 0⁺` and `χ_{ε_n}(u_n)(p) → χ(p)`, then `χ(p) = 1`. -/
+/-- **`1_{u > 0} ≤ χ`, pointwise** (proof of [Proposition 4.1(ii)](#AFS:part.eps-inner)): if
+`u_n(p) → u(p) > 0`, `ε_n → 0⁺` and `χ_{ε_n}(u_n)(p) → χ(p)`, then `χ(p) = 1`. -/
 theorem chi_eq_one_of_pos (hβ : IsReactionProfile β) {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n)
     (hε0 : Tendsto ε atTop (𝓝 0)) {v : ℕ → E d × ℝ → ℝ} {u χ : E d × ℝ → ℝ} {p : E d × ℝ}
     (hvp : Tendsto (fun n ↦ v n p) atTop (𝓝 (u p)))
@@ -67,8 +67,8 @@ theorem chi_eq_one_of_pos (hβ : IsReactionProfile β) {ε : ℕ → ℝ} (hε :
     exact (chiEps_eq_one_of_le hβ (hε n) (hn2.trans hn1).le).symm
   exact tendsto_nhds_unique hχp (tendsto_const_nhds.congr' hev)
 
-/-- **`1_{u > 0} ≤ χ` a.e.** (proof of Proposition 4.1(ii)): pointwise convergence `u_n → u` on `Ω`
-and a.e. convergence `χ_{ε_n}(u_n) → χ` on `Ω`, with `ε_n → 0⁺`. -/
+/-- **`1_{u > 0} ≤ χ` a.e.** (proof of [Proposition 4.1(ii)](#AFS:part.eps-inner)): pointwise
+convergence `u_n → u` on `Ω` and a.e. convergence `χ_{ε_n}(u_n) → χ` on `Ω`, with `ε_n → 0⁺`. -/
 theorem ae_chi_eq_one_of_pos (hβ : IsReactionProfile β) {Ω : Set (E d × ℝ)} {ε : ℕ → ℝ}
     (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0)) {v : ℕ → E d × ℝ → ℝ}
     {u χ : E d × ℝ → ℝ} (hv : ∀ p ∈ Ω, Tendsto (fun n ↦ v n p) atTop (𝓝 (u p)))
@@ -78,7 +78,7 @@ theorem ae_chi_eq_one_of_pos (hβ : IsReactionProfile β) {Ω : Set (E d × ℝ)
   filter_upwards [hχ, ae_restrict_mem hΩ] with p hp hpΩ hup
   exact chi_eq_one_of_pos hβ hε hε0 (hv p hpΩ) hp hup
 
-/-- Choice of the secondary parameter `δ₀` in the proof of Lemma 4.3:
+/-- Choice of the secondary parameter `δ₀` in the proof of [Lemma 4.3](#AFS:lem:chiConverge):
 `2 𝓑₁(δ₀) < δ` and `1 - δ < 2 𝓑₁(1 - δ₀)`. -/
 theorem exists_bigB_margin (hβ : IsReactionProfile β) {δ : ℝ} (hδ : 0 < δ) :
     ∃ δ₀ : ℝ, 0 < δ₀ ∧ δ₀ < 1 / 2 ∧ 2 * bigBEps β 1 δ₀ < δ ∧
@@ -102,9 +102,9 @@ theorem exists_bigB_margin (hβ : IsReactionProfile β) {δ : ℝ} (hδ : 0 < δ
 
 set_option maxHeartbeats 1000000 in
 -- the measure bookkeeping below elaborates slowly
-/-- Key measure estimate for `χ ∈ {0, 1}` (Lemma 4.3, (4.11)): on a
-compact `K ⊆ Ω` with `∫_K β_{ε_n}(u_n) ≤ C` uniformly, the set where the a.e. limit `χ` lies in
-`(δ, 1 - δ)` is null. -/
+/-- Key measure estimate for `χ ∈ {0, 1}` ([Lemma 4.3](#AFS:lem:chiConverge),
+[(A.9)](#AFS:eqn:chi1)): on a compact `K ⊆ Ω` with `∫_K β_{ε_n}(u_n) ≤ C` uniformly, the set where
+the a.e. limit `χ` lies in `(δ, 1 - δ)` is null. -/
 theorem volume_chi_mem_Ioo_eq_zero (hβ : IsReactionProfile β) {Ω K : Set (E d × ℝ)}
     (hKΩ : K ⊆ Ω) (hK : IsCompact K) {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n)
     (hε0 : Tendsto ε atTop (𝓝 0)) {v : ℕ → E d × ℝ → ℝ} (hv : ∀ n, ContinuousOn (v n) Ω)
@@ -165,9 +165,9 @@ theorem volume_chi_mem_Ioo_eq_zero (hβ : IsReactionProfile β) {Ω K : Set (E d
   exact nonpos_iff_eq_zero.1 (ge_of_tendsto' hlim fun n ↦
     (measure_mono (iInter_subset _ n)).trans (hAn (n + N)))
 
-/-- **`χ ∈ {0, 1}` a.e.** (end of the proof of Lemma 4.3): if `ε_n → 0⁺`, the `u_n`
-are continuous on the open set `Ω`, `χ_{ε_n}(u_n) → χ` a.e. on `Ω`, and `∫_K β_{ε_n}(u_n)` is
-bounded uniformly in `n` for every compact `K ⊆ Ω`, then `χ ∈ {0, 1}` a.e. on `Ω`. -/
+/-- **`χ ∈ {0, 1}` a.e.** (end of the proof of [Lemma 4.3](#AFS:lem:chiConverge)): if `ε_n → 0⁺`,
+the `u_n` are continuous on the open set `Ω`, `χ_{ε_n}(u_n) → χ` a.e. on `Ω`, and `∫_K β_{ε_n}(u_n)`
+is bounded uniformly in `n` for every compact `K ⊆ Ω`, then `χ ∈ {0, 1}` a.e. on `Ω`. -/
 theorem ae_zero_or_one_of_tendsto (hβ : IsReactionProfile β) {Ω : Set (E d × ℝ)}
     (hΩ : IsOpen Ω) {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0))
     {v : ℕ → E d × ℝ → ℝ} (hv : ∀ n, ContinuousOn (v n) Ω) {χ : E d × ℝ → ℝ}
@@ -207,7 +207,7 @@ theorem ae_zero_or_one_of_tendsto (hβ : IsReactionProfile β) {Ω : Set (E d ×
   exact hpn m k ⟨hm, (hk'.trans_le (min_le_left _ _)),
     by linarith [hk'.trans_le (min_le_right _ _)], hconv⟩
 
--- Lemma 4.3 (compactness part) is proved in `Inner/ChiCompact.lean`.
+-- [Lemma 4.3](#AFS:lem:chiConverge) (compactness part) is proved in `Inner/ChiCompact.lean`.
 
 /-- `L¹_loc` convergence on an open set implies a.e. convergence along a subsequence. -/
 theorem exists_subseq_ae_tendsto_of_tendstoLpLoc {Ω : Set (E d × ℝ)} (hΩ : IsOpen Ω)

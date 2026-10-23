@@ -13,16 +13,17 @@ import Mathlib.Tactic.ContinuousFunctionalCalculus
 /-!
 # The cutoff of Step 3
 
-Step 3 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4):
-a cutoff `η`, `0 ≤ η ≤ 1`, with
+Step 3 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)): a cutoff `η`, `0 ≤ η ≤ 1`, with
 `|∇η| + |∂ₜη| + |D²η| ≤ C_d` (at unit scale).
 
 We use the single smooth function `η = χ(σ)`, `σ(x, t) = |x - x₀|²/r² + κ (t₀ - t)/r²`, with
-`χ = 1` on `(-∞, 2]` and `χ = 0` on `[3, ∞)`; `κ = 1` for Proposition A.5 (space-time cutoff)
-and `κ = 0` for Proposition A.6 (space cutoff only). Then `η = 1` on `Q_r(x₀, t₀)`
-(resp. `B_r(x₀) × ℝ`), `η = 0` where `σ ≥ 3`, and `C_η ≤ C_χ / r²` wherever `|x - x₀|² ≤ 3r²`.
+`χ = 1` on `(-∞, 2]` and `χ = 0` on `[3, ∞)`; `κ = 1` for [Proposition B.2](#AFS:p.localLip)
+(space-time cutoff) and `κ = 0` for [Proposition B.3](#AFS:p.localLip-initial-data) (space cutoff
+only). Then `η = 1` on `Q_r(x₀, t₀)` (resp. `B_r(x₀) × ℝ`), `η = 0` where `σ ≥ 3`, and
+`C_η ≤ C_χ / r²` wherever `|x - x₀|² ≤ 3r²`.
 -/
 
 open Set Filter Topology Finset Real
@@ -48,8 +49,6 @@ theorem chi_eq_one {s : ℝ} (hs : s ≤ 2) : chi s = 1 := smoothTransition.one_
 
 theorem chi_eq_zero {s : ℝ} (hs : 3 ≤ s) : chi s = 0 :=
   smoothTransition.zero_of_nonpos (by linarith)
-
-theorem chi_pos {s : ℝ} (hs : s < 3) : 0 < chi s := smoothTransition.pos_of_pos (by linarith)
 
 /-- A continuous function vanishing outside `[a, b]` is bounded. -/
 theorem exists_abs_le_of_eq_zero_outside {f : ℝ → ℝ} (hf : Continuous f) {a b : ℝ}

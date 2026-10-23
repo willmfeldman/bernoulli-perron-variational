@@ -9,32 +9,35 @@ public import PerronVariational.Inner.SliceInnerVar
 import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
-# Time localization of the parabolic identities (proof of Theorem 3.10, Steps 2 and 4)
+# Time localization of the parabolic identities
 
-The proof of **Theorem 3.10** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, uses, at almost
-every time `t`, the spatial ("time-sliced") versions of the space-time relations satisfied by
-`(u, χ)`:
+The proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981, uses in Steps 2 and 4, at almost every time `t`, the spatial ("time-sliced")
+versions of the space-time relations satisfied by `(u, χ)`:
 
-* the weak heat equation in the positivity set, slice form of (4.5) (used for (4.12));
-* the inner variation identity, slice form (4.17);
+* the weak heat equation in the positivity set, slice form of [(4.6)](#AFS:eqn:weakHeat) (used for
+  [(4.9)](#AFS:eqn:heatEqn));
+* the inner variation identity, slice form [(4.8)](#AFS:eqn:innerVarLocalized);
 * `1_{u(·,t) > 0} ≤ χ(·, t)` a.e. (Step 4);
-* the energy bound `J(u(t), χ(t); U) ≤ E₀` from (3.11);
+* the energy bound `J(u(t), χ(t); U) ≤ E₀` from [(3.12)](#AFS:eqn:diss2);
 * `∂ₜu(·, t) ∈ L²(U)`, with `t ↦ ∫_U |∂ₜu(t)|²` integrable on `(0, ∞)`.
 
-## Deviation: the weak heat equation is a hypothesis
+## The weak heat equation is a hypothesis
 
-The paper's Definition 3.7 does **not** contain the weak heat equation (4.5) in `{u > 0}`; the
-paper proves (4.5) only for the `ε → 0` limit (proof of Lemma 4.2), but the proof of Theorem 3.10
-(Step 2) uses it for the given `(u, χ)`. Without it Theorem 3.10 is false: `u(x, t) = 1 + |x₁|`,
-`χ ≡ 1`, `Q` constant satisfies all hypotheses of `LongtimeInnerStatement`, but
-`u_∞ = 1 + |x₁|` is not `C²` in `{u_∞ > 0} = U`. Here we therefore assume (4.5) as the
-hypothesis `WeakHeatInPos`; Proposition 4.1 and Theorem 3.9 provide it for the flows used in
-Propositions 6.1 and 6.2.
+[Definition 3.8(iv)](#AFS:d.parabolic-inner) of the paper contains the heat equation in `{u > 0}`;
+`IsParaInnerVarSolution` does not, and here its weak form [(4.6)](#AFS:eqn:weakHeat) is the separate
+hypothesis `WeakHeatInPos`. Without it [Theorem 3.14](#AFS:t.longtime-inner) is false:
+`u(x, t) = 1 + |x₁|`, `χ ≡ 1`, `Q` constant satisfies all the other hypotheses of
+`LongtimeInnerStatement`, but `u_∞ = 1 + |x₁|` is not `C²` in `{u_∞ > 0} = U`.
+[Proposition 4.1](#AFS:p.eps-inner-limit) and [Theorem 3.13](#AFS:t.parabolic-existence) provide
+[(4.6)](#AFS:eqn:weakHeat) for the flows used in Propositions [6.1](#AFS:p.inner-smallest) and
+[6.2](#AFS:p.inner-largest).
 
 ## Main definitions
 
-* `PerronVariational.LongTime.WeakHeatInPos`: the weak heat equation (4.5) in `{u > 0} ∩ U_∞`.
+* `PerronVariational.LongTime.WeakHeatInPos`: the weak heat [equation (4.6)](#AFS:eqn:weakHeat) in
+  `{u > 0} ∩ U_∞`.
 * `PerronVariational.LongTime.IsGoodSlice`: all slice properties at a time `t`.
 
 ## Main results
@@ -56,23 +59,23 @@ namespace LongTime
 variable {d : ℕ}
 
 
-/-- A **good slice** `t`: the time-sliced relations used in Steps 2–4 of the proof of Theorem 3.10
-hold at `t`. -/
+/-- A **good slice** `t`: the time-sliced relations used in Steps 2–4 of the proof of
+[Theorem 3.14](#AFS:t.longtime-inner) hold at `t`. -/
 structure IsGoodSlice (U : Set (E d)) (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ) (E0 : ℝ≥0∞)
     (t : ℝ) : Prop where
   pos : 0 < t
-  /-- The energy bound from (3.11). -/
+  /-- The energy bound from [(3.12)](#AFS:eqn:diss2). -/
   energy : energyJχ U Q (fun x ↦ gradₓ u (x, t)) (fun x ↦ χ (x, t)) ≤ E0
   /-- `∂ₜu(·, t) ∈ L²(U)`. -/
   memL2 : MemLp (fun x ↦ w (x, t)) 2 (volume.restrict U)
   /-- `1_{u(·,t) > 0} ≤ χ(·, t)` a.e. in `U`. -/
   pos_le : ∀ᵐ x ∂(volume.restrict U), 0 < u (x, t) → χ (x, t) = 1
-  /-- Slice form of (4.5): `∫_U ∂ₜu(t) ζ = -∫_U ∇u(t) · ∇ζ` for Lipschitz `ζ` with compact
-  support in `{u(·, t) > 0} ∩ U`. -/
+  /-- Slice form of [(4.6)](#AFS:eqn:weakHeat): `∫_U ∂ₜu(t) ζ = -∫_U ∇u(t) · ∇ζ` for Lipschitz `ζ`
+  with compact support in `{u(·, t) > 0} ∩ U`. -/
   heat : ∀ ζ : E d → ℝ, (∃ K, LipschitzWith K ζ) → HasCompactSupport ζ →
     tsupport ζ ⊆ posSet (fun y ↦ u (y, t)) U →
     ∫ x in U, w (x, t) * ζ x = -∫ x in U, inner ℝ (gradₓ u (x, t)) (∇ ζ x)
-  /-- (4.17) for `ξ ∈ C¹_c(U; ℝᵈ)`. -/
+  /-- [(4.8)](#AFS:eqn:innerVarLocalized) for `ξ ∈ C¹_c(U; ℝᵈ)`. -/
   innerVar : ∀ ξ : E d → E d, ContDiff ℝ 1 ξ → HasCompactSupport ξ → tsupport ξ ⊆ U →
     Integrable (sliceInnerVarIntegrand Q u w χ t ξ) (volume.restrict U) ∧
       ∫ x in U, sliceInnerVarIntegrand Q u w χ t ξ x = 0
@@ -81,7 +84,7 @@ section Slices
 
 variable {U : Set (E d)} {Q : E d → ℝ} {u w χ : E d × ℝ → ℝ} {E0 : ℝ≥0∞}
 
-/-- The energy bound `J(u(t), χ(t); U) ≤ E₀` for a.e. `t > 0`, from (3.11). -/
+/-- The energy bound `J(u(t), χ(t); U) ≤ E₀` for a.e. `t > 0`, from [(3.12)](#AFS:eqn:diss2). -/
 theorem ae_energy_le (hdiss : DissipationIneq U Q u w χ E0) :
     ∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))),
       energyJχ U Q (fun x ↦ gradₓ u (x, t)) (fun x ↦ χ (x, t)) ≤ E0 := by
@@ -145,21 +148,21 @@ theorem ae_memL2_slice_and_exists_wSlice (h : IsParaInnerVarSolution U Q u w χ)
   · filter_upwards [hslice] with t ht
     exact lintegral_congr_ae (ht.mono fun x hx ↦ by simp [hx])
 
-/-- **Fubini for `1_{u>0} ≤ χ`**: the space-time a.e. inequality of Definition 3.7(iii) holds on
-a.e. time slice. -/
+/-- **Fubini for `1_{u>0} ≤ χ`**: the space-time a.e. inequality of
+[Definition 3.8(iii)](#AFS:d.parabolic-inner) holds on a.e. time slice. -/
 theorem ae_pos_le_slice (h : IsParaInnerVarSolution U Q u w χ) :
     ∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))),
       ∀ᵐ x ∂(volume.restrict U), 0 < u (x, t) → χ (x, t) = 1 :=
   ae_slice_of_ae h.pos_le
 
-/-- **Time localization of (4.5)** (as in (4.12)): for a.e. `t > 0`,
-`∫_U ∂ₜu(t) ζ = -∫_U ∇u(t) · ∇ζ` for every Lipschitz `ζ` with compact support in
+/-- **Time localization of [(4.6)](#AFS:eqn:weakHeat)** (as in [(4.9)](#AFS:eqn:heatEqn)): for a.e.
+`t > 0`, `∫_U ∂ₜu(t) ζ = -∫_U ∇u(t) · ∇ζ` for every Lipschitz `ζ` with compact support in
 `{u(·, t) > 0} ∩ U`.
 
-Proof: (4.5) tested with `ρₙ(x - q) ψ(s)` (`q` in a countable dense set) and du Bois-Reymond in
-time give the slice identity for all translated bumps outside a common null set of times
-(`ae_heat_slice_bump`); the density of translated bumps (`heat_slice_of_bumps`) concludes, using
-`∂ₜu(t) ∈ L²(U)` and the local boundedness of `∇u(t)`. -/
+Proof: [(4.6)](#AFS:eqn:weakHeat) tested with `ρₙ(x - q) ψ(s)` (`q` in a countable dense set) and du
+Bois-Reymond in time give the slice identity for all translated bumps outside a common null set of
+times (`ae_heat_slice_bump`); the density of translated bumps (`heat_slice_of_bumps`) concludes,
+using `∂ₜu(t) ∈ L²(U)` and the local boundedness of `∇u(t)`. -/
 theorem ae_heat_slice (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
     (hheat : WeakHeatInPos U u w) :
     ∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))),
@@ -174,14 +177,15 @@ theorem ae_heat_slice (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
     (ae_memL2_slice_and_exists_wSlice h).1] with s hs hb hmem
   exact heat_slice_of_bumps hU h hDd hs hmem hb
 
-/-- **Time localization of (3.3)** ((4.17)): for a.e.
-`t > 0`, the slice integrand is integrable and has zero integral for every Lipschitz `ξ` with
-compact support in `U` (in particular for `ξ ∈ C¹_c(U; ℝᵈ)`).
+/-- **Time localization of [(3.3)](#AFS:e.parabolic-inner-var)**
+([(4.8)](#AFS:eqn:innerVarLocalized)): for a.e. `t > 0`, the slice integrand is integrable and has
+zero integral for every Lipschitz `ξ` with compact support in `U` (in particular for
+`ξ ∈ C¹_c(U; ℝᵈ)`).
 
-Proof: (3.3) tested with `ψ(s) ρₙ(x - q) eᵢ` (`q` in a countable dense set) and du Bois-Reymond
-in time give the slice identity for all translated bumps times coordinate vectors outside a
-common null set of times (`ae_innerVar_slice_bump`); the coordinate decomposition of the
-integrand and the density of translated bumps (`innerVar_slice_of_bumps`) conclude, using
+Proof: [(3.3)](#AFS:e.parabolic-inner-var) tested with `ψ(s) ρₙ(x - q) eᵢ` (`q` in a countable dense
+set) and du Bois-Reymond in time give the slice identity for all translated bumps times coordinate
+vectors outside a common null set of times (`ae_innerVar_slice_bump`); the coordinate decomposition
+of the integrand and the density of translated bumps (`innerVar_slice_of_bumps`) conclude, using
 `∂ₜu(t) ∈ L²(U)`, the local boundedness of `∇u(t)` and the local Lipschitz continuity of `Q²`. -/
 theorem ae_innerVar_slice (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
     (hQ : LocallyLipschitzOn U fun y ↦ Q y ^ 2) :

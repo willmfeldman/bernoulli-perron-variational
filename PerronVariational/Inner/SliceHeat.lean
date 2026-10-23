@@ -13,24 +13,26 @@ import PerronVariational.Inner.SliceFubini
 import PerronVariational.Inner.SliceTools
 
 /-!
-# Time localization of the weak heat equation (4.5)
+# Time localization of the weak heat [equation (4.6)](#AFS:eqn:weakHeat)
 
-Proof of **Theorem 3.10**, Step 2 ((4.12)), of F. Abedin, W. M. Feldman, K. Stinson,
+Proof of **[Theorem 3.14](#AFS:t.longtime-inner)**, Step 2 ([(4.9)](#AFS:eqn:heatEqn)), of F.
+Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
-arXiv:2609.14981: for a parabolic inner variational solution satisfying the weak heat equation
-(4.5) in `{u > 0}` (`WeakHeatInPos`), for a.e. `t > 0`,
+arXiv:2609.14981: for a parabolic inner variational solution satisfying the weak heat [equation
+(4.6)](#AFS:eqn:weakHeat) in `{u > 0}` (`WeakHeatInPos`), for a.e. `t > 0`,
 `∫_U ∂ₜu(t) ζ = -∫_U ∇u(t) · ∇ζ` for every Lipschitz `ζ` with compact support in
 `{u(·, t) > 0} ∩ U`.
 
-Definition 3.7 of the paper does not include (4.5); here the flow is assumed to satisfy it, because
-Theorem 3.10 is false without it (a time-independent `u = 1 + |x₁|` with `χ ≡ 1` is a parabolic
-inner variational solution whose limit is not harmonic in `{u > 0}`), and Step 2 of the paper's
-proof uses it.
+`IsParaInnerVarSolution` does not include [(4.6)](#AFS:eqn:weakHeat)
+([Definition 3.8(iv)](#AFS:d.parabolic-inner) of the paper, in weak form); here the flow is assumed
+to satisfy it, because [Theorem 3.14](#AFS:t.longtime-inner) is false without it (a time-independent
+`u = 1 + |x₁|` with `χ ≡ 1` satisfies the remaining conditions, and its limit is not harmonic in
+`{u > 0}`), and Step 2 of the proof uses it.
 
-Proof: test (4.5) with `ρₙ(x - q) ψ(s)` (`q` in a countable dense set, `ψ ∈ C_c^∞` in time) and
-apply du Bois-Reymond in time (`ae_setIntegral_slice_eq_zero`); this gives the slice identity for
-all translated bumps outside a common null set of times. Conclude by the density of translated
-bumps (`firstOrderFunctional_eq_zero_of_bumps`).
+Proof: test [(4.6)](#AFS:eqn:weakHeat) with `ρₙ(x - q) ψ(s)` (`q` in a countable dense set,
+`ψ ∈ C_c^∞` in time) and apply du Bois-Reymond in time (`ae_setIntegral_slice_eq_zero`); this gives
+the slice identity for all translated bumps outside a common null set of times. Conclude by the
+density of translated bumps (`firstOrderFunctional_eq_zero_of_bumps`).
 
 ## Main results
 
@@ -73,14 +75,6 @@ theorem gradient_mollAt_eq_zero {n : ℕ} {q x : E d} (hx : x ∉ closedBall q (
   have hts : tsupport (mollAt n q) ⊆ closedBall q (bumpRad n) :=
     closure_minimal (fun y hy ↦ by_contra fun h' ↦ hy (mollAt_eq_zero h')) isClosed_closedBall
   simp [gradient, fderiv_of_notMem_tsupport ℝ (fun h ↦ hx (hts h))]
-
-theorem exists_bound_mollAt (n : ℕ) (q : E d) :
-    ∃ C, ∀ x, |mollAt n q x| ≤ C ∧ ‖∇ (mollAt n q) x‖ ≤ C := by
-  obtain ⟨C, hC⟩ := exists_bound_moll (d := d) n
-  refine ⟨C, fun x ↦ ⟨(hC (x - q)).1, ?_⟩⟩
-  have : fderiv ℝ (mollAt n q) x = fderiv ℝ (moll d n) (x - q) := by
-    rw [show mollAt n q = fun x ↦ moll d n (x - q) from rfl, fderiv_comp_sub]
-  simpa [gradient, this] using (hC (x - q)).2
 
 section Heat
 
@@ -142,7 +136,7 @@ theorem ae_heat_slice_bump (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w �
       hvan p fun hB ↦ hp.2 ⟨hB, hp.1.2⟩
   refine ae_setIntegral_slice_eq_zero hU.measurableSet measurableSet_Ioi hT
     (bumpTimes_subset n q) hint fun ψ hψs hψc hψT ↦ ?_
-  -- test (4.5) with `φ(x, s) = ρ(x - q) ψ(s)`
+  -- test [(4.6)](#AFS:eqn:weakHeat) with `φ(x, s) = ρ(x - q) ψ(s)`
   set φ : E d × ℝ → ℝ := fun p ↦ mollAt n q p.1 * ψ p.2
   have hφs : ContDiff ℝ ∞ φ :=
     ((contDiff_mollAt n q).comp contDiff_fst).mul (hψs.comp contDiff_snd)

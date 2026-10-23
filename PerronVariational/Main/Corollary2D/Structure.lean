@@ -27,11 +27,11 @@ import PerronVariational.Stationary.TwoPlane.Step3
 import PerronVariational.Stationary.ViscosityLocal
 
 /-!
-# Corollary 1.2: classification of planar blow-ups and the structure theorem
+# [Corollary 1.2](#AFS:c.2d-structure): classification of planar blow-ups and the structure theorem
 
-**Corollary 1.2** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: classification of
-blow-ups in the plane
+**[Corollary 1.2](#AFS:c.2d-structure)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+classification of blow-ups in the plane
 (`blowup_classification`), the structure of the free boundary for downward resp. upward
 minimizers (`fb_structure_of_downward`, `classical_of_upward`), existence of blow-ups
 (`exists_isBlowupLimit`), and `corollary_2d_smallest`, `corollary_2d_largest`.
@@ -77,16 +77,16 @@ theorem _root_.PerronVariational.Setting.Q_pos (S : Setting d) {x : E d} (hx : x
   S.Qmin_pos.trans_le (S.Q_mem x (subset_closure hx)).1
 
 /-- **Blow-up classification at a free boundary point in the plane** (proof sketch of
-Corollary 1.2). Let `u` be a viscosity and inner variational solution in `U ⊆ ℝ²`, `x₀` a free
-boundary point and `v` a blow-up limit of `u` at `x₀`. Assume that half-plane blow-ups at `x₀`
-force `u` to be classical near `x₀` (`hreg`: flatness + ε-regularity) and that `v ≢ 0`
-(`hnz`: non-degeneracy). Then either `u` is classical near `x₀`, or `v = α |y · e|` with
+[Corollary 1.2](#AFS:c.2d-structure)). Let `u` be a viscosity and inner variational solution in
+`U ⊆ ℝ²`, `x₀` a free boundary point and `v` a blow-up limit of `u` at `x₀`. Assume that half-plane
+blow-ups at `x₀` force `u` to be classical near `x₀` (`hreg`: flatness + ε-regularity) and that
+`v ≢ 0` (`hnz`: non-degeneracy). Then either `u` is classical near `x₀`, or `v = α |y · e|` with
 `0 < α ≤ Q(x₀)`.
 
 Inputs: the Weiss monotonicity formula (`Registry.blowup_homogeneous`: `v` is `1`-homogeneous and
 inner variational with coefficient `Q(x₀)`), the planar classification of Jerison–Kamburov
 (`Registry.classification_homogeneous_planar`), and the supersolution test
-(`le_of_isBlowupLimit_twoPlane`, via Lemma 2.4). -/
+(`le_of_isBlowupLimit_twoPlane`, via [Lemma 2.5](#AFS:l.super-stability)). -/
 theorem blowup_classification (S : Setting 2) {u χ : E 2 → ℝ} (hvisc : IsViscSolution S.U S.Q u)
     (hinner : IsInnerVarSolution S.U S.Q u χ) {x₀ : E 2} (hx₀ : x₀ ∈ freeBoundary u S.U)
     {v : E 2 → ℝ} (hv : IsBlowupLimit u x₀ v)
@@ -110,8 +110,9 @@ theorem blowup_classification (S : Setting 2) {u χ : E 2 → ℝ} (hvisc : IsVi
       (S.continuousAt_Q hxU) hq.le hv he htwo, htwo⟩
   · exact absurd (hzero y₀) hy₀
 
-/-- **Two-plane blow-ups of local downward minimizers have slope `≥ Q(x₀)`** (Corollary 2.13 and
-Proposition 2.14). -/
+/-- **Two-plane blow-ups of local downward minimizers have slope `≥ Q(x₀)`**
+([Corollary 2.18](#AFS:c.blow-up-directional) and
+[Proposition 2.20](#AFS:p.two-plane-minimizing-props)). -/
 theorem le_of_downwardMinimizer (S : Setting d) {u : E d → ℝ} (hL : LocallyLipschitzOn S.U u)
     {x₀ : E d} (hxU : x₀ ∈ S.U) {r : ℝ} (hr : 0 < r) (hrU : closedBall x₀ r ⊆ S.U)
     (hmin : IsDownwardMinimizer (ball x₀ r) S.Q u) {v : E d → ℝ} (hv : IsBlowupLimit u x₀ v)
@@ -130,8 +131,9 @@ theorem le_of_downwardMinimizer (S : Setting d) {u : E d → ℝ} (hL : LocallyL
   rw [this] at hmin'
   exact (twoPlane_downwardMinimizer_iff hα (S.Q_pos hxU) he).1 hmin'
 
-/-- **Two-plane blow-ups are excluded for local upward minimizers** (Corollary 2.13 and
-Proposition 2.14). -/
+/-- **Two-plane blow-ups are excluded for local upward minimizers**
+([Corollary 2.18](#AFS:c.blow-up-directional) and
+[Proposition 2.20](#AFS:p.two-plane-minimizing-props)). -/
 theorem false_of_upwardMinimizer (S : Setting d) {u : E d → ℝ} (hL : LocallyLipschitzOn S.U u)
     {x₀ : E d} {r : ℝ} (hr : 0 < r) (hrU : closedBall x₀ r ⊆ S.U)
     (hmin : IsUpwardMinimizer (ball x₀ r) S.Q u) {v : E d → ℝ} (hv : IsBlowupLimit u x₀ v)
@@ -162,15 +164,15 @@ theorem isClassicalNear_of_halfPlane (S : Setting d) {u : E d → ℝ}
 
 end Classification
 
-/-! ### Part 4: Corollary 1.2 -/
+/-! ### Part 4: [Corollary 1.2](#AFS:c.2d-structure) -/
 
 section Corollary
 
-/-- **Corollary 1.2(i), abstract form.** Let `u` in `U ⊆ ℝ²` be a viscosity and inner variational
-solution which is a downward minimizer of `J_Q` near each free boundary point and uniformly
-non-degenerate near each free boundary point. Then the free boundary splits into the relatively
-open set `FB_reg` of classical points and the set `FB_TP` at which every blow-up is
-`Q(x₀) |y · e|`. -/
+/-- **[Corollary 1.2(i)](#AFS:part.smallest-reg), abstract form.** Let `u` in `U ⊆ ℝ²` be a
+viscosity and inner variational solution which is a downward minimizer of `J_Q` near each free
+boundary point and uniformly non-degenerate near each free boundary point. Then the free boundary
+splits into the relatively open set `FB_reg` of classical points and the set `FB_TP` at which every
+blow-up is `Q(x₀) |y · e|`. -/
 theorem fb_structure_of_downward (S : Setting 2) {u χ : E 2 → ℝ}
     (hvisc : IsViscSolution S.U S.Q u) (hinner : IsInnerVarSolution S.U S.Q u χ)
     (hdown : ∀ x ∈ freeBoundary u S.U, ∃ r > 0, closedBall x r ⊆ S.U ∧
@@ -203,10 +205,11 @@ theorem fb_structure_of_downward (S : Setting 2) {u χ : E 2 → ℝ}
     have hQα := le_of_downwardMinimizer S hinner.locLip hxU hr hrU hmin hv he hα hvα
     exact ⟨e, he, fun y ↦ by rw [hvα y, le_antisymm hαQ hQα]⟩
 
-/-- **Corollary 1.2(ii), abstract form.** Let `u` in `U ⊆ ℝ²` be a viscosity and inner variational
-solution which is an upward minimizer of `J_Q` near each free boundary point, whose blow-ups at
-free boundary points do not vanish identically, and at whose free boundary points half-plane
-blow-ups give classical points. Then `u` is classical near every free boundary point. -/
+/-- **[Corollary 1.2(ii)](#AFS:part.largest-reg), abstract form.** Let `u` in `U ⊆ ℝ²` be a
+viscosity and inner variational solution which is an upward minimizer of `J_Q` near each free
+boundary point, whose blow-ups at free boundary points do not vanish identically, and at whose free
+boundary points half-plane blow-ups give classical points. Then `u` is classical near every free
+boundary point. -/
 theorem classical_of_upward (S : Setting 2) {u χ : E 2 → ℝ}
     (hvisc : IsViscSolution S.U S.Q u) (hinner : IsInnerVarSolution S.U S.Q u χ)
     (hup : ∀ x ∈ freeBoundary u S.U, ∃ r > 0, closedBall x r ⊆ S.U ∧
@@ -225,8 +228,9 @@ theorem classical_of_upward (S : Setting 2) {u χ : E 2 → ℝ}
     exact (false_of_upwardMinimizer S hinner.locLip hr hrU hmin hv he hα hvα).elim
 
 
-/-- **Existence of blow-up limits** (Arzelà–Ascoli; proof sketch of Corollary 1.2). If `u` is
-locally Lipschitz in `U` and vanishes at `x₀ ∈ U`, then `u` has a blow-up limit at `x₀`. -/
+/-- **Existence of blow-up limits** (Arzelà–Ascoli; proof sketch of
+[Corollary 1.2](#AFS:c.2d-structure)). If `u` is locally Lipschitz in `U` and vanishes at `x₀ ∈ U`,
+then `u` has a blow-up limit at `x₀`. -/
 theorem exists_isBlowupLimit {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ}
     (hL : LocallyLipschitzOn U u) {x₀ : E d} (hx₀ : x₀ ∈ U) (hu0 : u x₀ = 0) :
     ∃ v, IsBlowupLimit u x₀ v := by
@@ -420,13 +424,14 @@ theorem not_frequently_pos_far (S : Setting 2) {u χ : E 2 → ℝ}
     · rw [mem_ball_zero_iff, norm_smul, he]; norm_num
   exact absurd h0 (not_le.2 hRpos)
 
-/-- **The flatness step for largest subsolutions** (proof sketch of Corollary 1.2(ii)). If some
-blow-up of the largest subsolution at a free boundary point `x₀` is the half-plane solution
-`Q(x₀) (y · e)₊`, then `u` is `ε`-flat in arbitrarily small balls around `x₀`. The paper applies
-ε-regularity directly after the blow-up; but locally uniform convergence gives only the lower half
-of the flatness condition, and Theorem B.1 (non-degeneracy at free boundary points only) does not by
-itself give `u = 0` on `{(y - x₀) · e < -ε s}`. Here we add the missing step: by Theorem B.1 there
-are no free boundary points on the far side, so `u` vanishes identically or nowhere there
+/-- **The flatness step for largest subsolutions** (proof sketch of
+[Corollary 1.2(ii)](#AFS:part.largest-reg)). If some blow-up of the largest subsolution at a free
+boundary point `x₀` is the half-plane solution `Q(x₀) (y · e)₊`, then `u` is `ε`-flat in arbitrarily
+small balls around `x₀`. Locally uniform convergence gives only the lower half of the flatness
+condition, and [Theorem 2.10](#AFS:t.largest-sub-non-degen) (non-degeneracy at free boundary points
+only) does not by itself give `u = 0` on `{(y - x₀) · e < -ε s}`. As in the paper's lemma on
+one-plane blow-up limits: by [Theorem 2.10](#AFS:t.largest-sub-non-degen) there are no free boundary
+points on the far side, so `u` vanishes identically or nowhere there
 (`flat_or_pos_of_halfPlane_blowup`); the second alternative is excluded by the inner variational
 structure, the sequence form of the Weiss blow-up result and the planar classification
 (`not_frequently_pos_far`). -/
@@ -467,13 +472,15 @@ end Corollary2D
 
 open Corollary2D
 
-/-- **Corollary 1.2(i)**, from Theorem 1.1 (smallest case), Proposition 6.1 (continuity on `Ū`)
-and the non-degeneracy of smallest supersolutions.
+/-- **[Corollary 1.2(i)](#AFS:part.smallest-reg)**, from [Theorem 1.1](#AFS:t.main) (smallest case),
+[Proposition 6.1](#AFS:p.inner-smallest) (continuity on `Ū`) and the non-degeneracy of smallest
+supersolutions.
 
-The paper's proof sketch excludes two-plane blow-ups `α |y · e|` with `α > Q(x₀)` (supersolution
-test) and with `0 < α < Q(x₀)` (Proposition 2.14), but not the degenerate blow-up `0`. Here `0` is
-excluded by the uniform non-degeneracy of Perron's smallest supersolution
-(`Setting.perronSmallest_uniformlyNondegenerate`, a radial barrier together with Lemma 2.7). -/
+Two-plane blow-ups `α |y · e|` are excluded for `α > Q(x₀)` by the supersolution test and for
+`0 < α < Q(x₀)` by [Proposition 2.20](#AFS:p.two-plane-minimizing-props); the degenerate blow-up `0`
+is excluded by the uniform non-degeneracy of Perron's smallest supersolution
+(`Setting.perronSmallest_uniformlyNondegenerate`, a radial barrier together with
+[Lemma 2.8](#AFS:l.local-minimality); the paper uses the non-degeneracy of downward minimizers). -/
 theorem corollary_2d_smallest_of (hmain : MainSmallestStatement) (h61 : InnerSmallestStatement) :
     Corollary2DSmallestStatement := by
   intro S g hg hbdry
@@ -482,17 +489,18 @@ theorem corollary_2d_smallest_of (hmain : MainSmallestStatement) (h61 : InnerSma
   exact fb_structure_of_downward S hvisc hinner hdown fun x hx ↦
     S.perronSmallest_uniformlyNondegenerate hg hvisc.1 hcont hx
 
-/-- **Corollary 1.2(i)**. -/
+/-- **[Corollary 1.2(i)](#AFS:part.smallest-reg)**. -/
 theorem corollary_2d_smallest : Corollary2DSmallestStatement :=
   corollary_2d_smallest_of main_smallest
     (inner_smallest_of parabolic_existence_bdd longtime_innerVar)
 
 
-/-- **Theorem B.1** for Perron's largest subsolution. -/
+/-- **[Theorem 2.10](#AFS:t.largest-sub-non-degen)** for Perron's largest subsolution. -/
 theorem largestSub_nondegenerate : LargestSubNondegenerateStatement :=
   largestSub_nondegenerate_of (inner_largest_of parabolic_existence_bdd longtime_innerVar)
 
-/-- **Corollary 1.2(ii)**, from Theorem 1.1 (largest case) and Theorem B.1. -/
+/-- **[Corollary 1.2(ii)](#AFS:part.largest-reg)**, from [Theorem 1.1](#AFS:t.main) (largest case)
+and [Theorem 2.10](#AFS:t.largest-sub-non-degen). -/
 theorem corollary_2d_largest_of (hmain : MainLargestStatement)
     (hB1 : LargestSubNondegenerateStatement) : Corollary2DLargestStatement := by
   intro S g hg
@@ -502,9 +510,23 @@ theorem corollary_2d_largest_of (hmain : MainLargestStatement)
       he) fun x₀ hx₀ ↦ exists_isBlowupLimit S.isOpen hinner.locLip hx₀.2
       (eq_zero_of_mem_freeBoundary S.isOpen hvisc.1.1 hvisc.1.2.1 hx₀)
 
-/-- **Corollary 1.2(ii)**. -/
+/-- **[Corollary 1.2(ii)](#AFS:part.largest-reg)**. -/
 theorem corollary_2d_largest : Corollary2DLargestStatement :=
   corollary_2d_largest_of main_largest largestSub_nondegenerate
+
+/-- **[Corollary 1.2(i)](#AFS:part.smallest-reg)**, paper-literal (`g` as in
+[Definition 2.3](#AFS:d.strict-sub)). Derived from the general `corollary_2d_smallest` through
+`IsUnifStrictSub.isStrictSub`; the non-degeneracy input
+(`Setting.perronSmallest_uniformlyNondegenerate`) uses the general
+[Lemma 2.8](#AFS:l.local-minimality), so this is not a paper-route proof. -/
+theorem corollary_2d_smallest_unif : Corollary2DSmallestUnifStatement :=
+  fun S g hg hbdry ↦ corollary_2d_smallest S g hg.isStrictSub hbdry
+
+/-- **[Corollary 1.2(ii)](#AFS:part.largest-reg)**, paper-literal (`g` as in
+[Definition 2.3](#AFS:d.strict-sub)). Derived from the general `corollary_2d_largest` through
+`IsUnifStrictSuper.isStrictSuper`. -/
+theorem corollary_2d_largest_unif : Corollary2DLargestUnifStatement :=
+  fun S g hg ↦ corollary_2d_largest S g hg.isStrictSuper
 
 end PerronVariational
 

@@ -17,9 +17,10 @@ defined here by duality: `sup {∫_Ω χ div ψ : ψ ∈ C¹_c(Ω; ℝᵈ), |ψ|
 `∫ η |∇χ|` for the total variation measure of `χ ∈ BV`; the duality formula is the standard
 equivalent definition and needs no measure-valued gradient.
 
-* `weightedTV Ω η χ` on `ℝᵈ` (used for (3.15) and, with `η = 1`, the hypotheses of Lemma 2.10).
-* `weightedTVₓ Ω η χ` on space-time `ℝᵈ × ℝ` with the *spatial* divergence (used for (3.13); the
-  gradient `∇χ` there is spatial, cf. (4.7)).
+* `weightedTV Ω η χ` on `ℝᵈ` (used for [(3.16)](#AFS:eqn:inftyPerim) and, with `η = 1`, the
+  hypotheses of [Lemma 2.14](#AFS:l.inner-compactness-stability)).
+* `weightedTVₓ Ω η χ` on space-time `ℝᵈ × ℝ` with the *spatial* divergence (used for
+  [(3.14)](#AFS:eqn:chiEst2); the gradient `∇χ` there is spatial, cf. [(4.7)](#AFS:eqn:chiEpsBV)).
 * `totalVariationOn V χ = weightedTV V 1 χ`.
 
 Since `ψ ↦ -ψ` preserves the class of test fields, the supremum of `∫ χ div ψ` equals the

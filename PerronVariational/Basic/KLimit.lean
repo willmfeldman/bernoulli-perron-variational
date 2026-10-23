@@ -15,8 +15,9 @@ public import Mathlib.Basic.Real.Basic
 Notation from F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
 solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
-* `upperKLimit A l`: the paper's `limsup*` of sets (used in Lemma 2.4, Prop 5.3 and Lemma 5.5).
-* `PrecOn u v E F`: the paper's `u ≺_E v on F` (Definition 3.1).
+* `upperKLimit A l`: the paper's `limsup*` of sets (used in [Lemma 2.5](#AFS:l.super-stability),
+  [Prop 5.3](#AFS:p.semilinear-limit-viscosity) and [Proposition 5.5](#AFS:p.subsolution-limit)).
+* `PrecOn u v E F`: the paper's `u ≺_E v on F` ([Definition 3.1](#AFS:d.prec-ordering)).
 -/
 
 open Set Filter Topology
@@ -31,11 +32,11 @@ variable {X ι : Type*}
 `x` belongs to it iff every neighbourhood of `x` meets `A i` for frequently many `i` along `l`.
 For `l = atTop` on `ℕ` in a metric space this is the set of limits `x = lim x_{j_k}` of
 subsequences with `x_{j_k} ∈ A_{j_k}`, which is the paper's usage (e.g. the proof of
-Lemma 5.1). -/
+[Lemma 5.1](#AFS:l.limit-max)). -/
 def upperKLimit [TopologicalSpace X] (A : ι → Set X) (l : Filter ι) : Set X :=
   {x | ∀ N ∈ 𝓝 x, ∃ᶠ i in l, (A i ∩ N).Nonempty}
 
-/-- `u ≺_E v on F` (paper, Definition 3.1): `u < v` on `E ∩ F`. -/
+/-- `u ≺_E v on F` (paper, [Definition 3.1](#AFS:d.prec-ordering)): `u < v` on `E ∩ F`. -/
 def PrecOn (u v : X → ℝ) (Eset F : Set X) : Prop := ∀ p ∈ Eset ∩ F, u p < v p
 
 end PerronVariational

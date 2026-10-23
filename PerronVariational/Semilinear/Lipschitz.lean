@@ -17,30 +17,30 @@ import PerronVariational.Semilinear.Monotone
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Interior Lipschitz bounds for the semilinear problem (Proposition 3.8(iv))
+# Interior Lipschitz bounds, semilinear problem ([Proposition 3.12(iii)](#AFS:part.lipschitz))
 
-Appendix A.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: Propositions A.5 and
-A.6 and Lemma A.7, proved by the Bernstein method.
+[Appendix B.4](#AFS:s.lipschitz-space) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+Propositions [B.2](#AFS:p.localLip) and [B.3](#AFS:p.localLip-initial-data) and
+[Lemma B.4](#AFS:l.lipschitz-initial), proved by the Bernstein method.
 
-* `exists_interiorLipEst` (Proposition A.5 for solutions of (3.4)): approximate `Q` by smooth
-  coefficients (as in the appendix: `Q` is only Lipschitz, so solutions are only `C^{2,1}`), apply
-  the smooth Bernstein estimate `bernstein_interior_smooth` to the approximate solutions (which
-  are smooth), and pass to the limit by the comparison principle.
-* `exists_norm_gradₓ_le` (Lemma A.7): the same with smooth data as well (the "mollification
-  argument" of the proof of Lemma A.7) and the initial-data estimate `bernstein_initial_smooth`.
-  The mollification argument also needs the regularity of the gradient up to `t = 0` for smooth
-  data, `IsSemilinearSolution.continuousOn_gradₓ_of_contDiff`, which comes from
-  parabolic-basic-theory v0.1.0.
+* `exists_interiorLipEst` ([Proposition B.2](#AFS:p.localLip) for solutions of
+  [(3.4)](#AFS:e.bernoulli-parabolic-semilinear)): approximate `Q` by smooth coefficients (as in the
+  appendix: `Q` is only Lipschitz, so solutions are only `C^{2,1}`), apply the smooth Bernstein
+  estimate `bernstein_interior_smooth` to the approximate solutions (which are smooth), and pass to
+  the limit by the comparison principle.
+* `exists_norm_gradₓ_le` ([Lemma B.4](#AFS:l.lipschitz-initial)): the same with smooth data as well
+  (the "mollification argument" of the proof of [Lemma B.4](#AFS:l.lipschitz-initial)) and the
+  initial-data estimate `bernstein_initial_smooth`. The mollification argument also needs the
+  regularity of the gradient up to `t = 0` for smooth data,
+  `IsSemilinearSolution.continuousOn_gradₓ_of_contDiff`, which comes from parabolic-basic-theory
+  v0.1.0.
 
-Deviations from the paper's statements. Lemma A.7 assumes a bound on `‖∇g‖_{L^∞(U)}`; here we
-assume a Lipschitz constant `L` of `g` on `Ū`, because for non-convex `U` the gradient bound does
-not give an `ε`-independent Lipschitz constant on `Ū` (only the Lipschitz bound on balls
-`B_{2r} ⊆ U` is used). Proposition A.6 assumes `T ≤ 4r²`; here it is not needed (the cutoff is
-in space only), so Lemma A.7 follows from Proposition A.6 alone.
-
-Note (paper typo): Propositions A.5 and A.6 write the equation as `(∂ₜ - Δ)u = -Q β_ε(u)`; the
-equation (3.4) has `Q²`. The statements below use (3.4).
+[Lemma B.4](#AFS:l.lipschitz-initial) is stated with a Lipschitz constant `L` of `g` on `Ū` (only
+the Lipschitz bound on balls `B_{2r} ⊆ U` is used). [Proposition B.3](#AFS:p.localLip-initial-data)
+assumes `T ≤ 4r²`; here it is not needed (the cutoff is in space only), so
+[Lemma B.4](#AFS:l.lipschitz-initial) follows from [Proposition B.3](#AFS:p.localLip-initial-data)
+alone.
 -/
 
 open Set Filter Topology Metric
@@ -53,10 +53,10 @@ namespace PerronVariational
 variable {d : ℕ}
 
 /-- **Regularity of the gradient up to the initial time for smooth data** (the step of the
-"mollification argument" in the proof of Lemma A.7 that the paper leaves implicit:
-"it suffices to consider the case `g_ε` is smooth, so that `∇u_ε` is continuous at `t = 0` on
-`V`"). If `Q` and the data `g` are `C^∞`, the spatial gradient of the solution of (3.4) is
-continuous on `U × [0, ∞)`.
+"mollification argument" in the proof of [Lemma B.4](#AFS:l.lipschitz-initial) that the paper leaves
+implicit: "it suffices to consider the case `g_ε` is smooth, so that `∇u_ε` is continuous at `t = 0`
+on `V`"). If `Q` and the data `g` are `C^∞`, the spatial gradient of the solution of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) is continuous on `U × [0, ∞)`.
 
 This is interior (in space) parabolic Schauder regularity up to the initial time
 (O. A. Ladyzhenskaya, V. A. Solonnikov, N. N. Ural'ceva, *Linear and Quasilinear Equations of
@@ -135,13 +135,15 @@ theorem Setting.abs_le_Qmax (S : Setting d) {Q' : E d → ℝ}
     (h : ∀ x, S.Qmin ≤ Q' x ∧ Q' x ≤ S.Qmax) (x : E d) : |Q' x| ≤ S.Qmax := by
   rw [abs_of_nonneg (S.Qmin_pos.le.trans (h x).1)]; exact (h x).2
 
-/-! ### Proposition A.5 and Lemma A.7 -/
+/-! ### [Proposition B.2](#AFS:p.localLip) and [Lemma B.4](#AFS:l.lipschitz-initial) -/
 
-/-- **Proposition A.5**, i.e. the interior Lipschitz bound (3.9) of Proposition 3.8(iv), for
-solutions of (3.4): there is a constant `C` (depending on the setting and on `β` only, in
-particular not on `ε`) such that every solution `u` of (3.4) with nonnegative data
-`g`, Lipschitz on `Ū`, satisfies `‖∇u‖_{L^∞(Q_r(x,t))} ≤ C (r⁻¹ ‖u‖_{L^∞(Q_{2r}(x,t))} + 1)`
-whenever `Q_{2r}(x, t) ⊆ U_∞` and `0 < r ≤ 1`.
+/-- **[Proposition B.2](#AFS:p.localLip)**, i.e. the interior Lipschitz bound
+[(3.10)](#AFS:e.localEst) of [Proposition 3.12(iii)](#AFS:part.lipschitz), for solutions of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear): there is a constant `C` (depending on the setting
+and on `β` only, in particular not on `ε`) such that every solution `u` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with nonnegative data `g`, Lipschitz on `Ū`,
+satisfies `‖∇u‖_{L^∞(Q_r(x,t))} ≤ C (r⁻¹ ‖u‖_{L^∞(Q_{2r}(x,t))} + 1)` whenever `Q_{2r}(x, t) ⊆ U_∞`
+and `0 < r ≤ 1`.
 
 Proof: smooth approximation of `Q` (`IsSemilinearSolution.exists_smooth_approx`), the smooth
 estimate `bernstein_interior_smooth` for the approximate solutions, and
@@ -215,13 +217,15 @@ theorem exists_interiorLipEst (S : Setting d) {β : ℝ → ℝ} (hβ : IsReacti
     rw [Real.norm_eq_abs]
     exact hclose n z (subset_closure hzU.1) s hs1
 
-/-- **Lemma A.7**, second part of Proposition 3.8(iv): for `V ⊂⊂ U` and bounds `L`, `M` there
-is `C_V` such that for `0 < ε ≤ 1`, every solution `u` of (3.4) with data `0 ≤ g ≤ M`,
-`L`-Lipschitz on `Ū`, satisfies `sup_{t > 0} ‖∇u(·, t)‖_{L^∞(V)} ≤ C_V`.
+/-- **[Lemma B.4](#AFS:l.lipschitz-initial)**, second part of
+[Proposition 3.12(iii)](#AFS:part.lipschitz): for `V ⊂⊂ U` and bounds `L`, `M` there is `C_V` such
+that for `0 < ε ≤ 1`, every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data
+`0 ≤ g ≤ M`, `L`-Lipschitz on `Ū`, satisfies `sup_{t > 0} ‖∇u(·, t)‖_{L^∞(V)} ≤ C_V`.
 
 Proof: smooth approximation of `Q` and `g` (`IsSemilinearSolution.exists_smooth_approx`), the
-smooth initial-data estimate `bernstein_initial_smooth` (Proposition A.6) on
-`B_{2r}(x) × [0, ∞)` with `2r ≤ dist(V, ∂U)`, the continuity of `∇u` at `t = 0` for smooth data
+smooth initial-data estimate `bernstein_initial_smooth`
+([Proposition B.3](#AFS:p.localLip-initial-data)) on `B_{2r}(x) × [0, ∞)` with `2r ≤ dist(V, ∂U)`,
+the continuity of `∇u` at `t = 0` for smooth data
 (`IsSemilinearSolution.continuousOn_gradₓ_of_contDiff`), and
 `norm_gradient_le_of_tendsto_pointwise`. -/
 theorem exists_norm_gradₓ_le (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)

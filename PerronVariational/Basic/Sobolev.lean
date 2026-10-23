@@ -23,8 +23,9 @@ solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
   explicit data `G`. The paper works with the Sobolev space `H¹(U)` and its (unique a.e.) weak
   gradient; here a function comes with a chosen `L²` weak gradient, which is equivalent and avoids
   quotient spaces.
-* `energyJ V Q u G`: the Alt–Caffarelli energy `J_Q(u; V)` (the paper's (1.2)), and
-  `energyJχ V Q G χ`: the energy `J(u, χ; V)` of a pair (the paper's §3.4).
+* `energyJ V Q u G`: the Alt–Caffarelli energy `J_Q(u; V)` (the paper's [(1.2)](#AFS:e.energy)), and
+  `energyJχ V Q G χ`: the energy `J(u, χ; V)` of a pair (the paper's
+  [§3.4](#AFS:s.semilinear-intro)).
 * `TendstoLpLoc` (strong `L^p_loc` convergence) and `TendstoWeakL2` (weak `L²` convergence).
 
 The paper's energies are real integrals of integrable functions; here they are `ℝ≥0∞`-valued lower
@@ -45,14 +46,14 @@ variable {d : ℕ}
 
 export GMTFoundations (HasWeakGradient MemH1 MemH1Loc TendstoLpLoc TendstoWeakL2)
 
-/-- The Alt–Caffarelli energy `J_Q(u; V) = ∫_V |∇u|² + Q² 1_{u>0}` (paper (1.2)),
+/-- The Alt–Caffarelli energy `J_Q(u; V) = ∫_V |∇u|² + Q² 1_{u>0}` (paper [(1.2)](#AFS:e.energy)),
 with the gradient supplied as data `G`. Valued in `ℝ≥0∞` (a lower integral), so no integrability
 condition is needed. -/
 noncomputable def energyJ (V : Set (E d)) (Q u : E d → ℝ) (G : E d → E d) : ℝ≥0∞ :=
   ∫⁻ x in V, ENNReal.ofReal (‖G x‖ ^ 2 + Q x ^ 2 * (posSet u V).indicator 1 x)
 
-/-- The energy of a pair, `J(u, χ; V) = ∫_V |∇u|² + Q² χ` (paper §3.4), with the gradient
-supplied as data `G`. Valued in `ℝ≥0∞` (a lower integral). -/
+/-- The energy of a pair, `J(u, χ; V) = ∫_V |∇u|² + Q² χ` (paper [§3.4](#AFS:s.semilinear-intro)),
+with the gradient supplied as data `G`. Valued in `ℝ≥0∞` (a lower integral). -/
 noncomputable def energyJχ (V : Set (E d)) (Q : E d → ℝ) (G : E d → E d) (χ : E d → ℝ) :
     ℝ≥0∞ :=
   ∫⁻ x in V, ENNReal.ofReal (‖G x‖ ^ 2 + Q x ^ 2 * χ x)

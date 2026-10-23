@@ -10,17 +10,17 @@ public import PerronVariational.Semilinear.AutonomousODE
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# The supersolution profile (Lemma A.3)
+# The supersolution profile ([Lemma 3.10](#AFS:l.profile-super))
 
-Lemma A.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+[Lemma 3.10](#AFS:l.profile-super) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 For `θ̂ > 1` set `θ̃ = (1 + θ̂)/2`, `σ = θ̂/θ̃ - 1 > 0`, let `κ ∈ (0, 1)` solve
-`2𝓑(κ) = (θ̃ - 1)/θ̃` ((A.3)) and `P(z) = 2θ̃(𝓑(z) - 𝓑(κ))`.
+`2𝓑(κ) = (θ̃ - 1)/θ̃` ([(B.3)](#AFS:e.kappa-def)) and `P(z) = 2θ̃(𝓑(z) - 𝓑(κ))`.
 
-**Choice of the reparametrization `η` (deviation from the paper).**
-The paper assumes an abstract smooth `η` with (A.4)
-(`η(p) = p²` near `0`, `η(p) = p` near `1`, `0 < η(p) ≤ p`, `0 ≤ η' ≤ 1 + σ`), whose existence it
-asserts without construction. Here we use the explicit
+**Choice of the reparametrization `η`.**
+The paper fixes a smooth `η` with [(B.4)](#AFS:e.eta-properties)
+(`η(p) = p²` near `0`, `η(p) = p` near `1`, `0 < η(p) ≤ p`, `0 ≤ η' ≤ 1 + σ`) without
+constructing one. Here we use the explicit
 rational function `η(p) = (1 + σ) p² / (p + σ)`, which has all the properties the proof uses:
 `η(0) = 0`, `η(1) = 1`, `0 < η(p) ≤ p` on `(0, 1]`, `0 ≤ η' ≤ 1 + σ` on `[0, ∞)`,
 `η(p) ≍ p²` and `η'(p) ≲ p` near `0`, and `η` is smooth on `(-σ, ∞)`. Then
@@ -51,8 +51,8 @@ noncomputable def superTheta (θh : ℝ) : ℝ := (1 + θh) / 2
 noncomputable def superSigma (θh : ℝ) : ℝ := θh / superTheta θh - 1
 
 open Classical in
-/-- The level `κ = κ_{θ̂} ∈ (0, 1)` of (A.3): `2𝓑(κ) = (θ̃ - 1)/θ̃` (a choice; it
-is unique since `𝓑` is strictly increasing on `[0, 1]`). -/
+/-- The level `κ = κ_{θ̂} ∈ (0, 1)` of [(B.3)](#AFS:e.kappa-def): `2𝓑(κ) = (θ̃ - 1)/θ̃` (a choice;
+it is unique since `𝓑` is strictly increasing on `[0, 1]`). -/
 noncomputable def superKappa (β : ℝ → ℝ) (θh : ℝ) : ℝ :=
   if h : ∃ κ ∈ Ioo (0 : ℝ) 1, 2 * bigBEps β 1 κ = (superTheta θh - 1) / superTheta θh then
     h.choose else 0
@@ -73,7 +73,7 @@ noncomputable def superEtaDeriv (σ p : ℝ) : ℝ := (1 + σ) * p * (p + 2 * σ
 noncomputable def superLogField (β : ℝ → ℝ) (θh t : ℝ) : ℝ :=
   superField β θh (superKappa β θh + Real.exp t) * Real.exp (-t)
 
-/-- **Lemma A.3**: the supersolution profile
+/-- **[Lemma 3.10](#AFS:l.profile-super)**: the supersolution profile
 `Ψ_{1,θ̂}(s) = κ + exp(T(s - 1))`, where `T' = F(T)`, `T(0) = log(1 - κ)`; equivalently
 `Ψ' = g(Ψ)`, `Ψ(1) = 1`. -/
 noncomputable def profileSuper (β : ℝ → ℝ) (θh s : ℝ) : ℝ :=
@@ -131,9 +131,6 @@ theorem hasDerivAt_superP (z : ℝ) :
     (2 * superTheta θh)
   exact h
 
-theorem continuous_superP : Continuous (superP β θh) :=
-  continuous_iff_continuousAt.2 fun z ↦ (hasDerivAt_superP hβ hθh z).continuousAt
-
 theorem contDiff_superP : ContDiff ℝ ∞ (superP β θh) :=
   contDiff_const.mul (hβ.contDiff_bigB.sub contDiff_const)
 
@@ -176,7 +173,8 @@ theorem superP_pos {z : ℝ} (hz : superKappa β θh < z) : 0 < superP β θh z 
 theorem superP_nonneg {z : ℝ} (hz : superKappa β θh ≤ z) : 0 ≤ superP β θh z := by
   rw [← superP_kappa hβ hθh (β := β)]; exact superP_monotone hβ hθh hz
 
-/-- Upper linear bound `P(z) ≤ 2θ̃ M (z - κ)` for `z ≥ κ` (proof of Lemma A.3). -/
+/-- Upper linear bound `P(z) ≤ 2θ̃ M (z - κ)` for `z ≥ κ` (proof of
+[Lemma 3.10](#AFS:l.profile-super)). -/
 theorem superP_le {M : ℝ} (hM : ∀ s, β s ≤ M) {z : ℝ} (hz : superKappa β θh ≤ z) :
     superP β θh z ≤ 2 * superTheta θh * M * (z - superKappa β θh) := by
   have hθt := one_lt_superTheta hθh
@@ -191,7 +189,7 @@ theorem superP_le {M : ℝ} (hM : ∀ s, β s ≤ M) {z : ℝ} (hz : superKappa 
   linarith
 
 /-- Lower linear bound `P(z) ≥ θ̃ b (z - κ)` on `[κ, 1]`, where `b ≤ β` on `[κ, (1 + κ)/2]`
-(proof of Lemma A.3, extended from `[κ, z₀]` to `[κ, 1]`). -/
+(proof of [Lemma 3.10](#AFS:l.profile-super), extended from `[κ, z₀]` to `[κ, 1]`). -/
 theorem le_superP {b : ℝ} (hb : 0 ≤ b)
     (hβb : ∀ s ∈ Icc (superKappa β θh) ((1 + superKappa β θh) / 2), b ≤ β s) {z : ℝ}
     (hz : z ∈ Icc (superKappa β θh) 1) :
@@ -432,9 +430,6 @@ theorem profileSuper_contDiff : ContDiff ℝ ∞ (profileSuper β θh) :=
     (superLogSol_hasDerivAt hβ hθh) (contDiff_superLogField hβ hθh)).comp
     (contDiff_id.sub contDiff_const)))
 
-theorem profileSuper_continuous : Continuous (profileSuper β θh) :=
-  (profileSuper_contDiff hβ hθh).continuous
-
 theorem profileSuper_hasDerivAt_deriv (s : ℝ) :
     HasDerivAt (deriv (profileSuper β θh))
       (superTheta θh * β (profileSuper β θh s) *
@@ -453,7 +448,7 @@ theorem profileSuper_deriv_deriv (s : ℝ) :
         superEtaDeriv (superSigma θh) (superP β θh (profileSuper β θh s)) :=
   (profileSuper_hasDerivAt_deriv hβ hθh s).deriv
 
-/-- **Lemma A.3(i)**: `0 ≤ Ψ'' ≤ θ̂ β(Ψ)`. -/
+/-- **[Lemma 3.10(i)](#AFS:part.profile-super-a)**: `0 ≤ Ψ'' ≤ θ̂ β(Ψ)`. -/
 theorem profileSuper_deriv_deriv_mem (s : ℝ) :
     0 ≤ deriv (deriv (profileSuper β θh)) s ∧
       deriv (deriv (profileSuper β θh)) s ≤ θh * β (profileSuper β θh s) := by
@@ -471,14 +466,14 @@ theorem profileSuper_deriv_deriv_mem (s : ℝ) :
       _ = superTheta θh * (1 + superSigma θh) * β (profileSuper β θh s) := by ring
       _ = _ := by rw [superTheta_mul_one_add_superSigma hθh]
 
-/-- **Lemma A.3(ii)**: `0 < Ψ' ≤ 1`. -/
+/-- **[Lemma 3.10(ii)](#AFS:part.profile-super-b)**: `0 < Ψ' ≤ 1`. -/
 theorem profileSuper_deriv_mem (s : ℝ) :
     0 < deriv (profileSuper β θh) s ∧ deriv (profileSuper β θh) s ≤ 1 := by
   rw [profileSuper_deriv hβ hθh]
   exact ⟨superField_pos hβ hθh (kappa_lt_profileSuper hβ hθh s),
     superField_le_one hβ hθh (kappa_lt_profileSuper hβ hθh s).le⟩
 
-/-- **Lemma A.3(ii)**: `Ψ(s) = s` for `s ≥ 1`. -/
+/-- **[Lemma 3.10(ii)](#AFS:part.profile-super-b)**: `Ψ(s) = s` for `s ≥ 1`. -/
 theorem profileSuper_of_one_le {s : ℝ} (hs : 1 ≤ s) : profileSuper β θh s = s := by
   rcases hs.eq_or_lt with rfl | hs
   · exact profileSuper_one hβ hθh
@@ -496,11 +491,11 @@ theorem profileSuper_of_one_le {s : ℝ} (hs : 1 ≤ s) : profileSuper β θh s 
   · linarith
   · linarith
 
-/-- **Lemma A.3(iii)**: `Ψ(s) < 1` for `s < 1`. -/
+/-- **[Lemma 3.10(iii)](#AFS:part.profile-super-c)**: `Ψ(s) < 1` for `s < 1`. -/
 theorem profileSuper_lt_one {s : ℝ} (hs : s < 1) : profileSuper β θh s < 1 := by
   rw [← profileSuper_one hβ hθh]; exact profileSuper_strictMono hβ hθh hs
 
-/-- **Lemma A.3(iii)**: `s < Ψ(s)` for `s < 1`. -/
+/-- **[Lemma 3.10(iii)](#AFS:part.profile-super-c)**: `s < Ψ(s)` for `s < 1`. -/
 theorem lt_profileSuper {s : ℝ} (hs : s < 1) : s < profileSuper β θh s := by
   have hmono : StrictMonoOn (fun t ↦ t - profileSuper β θh t) (Iic 1) := by
     have hd : ∀ t, HasDerivAt (fun t ↦ t - profileSuper β θh t)
@@ -516,14 +511,15 @@ theorem lt_profileSuper {s : ℝ} (hs : s < 1) : s < profileSuper β θh s := by
   simp only [profileSuper_one hβ hθh, sub_self] at this
   linarith
 
-/-- **Lemma A.3(iii)**: `s₊ ≤ Ψ(s)` for all `s` (from `Ψ(s) ≥ s` and `Ψ > κ > 0`). -/
+/-- **[Lemma 3.10(iii)](#AFS:part.profile-super-c)**: `s₊ ≤ Ψ(s)` for all `s` (from `Ψ(s) ≥ s` and
+`Ψ > κ > 0`). -/
 theorem max_le_profileSuper (s : ℝ) : max s 0 ≤ profileSuper β θh s := by
   refine max_le ?_ ((superKappa_pos hβ hθh).trans (kappa_lt_profileSuper hβ hθh s)).le
   rcases lt_or_ge s 1 with hs | hs
   · exact (lt_profileSuper hβ hθh hs).le
   · rw [profileSuper_of_one_le hβ hθh hs]
 
-/-- **Lemma A.3(iii)**: `sup_ℝ |Ψ - s₊| ≤ 1`. -/
+/-- **[Lemma 3.10(iii)](#AFS:part.profile-super-c)**: `sup_ℝ |Ψ - s₊| ≤ 1`. -/
 theorem abs_profileSuper_sub_le (s : ℝ) : |profileSuper β θh s - max s 0| ≤ 1 := by
   rcases le_total 1 s with hs | hs
   · rw [profileSuper_of_one_le hβ hθh hs, max_eq_left (by linarith), sub_self, abs_zero]
@@ -588,7 +584,7 @@ theorem exists_profileSuper_sub_kappa_le :
           zero_le_one
     _ = _ := one_mul _
 
-/-- **Lemma A.3(iv)**: exponential tails
+/-- **[Lemma 3.10(iv)](#AFS:part.profile-super-e)**: exponential tails
 `max(Ψ - κ, Ψ', Ψ'') ≤ C e^{cs}` for `s ≤ 0`, with `C ≥ 1 ≥ c > 0` depending only on `θ̂`, `β`. -/
 theorem profileSuper_tail : ∃ C c : ℝ, 0 < c ∧ c ≤ 1 ∧ 1 ≤ C ∧ ∀ s ≤ 0,
     profileSuper β θh s - superKappa β θh ≤ C * Real.exp (c * s) ∧
@@ -645,7 +641,7 @@ theorem profileSuper_tail : ∃ C c : ℝ, 0 < c ∧ c ≤ 1 ∧ 1 ≤ C ∧ ∀
           gcongr
       _ = K₂ * (profileSuper β θh s - κ) := by ring
 
-/-- **Lemma A.3(iii)**: `Ψ(s) ↓ κ` as `s → -∞`. -/
+/-- **[Lemma 3.10(iii)](#AFS:part.profile-super-c)**: `Ψ(s) ↓ κ` as `s → -∞`. -/
 theorem tendsto_profileSuper_atBot :
     Tendsto (profileSuper β θh) atBot (𝓝 (superKappa β θh)) := by
   obtain ⟨c, hc0, hc⟩ := exists_profileSuper_sub_kappa_le hβ hθh
@@ -661,10 +657,9 @@ theorem tendsto_profileSuper_atBot :
 
 end ProfileSuper
 
+/-! ### [(3.7)](#AFS:e.profile-ep-def): the rescaled super-profile `Ψ_{ε,θ̂}` -/
 
-/-! ### (A.5): the rescaled super-profile `Ψ_{ε,θ̂}` -/
-
-/-- (A.5): `Ψ_{ε,θ̂}(s) = ε Ψ_{1,θ̂}(s/ε)`. -/
+/-- [(3.7)](#AFS:e.profile-ep-def): `Ψ_{ε,θ̂}(s) = ε Ψ_{1,θ̂}(s/ε)`. -/
 noncomputable def profileSuperEps (β : ℝ → ℝ) (θh ε : ℝ) (s : ℝ) : ℝ :=
   ε * profileSuper β θh (s / ε)
 
@@ -707,7 +702,7 @@ theorem profileSuperEps_deriv_deriv (s : ℝ) :
     deriv (deriv (profileSuperEps β θh ε)) s = deriv (deriv (profileSuper β θh)) (s / ε) / ε :=
   (profileSuperEps_hasDerivAt_deriv hβ hθh hε s).deriv
 
-/-- Rescaled Lemma A.3(i): `0 ≤ Ψ_ε'' ≤ θ̂ β_ε(Ψ_ε)`. -/
+/-- Rescaled [Lemma 3.10(i)](#AFS:part.profile-super-a): `0 ≤ Ψ_ε'' ≤ θ̂ β_ε(Ψ_ε)`. -/
 theorem profileSuperEps_deriv_deriv_mem (s : ℝ) :
     0 ≤ deriv (deriv (profileSuperEps β θh ε)) s ∧
       deriv (deriv (profileSuperEps β θh ε)) s ≤ θh * betaEps β ε (profileSuperEps β θh ε s) := by
@@ -717,7 +712,7 @@ theorem profileSuperEps_deriv_deriv_mem (s : ℝ) :
   rw [← mul_div_assoc]
   exact div_le_div_of_nonneg_right h2 hε.le
 
-/-- Rescaled Lemma A.3(ii): `0 < Ψ_ε' ≤ 1`. -/
+/-- Rescaled [Lemma 3.10(ii)](#AFS:part.profile-super-b): `0 < Ψ_ε' ≤ 1`. -/
 theorem profileSuperEps_deriv_mem (s : ℝ) :
     0 < deriv (profileSuperEps β θh ε) s ∧ deriv (profileSuperEps β θh ε) s ≤ 1 := by
   rw [profileSuperEps_deriv hβ hθh hε]; exact profileSuper_deriv_mem hβ hθh _
@@ -726,17 +721,17 @@ omit hε in
 theorem profileSuperEps_contDiff : ContDiff ℝ ∞ (profileSuperEps β θh ε) :=
   contDiff_const.mul ((profileSuper_contDiff hβ hθh).comp (contDiff_id.div_const ε))
 
-/-- Rescaled Lemma A.3(ii): `Ψ_ε(s) = s` for `s ≥ ε`. -/
+/-- Rescaled [Lemma 3.10(ii)](#AFS:part.profile-super-b): `Ψ_ε(s) = s` for `s ≥ ε`. -/
 theorem profileSuperEps_of_le {s : ℝ} (hs : ε ≤ s) : profileSuperEps β θh ε s = s := by
   rw [profileSuperEps, profileSuper_of_one_le hβ hθh ((one_le_div hε).2 hs),
     mul_div_cancel₀ _ hε.ne']
 
-/-- Rescaled Lemma A.3(iii): `ε κ < Ψ_ε`. -/
+/-- Rescaled [Lemma 3.10(iii)](#AFS:part.profile-super-c): `ε κ < Ψ_ε`. -/
 theorem mul_kappa_lt_profileSuperEps (s : ℝ) :
     ε * superKappa β θh < profileSuperEps β θh ε s :=
   mul_lt_mul_of_pos_left (kappa_lt_profileSuper hβ hθh _) hε
 
-/-- Rescaled Lemma A.3(iii): `s₊ ≤ Ψ_ε(s)`. -/
+/-- Rescaled [Lemma 3.10(iii)](#AFS:part.profile-super-c): `s₊ ≤ Ψ_ε(s)`. -/
 theorem max_le_profileSuperEps (s : ℝ) : max s 0 ≤ profileSuperEps β θh ε s := by
   have h := max_le_profileSuper hβ hθh (s / ε)
   have e2 : max s 0 = ε * max (s / ε) 0 := by
@@ -744,7 +739,7 @@ theorem max_le_profileSuperEps (s : ℝ) : max s 0 ≤ profileSuperEps β θh ε
   rw [e2, profileSuperEps]
   exact mul_le_mul_of_nonneg_left h hε.le
 
-/-- Rescaled Lemma A.3(iii): `sup_ℝ |Ψ_ε - s₊| ≤ ε`. -/
+/-- Rescaled [Lemma 3.10(iii)](#AFS:part.profile-super-c): `sup_ℝ |Ψ_ε - s₊| ≤ ε`. -/
 theorem abs_profileSuperEps_sub_le (s : ℝ) :
     |profileSuperEps β θh ε s - max s 0| ≤ ε := by
   have h := abs_profileSuper_sub_le hβ hθh (s / ε)

@@ -14,9 +14,9 @@ import PerronVariational.Inner.SliceHeat
 /-!
 # Integration by parts for locally Lipschitz functions, and limits of the weak heat equation
 
-Tools for **Theorem 3.10**, Step 2, of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
-the long-time limit `u_∞` is weakly harmonic in `{u_∞ > 0}`.
+Tools for **[Theorem 3.14](#AFS:t.longtime-inner)**, Step 2, of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the long-time limit `u_∞` is weakly harmonic in `{u_∞ > 0}`.
 
 * `∫_U ∇f · ∇φ = -∫_U f Δφ` for `f` locally Lipschitz on the open set `U` and `φ ∈ C²_c(U)`,
   from the integration by parts `GMTFoundations.integral_fderiv_mul_eq_neg`
@@ -264,7 +264,7 @@ theorem innerVarIntegrand_eq_zero_of_notMem (Q v χ : E d → ℝ) {ξ : E d →
     image_eq_zero_of_notMem_tsupport hx]
 
 /-- **Uniform gradient bound for large times** on a compact `K ⊆ U`, from the interior Lipschitz
-estimate (3.12) and `0 ≤ u ≤ M`. -/
+estimate [(3.13)](#AFS:eqn:LipEst) and `0 ≤ u ≤ M`. -/
 theorem exists_bound_gradₓ_of_interiorLipEst {U : Set (E d)} (hU : IsOpen U)
     {u : E d × ℝ → ℝ} {C M : ℝ} (hlip : InteriorLipEst U u C) (h0 : ∀ p ∈ UInf U, 0 ≤ u p)
     (hM : ∀ p ∈ UInf U, u p ≤ M) {K : Set (E d)} (hK : IsCompact K) (hKU : K ⊆ U) :

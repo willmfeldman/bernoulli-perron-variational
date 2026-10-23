@@ -15,9 +15,10 @@ import Mathlib.Tactic.ContinuousFunctionalCalculus
 /-!
 # Passage to the limit in the inner-variation identity
 
-Proof of Proposition 4.1(ii) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: "The
-convergence obtained above is sufficient to pass to the limit in (4.2)". Given, on `U_∞`,
+Proof of [Proposition 4.1(ii)](#AFS:part.eps-inner) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: "The convergence obtained above is sufficient to pass to the limit in
+[(4.2)](#AFS:eqn:innerVarEps)". Given, on `U_∞`,
 * `∇u_n → ∇u` strongly in `L²_loc`,
 * `χ_n → χ` in `L¹_loc` with `|χ_n|, |χ| ≤ 1`,
 * `∂ₜu_n ⇀ w` weakly in `L²(U_∞)` with bounded norms,
@@ -182,8 +183,8 @@ theorem paraInnerVarIntegrand_eq_zero_of_notMem {Q : E d → ℝ} {u w χ : E d 
   have hξp : ξ p = 0 := (notMem_tsupport_iff_eventuallyEq.1 hp).self_of_nhds
   simp [paraInnerVarIntegrand, divₓ_eq_zero_of_notMem hp, fderivₓ_eq_zero_of_notMem hp, hξp]
 
-/-- The integrand of (3.3) rewritten as `⟪∇u, M ∇u⟫ + b χ - 2 ⟪ξ, ∇u⟫ w` with
-`M = (div ξ) Id - 2 Dξ` and `b = Q² div ξ + ∇(Q²) · ξ`. -/
+/-- The integrand of [(3.3)](#AFS:e.parabolic-inner-var) rewritten as
+`⟪∇u, M ∇u⟫ + b χ - 2 ⟪ξ, ∇u⟫ w` with `M = (div ξ) Id - 2 Dξ` and `b = Q² div ξ + ∇(Q²) · ξ`. -/
 theorem paraInnerVarIntegrand_eq (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ) (ξ : E d × ℝ → E d)
     (p : E d × ℝ) :
     paraInnerVarIntegrand Q u w χ ξ p =
@@ -202,8 +203,9 @@ section Limit
 
 variable {d : ℕ}
 
-/-- **Passage to the limit in (4.2)** (proof of Proposition 4.1(ii)). Let `ξ ∈ C¹_c(Ω)` and
-`K = spt ξ`. Assume `∫_Ω paraInnerVarIntegrand Q u_n w_n χ_n ξ = 0` for all `n`, and
+/-- **Passage to the limit in [(4.2)](#AFS:eqn:innerVarEps)** (proof of
+[Proposition 4.1(ii)](#AFS:part.eps-inner)). Let `ξ ∈ C¹_c(Ω)` and `K = spt ξ`. Assume
+`∫_Ω paraInnerVarIntegrand Q u_n w_n χ_n ξ = 0` for all `n`, and
 * `∇u_n → ∇u` in `L²(K)`,
 * `χ_n → χ` in `L¹(K)`, `|χ_n|, |χ| ≤ 1`,
 * `w_n ⇀ w` weakly in `L²(Ω)` with `‖w_n‖_{L²(Ω)} ≤ B`,

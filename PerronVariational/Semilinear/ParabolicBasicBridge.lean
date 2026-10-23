@@ -20,10 +20,11 @@ import PerronVariational.Semilinear.Profiles
 
 The classical well-posedness of the semilinear problem, its comparison principle, and the
 regularity of the spatial gradient up to `t = 0` for smooth data (the results from the literature
-used in Appendix A of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981) are proved in the
-dependency parabolic-basic-theory v0.1.0 (`ParabolicBasic.MainTheorems`), which treats the
-general semilinear equation `∂ₜu = Δₓu - f(x, u)`. The equation (3.4) of the paper is the case
+used in [Appendix B](#AFS:s.semilinear) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981) are
+proved in the dependency parabolic-basic-theory v0.1.0 (`ParabolicBasic.MainTheorems`), which treats
+the general semilinear equation `∂ₜu = Δₓu - f(x, u)`. The
+[equation (3.4)](#AFS:e.bernoulli-parabolic-semilinear) of the paper is the case
 
   `f(x, z) = Q(x)² β_ε(z)` (`semilinearReaction Q β ε`).
 
@@ -46,8 +47,8 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- The reaction term `f(x, z) = Q(x)² β_ε(z)` of (3.4), in the form `f : E d → ℝ → ℝ` used by
-parabolic-basic-theory. -/
+/-- The reaction term `f(x, z) = Q(x)² β_ε(z)` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear), in
+the form `f : E d → ℝ → ℝ` used by parabolic-basic-theory. -/
 noncomputable def semilinearReaction (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ) : E d → ℝ → ℝ :=
   fun x z ↦ Q x ^ 2 * betaEps β ε z
 

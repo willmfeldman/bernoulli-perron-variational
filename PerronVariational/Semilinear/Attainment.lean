@@ -13,26 +13,28 @@ import PerronVariational.Semilinear.Lipschitz
 import PerronVariational.Semilinear.Monotone
 
 /-!
-# Uniform attainment of the parabolic boundary data (Proposition 3.8(v))
+# Uniform attainment of the parabolic boundary data ([Proposition 3.12(iv)](#AFS:part.attainment))
 
-Proposition A.8, with Lemmas A.9 and A.10, of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.5).
+[Proposition B.5](#AFS:p.attainment), with Lemmas [B.6](#AFS:l.attainment-lateral) and
+[B.7](#AFS:l.initial-L2), of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.5](#AFS:ss.attainment)).
 
-`exists_modulus` (Proposition A.8) is proved by barriers only. The route differs from the
-paper's, which goes through the `L²`-in-time estimate of Lemma A.10 and hence the dissipation
-identity:
+`exists_modulus` ([Proposition B.5](#AFS:p.attainment)) is proved by barriers only. The route
+differs from the paper's, which goes through the `L²`-in-time estimate of
+[Lemma B.7](#AFS:l.initial-L2) and hence the dissipation identity:
 
 1. `exists_boundary_estimate` (lateral estimate, uniform in `t`, AttainmentEstimates.lean);
 2. `exists_spatial_modulus`: near `∂U` from 1., in the interior from the global gradient bound
-   Lemma A.7 (`exists_norm_gradₓ_le`) and the mean value theorem;
+   [Lemma B.4](#AFS:l.lipschitz-initial) (`exists_norm_gradₓ_le`) and the mean value theorem;
 3. `exists_time_modulus`: restart at time `s` (`IsSemilinearSolution.shift`) and apply the
    initial-time estimate `exists_initial_estimate` to the data `u(·, s)`, whose modulus comes
    from 2.;
 4. the modulus `ϖ` is the supremum of the oscillations over the whole class.
 
-So `exists_modulus` depends only on Lemma A.7, on the classical well-posedness of (3.4) and on the
-comparison principle for (3.4) (both from parabolic-basic-theory v0.1.0).
+So `exists_modulus` depends only on [Lemma B.4](#AFS:l.lipschitz-initial), on the classical
+well-posedness of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) and on the comparison principle for
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) (both from parabolic-basic-theory v0.1.0).
 -/
 
 open Set Filter Topology Metric
@@ -74,7 +76,8 @@ theorem norm_gradient_le_of_lipschitzOnWith (S : Setting d) {g : E d → ℝ} {L
   exact norm_fderiv_le_of_lipschitzOn ℝ
     (mem_of_superset (S.isOpen.mem_nhds hx) subset_closure) hg
 
-/-- **Spatial equicontinuity**, uniform in `t ≥ 0` and in the class of Proposition A.8. -/
+/-- **Spatial equicontinuity**, uniform in `t ≥ 0` and in the class of
+[Proposition B.5](#AFS:p.attainment). -/
 theorem exists_spatial_modulus (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) (M : ℝ) {σ : ℝ} (hσ : 0 < σ) :
     ∃ δ > 0, ∀ ε ∈ Ioc (0 : ℝ) 1, ∀ (g : E d → ℝ) (u : E d × ℝ → ℝ),
@@ -175,7 +178,8 @@ theorem exists_spatial_modulus (S : Setting d) {β : ℝ → ℝ} (hβ : IsReact
     _ ≤ σ := by
       rw [mul_div_assoc', div_le_iff₀ (by positivity)]; nlinarith
 
-/-- **Equicontinuity in time**, uniform in `s ≥ 0` and in the class of Proposition A.8. -/
+/-- **Equicontinuity in time**, uniform in `s ≥ 0` and in the class of
+[Proposition B.5](#AFS:p.attainment). -/
 theorem exists_time_modulus (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) (M : ℝ) {σ : ℝ} (hσ : 0 < σ) :
     ∃ τ > 0, ∀ ε ∈ Ioc (0 : ℝ) 1, ∀ (g : E d → ℝ) (u : E d × ℝ → ℝ),
@@ -212,7 +216,8 @@ theorem exists_time_modulus (S : Setting d) {β : ℝ → ℝ} (hβ : IsReaction
   simp only [sub_add_cancel] at key
   linarith
 
-/-- **Equicontinuity** in space-time, uniform in the class of Proposition A.8. -/
+/-- **Equicontinuity** in space-time, uniform in the class of
+[Proposition B.5](#AFS:p.attainment). -/
 theorem exists_modulus_aux (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) (M : ℝ) {σ : ℝ} (hσ : 0 < σ) :
     ∃ δ > 0, ∀ ε ∈ Ioc (0 : ℝ) 1, ∀ (g : E d → ℝ) (u : E d × ℝ → ℝ),
@@ -240,10 +245,10 @@ theorem exists_modulus_aux (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionP
     _ ≤ |u (x, t) - u (y, t)| + |u (y, t) - u (y, s)| := abs_add_le _ _
     _ ≤ σ := by linarith
 
-/-- **Proposition A.8**, Proposition 3.8(v): given `L ≥ 0` and `M`, there is a
-modulus of continuity `ϖ` such that for all `0 < ε ≤ 1`, every solution `u` of (3.4) with
-nonnegative data `g ≤ M` that are `L`-Lipschitz on `Ū` satisfies
-`|u(x, t) - u(y, s)| ≤ ϖ(|x - y| + |t - s|)` on `Ū × [0, ∞)`.
+/-- **[Proposition B.5](#AFS:p.attainment)**, [Proposition 3.12(iv)](#AFS:part.attainment): given
+`L ≥ 0` and `M`, there is a modulus of continuity `ϖ` such that for all `0 < ε ≤ 1`, every solution
+`u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with nonnegative data `g ≤ M` that are
+`L`-Lipschitz on `Ū` satisfies `|u(x, t) - u(y, s)| ≤ ϖ(|x - y| + |t - s|)` on `Ū × [0, ∞)`.
 
 Proof: `ϖ(h)` is the supremum of `|u p - u q|` over the class and over `|p - q| ≤ h`; it tends
 to `0` by `exists_modulus_aux`. -/

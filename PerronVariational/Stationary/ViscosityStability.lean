@@ -13,17 +13,18 @@ import PerronVariational.Stationary.Perron
 import PerronVariational.Stationary.ViscosityJet
 
 /-!
-# Stability of viscosity supersolutions and relaxed subsolutions (Lemma 2.4)
+# Stability of viscosity supersolutions and relaxed subsolutions
 
-Lemma 2.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. The paper cites the proofs from
-W. M. Feldman, N. Požár, *On convex comparison for exterior Bernoulli problems with discontinuous
-anisotropy*, Interfaces Free Bound. 27 (2025), 459–468, doi:10.4171/ifb/525, Lemma 3.1, and from
-W. M. Feldman, I. C. Kim, *The pinning effect of dilute defects*, arXiv:2512.11152, Lemma A.12;
-here both parts are proved directly.
+[Lemma 2.5](#AFS:l.super-stability) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. The paper
+cites the proofs from W. M. Feldman, N. Požár, *On convex comparison for exterior Bernoulli problems
+with discontinuous anisotropy*, Interfaces Free Bound. 27 (2025), 459–468, doi:10.4171/ifb/525,
+Lemma 3.1, and from W. M. Feldman, I. C. Kim, *The pinning effect of dilute defects*,
+arXiv:2512.11152, Lemma A.12; here both parts are proved directly.
 
-* `isViscSuper_of_tendstoLocallyUniformlyOn`: Lemma 2.4(i).
-* `isRelaxedSub_of_tendstoLocallyUniformlyOn`: Lemma 2.4(ii), with `E* = upperKLimit E l`.
+* `isViscSuper_of_tendstoLocallyUniformlyOn`: [Lemma 2.5(i)](#AFS:part.stability-super).
+* `isRelaxedSub_of_tendstoLocallyUniformlyOn`: [Lemma 2.5(ii)](#AFS:part.stability-pair), with
+  `E* = upperKLimit E l`.
 
 Both are stated along an arbitrary nontrivial filter `l` (the paper: `k → ∞`), and assume `Q`
 continuous on `U` (true in the standing setting, where `Q` is Lipschitz).
@@ -167,9 +168,9 @@ theorem exists_isMinOn_inter_ball {F : Set (E d)} (hF : IsClosed F) {x z₀ : E 
 theorem dist_eq_quartic {x y : E d} {ρ : ℝ} (h : dist y x = ρ) : (‖y - x‖ ^ 2) ^ 2 = ρ ^ 4 := by
   rw [← dist_eq_norm, h]; ring
 
-/-! ### Lemma 2.4 -/
+/-! ### [Lemma 2.5](#AFS:l.super-stability) -/
 
-/-- **Lemma 2.4(i)**. Locally uniform limits of viscosity
+/-- **[Lemma 2.5(i)](#AFS:part.stability-super)**. Locally uniform limits of viscosity
 supersolutions are viscosity supersolutions. -/
 theorem isViscSuper_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [l.NeBot]
     {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} (hQ : ContinuousOn Q U)
@@ -275,7 +276,7 @@ theorem isViscSuper_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [l
     · exact hB hres1
     · linarith
 
-/-- **Lemma 2.4(ii)**. If `(u_k, E_k)` are relaxed subsolutions and
+/-- **[Lemma 2.5(ii)](#AFS:part.stability-pair)**. If `(u_k, E_k)` are relaxed subsolutions and
 `u_k → u` locally uniformly in `U`, then `(u, E*)` is a relaxed subsolution, where
 `E* = limsup* E_k` is the upper Kuratowski limit. -/
 theorem isRelaxedSub_of_tendstoLocallyUniformlyOn {ι : Type*} {l : Filter ι} [l.NeBot]

@@ -22,21 +22,24 @@ import PerronVariational.Inner.WeakGrad
 import PerronVariational.Inner.WeakHeat
 import PerronVariational.Inner.WeissTime.ChiEps
 import PerronVariational.Registry.FunctionalAnalysis
+import PerronVariational.Registry.SemilinearDissipation
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Proposition 4.1: the `ε → 0` inner-variational limit
+# [Proposition 4.1](#AFS:p.eps-inner-limit): the `ε → 0` inner-variational limit
 
-`Inner.eps_inner_limit : EpsInnerLimitStatement` is **Proposition 4.1** of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+`Inner.eps_inner_limit : EpsInnerLimitStatement` is **[Proposition 4.1](#AFS:p.eps-inner-limit)** of
+F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
 Bernoulli one-phase problem*, arXiv:2609.14981. It is assembled from the named steps:
 * uniform estimates for arbitrary semilinear solutions (`Inner/SemilinearEstimates.lean`);
 * Arzelà–Ascoli compactness (`Inner/Compactness.lean`);
-* weak/strong convergence of derivatives, Lemma 4.2 (`Inner/StrongGrad.lean`);
-* `χ` convergence and `χ ∈ {0, 1}`, `1_{u>0} ≤ χ`, Lemma 4.3 (`Inner/ChiConverge.lean`);
-* passage to the limit in (4.2) (`Inner/EpsIdentity.lean`);
-* the weak heat equation (4.5) in `{u > 0}` (`Inner/WeakHeat.lean`);
+* weak/strong convergence of derivatives, [Lemma 4.2](#AFS:lem:strongGrad)
+  (`Inner/StrongGrad.lean`);
+* `χ` convergence and `χ ∈ {0, 1}`, `1_{u>0} ≤ χ`, [Lemma 4.3](#AFS:lem:chiConverge)
+  (`Inner/ChiConverge.lean`);
+* passage to the limit in [(4.2)](#AFS:eqn:innerVarEps) (`Inner/EpsIdentity.lean`);
+* the weak heat [equation (4.6)](#AFS:eqn:weakHeat) in `{u > 0}` (`Inner/WeakHeat.lean`);
 * the lower-semicontinuity steps of (iii) (this file).
 -/
 
@@ -118,6 +121,16 @@ theorem energyBound_eq (S : Setting d) {G : E d → E d}
   ext x
   exact ENNReal.ofReal_add (sq_nonneg _) (sq_nonneg _)
 
+/-- `∫_U |G|² + Q_max²|U| ≤ J(G, c; U) + Q_max²|U|` for `c ≥ 0`. -/
+theorem energyBound_le_energyJχ_add (S : Setting d) {G : E d → E d} {c : E d → ℝ}
+    (hc : ∀ x, 0 ≤ c x) :
+    energyBound S G ≤ energyJχ S.U S.Q G c + ENNReal.ofReal (S.Qmax ^ 2) * volume S.U := by
+  rw [energyBound, energyJχ, ← setLIntegral_const, ← lintegral_add_right _ measurable_const]
+  refine lintegral_mono fun x ↦ ?_
+  rw [← ENNReal.ofReal_add (add_nonneg (sq_nonneg _) (mul_nonneg (sq_nonneg _) (hc x)))
+    (sq_nonneg _)]
+  exact ENNReal.ofReal_le_ofReal (by nlinarith [mul_nonneg (sq_nonneg (S.Q x)) (hc x)])
+
 /-- **Convergence of the energy bounds**: `‖G_i - G₀‖_{L²(U)} → 0` implies
 `∫_U |G_i|² + Q_max²|U| → ∫_U |G₀|² + Q_max²|U|`. -/
 theorem tendsto_energyBound (S : Setting d) {ι : Type*} {l : Filter ι} {G : ι → E d → E d}
@@ -186,14 +199,16 @@ theorem TendstoWeakL2.mono_set {X F : Type*} [MeasurableSpace X] [NormedAddCommG
   simp only [key] at this
   exact this
 
-/-- **Dissipation inequality in the limit** (proof of Proposition 4.1(iii): "follows from
-(3.8) and weak lower semi-continuity of the energy"). If the `v_n` satisfy (3.8) with bounds
-`E n → E0` (`E n ≤ E1 < ∞`), their time slices are differentiable with `∇ₓv_n` continuous on `U_∞`,
-`v_n → u` locally uniformly on `U_∞` (`u` locally Lipschitz in space), `0 ≤ χ_n` continuous on
-`U_∞`, `χ_n → χ` a.e. on `U_∞` (`0 ≤ χ` measurable) and `∂ₜv_n ⇀ w` weakly in `L²(U_∞)`, then
-`(u, w, χ)` satisfies (3.11) with bound `E0`. (For each `T`, `∇v_n(·, T) ⇀ ∇u(·, T)` weakly in
-`L²(U)`; Fatou for the `χ` term on a.e. slice; weak lower semicontinuity of the weighted `L²`
-norm, from gmt-foundations v0.1.0, for the gradient and for `w`.) -/
+/-- **Dissipation inequality in the limit** (proof of
+[Proposition 4.1(iii)](#AFS:part.eps-estimates): "follows from [(3.9)](#AFS:e.dissipation-eps) and
+weak lower semi-continuity of the energy"). If the `v_n` satisfy [(3.9)](#AFS:e.dissipation-eps)
+with bounds `E n → E0` (`E n ≤ E1 < ∞`), their time slices are differentiable with `∇ₓv_n`
+continuous on `U_∞`, `v_n → u` locally uniformly on `U_∞` (`u` locally Lipschitz in space),
+`0 ≤ χ_n` continuous on `U_∞`, `χ_n → χ` a.e. on `U_∞` (`0 ≤ χ` measurable) and `∂ₜv_n ⇀ w` weakly
+in `L²(U_∞)`, then `(u, w, χ)` satisfies [(3.12)](#AFS:eqn:diss2) with bound `E0`. (For each `T`,
+`∇v_n(·, T) ⇀ ∇u(·, T)` weakly in `L²(U)`; Fatou for the `χ` term on a.e. slice; weak lower
+semicontinuity of the weighted `L²` norm, from gmt-foundations v0.1.0, for the gradient and for
+`w`.) -/
 theorem dissipationIneq_of_tendsto (S : Setting d) {v χ : ℕ → E d × ℝ → ℝ}
     {u w χ₀ : E d × ℝ → ℝ} {En : ℕ → ℝ≥0∞} {E0 E1 : ℝ≥0∞} (hE1 : E1 ≠ ⊤) (hEb : ∀ n, En n ≤ E1)
     (hvd : ∀ n, ∀ t > 0, DifferentiableOn ℝ (fun x ↦ v n (x, t)) S.U)
@@ -290,8 +305,9 @@ theorem dissipationIneq_of_tendsto (S : Setting d) {v χ : ℕ → E d × ℝ �
   rw [hsplit _ _ (hgm _) (fun x ↦ hχ₀0 _), ennreal_half_add_eq]
   exact ENNReal.div_le_div_right htot 2
 
-/-- **(3.12) in the limit** (proof of Proposition 4.1(iii): the interior Lipschitz bound "passes
-to the limit by the locally uniform convergence"). -/
+/-- **[(3.13)](#AFS:eqn:LipEst) in the limit** (proof of
+[Proposition 4.1(iii)](#AFS:part.eps-estimates): the interior Lipschitz bound "passes to the limit
+by the locally uniform convergence"). -/
 theorem interiorLipEst_of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → E d × ℝ → ℝ}
     {u : E d × ℝ → ℝ} {C : ℝ} (hC : 0 ≤ C) (hv : ∀ n, InteriorLipEst U (v n) C)
     (hvd : ∀ n, ∀ t > 0, DifferentiableOn ℝ (fun x ↦ v n (x, t)) U)
@@ -421,8 +437,8 @@ theorem continuousOn_chiEps {β : ℝ → ℝ} (hβ : IsReactionProfile β) (ε 
 
 /-! ### Assembly -/
 
-/-- **Proposition 4.1**, in the form `EpsInnerLimitStatement` (whose docstring records how it
-differs from the paper's statement). -/
+/-- **[Proposition 4.1](#AFS:p.eps-inner-limit)**, in the form `EpsInnerLimitStatement` (whose
+docstring records how it differs from the paper's statement). -/
 theorem eps_inner_limit : EpsInnerLimitStatement := by
   intro d S β hβ
   obtain ⟨C₀, ε₁, hε₁, hLip⟩ := semilinear_interiorLipEst S hβ
@@ -430,24 +446,19 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
   obtain ⟨ε₃, hε₃, hBeta⟩ := semilinear_betaEps_lintegral_le S hβ
   obtain ⟨ε₄, hε₄, hPer⟩ := semilinear_weightedPerimeterEst S hβ
   refine ⟨max C₀ 0, fun M Ebd hEbd ↦ ?_⟩
-  set E1 : ℝ≥0∞ := Ebd + 1 with hE1def
-  have hE1 : E1 ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hEbd, ENNReal.one_ne_top⟩
+  have hEU : ENNReal.ofReal (S.Qmax ^ 2) * volume S.U ≠ ⊤ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top S.isBounded.measure_lt_top.ne
+  set E1 : ℝ≥0∞ := Ebd + ENNReal.ofReal (S.Qmax ^ 2) * volume S.U with hE1def
+  have hE1 : E1 ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hEbd, hEU⟩
   obtain ⟨Cper, hCper⟩ := hPer M E1 hE1
   refine ⟨Cper, ?_⟩
-  intro ε₀ g Gg gε Gε uε hε₀ hg hgε hH1 hbd hEbd' hsol
-  -- convergence of the energy bounds of the data
-  have hGconv : Tendsto (fun ε ↦ eLpNorm (Gε ε - Gg) 2 (volume.restrict S.U)) (𝓝[>] 0)
-      (𝓝 0) :=
-    tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hH1 (fun _ ↦ bot_le)
-      (fun _ ↦ le_add_self)
-  have hmemG : ∀ᶠ ε in 𝓝[>] (0 : ℝ), MemLp (Gε ε) 2 (volume.restrict S.U) :=
-    Filter.mem_of_superset (Ioo_mem_nhdsGT hε₀) fun ε hε ↦ (hgε ε hε).2.1
-  have hEconv := tendsto_energyBound S hmemG hg.2.1 hGconv
-  have hlt : energyBound S Gg < E1 :=
-    lt_of_le_of_lt hEbd' (ENNReal.lt_add_right hEbd one_ne_zero)
-  obtain ⟨ε₅, hε₅, hε₅E⟩ : ∃ ε₅ : ℝ, 0 < ε₅ ∧ ∀ ε ∈ Ioo 0 ε₅, energyBound S (Gε ε) ≤ E1 := by
-    obtain ⟨ε₅, hε₅, h⟩ := mem_nhdsGT_iff_exists_Ioo_subset.1 (hEconv.eventually (gt_mem_nhds hlt))
-    exact ⟨ε₅, hε₅, fun ε hε ↦ (h hε).le⟩
+  rintro ε₀ g Gg gε Gε uε E0 hε₀ - hgε - - hbd hE0 hJ hsol
+  -- the energy bounds of the data, from `J(gε, χ⁰_ε; U) ≤ E0`
+  -- ([Lemma 3.11(iv)](#AFS:part.gep-4))
+  have hE0E1 : E0 ≤ E1 := hE0.trans le_self_add
+  obtain ⟨ε₅, hε₅, hε₅E⟩ : ∃ ε₅ : ℝ, 0 < ε₅ ∧ ∀ ε ∈ Ioo 0 ε₅, energyBound S (Gε ε) ≤ E1 :=
+    ⟨ε₀, hε₀, fun ε hε ↦ (energyBound_le_energyJχ_add S fun x ↦
+      (chiEps_mem_Icc hβ hε.1 (uε ε) (x, 0)).1).trans (add_le_add ((hJ ε hε).trans hE0) le_rfl)⟩
   -- the base sequence `e n ↓ 0`
   set ε' : ℝ := min (min ε₀ ε₁) (min (min ε₂ ε₃) (min ε₄ ε₅)) with hε'def
   have hε'pos : 0 < ε' := lt_min (lt_min hε₀ hε₁) (lt_min (lt_min hε₂ hε₃) (lt_min hε₄ hε₅))
@@ -541,12 +552,12 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
       (gradₓ u) atTop :=
     tendstoWeakL2_gradₓ S.isOpen (fun n ↦ hvd _) (fun n ↦ (hsolv _).2.1.2.2.1) hconv₂ hucont
       hulip hE1 (fun n ↦ hslice _)
-  -- Step D: strong convergence of `∇v_n` (Lemma 4.2)
+  -- Step D: strong convergence of `∇v_n` ([Lemma 4.2](#AFS:lem:strongGrad))
   have hstrong : TendstoLpLoc 2 volume (UInf S.U) (fun n ↦ gradₓ (v (ψ n))) (gradₓ u) atTop :=
     tendstoLpLoc_gradₓ_semilinear S hβ (ε := fun n ↦ e (ψ n)) (fun n ↦ he_pos _)
       (he0.comp hψ.tendsto_atTop) (fun n ↦ (hsolv _).2.1) (fun n q hq ↦ (hvbd _ q hq).1) hconv₂
       hucont hulip hgradw hE1 (fun n ↦ hslice _) hw₂ hB0 (fun n ↦ hdtB _)
-  -- Step E: `L¹_loc` and a.e. convergence of `χ_ε` (Lemma 4.3)
+  -- Step E: `L¹_loc` and a.e. convergence of `χ_ε` ([Lemma 4.3](#AFS:lem:chiConverge))
   have hχcont : ∀ n, ContinuousOn (chiEps β (e n) (v n)) (UInf S.U) := fun n ↦
     continuousOn_chiEps hβ _ (hvc n)
   obtain ⟨φ₃, hφ₃, χ₀, hχ₀m, hχ₃⟩ := exists_tendstoLpLoc_chiEps_subseq S hβ
@@ -641,8 +652,6 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
       hg hg₀ (hstrongΦ _ hξs hK)
       (fun n ↦ ((hχcont _).mono hξs).aestronglyMeasurable hKm) hχn
       hχm.aestronglyMeasurable hχb (hχL1 _ hξs hK) hwΦ B hB0 (fun n ↦ hdtB _)
-  have hEΦ : Tendsto (fun n ↦ energyBound S (Gε (e (Φ n)))) atTop (𝓝 (energyBound S Gg)) :=
-    hEconv.comp (tendsto_nhdsWithin_iff.2 ⟨heΦ, Eventually.of_forall fun n ↦ he_pos _⟩)
   refine ⟨fun n ↦ e (Φ n), u, w, χ, fun n ↦ he₀ _, he_anti.comp_strictMono hΦ, heΦ, hconvΦ,
     hgradwΦ, hχL1, hχae, Eventually.of_forall hχ01, ?_, ?_, ?_, ?_, ?_⟩
   · -- (ii) the limit is a parabolic inner variational solution
@@ -650,21 +659,22 @@ theorem eps_inner_limit : EpsInnerLimitStatement := by
       ?_, fun ξ hξ hξc hξs ↦ (hid ξ hξ hξc hξs).1, fun ξ hξ hξc hξs ↦ (hid ξ hξ hξc hξs).2⟩
     exact ae_chi_eq_one_of_pos hβ (fun n ↦ he_pos (Φ n)) heΦ
       (fun p hp ↦ hconvΦ.tendsto_at hp) hUInfm hχae
-  · -- (4.5)
+  · -- [(4.6)](#AFS:eqn:weakHeat)
     exact weakHeat_of_tendsto S.isOpen hβ (fun n ↦ he_pos _) heΦ (fun n ↦ (hsolv _).2.1) hconvΦ
       hstrongΦ hgu hwΦ
-  · -- (3.11)
+  · -- [(3.12)](#AFS:eqn:diss2)
     exact dissipationIneq_of_tendsto S (v := fun n ↦ v (Φ n))
       (χ := fun n ↦ chiEps β (e (Φ n)) (v (Φ n)))
-      (En := fun n ↦ energyBound S (Gε (e (Φ n)))) hE1 (fun n ↦ hEn _) (fun n ↦ hvd _)
+      (En := fun _ ↦ E0) hE1 (fun _ ↦ hE0E1) (fun n ↦ hvd _)
       (fun n ↦ (hsolv _).2.1.2.2.1)
-      (fun n T hT ↦ semilinear_dissipation S hβ (he_pos _) (hH1n _) (hsolv _) T hT) hEΦ
+      (fun n T hT ↦ (Registry.semilinear_energy_dissipation S hβ (he_pos _) (hH1n _) (hsolv _)
+        hT).trans (ENNReal.div_le_div_right (hJ _ (he₀ _)) 2)) tendsto_const_nhds
       hconvΦ hulip (fun n ↦ hχcont _) (fun n p ↦ (chiEps_mem_Icc hβ (he_pos _) _ p).1)
       (fun p ↦ by rcases hχ01 p with h | h <;> simp [h]) hχae hwΦ
-  · -- (3.12)
+  · -- [(3.13)](#AFS:eqn:LipEst)
     exact interiorLipEst_of_tendsto S.isOpen (le_max_right _ _) (fun n ↦ hlipn _)
       (fun n ↦ hvd _) hconvΦ
-  · -- (3.13)
+  · -- [(3.14)](#AFS:eqn:chiEst2)
     intro η hη
     have hlsc := Registry.weightedTVₓ_le_liminf (l := atTop) hUInfo η
       (fun n ↦ chiEps β (e (Φ n)) (v (Φ n))) χ

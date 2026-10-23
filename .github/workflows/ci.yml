@@ -67,6 +67,8 @@ jobs:
         run: scripts/check-challenges.sh
       - name: Check module headers, challenge vocabulary sync, imports and size
         run: python3 scripts/challenge-prep.py check
+      - name: Check paper references against the committed label snapshot
+        run: python3 scripts/paper-refs.py check
       - name: Save Lake artifacts
         uses: actions/cache/save@v6
         if: always()

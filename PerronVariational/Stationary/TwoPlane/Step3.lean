@@ -13,14 +13,14 @@ import PerronVariational.Main.Directional
 import PerronVariational.Stationary.TwoPlane.OneDim
 
 /-!
-# Two-plane functions: Step 3 and Proposition 2.14
+# Two-plane functions: Step 3 and [Proposition 2.20](#AFS:p.two-plane-minimizing-props)
 
-**Proposition 2.14** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: slices and
-marginals, the ACL property of Sobolev functions along `e` (`ae_slice_hasPrimitive`), Step 3
-(`energyJ_ge_of_downward`) and the three statements `twoPlane_not_upwardMinimizer`,
-`twoPlane_not_downwardMinimizer_of_lt`, `twoPlane_downwardMinimizer_of_le` (with
-`twoPlane_downwardMinimizer_iff`).
+**[Proposition 2.20](#AFS:p.two-plane-minimizing-props)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: slices and marginals, the ACL property of Sobolev functions along `e`
+(`ae_slice_hasPrimitive`), Step 3 (`energyJ_ge_of_downward`) and the three statements
+`twoPlane_not_upwardMinimizer`, `twoPlane_not_downwardMinimizer_of_lt`,
+`twoPlane_downwardMinimizer_of_le` (with `twoPlane_downwardMinimizer_iff`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -268,10 +268,10 @@ theorem ae_ae_coord (b : OrthonormalBasis (Fin (n + 1)) ℝ (E (n + 1)))
 then for a.e. line `s ↦ Θ⁻¹(s, y)` parallel to `e`, the restriction of `v` has an absolutely
 continuous representative `w` with `w' = G · e` (L. C. Evans, R. F. Gariepy, *Measure Theory and
 Fine Properties of Functions*, revised ed., CRC Press, 2015, doi:10.1201/b18333, Theorem 4.21).
-Used by the paper implicitly in Step 3 of the proof of Proposition 2.14 ("any
-competitor for `d > 1` will pay the 1-dimensional energy along slices"). Proof:
-`ae_slice_hasPrimitive'` (test functions `χ(x · e) θ(x')`, Fubini, and the one-dimensional
-`exists_primitive_of_weakDeriv`). -/
+Used by the paper implicitly in Step 3 of the proof of
+[Proposition 2.20](#AFS:p.two-plane-minimizing-props) ("any competitor for `d > 1` will pay the
+1-dimensional energy along slices"). Proof: `ae_slice_hasPrimitive'` (test functions
+`χ(x · e) θ(x')`, Fubini, and the one-dimensional `exists_primitive_of_weakDeriv`). -/
 theorem ae_slice_hasPrimitive (b : OrthonormalBasis (Fin (n + 1)) ℝ (E (n + 1))) (hb : b 0 = e)
     {v : E (n + 1) → ℝ} {G : E (n + 1) → E (n + 1)} (hv : MemH1Loc univ v G) :
     ∀ᵐ y : Fin n → ℝ, ∃ w : ℝ → ℝ, (∀ᵐ s : ℝ, w s = v ((coordEquiv b).symm (s, y))) ∧
@@ -317,8 +317,8 @@ theorem exists_Ioo_eq_slice_ball (hb : b 0 = e) (he : ‖e‖ = 1) (y : Fin n �
     rw [this, abs_lt]
     constructor <;> rintro ⟨h1, h2⟩ <;> constructor <;> linarith
 
-/-- **Proposition 2.14, Step 3**, lower bound for measurable downward competitors in
-dimension `n + 1`: `J_q(v; B) ≥ (α² + q²)|B| = J_q(φ_α; B)`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props), Step 3**, lower bound for measurable
+downward competitors in dimension `n + 1`: `J_q(v; B) ≥ (α² + q²)|B| = J_q(φ_α; B)`. -/
 theorem energyJ_ge_of_downward {α q : ℝ} (hq : 0 < q) (hqα : q ≤ α) (he : ‖e‖ = 1)
     {x₀ : E (n + 1)} {r : ℝ} {v : E (n + 1) → ℝ} {G : E (n + 1) → E (n + 1)}
     (hvm : Measurable v) (hGm : Measurable G) (hv : MemH1Loc univ v G)
@@ -421,7 +421,7 @@ theorem energyJ_twoPlane {d : ℕ} {α q : ℝ} (hα : 0 < α) {e : E d} (he : �
     rw [posSet_twoPlane hα]; exact ⟨hx, h2⟩
   rw [h1, norm_twoPlaneGrad_of_ne α he h2, indicator_of_mem hp, sq_abs, Pi.one_apply, mul_one]
 
-/-- **Proposition 2.14 (2), `α ≥ q`** in dimension `n + 1`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (2), `α ≥ q`** in dimension `n + 1`. -/
 theorem twoPlane_downwardMinimizer_of_le_aux {α q : ℝ} (hq : 0 < q) (hqα : q ≤ α)
     (he : ‖e‖ = 1) : IsDownwardMinimizer univ (fun _ ↦ q) (twoPlane α e) := by
   have hα : 0 < α := hq.trans_le hqα
@@ -467,10 +467,11 @@ theorem twoPlane_downwardMinimizer_of_le_aux {α q : ℝ} (hq : 0 < q) (hqα : q
 
 end Step3
 
-/-! ### Proposition 2.14 -/
+/-! ### [Proposition 2.20](#AFS:p.two-plane-minimizing-props) -/
 
-/-- **Proposition 2.14 (1)**: for `α > 0`, the two-plane solution `φ_α(x) = α |x · e|` is not
-an upward minimizer of `J_q` in `ℝᵈ` (any `q`). Proof by first variation (see module doc). -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (1)**: for `α > 0`, the two-plane
+solution `φ_α(x) = α |x · e|` is not an upward minimizer of `J_q` in `ℝᵈ` (any `q`). Proof by first
+variation (see module doc). -/
 theorem twoPlane_not_upwardMinimizer {α : ℝ} (hα : 0 < α) {e : E d} (he : ‖e‖ = 1) (q : ℝ) :
     ¬ IsUpwardMinimizer univ (fun _ ↦ q) (twoPlane α e) := by
   rintro ⟨-, -, -, -, hmin⟩
@@ -621,8 +622,8 @@ theorem twoPlane_not_upwardMinimizer {α : ℝ} (hα : 0 < α) {e : E d} (he : �
       (mul_nonneg (sq_nonneg _) (indicator_nonneg (fun _ _ ↦ zero_le_one) _))
   · rw [hint]; linarith
 
-/-- **Proposition 2.14 (2), `α < q`** (Steps 1–2): for `0 < α < q`, `φ_α` is not a
-downward minimizer of `J_q` in `ℝᵈ`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (2), `α < q`** (Steps 1–2): for
+`0 < α < q`, `φ_α` is not a downward minimizer of `J_q` in `ℝᵈ`. -/
 theorem twoPlane_not_downwardMinimizer_of_lt {α q : ℝ} (hα : 0 < α) (hαq : α < q) {e : E d}
     (he : ‖e‖ = 1) : ¬ IsDownwardMinimizer univ (fun _ ↦ q) (twoPlane α e) := by
   obtain ⟨n, rfl⟩ : ∃ n, d = n + 1 := by
@@ -633,8 +634,8 @@ theorem twoPlane_not_downwardMinimizer_of_lt {α q : ℝ} (hα : 0 < α) (hαq :
     · exact ⟨n, rfl⟩
   exact twoPlane_not_downwardMinimizer_of_lt_aux hα hαq he
 
-/-- **Proposition 2.14 (2), `α ≥ q`** (Step 3): for `0 < q ≤ α`, `φ_α` is a
-downward minimizer of `J_q` in `ℝᵈ`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (2), `α ≥ q`** (Step 3): for
+`0 < q ≤ α`, `φ_α` is a downward minimizer of `J_q` in `ℝᵈ`. -/
 theorem twoPlane_downwardMinimizer_of_le {α q : ℝ} (hq : 0 < q) (hqα : q ≤ α) {e : E d}
     (he : ‖e‖ = 1) : IsDownwardMinimizer univ (fun _ ↦ q) (twoPlane α e) := by
   obtain ⟨n, rfl⟩ : ∃ n, d = n + 1 := by
@@ -645,8 +646,8 @@ theorem twoPlane_downwardMinimizer_of_le {α q : ℝ} (hq : 0 < q) (hqα : q ≤
     · exact ⟨n, rfl⟩
   exact twoPlane_downwardMinimizer_of_le_aux hq hqα he
 
-/-- **Proposition 2.14 (2)**: for `α, q > 0`, `φ_α` is a downward minimizer of `J_q` in `ℝᵈ`
-iff `q ≤ α`. -/
+/-- **[Proposition 2.20](#AFS:p.two-plane-minimizing-props) (2)**: for `α, q > 0`, `φ_α` is a
+downward minimizer of `J_q` in `ℝᵈ` iff `q ≤ α`. -/
 theorem twoPlane_downwardMinimizer_iff {α q : ℝ} (hα : 0 < α) (hq : 0 < q) {e : E d}
     (he : ‖e‖ = 1) : IsDownwardMinimizer univ (fun _ ↦ q) (twoPlane α e) ↔ q ≤ α :=
   ⟨fun h ↦ not_lt.1 fun hlt ↦ twoPlane_not_downwardMinimizer_of_lt hα hlt he h,

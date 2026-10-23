@@ -1,0 +1,1559 @@
+{
+ "arxiv": "2609.14981",
+ "draft": false,
+ "duplicates": [],
+ "format": 1,
+ "generator": "paper-refs 0.4.0",
+ "labels": {
+  "c.2d-structure": {
+   "anchor": "theorem.1.2",
+   "kind": "corollary",
+   "kind_from": "tex",
+   "number": "1.2"
+  },
+  "c.blow-up-directional": {
+   "anchor": "theorem.2.18",
+   "kind": "corollary",
+   "kind_from": "tex",
+   "number": "2.18"
+  },
+  "c.monotone-long-time": {
+   "anchor": "theorem.5.7",
+   "kind": "corollary",
+   "kind_from": "tex",
+   "number": "5.7"
+  },
+  "c.positivity-no-jump": {
+   "anchor": "theorem.B.9",
+   "kind": "corollary",
+   "kind_from": "tex",
+   "number": "B.9"
+  },
+  "cor:increasing": {
+   "anchor": "theorem.5.4",
+   "kind": "corollary",
+   "kind_from": "tex",
+   "number": "5.4"
+  },
+  "d.directional": {
+   "anchor": "theorem.2.15",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.15"
+  },
+  "d.largest-smallest": {
+   "anchor": "theorem.2.7",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.7"
+  },
+  "d.parabolic-inner": {
+   "anchor": "theorem.3.8",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.8"
+  },
+  "d.parabolic-relaxed-subsolution": {
+   "anchor": "theorem.3.5",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.5"
+  },
+  "d.parabolic-strict-sub": {
+   "anchor": "theorem.3.2",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.2"
+  },
+  "d.parabolic-subsolution": {
+   "alias_of": "d.parabolic-supersolution",
+   "anchor": "theorem.3.3",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.3"
+  },
+  "d.parabolic-supersolution": {
+   "anchor": "theorem.3.3",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.3"
+  },
+  "d.prec-ordering": {
+   "anchor": "theorem.3.1",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "3.1"
+  },
+  "d.relaxed-sub-stationary": {
+   "anchor": "theorem.2.4",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.4"
+  },
+  "d.stationary-inner": {
+   "anchor": "theorem.2.11",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.11"
+  },
+  "d.stationary-viscosity": {
+   "anchor": "theorem.2.1",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.1"
+  },
+  "d.strict-sub": {
+   "anchor": "theorem.2.3",
+   "kind": "definition",
+   "kind_from": "tex",
+   "number": "2.3"
+  },
+  "e.J-lattice-prop": {
+   "anchor": "equation.A.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.1"
+  },
+  "e.Linfty": {
+   "anchor": "equation.3.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.8"
+  },
+  "e.attainment": {
+   "anchor": "equation.3.11",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.11"
+  },
+  "e.b2rho-outside": {
+   "anchor": "equation.B.12",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.12"
+  },
+  "e.bernoulli-basic": {
+   "anchor": "equation.1.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "1.1"
+  },
+  "e.bernoulli-parabolic": {
+   "anchor": "equation.3.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.1"
+  },
+  "e.bernoulli-parabolic-semilinear": {
+   "anchor": "equation.3.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.4"
+  },
+  "e.beta-conditions": {
+   "anchor": "equation.3.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.5"
+  },
+  "e.better-u-upper": {
+   "anchor": "equation.A.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.4"
+  },
+  "e.chain-sub": {
+   "anchor": "equation.B.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.5"
+  },
+  "e.chain-super-goal": {
+   "anchor": "equation.B.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.6"
+  },
+  "e.density-zero": {
+   "anchor": "equation.2.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.6"
+  },
+  "e.dissipation-eps": {
+   "anchor": "equation.3.9",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.9"
+  },
+  "e.ell-bds-above-ep": {
+   "anchor": "equation.B.10",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.10"
+  },
+  "e.energy": {
+   "anchor": "equation.1.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "1.2"
+  },
+  "e.eta-properties": {
+   "anchor": "equation.B.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.4"
+  },
+  "e.exterior-ball": {
+   "anchor": "equation.B.11",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.11"
+  },
+  "e.kappa-def": {
+   "anchor": "equation.B.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.3"
+  },
+  "e.kappaj-consequence": {
+   "anchor": "equation.5.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.2"
+  },
+  "e.lattice-application": {
+   "anchor": "equation.A.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.3"
+  },
+  "e.localEst": {
+   "anchor": "equation.3.10",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.10"
+  },
+  "e.obstacle-remin": {
+   "anchor": "equation.6.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "6.1"
+  },
+  "e.obstacle-remin-sub": {
+   "anchor": "equation.6.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "6.2"
+  },
+  "e.parabolic-inner-var": {
+   "anchor": "equation.3.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.3"
+  },
+  "e.perron-def-sub": {
+   "anchor": "equation.2.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.2"
+  },
+  "e.perron-def-super": {
+   "anchor": "equation.2.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.4"
+  },
+  "e.point-kappa-choice": {
+   "anchor": "equation.5.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.5"
+  },
+  "e.prec-br-bd": {
+   "anchor": "equation.5.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.7"
+  },
+  "e.prec-br-in": {
+   "anchor": "equation.5.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.8"
+  },
+  "e.profile-ep-def": {
+   "anchor": "equation.3.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.7"
+  },
+  "e.profile-foc": {
+   "anchor": "equation.B.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.2"
+  },
+  "e.stationary-inner-var": {
+   "anchor": "equation.2.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.5"
+  },
+  "e.w-eq": {
+   "anchor": "equation.B.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.7"
+  },
+  "e.zmax": {
+   "anchor": "equation.B.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.8"
+  },
+  "e.zmax-ineq": {
+   "anchor": "equation.B.9",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.9"
+  },
+  "eqn:LipEst": {
+   "anchor": "equation.3.13",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.13"
+  },
+  "eqn:S^g": {
+   "anchor": "equation.2.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.1"
+  },
+  "eqn:S_g": {
+   "anchor": "equation.2.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.3"
+  },
+  "eqn:chi1": {
+   "anchor": "equation.A.9",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.9"
+  },
+  "eqn:chiBoundy": {
+   "anchor": "equation.4.12",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.12"
+  },
+  "eqn:chiEps": {
+   "anchor": "equation.3.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.6"
+  },
+  "eqn:chiEpsBV": {
+   "anchor": "equation.4.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.7"
+  },
+  "eqn:chiEst2": {
+   "anchor": "equation.3.14",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.14"
+  },
+  "eqn:coincide": {
+   "anchor": "equation.A.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.5"
+  },
+  "eqn:containerMe": {
+   "anchor": "equation.5.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.6"
+  },
+  "eqn:contraDo": {
+   "anchor": "equation.5.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.1"
+  },
+  "eqn:contraMe": {
+   "anchor": "equation.5.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.3"
+  },
+  "eqn:contradicted": {
+   "anchor": "equation.5.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "5.4"
+  },
+  "eqn:directionalMinimality": {
+   "anchor": "equation.2.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.7"
+  },
+  "eqn:diss2": {
+   "anchor": "equation.3.12",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.12"
+  },
+  "eqn:dissipation": {
+   "anchor": "equation.B.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "B.1"
+  },
+  "eqn:heatEqn": {
+   "anchor": "equation.4.9",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.9"
+  },
+  "eqn:heatEqnRelation": {
+   "anchor": "equation.4.4",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.4"
+  },
+  "eqn:inftyBound": {
+   "anchor": "equation.4.1",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.1"
+  },
+  "eqn:inftyLip": {
+   "anchor": "equation.3.15",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.15"
+  },
+  "eqn:inftyPerim": {
+   "anchor": "equation.3.16",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.16"
+  },
+  "eqn:innerVarEps": {
+   "anchor": "equation.4.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.2"
+  },
+  "eqn:innerVarLocalized": {
+   "anchor": "equation.4.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.8"
+  },
+  "eqn:limsupForGrad": {
+   "anchor": "equation.4.3",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.3"
+  },
+  "eqn:limsupForGradFinal": {
+   "anchor": "equation.4.5",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.5"
+  },
+  "eqn:limsupMe": {
+   "anchor": "equation.4.11",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.11"
+  },
+  "eqn:locallocalLip": {
+   "anchor": "equation.2.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "2.8"
+  },
+  "eqn:nablaEst": {
+   "anchor": "equation.A.8",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.8"
+  },
+  "eqn:nondegenStep": {
+   "anchor": "equation.3.2",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "3.2"
+  },
+  "eqn:spatialEst": {
+   "anchor": "equation.A.7",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.7"
+  },
+  "eqn:timeBound": {
+   "anchor": "equation.4.13",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.13"
+  },
+  "eqn:timeDerivative": {
+   "anchor": "equation.A.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "A.6"
+  },
+  "eqn:vanishingtime": {
+   "anchor": "equation.4.10",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.10"
+  },
+  "eqn:weakHeat": {
+   "anchor": "equation.4.6",
+   "kind": "equation",
+   "kind_from": "tex",
+   "number": "4.6"
+  },
+  "f.necklace": {
+   "anchor": "figure.1",
+   "kind": "figure",
+   "kind_from": "tex",
+   "number": "1",
+   "title": "A configuration where minimal supersolution (left), energy minimizer (middle), and maximal subsolution (right) are distinct. The domain is the exterior of a union of $N=18$ unit disks centered and evenly spaced around a circle of radius $r=24$, and the data $g$ is chosen so that the radial solutions centered at each disk just touch their two neighbors. The salient features of this example are Lean verified with $N=100$ at GitHubRepo"
+  },
+  "fig:precFail": {
+   "anchor": "figure.2",
+   "kind": "figure",
+   "kind_from": "tex",
+   "number": "2",
+   "title": "With boundary data $g = 0$ in $B_4((0,4))$ and $g = c_1$ (left diagram) or $g = c_2$ (right diagram) in $B_1((0,-4))$ with $0<c_1 < c_2$, we have found the smallest supersolutions $u_1$ and $u_2$, respectively. Since the free boundary is able to meet the domain boundary (a possibility since $g = 0$ within $U$), the ordering $u_1u_2$ fails on $U$"
+  },
+  "it.g-firstint": {
+   "anchor": "Item.66",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(b)"
+  },
+  "it.g-ineq": {
+   "anchor": "Item.65",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(a)"
+  },
+  "it.g-linear": {
+   "anchor": "Item.67",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(c)"
+  },
+  "l.attainment-lateral": {
+   "anchor": "theorem.B.6",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "B.6"
+  },
+  "l.directionalStable": {
+   "anchor": "theorem.2.16",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.16"
+  },
+  "l.extremal-viscosity": {
+   "anchor": "theorem.2.6",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.6"
+  },
+  "l.initial-L2": {
+   "anchor": "theorem.B.7",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "B.7"
+  },
+  "l.inner-compactness-stability": {
+   "anchor": "theorem.2.14",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.14",
+   "title": "compactness for inner variational solutions"
+  },
+  "l.inner-variational-implies-subsoln": {
+   "anchor": "theorem.2.12",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.12"
+  },
+  "l.largest-sub-sphere-exterior": {
+   "anchor": "theorem.A.3",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "A.3"
+  },
+  "l.limit-max": {
+   "anchor": "theorem.5.1",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "5.1"
+  },
+  "l.lipschitz-initial": {
+   "anchor": "theorem.B.4",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "B.4"
+  },
+  "l.local-minimality": {
+   "anchor": "theorem.2.8",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.8"
+  },
+  "l.monotone": {
+   "anchor": "theorem.B.1",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "B.1"
+  },
+  "l.nondegen-equivalences": {
+   "anchor": "theorem.A.2",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "A.2"
+  },
+  "l.one-plane-limit": {
+   "anchor": "theorem.2.19",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.19"
+  },
+  "l.outer-reg-non-degen": {
+   "anchor": "theorem.A.1",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "A.1",
+   "title": "Subsolution non-degeneracy at outer-regular points"
+  },
+  "l.perimeter-bound": {
+   "anchor": "theorem.2.13",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.13",
+   "title": "Perimeter bound"
+  },
+  "l.positivity-trace": {
+   "anchor": "theorem.B.8",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "B.8"
+  },
+  "l.prec-ordering-convergence": {
+   "anchor": "theorem.5.2",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "5.2"
+  },
+  "l.profile-sub": {
+   "anchor": "theorem.3.9",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "3.9"
+  },
+  "l.profile-super": {
+   "anchor": "theorem.3.10",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "3.10"
+  },
+  "l.subsolution-inner-limit": {
+   "anchor": "theorem.5.8",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "5.8"
+  },
+  "l.super-stability": {
+   "anchor": "theorem.2.5",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "2.5"
+  },
+  "l.well-prepared": {
+   "anchor": "theorem.3.11",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "3.11"
+  },
+  "lem:chiConverge": {
+   "anchor": "theorem.4.3",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "4.3"
+  },
+  "lem:strongGrad": {
+   "anchor": "theorem.4.2",
+   "kind": "lemma",
+   "kind_from": "tex",
+   "number": "4.2"
+  },
+  "p.attainment": {
+   "anchor": "theorem.B.5",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "B.5",
+   "title": "uniform attainment of the data"
+  },
+  "p.downward": {
+   "anchor": "theorem.6.3",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "6.3"
+  },
+  "p.eps-inner-limit": {
+   "anchor": "theorem.4.1",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "4.1",
+   "title": "$0$ limit, variational form"
+  },
+  "p.inner-largest": {
+   "anchor": "theorem.6.2",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "6.2"
+  },
+  "p.inner-smallest": {
+   "anchor": "theorem.6.1",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "6.1"
+  },
+  "p.localLip": {
+   "anchor": "theorem.B.2",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "B.2"
+  },
+  "p.localLip-initial-data": {
+   "anchor": "theorem.B.3",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "B.3"
+  },
+  "p.monotone-nondegen-relaxed": {
+   "anchor": "theorem.3.6",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "3.6"
+  },
+  "p.semilinear-limit-viscosity": {
+   "anchor": "theorem.5.3",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "5.3"
+  },
+  "p.semilinear-wellposed": {
+   "anchor": "theorem.3.12",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "3.12"
+  },
+  "p.subsolution-limit": {
+   "anchor": "theorem.5.5",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "5.5"
+  },
+  "p.supersolution-limit": {
+   "anchor": "theorem.5.6",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "5.6"
+  },
+  "p.two-plane-minimizing-props": {
+   "anchor": "theorem.2.20",
+   "kind": "proposition",
+   "kind_from": "tex",
+   "number": "2.20"
+  },
+  "part.H1-continuity": {
+   "anchor": "Item.48",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "p.semilinear-wellposed"
+  },
+  "part.attainment": {
+   "anchor": "Item.50",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iv)",
+   "parent": "p.semilinear-wellposed"
+  },
+  "part.avg": {
+   "anchor": "Item.62",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "l.nondegen-equivalences"
+  },
+  "part.blow-up-directional-1": {
+   "anchor": "Item.23",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "c.blow-up-directional"
+  },
+  "part.continuity": {
+   "anchor": "Item.52",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "t.parabolic-existence"
+  },
+  "part.downward": {
+   "anchor": "Item.3",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "t.main"
+  },
+  "part.eps-convergence": {
+   "anchor": "Item.59",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "p.eps-inner-limit"
+  },
+  "part.eps-estimates": {
+   "anchor": "Item.61",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "p.eps-inner-limit"
+  },
+  "part.eps-inner": {
+   "anchor": "Item.60",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "p.eps-inner-limit"
+  },
+  "part.eta-gradient": {
+   "anchor": "Item.74",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)"
+  },
+  "part.eta-superharmonic": {
+   "anchor": "Item.73",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)"
+  },
+  "part.gep-1": {
+   "anchor": "Item.42",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "l.well-prepared"
+  },
+  "part.gep-2": {
+   "anchor": "Item.43",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "l.well-prepared"
+  },
+  "part.gep-3": {
+   "anchor": "Item.44",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "l.well-prepared"
+  },
+  "part.gep-4": {
+   "anchor": "Item.45",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iv)",
+   "parent": "l.well-prepared"
+  },
+  "part.gep-5": {
+   "anchor": "Item.46",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(v)",
+   "parent": "l.well-prepared"
+  },
+  "part.inner": {
+   "anchor": "Item.2",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "t.main"
+  },
+  "part.laplace": {
+   "anchor": "Item.64",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "l.nondegen-equivalences"
+  },
+  "part.largest-reg": {
+   "anchor": "Item.5",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "c.2d-structure"
+  },
+  "part.lipschitz": {
+   "anchor": "Item.49",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "p.semilinear-wellposed"
+  },
+  "part.longtime-viscosity-1": {
+   "anchor": "Item.57",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "t.longtime-viscosity"
+  },
+  "part.longtime-viscosity-2": {
+   "anchor": "Item.58",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "t.longtime-viscosity"
+  },
+  "part.monotone": {
+   "anchor": "Item.47",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "p.semilinear-wellposed"
+  },
+  "part.profile-sub-a": {
+   "anchor": "Item.34",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "l.profile-sub"
+  },
+  "part.profile-sub-b": {
+   "anchor": "Item.35",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "l.profile-sub"
+  },
+  "part.profile-sub-c": {
+   "anchor": "Item.36",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "l.profile-sub"
+  },
+  "part.profile-super-a": {
+   "anchor": "Item.37",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "l.profile-super"
+  },
+  "part.profile-super-b": {
+   "anchor": "Item.38",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "l.profile-super"
+  },
+  "part.profile-super-c": {
+   "anchor": "Item.39",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)",
+   "parent": "l.profile-super"
+  },
+  "part.profile-super-e": {
+   "anchor": "Item.40",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iv)",
+   "parent": "l.profile-super"
+  },
+  "part.profile-super-f": {
+   "anchor": "Item.41",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(v)",
+   "parent": "l.profile-super"
+  },
+  "part.quadratic-behavior": {
+   "anchor": "Item.75",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(iii)"
+  },
+  "part.smallest-reg": {
+   "anchor": "Item.4",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "c.2d-structure"
+  },
+  "part.stability-pair": {
+   "anchor": "Item.14",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "l.super-stability"
+  },
+  "part.stability-super": {
+   "anchor": "Item.13",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "l.super-stability"
+  },
+  "part.sup": {
+   "anchor": "Item.63",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(ii)",
+   "parent": "l.nondegen-equivalences"
+  },
+  "part.trace": {
+   "anchor": "Item.51",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(v)",
+   "parent": "p.semilinear-wellposed"
+  },
+  "part.visc": {
+   "anchor": "Item.1",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(i)",
+   "parent": "t.main"
+  },
+  "phi.a": {
+   "anchor": "Item.68",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(a)"
+  },
+  "phi.b": {
+   "anchor": "Item.69",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(b)"
+  },
+  "phi.c": {
+   "anchor": "Item.70",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(c)"
+  },
+  "phi.d": {
+   "anchor": "Item.71",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(d)"
+  },
+  "phi.e": {
+   "anchor": "Item.72",
+   "kind": "item",
+   "kind_from": "tex",
+   "number": "(e)"
+  },
+  "r.caffarelli-admissible": {
+   "anchor": "theorem.1.3",
+   "kind": "remark",
+   "kind_from": "tex",
+   "number": "1.3"
+  },
+  "r.longtime-inner-indicator": {
+   "anchor": "theorem.3.15",
+   "kind": "remark",
+   "kind_from": "tex",
+   "number": "3.15"
+  },
+  "r.statToPara": {
+   "anchor": "theorem.3.4",
+   "kind": "remark",
+   "kind_from": "tex",
+   "number": "3.4",
+   "title": "Solutions of e.bernoulli-basic are stationary solutions of e.bernoulli-parabolic"
+  },
+  "r.strict-touching": {
+   "anchor": "theorem.2.2",
+   "kind": "remark",
+   "kind_from": "tex",
+   "number": "2.2"
+  },
+  "s.additional-proofs": {
+   "anchor": "appendix.A",
+   "kind": "appendix",
+   "kind_from": "tex",
+   "number": "A",
+   "title": "Additional proofs"
+  },
+  "s.basic-properties": {
+   "anchor": "subsection.B.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.1",
+   "title": "Basic properties"
+  },
+  "s.blow-ups": {
+   "anchor": "subsection.2.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.5",
+   "title": "Blow-ups"
+  },
+  "s.concepts": {
+   "anchor": "section.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2",
+   "title": "Solution concepts"
+  },
+  "s.conclusion": {
+   "anchor": "section.6",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "6",
+   "title": "Proof of the main theorem"
+  },
+  "s.directional-minimality": {
+   "anchor": "subsection.2.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.4",
+   "title": "Directional minimality"
+  },
+  "s.directionalStable-proof": {
+   "anchor": "subsection.A.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.3",
+   "title": "Proof of Lemma l.directionalStable"
+  },
+  "s.downward": {
+   "anchor": "subsection.6.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "6.3",
+   "title": "Extremal solutions are directionally minimal"
+  },
+  "s.energy-estimates": {
+   "anchor": "subsection.B.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.2",
+   "title": "Energy estimates"
+  },
+  "s.inner-largest": {
+   "anchor": "subsection.6.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "6.2",
+   "title": "The inner variational property: largest subsolutions"
+  },
+  "s.inner-limits": {
+   "anchor": "section.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4",
+   "title": "Limits in the inner variational sense"
+  },
+  "s.inner-regularity-stability": {
+   "anchor": "subsubsection.2.3.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.3.1",
+   "title": "Regularity and stability under limits"
+  },
+  "s.inner-smallest": {
+   "anchor": "subsection.6.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "6.1",
+   "title": "The inner variational property: smallest supersolutions"
+  },
+  "s.inner-variational-stationary": {
+   "anchor": "subsection.2.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.3",
+   "title": "Inner variational solutions"
+  },
+  "s.intro": {
+   "anchor": "section.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "1",
+   "title": "Introduction"
+  },
+  "s.largest-sub-nondegen": {
+   "anchor": "subsection.A.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.2",
+   "title": "Largest subsolution non-degeneracy"
+  },
+  "s.limit-theorems": {
+   "anchor": "subsection.3.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.5",
+   "title": "Existence and limit theorems for the parabolic Bernoulli problem"
+  },
+  "s.lipschitz-space": {
+   "anchor": "subsection.B.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.4",
+   "title": "Lipschitz estimate in space"
+  },
+  "s.long-time-limit": {
+   "anchor": "subsection.5.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "5.4",
+   "title": "Long time limit"
+  },
+  "s.no-outward-jump": {
+   "anchor": "subsection.B.6",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.6",
+   "title": "No outward jump of the positive phase at $t=0$"
+  },
+  "s.non-degen": {
+   "anchor": "subsubsection.2.2.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.2.1",
+   "title": "Non-degeneracy properties of extremal solutions"
+  },
+  "s.parabolic-comparison": {
+   "anchor": "subsection.3.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.2",
+   "title": "Parabolic comparison principles"
+  },
+  "s.parabolic-inner": {
+   "anchor": "subsection.3.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.3",
+   "title": "Parabolic inner variational solutions"
+  },
+  "s.parabolic_bernoulli": {
+   "anchor": "section.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3",
+   "title": "The parabolic Bernoulli problem"
+  },
+  "s.perimeter-chi-compactness": {
+   "anchor": "subsection.4.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4.3",
+   "title": "Perimeter estimate and $$ compactness in $L^1$"
+  },
+  "s.perron": {
+   "anchor": "subsection.2.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.2",
+   "title": "Perron's method and extremal viscosity solutions"
+  },
+  "s.profile-sub-proof": {
+   "anchor": "subsubsection.B.3.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.3.1",
+   "title": "Proof of profile-sub"
+  },
+  "s.profile-super-proof": {
+   "anchor": "subsubsection.B.3.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.3.2",
+   "title": "Proof of profile-super"
+  },
+  "s.proof-chiConverge": {
+   "anchor": "subsection.A.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.5",
+   "title": "Proof of Lemma lem:chiConverge"
+  },
+  "s.proof-parabolic-existence": {
+   "anchor": "subsection.5.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "5.3",
+   "title": "Proof of parabolic-existence"
+  },
+  "s.proof-supersolution-limit": {
+   "anchor": "subsection.A.6",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.6",
+   "title": "Proof of supersolution-limit"
+  },
+  "s.proof-two-plane-minimizing-props": {
+   "anchor": "subsection.A.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.4",
+   "title": "Proof of two-plane-minimizing-props"
+  },
+  "s.recovery-sequences": {
+   "anchor": "subsubsection.3.4.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.4.1",
+   "title": "Recovery sequences for sub and supersolutions"
+  },
+  "s.semilinear": {
+   "anchor": "appendix.B",
+   "kind": "appendix",
+   "kind_from": "tex",
+   "number": "B",
+   "title": "Details on the semilinear approximation"
+  },
+  "s.semilinear-inner-formula": {
+   "anchor": "subsection.4.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4.1",
+   "title": "Inner variational formula for the semilinear problem"
+  },
+  "s.semilinear-intro": {
+   "anchor": "subsection.3.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.4",
+   "title": "The semilinear approximation"
+  },
+  "s.semilinear-limit": {
+   "anchor": "subsection.5.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "5.2",
+   "title": "Semilinear limit"
+  },
+  "s.smallest-super-nondegen": {
+   "anchor": "subsection.A.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "A.1",
+   "title": "Smallest supersolution non-degeneracy"
+  },
+  "s.technical-lemmas": {
+   "anchor": "subsection.5.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "5.1",
+   "title": "Some technical lemmas"
+  },
+  "s.viscosity-limits": {
+   "anchor": "section.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "5",
+   "title": "Limits in the viscosity sense"
+  },
+  "s.viscosity-solns-prelim": {
+   "anchor": "subsection.2.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "2.1",
+   "title": "Viscosity solutions"
+  },
+  "s.well-prepared-data-proofs": {
+   "anchor": "subsection.B.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.3",
+   "title": "Well-prepared data"
+  },
+  "s.well-prepared-proof": {
+   "anchor": "subsubsection.B.3.3",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.3.3",
+   "title": "Proof of Lemma l.well-prepared"
+  },
+  "s.well-prepared-semilinear": {
+   "anchor": "subsubsection.3.4.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.4.2",
+   "title": "Well-prepared solutions of the semilinear problem"
+  },
+  "ss.attainment": {
+   "anchor": "subsection.B.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "B.5",
+   "title": "Attainment of the parabolic boundary data"
+  },
+  "ss.notation": {
+   "anchor": "subsection.1.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "1.2",
+   "title": "Notation and conventions"
+  },
+  "ss.plan": {
+   "anchor": "subsection.1.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "1.1",
+   "title": "Strategy of the proof"
+  },
+  "subsec:paraInnerVar": {
+   "anchor": "subsection.4.4",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4.4",
+   "title": "Parabolic inner variation formula"
+  },
+  "subsec:paraVisc": {
+   "anchor": "subsection.3.1",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "3.1",
+   "title": "Parabolic viscosity solutions"
+  },
+  "subsec:strongGrad": {
+   "anchor": "subsection.4.2",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4.2",
+   "title": "Compactness of semilinear approximation"
+  },
+  "subsec:varTtoInfty": {
+   "anchor": "subsection.4.5",
+   "kind": "section",
+   "kind_from": "tex",
+   "number": "4.5",
+   "title": "Long time limit"
+  },
+  "t.comparison": {
+   "anchor": "theorem.3.7",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "3.7",
+   "title": "Strict comparison"
+  },
+  "t.downward-min-non-degen": {
+   "anchor": "theorem.2.17",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "2.17",
+   "title": "Downward minimizer non-degeneracy, see VelichkovBook*Lemma 4.4"
+  },
+  "t.largest-sub-non-degen": {
+   "anchor": "theorem.2.10",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "2.10",
+   "title": "Largest subsolution non-degeneracy OrcanEkmekci"
+  },
+  "t.longtime-inner": {
+   "anchor": "theorem.3.14",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "3.14",
+   "title": "long-time limit, variational form"
+  },
+  "t.longtime-viscosity": {
+   "anchor": "theorem.3.16",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "3.16",
+   "title": "long-time limit, viscosity form"
+  },
+  "t.main": {
+   "anchor": "theorem.1.1",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "1.1"
+  },
+  "t.parabolic-existence": {
+   "anchor": "theorem.3.13",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "3.13"
+  },
+  "t.smallest-super-non-degen": {
+   "anchor": "theorem.2.9",
+   "kind": "theorem",
+   "kind_from": "tex",
+   "number": "2.9",
+   "title": "Smallest supersolution non-degeneracy"
+  }
+ },
+ "moved": {
+  "f.necklace": "Figure 1 -> Figure 1: title 'A configuration where minimal supersolution (left), energy minimizer (middle), and maximal subsolution (right) are distinct. The domain is the exterior of a union of $18$ unit disks centered and evenly spaced around a circle of radius $r=24$, and the data $g$ is chosen so that the radial solutions centered at each disk just touch their two neighbors' -> 'A configuration where minimal supersolution (left), energy minimizer (middle), and maximal subsolution (right) are distinct. The domain is the exterior of a union of $N=18$ unit disks centered and evenly spaced around a circle of radius $r=24$, and the data $g$ is chosen so that the radial solutions centered at each disk just touch their two neighbors. The salient features of this example are Lean verified with $N=100$ at GitHubRepo'",
+  "p.semilinear-wellposed": "Proposition 3.8 -> Proposition 3.11: also labelled l.time-modulus, p.positivity-trace -> -",
+  "r.statToPara": "Remark 3.3 -> Remark 3.3: alias of eqn:statToPara -> -",
+  "s.inner-regularity-stability": "Section 2.3.1 -> Section 2.3.1: title 'Stability properties under limits' -> 'Regularity and stability under limits'",
+  "s.largest-sub-nondegen": "Appendix B -> Section B.2: kind Appendix B -> Section B.2; title 'Non-degeneracy of largest subsolutions' -> 'Largest subsolution non-degeneracy'",
+  "s.limit-theorems": "Section 3.5 -> Section 3.5: title 'Existence and limit theorems' -> 'Existence and limit theorems for the parabolic Bernoulli problem'",
+  "s.semilinear-inner-formula": "Section 4.1 -> Section 4.1: title 'Inner variational formula for semilinear problem' -> 'Inner variational formula for the semilinear problem'",
+  "s.well-prepared-proof": "Section A.3.2 -> Section A.3.3: title 'Transforming sub and supersolutions' -> 'Proof of Lemma l.well-prepared'",
+  "subsec:paraInnerVar": "Section 4.4 -> Section 4.4: title 'Parabolic inner variation formula: proof of eps-inner-limit' -> 'Parabolic inner variation formula'",
+  "subsec:varTtoInfty": "Section 4.5 -> Section 4.5: title 'Stationary limit as $T$' -> 'Long time limit'"
+ },
+ "moved_since": "v1",
+ "paper": "AFS",
+ "removed": {
+  "eqn:alt1": "equation 5.5 in v1",
+  "eqn:alt2": "equation 5.6 in v1",
+  "eqn:equiv": "equation 6.2 in v2",
+  "eqn:statToPara": "Remark 3.3 in v1",
+  "l.downward": "Lemma 6.3 in v2",
+  "l.subsolution-limit": "Lemma 5.5 in v2",
+  "l.supersolution-limit": "Lemma 5.6 in v2",
+  "l.time-modulus": "Proposition 3.8 in v1",
+  "p.positivity-trace": "Proposition 3.8 in v1",
+  "part.data": "Item (i) in v2",
+  "s.one-dim-profiles": "Section A.3.1 in v1",
+  "ss.acknowledgments": "Section 1.3 in v1",
+  "ss.ai-use": "Section 1.4 in v1"
+ },
+ "source": {
+  "aux": [
+   "bernoulli-paper.aux"
+  ],
+  "aux_sha256": "8061308c9ac7e01635acefc2111291b4fb801e9ffb606e27c2313220fe470782",
+  "frozen": {
+   "compile": "latexmk -pdf -interaction=nonstopmode -halt-on-error bernoulli-paper.tex",
+   "repo_commit": "8eec0e275311d84b6f50612b38a6f564d29e0264"
+  },
+  "tex": [
+   "bernoulli-paper.tex"
+  ],
+  "tex_sha256": "dec0b3e5a3cfc42142c1e526cb9c445a62f19747b9cddeb9b0eeb050e91f46c3"
+ },
+ "title": "Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem",
+ "version": "v2"
+}

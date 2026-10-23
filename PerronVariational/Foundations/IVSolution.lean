@@ -13,9 +13,10 @@ import InnerVariational.Kernel.Subharmonic
 # Inner variational solutions and the `Q`-variational solutions of bernoulli-rectifiability
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper"). Def
-2.8 of the paper (`IsInnerVarSolution U Q u χ`) and `InnerVariational.IsVariationalSolutionQ` of the
-dependency bernoulli-rectifiability v0.2.0 (the variational solutions of D. Kriventsov, G. S. Weiss,
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
+[Def 2.11](#AFS:d.stationary-inner) of the paper (`IsInnerVarSolution U Q u χ`) and
+`InnerVariational.IsVariationalSolutionQ` of the dependency bernoulli-rectifiability v0.2.0 (the
+variational solutions of D. Kriventsov, G. S. Weiss,
 *Rectifiability, finite Hausdorff measure, and compactness for non-minimizing Bernoulli free
 boundaries*, Comm. Pure Appl. Math. 78 (2025), no. 3, 545–591, doi:10.1002/cpa.22226, with a
 Lipschitz coefficient `Q`) describe the same objects, with three differences of encoding:
@@ -24,9 +25,10 @@ Lipschitz coefficient `Q`) describe the same objects, with three differences of 
   every ball in `Ω`. On an open `V ⊆ U` on which `u` is `C`-Lipschitz the two agree.
 * Here the inner variation is integrated over `U`; bernoulli-rectifiability integrates over the
   whole space. The integrand vanishes off `tsupport ξ ⊆ U` (`innerVariationQ_eq_setIntegral`).
-* Def 2.8 of the paper contains `Δu = 0` in `{u > 0}`; bernoulli-rectifiability derives it
-  (Kriventsov–Weiss, Prop 3.2; `IsVariationalSolution.harmonicOn_pos`). The global converse below
-  uses this for constant coefficients.
+* [Def 2.11](#AFS:d.stationary-inner) of the paper contains `Δu = 0` in `{u > 0}`;
+  bernoulli-rectifiability derives it (Kriventsov–Weiss, Prop 3.2;
+  `IsVariationalSolution.harmonicOn_pos`). The global converse below uses this for constant
+  coefficients.
 
 * `isVariationalSolutionQ_of_isInnerVarSolution` (on an open `V ⊆ U` on which `u` is Lipschitz)
   and `exists_ball_isVariationalSolutionQ` (on a ball around each point of `U`).
@@ -63,8 +65,9 @@ theorem innerVariationQ_eq_setIntegral {U : Set (E d)} (Q u χ : E d → ℝ) {�
   rw [innerVariationQ_eq_integral, setIntegral_eq_integral_of_forall_compl_eq_zero]
   exact fun x hx ↦ innerVarIntegrand_eq_zero_of_notMem_tsupport Q u χ fun h ↦ hx (hξ h)
 
-/-- An inner variational solution (Def 2.8) in `U` is a `Q`-variational solution in the sense of
-bernoulli-rectifiability on every open `V ⊆ U` on which `u` is `C`-Lipschitz. -/
+/-- An inner variational solution ([Def 2.11](#AFS:d.stationary-inner)) in `U` is a `Q`-variational
+solution in the sense of bernoulli-rectifiability on every open `V ⊆ U` on which `u` is
+`C`-Lipschitz. -/
 theorem isVariationalSolutionQ_of_isInnerVarSolution {U V : Set (E d)} {Q u χ : E d → ℝ}
     (h : IsInnerVarSolution U Q u χ) (hV : IsOpen V) (hVU : V ⊆ U) {C : ℝ≥0}
     (hC : LipschitzOnWith C u V) : InnerVariational.IsVariationalSolutionQ V C Q u χ where
@@ -87,8 +90,8 @@ theorem isVariationalSolutionQ_of_isInnerVarSolution {U V : Set (E d)} {Q u χ :
     exact h.stationary ξ hξ.1 hξ.2.1 (hξ.2.2.trans hVU)
 
 /-- **Ball form.** Around every point of `U` there is a ball in `U` on which an inner
-variational solution (Def 2.8) is a `Q`-variational solution in the sense of
-bernoulli-rectifiability. -/
+variational solution ([Def 2.11](#AFS:d.stationary-inner)) is a `Q`-variational solution in the
+sense of bernoulli-rectifiability. -/
 theorem exists_ball_isVariationalSolutionQ {U : Set (E d)} {Q u χ : E d → ℝ}
     (h : IsInnerVarSolution U Q u χ) (hU : IsOpen U) {x : E d} (hx : x ∈ U) :
     ∃ δ > 0, ball x δ ⊆ U ∧ ∃ C : ℝ≥0,
@@ -101,8 +104,8 @@ theorem exists_ball_isVariationalSolutionQ {U : Set (E d)} {Q u χ : E d → ℝ
     (fun y hy ↦ (hδt hy).2) (hCt.mono fun y hy ↦ (hδt hy).1)
 
 /-- A global `Q`-variational solution (bernoulli-rectifiability) with a constant coefficient
-`q > 0` is a global inner variational solution (Def 2.8). Harmonicity in `{v > 0}` comes from
-`IsVariationalSolution.harmonicOn_pos` applied to `(v / q, χ)`. -/
+`q > 0` is a global inner variational solution ([Def 2.11](#AFS:d.stationary-inner)). Harmonicity in
+`{v > 0}` comes from `IsVariationalSolution.harmonicOn_pos` applied to `(v / q, χ)`. -/
 theorem isInnerVarSolution_univ_of_isVariationalSolutionQ {q : ℝ} (hq : 0 < q) {C : ℝ≥0}
     {v χ : E d → ℝ} (h : InnerVariational.IsVariationalSolutionQ univ C (fun _ ↦ q) v χ) :
     IsInnerVarSolution univ (fun _ ↦ q) v χ where

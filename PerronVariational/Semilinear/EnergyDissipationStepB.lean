@@ -12,7 +12,7 @@ import Mathlib.Order.CompletePartialOrder
 /-!
 # Energy dissipation, part 3: the Steklov-averaged energy identity (Step B)
 
-Step B of the proof of the energy dissipation inequality (A.1) of
+Step B of the proof of the energy dissipation inequality [(B.1)](#AFS:eqn:dissipation) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
 in the Bernoulli one-phase problem*, arXiv:2609.14981.
 Fix `h > 0` and write, for `x ∈ U` and `t > 0`,

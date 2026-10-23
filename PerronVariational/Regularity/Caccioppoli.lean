@@ -15,8 +15,8 @@ public import PerronVariational.Basic.Sobolev
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper"). It
-is used for the continuity of one-sided obstacle minimizers in the proof of Lemma 6.3 (see
-`Regularity/ObstacleBoundary.lean`).
+is used for the continuity of one-sided obstacle minimizers in the proof of
+[Proposition 6.3](#AFS:p.downward) (see `Regularity/ObstacleBoundary.lean`).
 
 The hole-filling lemma `caccioppoli_of_step` and the De Giorgi class `IsDeGiorgiAt` come from the
 dependency gmt-foundations v0.1.0 (`GMTFoundations.DeGiorgi.Caccioppoli`); this module keeps only

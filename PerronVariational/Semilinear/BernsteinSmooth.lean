@@ -12,17 +12,17 @@ import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# The Bernstein estimates for smooth solutions (Propositions A.5–A.6, smooth case)
+# The Bernstein estimates for smooth solutions
 
-The joint proof of Propositions A.5 and A.6 of
+The joint proof of Propositions [B.2](#AFS:p.localLip) and [B.3](#AFS:p.localLip-initial-data) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4),
+in the Bernoulli one-phase problem*, arXiv:2609.14981 ([Appendix B.4](#AFS:s.lipschitz-space)),
 for smooth `Q`, so that the solution is smooth in the interior (interior smoothness of classical
 solutions, `Registry.semilinear_contDiffOn_of_contDiff`, from parabolic-basic-theory v0.1.0).
 
-* `bernstein_interior_smooth`: Proposition A.5 for solutions which are `C^∞`
+* `bernstein_interior_smooth`: [Proposition B.2](#AFS:p.localLip) for solutions which are `C^∞`
   on `B_{2r} × (t₀ - 4r², ∞)`.
-* `bernstein_initial_smooth`: Proposition A.6 for solutions which
+* `bernstein_initial_smooth`: [Proposition B.3](#AFS:p.localLip-initial-data) for solutions which
   are `C^∞` on `B_{2r} × (a, ∞)` and whose spatial gradient is continuous up to `t = a`.
 
 The constants depend only on `d`, `β`, `Q_max` and a bound `N` for `|∇(Q²)|`, not on `ε`, `r`,
@@ -34,9 +34,9 @@ separate argument.
 
 Proof structure: `z = η² |∇u|²/Φ'(Φ⁻¹(u))²` (`BernsteinMax.wGlob`, with the cutoff
 `BernsteinMax.etaFun`) is continuous on the compact cylinder, so it attains its maximum; at a
-positive maximum either `t = a` (Proposition A.6: `z ≤ L²`) or the derivative tests apply and
-`BernsteinMax.zmax_bound` gives `z ≤ K₀ (1 + 4M/r)²`; on the inner cylinder `η = 1` and
-`|∇u|² ≤ e² z`.
+positive maximum either `t = a` ([Proposition B.3](#AFS:p.localLip-initial-data): `z ≤ L²`) or the
+derivative tests apply and `BernsteinMax.zmax_bound` gives `z ≤ K₀ (1 + 4M/r)²`; on the inner
+cylinder `η = 1` and `|∇u|² ≤ e² z`.
 -/
 
 open Set Filter Topology Metric
@@ -79,7 +79,7 @@ theorem norm_le_of_sq_le {g K₀ M r : ℝ} (hg : 0 ≤ g) (hK₀ : 1 ≤ K₀) 
         mul_le_mul_of_nonneg_left this h2
     _ = 4 * Real.exp 1 * Real.sqrt K₀ * (M / r + 1) := by ring
 
-/-- Final numeric step of Proposition A.6. -/
+/-- Final numeric step of [Proposition B.3](#AFS:p.localLip-initial-data). -/
 theorem norm_le_of_sq_le_max {g K₀ M r L : ℝ} (hg : 0 ≤ g) (hK₀ : 1 ≤ K₀) (hM : 0 ≤ M)
     (hr : 0 < r) (hL : 0 ≤ L)
     (h : g ^ 2 ≤ Real.exp 1 ^ 2 * max (L ^ 2) (K₀ * (1 + 4 * M / r) ^ 2)) :
@@ -105,7 +105,7 @@ theorem norm_le_of_sq_le_max {g K₀ M r L : ℝ} (hg : 0 ≤ g) (hK₀ : 1 ≤ 
     have h3 : 0 ≤ 4 * Real.exp 1 * Real.sqrt K₀ * (M / r + 1) := by positivity
     linarith
 
-/-- **Proposition A.5, smooth case**. There is `C = C(d, β, Q_max, N)` such that
+/-- **[Proposition B.2](#AFS:p.localLip), smooth case**. There is `C = C(d, β, Q_max, N)` such that
 for every `ε > 0`, every `C^∞` coefficient `Q` with `|Q| ≤ Q_max`, `|∇(Q²)| ≤ N`, and every
 solution `u ≥ 0` of `∂ₜu = Δu - Q² β_ε(u)` which is `C^∞` on `B_{2r}(x₀) × (t₀ - 4r², ∞)`,
 `0 < r ≤ 1`, with `u ≤ M` on `Q_{2r}(x₀, t₀)`: `|∇u| ≤ C (M/r + 1)` on `Q_r(x₀, t₀)`. -/
@@ -247,7 +247,7 @@ theorem bernstein_interior_smooth {β : ℝ → ℝ} (hβ : IsReactionProfile β
   rw [show 2 * βmax * N = 2 * (βmax * N) by ring] at hbound
   exact hbound.trans (zstar_le hε hr hr1 hM0 hCχ0 hC₁0 (mul_nonneg hβmax0.le hN0) hCη)
 
-/-- **Proposition A.6, smooth case**. There is
+/-- **[Proposition B.3](#AFS:p.localLip-initial-data), smooth case**. There is
 `C = C(d, β, Q_max, N)` such that for every `ε > 0`, every `C^∞` coefficient `Q` with
 `|Q| ≤ Q_max`, `|∇(Q²)| ≤ N`, and every solution `0 ≤ u ≤ M` of `∂ₜu = Δu - Q² β_ε(u)` which is
 `C^∞` on `B_{2r}(x₀) × (a, ∞)`, `0 < r ≤ 1`, with `u`, `∇u` continuous on `B_{2r}(x₀) × [a, ∞)`

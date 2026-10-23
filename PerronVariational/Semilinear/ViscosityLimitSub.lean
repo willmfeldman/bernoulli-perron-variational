@@ -11,29 +11,33 @@ import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.ContinuousFunctionalCalculus
 import PerronVariational.Parabolic.StatToPara
+import PerronVariational.Parabolic.StrictBarrierEquiv
 import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.ViscosityLimitCalculus
 import PerronVariational.Semilinear.ViscosityLimitSuper
 import PerronVariational.Topology.KLimit
 
 /-!
-# Proposition 5.3, Step 1: the relaxed subsolution property
+# [Proposition 5.3](#AFS:p.semilinear-limit-viscosity), Step 1: the relaxed subsolution property
 
-Step 1 of the proof of Proposition 5.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+Step 1 of the proof of [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981.
 
-## The paper's Proposition 5.3 is false for `E = limsup* {u_j > ε_j}`
+## Side result: the smaller set `limsup* {u_j > ε_j}` does not work
 
-Counterexample (any reaction profile `β`): `U = B₁ ⊆ ℝᵈ`, `Q ≡ 1`, `z = 2e₁`, `0 < t₀ < T`, `Γ` the
-heat kernel, `h(x,t) = Γ(x - z, t - t₀)` for `t > t₀` and `0` for `t ≤ t₀` (smooth, bounded,
-nonnegative heat solution on `U × ℝ`, positive exactly for `t > t₀`), `u_j = ε_j (1 + h)`. As
+This concerns a set other than the one in [Proposition 5.3](#AFS:p.semilinear-limit-viscosity): with
+`E = limsup* {u_j > ε_j}` in place of the paper's set, the relaxed subsolution property can fail.
+Example (any reaction profile `β`): `U = B₁ ⊆ ℝᵈ`, `Q ≡ 1`, `z = 2e₁`, `0 < t₀ < T`, `Γ` the heat
+kernel, `h(x,t) = Γ(x - z, t - t₀)` for `t > t₀` and `0` for `t ≤ t₀` (smooth, bounded, nonnegative
+heat solution on `U × ℝ`, positive exactly for `t > t₀`), `u_j = ε_j (1 + h)`. As
 `u_j ≥ ε_j` and `β = 0` on `[1, ∞)`, `u_j` solves the semilinear equation; `u_j → u ≡ 0` uniformly
 and `E = Ū × [t₀, T]`. For `V = B_{ρ₁}`, `a < t₀ < b`, `φ = A(|x|² - ρ²) + B(t - t₀)`
 (`0 < ρ < ρ₁ < 1`, `2Aρ₁ < 1`, `B > 2dA`) is a strict supersolution with `u ≺_E φ` on `∂_P`
 (`E ∩ ∂_P = ∂V × [t₀, b]`, where `φ > 0 = u`), but `p = (0, t₀) ∈ E` has `u(p) = 0 > φ(p)`.
-The gap in the paper's proof is at the parabolic boundary in Step 1: off `E_j` one only has
-`u_j ≤ ε_j`, not `u_j ≤ Ψ_{ε_j}(φ - δ)`. The authors' correction replaces `E` by
-`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (`ViscosityLimitStar`).
+The obstruction is at the parabolic boundary in Step 1: off `E_j` one only has `u_j ≤ ε_j`, not
+`u_j ≤ Ψ_{ε_j}(φ - δ)`. [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) uses the larger set
+`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (`ViscosityLimitStar`), as in the paper.
 
 ## What is proved here
 
@@ -42,8 +46,8 @@ The gap in the paper's proof is at the parabolic boundary in Step 1: off `E_j` o
   `u_j` from above by `φ` plus a strict quadratic penalty) gives a contradiction; hence
   `relaxedSub_case_pos` (case `u(p) > 0`, the paper's case (i)).
 * `semilinear_limit_relaxedSolution_closure`: `(u, \overline{U × (0,T]})` is a relaxed viscosity
-  solution. Proposition 5.3 with the corrected set `E*` is `semilinear_limit_relaxedSolution`
-  (`ViscosityLimit`).
+  solution. [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) with the set `E*` is
+  `semilinear_limit_relaxedSolution` (`ViscosityLimit`).
 * `isParaRelaxedSub_semilinearLimitSet_of_case_zero`: the relaxed subsolution property for
   `E = limsup* {u_j > ε_j}`, conditional on excluding the case `u(p) = 0`.
 -/
@@ -190,7 +194,8 @@ theorem relaxedSub_contra_of_nhds (hβ : IsReactionProfile β) (hεpos : ∀ j, 
   have hucont := continuousOn_semilinearLimit hsol hconv
   have hpK : p ∈ closure V ×ˢ Icc a b := cyl_subset hpcyl
   have hpΩ : p ∈ Ω := hKΩ hpK
-  have hφ2 : ContDiff ℝ 2 φ := hφ.1.of_le (WithTop.coe_le_coe.2 le_top)
+  have hφs := IsClassicalStrictParaSuper.contDiff hφ
+  have hφ2 : ContDiff ℝ 2 φ := hφs.of_le (WithTop.coe_le_coe.2 le_top)
   -- (1) a neighbourhood of `p` in the cylinder lies in `Eset`
   obtain ⟨ρ₀, hρ₀, hρ₀E⟩ := hnE
   -- (2) `V` open
@@ -220,9 +225,11 @@ theorem relaxedSub_contra_of_nhds (hβ : IsReactionProfile β) (hεpos : ∀ j, 
     exact h2.trans_lt h1
   -- (5) the strict supersolution inequality at `p`
   set c₀ := dₜ φ p - lapₓ φ p with hc₀_def
-  have hc₀ : 0 < c₀ := hφ.2.1 p ⟨hclos, hpK⟩
+  have hc₀ : 0 < c₀ :=
+    IsClassicalStrictParaSuper.heat_pos hφ hpK
+      (closure_lt_subset_le continuous_const hφs.continuous hclos)
   have hheatc : Continuous (fun q ↦ dₜ φ q - lapₓ φ q) :=
-    (continuous_dₜ (hφ.1.of_le (WithTop.coe_le_coe.2 le_top))).sub (continuous_lapₓ hφ2)
+    (continuous_dₜ (hφs.of_le (WithTop.coe_le_coe.2 le_top))).sub (continuous_lapₓ hφ2)
   obtain ⟨ρ₁, hρ₁, hρ₁h⟩ : ∃ ρ₁ > 0, ∀ q, dist q p < ρ₁ → c₀ / 2 < dₜ φ q - lapₓ φ q := by
     have h := hheatc.continuousAt.eventually (lt_mem_nhds (half_lt_self hc₀))
     exact Metric.eventually_nhds_iff.1 h
@@ -267,7 +274,7 @@ theorem relaxedSub_contra_of_nhds (hβ : IsReactionProfile β) (hεpos : ∀ j, 
   set ζ : E d × ℝ → ℝ := fun q ↦ φ q + γ * ‖q.1 - p.1‖ ^ 2 + γ * (p.2 - q.2) with hζ_def
   have hζc : Continuous ζ := by
     rw [hζ_def]
-    exact (hφ.1.continuous.add (continuous_const.mul
+    exact (hφs.continuous.add (continuous_const.mul
       ((continuous_fst.sub continuous_const).norm.pow 2))).add
       (continuous_const.mul (continuous_const.sub continuous_snd))
   obtain ⟨pj, hpjC, hpjmax⟩ := hCc.exists_isMaxOn ⟨p, hpC⟩
@@ -368,7 +375,7 @@ theorem relaxedSub_case_pos (hβ : IsReactionProfile β) (hεpos : ∀ j, 0 < ε
 `u(p) = 0`.** Taking a first crossing time and then a maximum of `u - φ` on `E` at that time, the
 case `u(p) > 0` is excluded by `relaxedSub_case_pos`; the remaining case is the hypothesis
 `hzero`. (By the counterexample in the module docstring, `hzero` fails for general sequences
-`u_j`; Corollary 5.4 uses the set `E*` instead.) -/
+`u_j`; [Corollary 5.4](#AFS:cor:increasing) uses the set `E*` instead.) -/
 theorem isParaRelaxedSub_semilinearLimitSet_of_case_zero (hβ : IsReactionProfile β)
     (hεpos : ∀ j, 0 < εs j) (hεlim : Tendsto εs atTop (𝓝 0))
     (hsol : ∀ j, IsSemilinearSolOn S.U S.Q β (εs j) (Ioc 0 T) (us j))
@@ -390,11 +397,12 @@ theorem isParaRelaxedSub_semilinearLimitSet_of_case_zero (hβ : IsReactionProfil
   refine ⟨hucont, hunn, hEc, semilinearLimitSet_subset,
     posSetP_subset_semilinearLimitSet hεlim hconv, ?_⟩
   intro V a b φ hcyl hφ hbd
+  have hφs := IsClassicalStrictParaSuper.contDiff hφ
   obtain ⟨hVo, hVb, hab, hKΩ⟩ := hcyl
   set K := closure V ×ˢ Icc a b with hK_def
   have hKc : IsCompact K := hVb.isCompact_closure.prod isCompact_Icc
   have hKcont : ContinuousOn (fun q ↦ φ q - u q) K :=
-    hφ.1.continuous.continuousOn.sub (hucont.mono hKΩ)
+    hφs.continuous.continuousOn.sub (hucont.mono hKΩ)
   intro p ⟨hpE, hpcyl⟩
   by_contra hlt
   push Not at hlt
@@ -405,7 +413,7 @@ theorem isParaRelaxedSub_semilinearLimitSet_of_case_zero (hβ : IsReactionProfil
   have hCc : IsCompact C := (hKc.inter_left hEc).inter_right
     (isClosed_eq continuous_snd continuous_const)
   obtain ⟨p₁, hp₁C, hp₁max⟩ := hCc.exists_isMaxOn ⟨p₀, hp₀, rfl⟩
-    ((hucont.mono hKΩ).sub hφ.1.continuous.continuousOn |>.mono
+    ((hucont.mono hKΩ).sub hφs.continuous.continuousOn |>.mono
       (inter_subset_left.trans inter_subset_right))
   have hp₁E : p₁ ∈ Eset ∩ K := hp₁C.1
   have hp₁t : p₁.2 = p₀.2 := hp₁C.2
@@ -428,11 +436,10 @@ theorem isParaRelaxedSub_semilinearLimitSet_of_case_zero (hβ : IsReactionProfil
       hmax
   · exact hzero V a b φ hcyl hφ hbd p₁ hp₁E.1 hp₁cyl hup₁ hzero'.symm hstrict hmax
 
-/-- **Proved replacement for Proposition 5.3's relaxed subsolution part.** With the trivial
-set `E = \overline{U × (0, T]}`, `(u, E)` is a relaxed subsolution. (The relaxed ordering on all of
+/-- **The relaxed subsolution property for the trivial set.** With
+`E = \overline{U × (0, T]}`, `(u, E)` is a relaxed subsolution. (The relaxed ordering on all of
 `∂_P` forces `φ > 0` on `∂_P`; the local contradiction `relaxedSub_contra_of_nhds` applies at every
-first crossing point since `E` contains every neighbourhood.) This suffices for Theorem 3.9(iv)
-in the decreasing case, which only asserts `∃ E`. -/
+first crossing point since `E` contains every neighbourhood.) -/
 theorem semilinear_limit_isParaRelaxedSub_closure (hβ : IsReactionProfile β)
     (hεpos : ∀ j, 0 < εs j)
     (hsol : ∀ j, IsSemilinearSolOn S.U S.Q β (εs j) (Ioc 0 T) (us j))
@@ -446,11 +453,12 @@ theorem semilinear_limit_isParaRelaxedSub_closure (hβ : IsReactionProfile β)
   refine ⟨hucont, hunn, hEc, (closure_prod_eq).subset,
     fun q hq ↦ subset_closure hq.1, ?_⟩
   intro V a b φ hcyl hφ hbd
+  have hφs := IsClassicalStrictParaSuper.contDiff hφ
   obtain ⟨hVo, hVb, hab, hKΩ⟩ := hcyl
   set K := closure V ×ˢ Icc a b with hK_def
   have hKc : IsCompact K := hVb.isCompact_closure.prod isCompact_Icc
   have hKcont : ContinuousOn (fun q ↦ φ q - u q) K :=
-    hφ.1.continuous.continuousOn.sub (hucont.mono hKΩ)
+    hφs.continuous.continuousOn.sub (hucont.mono hKΩ)
   intro p ⟨hpE, hpcyl⟩
   by_contra hlt
   push Not at hlt
@@ -460,7 +468,7 @@ theorem semilinear_limit_isParaRelaxedSub_closure (hβ : IsReactionProfile β)
   have hCc : IsCompact C := (hKc.inter_left hEc).inter_right
     (isClosed_eq continuous_snd continuous_const)
   obtain ⟨p₁, hp₁C, hp₁max⟩ := hCc.exists_isMaxOn ⟨p₀, hp₀, rfl⟩
-    ((hucont.mono hKΩ).sub hφ.1.continuous.continuousOn |>.mono
+    ((hucont.mono hKΩ).sub hφs.continuous.continuousOn |>.mono
       (inter_subset_left.trans inter_subset_right))
   have hp₁E : p₁ ∈ Eset ∩ K := hp₁C.1
   have hp₁t : p₁.2 = p₀.2 := hp₁C.2
@@ -480,8 +488,8 @@ theorem semilinear_limit_isParaRelaxedSub_closure (hβ : IsReactionProfile β)
   exact relaxedSub_contra_of_nhds hβ hεpos hsol hconv hunn ⟨hVo, hVb, hab, hKΩ⟩ hφ hp₁cyl hup₁
     ⟨1, one_pos, fun q hq _ ↦ subset_closure (hKΩ (cyl_subset hq))⟩ hstrict hmax
 
-/-- Proposition 5.3 in corrected form: the limit is a relaxed viscosity solution for
-`E = \overline{U × (0, T]}`. -/
+/-- A weak form of [Proposition 5.3](#AFS:p.semilinear-limit-viscosity): the limit is a relaxed
+viscosity solution for `E = \overline{U × (0, T]}`. -/
 theorem semilinear_limit_relaxedSolution_closure (hβ : IsReactionProfile β)
     (hεpos : ∀ j, 0 < εs j) (hεlim : Tendsto εs atTop (𝓝 0))
     (hsol : ∀ j, IsSemilinearSolOn S.U S.Q β (εs j) (Ioc 0 T) (us j))

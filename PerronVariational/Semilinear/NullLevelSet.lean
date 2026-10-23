@@ -20,11 +20,12 @@ point of a set is a density point. At a point `x` of the set, the half-ball
 `{y ∈ B̄_r(x) : ⟨u, y - x⟩ > r/2}` (`u = ∇g(x)/|∇g(x)|`) lies in `{g > 0}` for small `r`, and its
 measure is a fixed positive fraction of `|B̄_r(x)|`, so `x` is not a density point.
 
-Used for the `H¹` convergence `g_ε → g₊` of the well-prepared data (item (i') of the formal
-Proposition 3.8 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981). The paper's proof of
-Theorem 3.9 applies Proposition 4.1, which needs this convergence, without checking it; for
-strict supersolutions it rests on the set `{g = 0, ∇g = 0}`, where `∇g₊ = 0` a.e.
+Used for the strong `H¹` convergence `g_ε → g₊` of the well-prepared data of
+[Proposition 3.12](#AFS:p.semilinear-wellposed) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981 (`Semilinear/WellPosedData.lean`). That convergence is not used by the main line:
+[Proposition 4.1](#AFS:p.eps-inner-limit) assumes only weak `H¹` convergence. For strict
+supersolutions it rests on the set `{g = 0, ∇g = 0}`, where `∇g₊ = 0` a.e.
 -/
 
 open Set Filter Topology MeasureTheory Metric Module

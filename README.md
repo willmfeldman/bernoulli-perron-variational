@@ -19,13 +19,13 @@ In the plane this gives the structure of the free boundary: the largest subsolut
 and the smallest supersolution is classical except on a closed set where every blow-up is a
 two-plane solution.
 
-The library has about 51,400 lines of Lean in 151 files. It is
+The library has about 58,000 lines of Lean in 170 files. It is
 sorry-free, and the headline theorems depend only on the axioms `propext`, `Classical.choice` and
 `Quot.sound`.
 
 ## Headline theorems
 
-Result numbers are those of arXiv:2609.14981v1. Each statement is a `…Statement : Prop` in
+Result numbers are those of arXiv:2609.14981v2. Each statement is a `…Statement : Prop` in
 `PerronVariational/Statements/`, proved by the theorem listed. `formalization.yaml` states the
 certified results in words.
 
@@ -33,36 +33,42 @@ certified results in words.
 |---|---|---|
 | The smallest supersolution above a strict subsolution is a viscosity solution, an inner variational solution, and a local downward minimizer of `J_Q` near each free boundary point | Theorem 1.1 | `main_smallest` |
 | The largest subsolution below a strict supersolution is a viscosity solution, an inner variational solution, and a local upward minimizer of `J_Q` near each free boundary point | Theorem 1.1 | `main_largest` |
-| In `ℝ²`, the free boundary of the smallest supersolution splits into a relatively open regular part, where the solution is classical, and a part where every blow-up is `Q(x₀)|y · e|` | Corollary 1.2(i) | `corollary_2d_smallest` |
+| In `ℝ²`, the free boundary of the smallest supersolution splits into a relatively open regular part, where the solution is classical, and a part where every blow-up is `Q(x₀)\|y · e\|` | Corollary 1.2(i) | `corollary_2d_smallest` |
 | In `ℝ²`, the largest subsolution is classical near every free boundary point | Corollary 1.2(ii) | `corollary_2d_largest` |
 
 The paper explains the ideas of the proof. `formalization.yaml` lists the main intermediate results
-(Theorem 3.9, Propositions 3.8 and 4.1, Theorem 3.10, Lemma 6.3, Theorem B.1) with their Lean names.
+(Theorem 3.13, Propositions 3.12 and 4.1, Theorem 3.14, Proposition 6.3, Theorem 2.10) with their Lean
+names.
 
 ## Deviations from the paper
 
-Each docstring states where its statement deviates from the paper. The main deviations are:
+[`DEVIATIONS.md`](DEVIATIONS.md) lists every place where the formalization differs from the paper,
+result by result: equivalent encodings, statements that are stronger, weaker or differently
+hypothesized, different proof routes, and steps the paper leaves implicit that are proved here.
+The docstring of each declaration concerned gives the details. The main points:
 
-- **Domain.** "`U` has C² boundary" is encoded as `U = {ρ < 0}` for some `ρ ∈ C²(ℝᵈ)` with
-  `∇ρ ≠ 0` on `∂U`.
-- **Test functions and data.** Test functions are smooth on all of `ℝᵈ` (or `ℝᵈ × ℝ`), not only on
-  `U`. This is equivalent, because every condition is local. Strict sub- and supersolutions are
-  `C²(ℝᵈ)`, not `C²(Ū)`; a `C²(Ū)` function on a C² domain extends.
-- **Sobolev spaces and energies.** An `H¹` function carries its weak gradient as explicit data.
-  The energies are `ℝ≥0∞`-valued lower integrals, so no integrability side conditions are needed.
-  "`u − v ∈ H¹₀(B)`" for a ball `B` is encoded as "`u = v` a.e. off `B`".
-- **One-sided minimizers.** The paper's Definition 2.11 compares energies on `U` for `H¹(U)`
-  competitors. Here the competitors are `H¹_loc(U)` and the energies are compared on the ball.
-  The two agree when `J_Q(u; U) < ∞`. The paper's literal version cannot apply on `U = ℝᵈ`,
-  where two-plane functions are not in `H¹`, and the paper uses it there.
-- **Parabolic regularity.** "`∇u ∈ L^∞_loc`" is encoded as local uniform Lipschitz bounds in
-  space, and `∂ₜu` is carried as data. Semilinear solutions are `C^{2,1}` rather than `C^∞`
-  (`C^∞` would need a smooth `Q`).
-- **Weighted perimeter.** `∫ η |∇χ|` is defined by duality, as the supremum of `∫ χ div ψ` over
-  `ψ ∈ C¹_c` with `|ψ| ≤ η`.
-- **Corrected statements.** Several corrections were found in comparison with the arXiv preprint.
-  The authors plan to post an updated preprint incorporating them. The differences from arXiv v1
-  are explained at the corresponding declarations.
+- **Data class of the main theorems.** `main_smallest`, `main_largest` and Corollary 1.2 take `g`
+  in a larger class than Definition 2.3: condition (i) is `Δg ≥ 0` (resp. `Δg ≤ 0`) instead of
+  `Δg ≥ δ₀` (resp. `Δg ≤ −δ₀`), and `a₀, δ₀` need not be at most `1/2`, so harmonic data are
+  allowed. These theorems therefore strengthen the paper's. The versions for the paper's class are
+  `main_smallest_unif`, `main_largest_unif`, `corollary_2d_smallest_unif` and
+  `corollary_2d_largest_unif`. The two examples use harmonic data, so they need the larger class.
+- **Encodings.** "`U` has C² boundary" is encoded as `U = {ρ < 0}` for some `ρ ∈ C²(ℝᵈ)` with
+  `∇ρ ≠ 0` on `∂U`. Test functions are smooth on all of `ℝᵈ` (or `ℝᵈ × ℝ`), and data are
+  `C²(ℝᵈ)`. An `H¹` function carries its weak gradient as data, energies are `ℝ≥0∞`-valued, and
+  "`u − v ∈ H¹₀(B)`" for a ball `B` is encoded as "`v = u` a.e. off `B`". For parabolic inner
+  variational solutions, "`∇u ∈ L^∞_loc`" is encoded as local Lipschitz bounds in space, `∂ₜu` is
+  carried as data, and `∫ η |∇χ|` is defined by duality.
+- **The heat equation in Definition 3.8.** Item (iv) of Definition 3.8 is not part of the Lean
+  definition. Its weak form is a separate predicate, which Proposition 4.1 and Theorem 3.13
+  provide and Theorems 3.14 and 3.16(ii) assume.
+- **Proof routes.** Several steps are proved by a different argument from the paper's, mostly to
+  avoid regularity that a Lipschitz `Q` does not give, or to replace a citation by a proof. For
+  example: the boundary and initial moduli of Appendix B use barriers only; Lemma 4.3 integrates
+  by parts before differentiating in time; and in Proposition 6.1 the subsolution property of the
+  limit comes from Lemma 2.12.
+- **Examples.** The necklace example (Figure 1) is formalized with different parameters
+  (100 holes inside the disc of radius 4, instead of 18 unit discs in the plane).
 
 ## Results from the literature
 
@@ -95,11 +101,11 @@ proofs.
 
 ## Comparator challenges
 
-`challenges/` holds two standalone [Comparator](https://github.com/leanprover/comparator)
-workspaces, `main-theorem` (Theorem 1.1) and `planar-structure` (Corollary 1.2). Each restates its
-headline statements over Mathlib only, with its own vocabulary in `Vocabulary.lean`, and both also
-state a model example (not a result of the paper) as a non-vacuity check. `formalization.yaml` lists
-them. See [`challenges/README.md`](challenges/README.md) for the challenge set and the acceptance
+`challenges/` holds one standalone [Comparator](https://github.com/leanprover/comparator)
+workspace, `main-results`. It restates the main results of the paper over Mathlib only, with its own
+vocabulary in `Vocabulary.lean`: Theorem 1.1, Corollary 1.2, and the necklace example (Figure 1 of
+the paper, with different parameters), which also shows that the hypotheses of the other claims can
+be met. `formalization.yaml` lists them. See [`challenges/README.md`](challenges/README.md) for the challenge set and the acceptance
 procedure.
 
 - Ordinary CI only elaborates these files.
@@ -158,17 +164,18 @@ library.
 |---|---|
 | `PerronVariational/Basic/`, `Defs/` | Vocabulary: the setting, Sobolev and BV notions, viscosity, variational and parabolic notions, Perron's extremal solutions |
 | `PerronVariational/Statements/` | Statements of the main and intermediate results |
-| `PerronVariational/Semilinear/` | The semilinear approximation (Proposition 3.8) and its viscosity limits (Section 5) |
-| `PerronVariational/Parabolic/` | The parabolic problem: existence (Theorem 3.9) and long-time limits |
-| `PerronVariational/Inner/` | Inner variational solutions: the singular limit (Proposition 4.1), long-time limits (Theorem 3.10), compactness |
+| `PerronVariational/Semilinear/` | The semilinear approximation (Proposition 3.12, Appendix B) and its viscosity limits (Section 5) |
+| `PerronVariational/Parabolic/` | The parabolic problem: existence (Theorem 3.13) and long-time limits |
+| `PerronVariational/Inner/` | Inner variational solutions: the singular limit (Proposition 4.1), long-time limits (Theorem 3.14), compactness |
 | `PerronVariational/Stationary/` | Stationary solutions: inner variational ⇒ viscosity sub/supersolution, two-plane solutions, directional minimizers |
-| `PerronVariational/Main/` | Propositions 6.1 and 6.2, Lemma 6.3, Theorem 1.1 and Corollary 1.2 |
-| `PerronVariational/Appendix/` | Appendix B: non-degeneracy |
-| `PerronVariational/Examples/` | A model example, not in the paper: a planar domain and data with distinct smallest and largest solutions, the smallest one having a two-plane point |
+| `PerronVariational/Main/` | Propositions 6.1 and 6.2, Proposition 6.3, Theorem 1.1 and Corollary 1.2 |
+| `PerronVariational/Appendix/` | Non-degeneracy (Theorems 2.9 and 2.10, Appendix A) |
+| `PerronVariational/Examples/` | Two planar examples. `TwoDisc` (`model_example`), not in the paper: a domain and data with distinct smallest and largest solutions, the smallest one having a two-plane point. `Necklace` (`necklace_example`), the configuration of Figure 1 with different parameters (100 holes instead of 18, inside a disc of radius 4): the smallest supersolution, the largest subsolution and every energy minimizer with the same boundary data are pairwise distinct, and the smallest one has two-plane points |
 | `PerronVariational/Analysis/`, `Regularity/`, `Topology/` | Toolkits |
 | `PerronVariational/Foundations/` | Interfaces to the dependencies |
 | `PerronVariational/Registry/` | Results cited from the literature, each proved here or by a dependency |
 | `challenges/`, `formalization.yaml` | Comparator workspaces and the theorem manifest |
+| `DEVIATIONS.md` | Differences between the formalization and the paper |
 | `scripts/` | Integrity, manifest, challenge and release-comparator checks used by CI and the release workflow |
 
 ## References

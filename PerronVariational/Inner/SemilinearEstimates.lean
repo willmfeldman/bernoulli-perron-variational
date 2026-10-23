@@ -23,11 +23,13 @@ import PerronVariational.Semilinear.Profiles
 # Uniform estimates for arbitrary solutions of the semilinear problem
 
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
-the Bernoulli one-phase problem*, arXiv:2609.14981, note at the start of Section 4 that
-Proposition 3.8(iii), (iv) and the bound (4.1) "hold for any solution of the semilinear problem, as
-can be seen from the proof". Proposition 4.1 (`EpsInnerLimitStatement`) quantifies over arbitrary
-solutions, so these estimates are stated here for an arbitrary classical solution of (3.4) (with
-data in `H¹`), as named lemmas.
+the Bernoulli one-phase problem*, arXiv:2609.14981, note at the start of
+[Section 4](#AFS:s.inner-limits) that [Proposition 3.12(ii)](#AFS:part.H1-continuity),
+[(iii)](#AFS:part.lipschitz) and the bound [(4.1)](#AFS:eqn:inftyBound) "hold for any solution of
+the semilinear problem, as can be seen from the proof". [Proposition 4.1](#AFS:p.eps-inner-limit)
+(`EpsInnerLimitStatement`) quantifies over arbitrary solutions, so these estimates are stated here
+for an arbitrary classical solution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) (with data in
+`H¹`), as named lemmas.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -66,12 +68,12 @@ theorem IsSemilinearSolOn.mono_time {U : Set (E d)} {Q : E d → ℝ} {β : ℝ 
     h.2.2.2.1.mono (prod_mono le_rfl hJ), fun p hp ↦ h.2.2.2.2.1 p ⟨hp.1, hJ hp.2⟩,
     h.2.2.2.2.2.1.mono (prod_mono le_rfl hJ), fun p hp ↦ h.2.2.2.2.2.2 p ⟨hp.1, hJ hp.2⟩⟩
 
-/-- **Bounds (4.1)**, in the form `0 ≤ u ≤ max M ε`: for any solution `u` of (3.4) with data
-`0 ≤ gε ≤ M` in `U`, `0 ≤ u ≤ max M ε` on `Ū × [0, ∞)`. Proof: comparison for the semilinear
-equation (`Registry.semilinear_comparison`) with the constant classical solutions `0` and
-`max M ε` (`β_ε` vanishes at both). The paper states `u ≤ ‖gε‖_∞`; here we prove `u ≤ max M ε`,
-because the constant `M` need not be a supersolution when `M < ε`; the weaker bound suffices for
-Proposition 4.1. -/
+/-- **Bounds [(4.1)](#AFS:eqn:inftyBound)**, in the form `0 ≤ u ≤ max M ε`: for any solution `u` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data `0 ≤ gε ≤ M` in `U`, `0 ≤ u ≤ max M ε` on
+`Ū × [0, ∞)`. Proof: comparison for the semilinear equation (`Registry.semilinear_comparison`) with
+the constant classical solutions `0` and `max M ε` (`β_ε` vanishes at both). The paper states
+`u ≤ ‖gε‖_∞`; here we prove the weaker bound `u ≤ max M ε`, which suffices for
+[Proposition 4.1](#AFS:p.eps-inner-limit). -/
 theorem semilinear_nonneg_le_max (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     {ε : ℝ} (hε : 0 < ε) {gε : E d → ℝ} {u : E d × ℝ → ℝ} {M : ℝ}
     (hu : IsSemilinearSolution S.U S.Q β ε gε u) (hg : ∀ x ∈ S.U, 0 ≤ gε x ∧ gε x ≤ M) :
@@ -130,12 +132,14 @@ theorem semilinear_nonneg_le_max (S : Setting d) {β : ℝ → ℝ} (hβ : IsRea
       exact (hgcl q.1 hq1).2.trans (le_max_left _ _)) p hpT
   exact ⟨hlow, hup⟩
 
-/-- **Energy dissipation for an arbitrary solution** (Proposition 3.8(iii), (3.8); claimed for any
-solution at the start of Section 4). If `u` solves (3.4) with data `gε ∈ H¹(U)` (the weak gradient
-`Gε` is carried as explicit data), then for every `T > 0`
-`½ J(u(T), χ_ε(T); U) + ∫₀ᵀ∫_U (∂ₜu)² ≤ ½ (∫_U |Gε|² + Q_max² |U|)`.
-The paper's identity has right-hand side `½ J(gε, χ⁰_ε; U)`, which is at most the right-hand side
-here since `χ⁰_ε ≤ 1`. The paper states (3.8) as an identity; here only the inequality is proved,
+/-- **Energy dissipation for an arbitrary solution**
+([Proposition 3.12(ii)](#AFS:part.H1-continuity), [(3.9)](#AFS:e.dissipation-eps); claimed for any
+solution at the start of [Section 4](#AFS:s.inner-limits)). If `u` solves
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data `gε ∈ H¹(U)` (the weak gradient `Gε` is
+carried as explicit data), then for every `T > 0`
+`½ J(u(T), χ_ε(T); U) + ∫₀ᵀ∫_U (∂ₜu)² ≤ ½ (∫_U |Gε|² + Q_max² |U|)`. The paper's identity has
+right-hand side `½ J(gε, χ⁰_ε; U)`, which is at most the right-hand side here since `χ⁰_ε ≤ 1`. The
+paper states [(3.9)](#AFS:e.dissipation-eps) as an identity; here only the inequality is proved,
 which is all that is used. From `Registry.semilinear_energy_dissipation`, proved in
 `Semilinear/EnergyDissipation.lean`. -/
 theorem semilinear_dissipation (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ}
@@ -196,10 +200,10 @@ theorem Setting.exists_lipschitz_approx (S : Setting d) {g : E d → ℝ}
       _ ≤ |h x - g x| := abs_max_sub_max_le_abs _ _ _
       _ ≤ η := hclose x hx
 
-/-- **Continuous dependence on the data.** Two solutions of (3.4) (same setting) whose data
-differ by at most `η` on `Ū` differ by at most `η e^{Λ t}` at time `t`, `Λ = Q_max² Lβ/ε²`
-(`Lβ` a Lipschitz constant of `β`). Comparison (`Registry.semilinear_comparison`) with
-`u' ± η e^{Λ t}`. -/
+/-- **Continuous dependence on the data.** Two solutions of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) (same setting) whose data differ by at most `η` on
+`Ū` differ by at most `η e^{Λ t}` at time `t`, `Λ = Q_max² Lβ/ε²` (`Lβ` a Lipschitz constant of
+`β`). Comparison (`Registry.semilinear_comparison`) with `u' ± η e^{Λ t}`. -/
 theorem IsSemilinearSolution.abs_sub_le_of_data (S : Setting d) {β : ℝ → ℝ}
     (hβ : IsReactionProfile β) {ε : ℝ} (hε : 0 < ε) {Lβ : ℝ} (hLβ0 : 0 ≤ Lβ)
     (hLβ : ∀ ε > 0, ∀ s s' : ℝ, |betaEps β ε s - betaEps β ε s'| ≤ Lβ / ε ^ 2 * |s - s'|)
@@ -269,15 +273,17 @@ theorem IsSemilinearSolution.abs_sub_le_of_data (S : Setting d) {β : ℝ → �
   rw [abs_le]
   constructor <;> linarith
 
-/-- **Interior Lipschitz bound for an arbitrary solution** (Proposition 3.8(iv), (3.9); claimed
-for any solution at the start of Section 4; Bernstein argument, Appendix A.4). There are a constant
-`C` and `ε₁ > 0`, depending only on the setting and `β`, such that every solution `u` of (3.4)
-with `0 < ε < ε₁` and bounded nonnegative data satisfies the interior Lipschitz estimate (3.12)
-with constant `C`.
+/-- **Interior Lipschitz bound for an arbitrary solution**
+([Proposition 3.12(iii)](#AFS:part.lipschitz), [(3.10)](#AFS:e.localEst); claimed for any solution
+at the start of [Section 4](#AFS:s.inner-limits); Bernstein argument,
+[Appendix B.4](#AFS:s.lipschitz-space)). There are a constant `C` and `ε₁ > 0`, depending only on
+the setting and `β`, such that every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear)
+with `0 < ε < ε₁` and bounded nonnegative data satisfies the interior Lipschitz estimate
+[(3.13)](#AFS:eqn:LipEst) with constant `C`.
 
-Proof: Proposition A.5 (`exists_interiorLipEst`) gives this, with `C` depending only on the setting
-and `β`, for nonnegative data Lipschitz on `Ū`. The data `gε = u(·, 0)` are continuous and
-nonnegative on `Ū`; approximate them uniformly on `Ū` by nonnegative Lipschitz data
+Proof: [Proposition B.2](#AFS:p.localLip) (`exists_interiorLipEst`) gives this, with `C` depending
+only on the setting and `β`, for nonnegative data Lipschitz on `Ū`. The data `gε = u(·, 0)` are
+continuous and nonnegative on `Ū`; approximate them uniformly on `Ū` by nonnegative Lipschitz data
 (`Setting.exists_lipschitz_approx`), solve (well-posedness of the semilinear problem,
 `Registry.semilinear_exists`), compare the solutions (`IsSemilinearSolution.abs_sub_le_of_data`,
 comparison with shifts `η e^{Λ t}`), and pass the uniform interior gradient bound to the limit on
@@ -364,7 +370,8 @@ theorem semilinear_interiorLipEst (S : Setting d) {β : ℝ → ℝ} (hβ : IsRe
     exact hclose k z (subset_closure hzU.1) s hs1
 
 -- The interior time-equicontinuity `semilinear_time_equicontinuous` is proved in
--- `Inner/Compactness.lean` (from (3.8), (3.9) and (4.1)).
+-- `Inner/Compactness.lean` (from [(3.9)](#AFS:e.dissipation-eps), [(3.10)](#AFS:e.localEst) and
+-- [(4.1)](#AFS:eqn:inftyBound)).
 
 -- The local bound on the reaction term `semilinear_betaEps_lintegral_le` is proved in
 -- `Inner/ReactionBound.lean`.
@@ -372,7 +379,8 @@ theorem semilinear_interiorLipEst (S : Setting d) {β : ℝ → ℝ} (hβ : IsRe
 -- The weighted perimeter bound `semilinear_weightedPerimeterEst` is proved in
 -- `Inner/PerimeterEps.lean`.
 
--- The semilinear inner-variation identity (4.2) is proved in `Inner/InnerVarEps.lean`.
+-- The semilinear inner-variation identity [(4.2)](#AFS:eqn:innerVarEps) is proved in
+-- `Inner/InnerVarEps.lean`.
 
 end Inner
 

@@ -14,10 +14,11 @@ import PerronVariational.Semilinear.Profiles
 /-!
 # The bound on `z` at its maximum (Step 3, case analysis)
 
-Steps 2–3 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4):
-the bounds on `k_v`, `∇ₓk` and the analysis of (A.10) in the regions `{v < ε}` and `{v ≥ ε}`.
+Steps 2–3 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)): the bounds on `k_v`, `∇ₓk` and the analysis of
+[(B.9)](#AFS:e.zmax-ineq) in the regions `{v < ε}` and `{v ≥ ε}`.
 
 We run the argument at scale `r ≤ 1` (no rescaling) with the Bernstein function built from
 `ε' = min(ε, r)`; the case `ε > r` (Step 5 of the paper, "`ε ≥ 1`" after rescaling) is covered by

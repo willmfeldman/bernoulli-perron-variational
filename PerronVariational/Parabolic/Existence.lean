@@ -10,36 +10,52 @@ public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.ContinuousFunctionalCalculus
+import PerronVariational.Inner.WeakGrad
 import PerronVariational.Semilinear.Attainment
 import PerronVariational.Semilinear.Monotone
+import PerronVariational.Semilinear.WellPosedData
 import PerronVariational.Topology.KLimit
 
 /-!
-# Theorem 3.9: existence for the parabolic problem (assembly)
+# [Theorem 3.13](#AFS:t.parabolic-existence): existence for the parabolic problem (assembly)
 
-**Theorem 3.9** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, is assembled, as in the
-paper's proof, from the *statements* of
-* Proposition 3.8 (`SemilinearWellposedStatement`): the well-prepared semilinear family;
-* Proposition 4.1 (`EpsInnerLimitStatement`): the `ε → 0` limit is a parabolic inner variational
-  solution with the estimates (3.11)–(3.13);
-* Proposition 5.3 (`SemilinearLimitRelaxedStatement`): the limit is a relaxed viscosity solution;
-* Corollary 5.4 (`SemilinearLimitIncreasingStatement`): in the increasing case it is a viscosity
-  solution.
+**[Theorem 3.13](#AFS:t.parabolic-existence)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, is
+assembled, as in the paper's proof, from the *statements* of
+* [Proposition 3.12](#AFS:p.semilinear-wellposed) (`SemilinearWellposedStatement`): the
+  well-prepared semilinear family;
+* [Proposition 4.1](#AFS:p.eps-inner-limit) (`EpsInnerLimitStatement`): the `ε → 0` limit is a
+  parabolic inner variational solution with the estimates
+  [(3.12)](#AFS:eqn:diss2)–[(3.14)](#AFS:eqn:chiEst2);
+* [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) (`SemilinearLimitRelaxedStatement`): the
+  limit is a relaxed viscosity solution;
+* [Corollary 5.4](#AFS:cor:increasing) (`SemilinearLimitIncreasingStatement`): in the increasing
+  case it is a viscosity solution.
 
 The ingredients not supplied by the statements, all proved here:
-* `exists_isReactionProfile`: some `β` satisfying (3.5) exists (the paper fixes one);
-* `exists_limit_extension`: the limit extends continuously to `Ū × [0, ∞)` (Proposition 3.8(v):
-  a modulus of continuity uniform in `ε`, and density of `U_∞`); it attains `g₊` on `∂_P U_∞`;
-* congruence lemmas: the properties (3.3), (3.11), (3.12) only see `u` on the open set `U_∞`;
-* gluing lemmas: Proposition 5.3 and Corollary 5.4 are stated on `U × (0, T]`, Theorem 3.9 on
-  `U × (0, ∞)`.
+* `exists_isReactionProfile`: some `β` satisfying [(3.5)](#AFS:e.beta-conditions) exists (the paper
+  fixes one);
+* `exists_limit_extension`: the limit extends continuously to `Ū × [0, ∞)`
+  ([Proposition 3.12(iv)](#AFS:part.attainment): a modulus of continuity uniform in `ε`, and density
+  of `U_∞`); it attains `g₊` on `∂_P U_∞`;
+* congruence lemmas: the properties [(3.3)](#AFS:e.parabolic-inner-var), [(3.12)](#AFS:eqn:diss2),
+  [(3.13)](#AFS:eqn:LipEst) only see `u` on the open set `U_∞`;
+* gluing lemmas: [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) and
+  [Corollary 5.4](#AFS:cor:increasing) are stated on `U × (0, T]`,
+  [Theorem 3.13](#AFS:t.parabolic-existence) on `U × (0, ∞)`;
+* `gε → g₊` weakly in `H¹(U)`, from [Lemma 3.11(ii)](#AFS:part.gep-2) and
+  [Lemma 3.11(iv)](#AFS:part.gep-4)
+  (`tendsto_setIntegral_mul_of_abs_sub_le`, `tendsto_setIntegral_inner_gradient`): `gε → g₊`
+  uniformly, and the gradients converge weakly in `L²(U)` by the energy bound. This is proved
+  because the Lean statement of [Proposition 4.1](#AFS:p.eps-inner-limit) takes it as a hypothesis
+  on the data.
 
 We also prove the strengthening `parabolic_existence_bdd_of`. It additionally exports the bound
-`0 ≤ u ≤ M` on `Ū × [0, ∞)` (from (3.7)), and the modulus of continuity of Proposition A.8
-(`exists_modulus`), which depends on `g` only through a Lipschitz constant `L` of `g` on `Ū` and
-`M`, using the Lipschitz item of `IsWellPreparedFamily`. The paper's Theorem 3.9 states neither;
-both are needed to get the boundary values of Perron's solutions in Propositions 6.1 and 6.2.
+`0 ≤ u ≤ M` on `Ū × [0, ∞)` (from [(3.8)](#AFS:e.Linfty)), and the modulus of continuity of
+[Proposition B.5](#AFS:p.attainment) (`exists_modulus`), which depends on `g` only through a
+Lipschitz constant `L` of `g` on `Ū` and `M`, using the Lipschitz item of `IsWellPreparedFamily`.
+Both are needed to get the boundary values of Perron's solutions in Propositions
+[6.1](#AFS:p.inner-smallest) and [6.2](#AFS:p.inner-largest).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -97,8 +113,8 @@ theorem integral_bumpProfile_pos : 0 < ∫ s, bumpProfile s := by
   refine lt_of_lt_of_le ?_ (measure_mono fun s hs ↦ (bumpProfile_pos hs).ne')
   simp
 
-/-- Some reaction profile `β` satisfying (3.5) exists: `β = b / (2 ∫ b)` with
-`b(s) = exp(-1/(s(1-s)))` on `(0, 1)`. -/
+/-- Some reaction profile `β` satisfying [(3.5)](#AFS:e.beta-conditions) exists: `β = b / (2 ∫ b)`
+with `b(s) = exp(-1/(s(1-s)))` on `(0, 1)`. -/
 theorem exists_isReactionProfile : ∃ β : ℝ → ℝ, IsReactionProfile β := by
   set c := ∫ s, bumpProfile s with hc
   have hc0 : 0 < c := integral_bumpProfile_pos
@@ -128,11 +144,12 @@ theorem exists_pos_forall_lt_of_tendsto {ϖ : ℝ → ℝ} (hϖ : Tendsto ϖ (�
   rw [mem_ball, Real.dist_eq, sub_zero, abs_of_nonneg hs0]
   exact hsr
 
-/-- **Extension lemma** (the step "by Proposition 3.8(v), `u` extends to `C(Ū × [0, ∞))`" of the
-proof of Theorem 3.9). Functions `v j` on `F` with a common modulus of continuity `ϖ` (w.r.t. a
-gauge `ρ ≤ 2 dist`), converging pointwise on a dense subset `D ⊆ F`, converge pointwise on all of
-`F` to a function that is continuous on `F` and agrees with the given limit on `D`. (No
-Arzelà–Ascoli argument is needed: the sequence is pointwise Cauchy.) -/
+/-- **Extension lemma** (the step "by [Proposition 3.12(iv)](#AFS:part.attainment), `u` extends to
+`C(Ū × [0, ∞))`" of the proof of [Theorem 3.13](#AFS:t.parabolic-existence)). Functions `v j` on `F`
+with a common modulus of continuity `ϖ` (w.r.t. a gauge `ρ ≤ 2 dist`), converging pointwise on a
+dense subset `D ⊆ F`, converge pointwise on all of `F` to a function that is continuous on `F` and
+agrees with the given limit on `D`. (No Arzelà–Ascoli argument is needed: the sequence is pointwise
+Cauchy.) -/
 theorem exists_limit_extension {F D : Set X} (hDF : D ⊆ F) (hFD : F ⊆ closure D)
     {v : ℕ → X → ℝ} {u : X → ℝ} (hconv : ∀ p ∈ D, Tendsto (fun j ↦ v j p) atTop (𝓝 (u p)))
     {ϖ : ℝ → ℝ} (hϖ : Tendsto ϖ (𝓝[≥] 0) (𝓝 0)) (ρ : X → X → ℝ) (hρ : ∀ p q, 0 ≤ ρ p q)
@@ -231,7 +248,7 @@ theorem IsParaInnerVarSolution.congr (hU : IsOpen U) (h : IsParaInnerVarSolution
         rw [← setIntegral_congr_fun hM (paraInnerVarIntegrand_congr hU heq ξ)]
         exact h.stationary ξ hξ hξc hξs }
 
-/-- The weak heat equation (4.5) in `{u > 0}` only sees `u` on `U_∞`. -/
+/-- The weak heat [equation (4.6)](#AFS:eqn:weakHeat) in `{u > 0}` only sees `u` on `U_∞`. -/
 theorem WeakHeatInPos.congr (hU : IsOpen U) (h : WeakHeatInPos U u w)
     (heq : EqOn u u' (UInf U)) : WeakHeatInPos U u' w := by
   intro φ hφ hc hsupp
@@ -342,29 +359,6 @@ theorem isParaRelaxedSub_Ioi_of_Ioc {Et : ℝ → Set (E d × ℝ)} {Einf : Set 
     intro p hp
     exact key p ⟨hge T hT ⟨hp.1, (mem_cyl_snd_le hp.2).trans_lt hbT⟩, hp.2⟩
 
-theorem closure_Ioi_inter_subset (T : ℝ) :
-    closure (U ×ˢ Ioi (0 : ℝ)) ∩ {p | p.2 < T} ⊆ closure (U ×ˢ Ioc 0 T) := by
-  rintro p ⟨hp, hpT⟩
-  refine closure_mono ?_ ((isOpen_snd_lt T).inter_closure ⟨hpT, hp⟩)
-  rintro q ⟨hqT, hqU, hq0⟩
-  exact ⟨hqU, hq0, le_of_lt hqT⟩
-
-theorem semilinearLimitSet_Ioc_subset (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (T : ℝ) :
-    semilinearLimitSet U (Ioc 0 T) εs us ⊆ semilinearLimitSet U (Ioi 0) εs us :=
-  upperKLimit_mono fun _ _ hp ↦ ⟨⟨hp.1.1, hp.1.2.1⟩, hp.2⟩
-
-theorem semilinearLimitSet_Ioi_inter_subset (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (T : ℝ) :
-    semilinearLimitSet U (Ioi 0) εs us ∩ {p | p.2 < T} ⊆ semilinearLimitSet U (Ioc 0 T) εs us := by
-  rintro p ⟨hp, hpT⟩ N hN
-  refine (hp (N ∩ {q | q.2 < T}) (inter_mem hN ((isOpen_snd_lt T).mem_nhds hpT))).mono ?_
-  rintro j ⟨q, ⟨⟨hqU, hq0⟩, hq⟩, hqN, hqT⟩
-  exact ⟨q, ⟨⟨hqU, hq0, le_of_lt hqT⟩, hq⟩, hqN⟩
-
-theorem semilinearLimitSet_subset_closure (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (I : Set ℝ) :
-    semilinearLimitSet U I εs us ⊆ closure U ×ˢ closure I :=
-  upperKLimit_subset_of_eventually (isClosed_closure.prod isClosed_closure)
-    (Eventually.of_forall fun _ _ hp ↦ ⟨subset_closure hp.1.1, subset_closure hp.1.2⟩)
-
 theorem semilinearLimitSetStar_Ioc_subset (εs : ℕ → ℝ) (us : ℕ → E d × ℝ → ℝ) (T : ℝ) :
     semilinearLimitSetStar U (Ioc 0 T) εs us ⊆ semilinearLimitSetStar U (Ioi 0) εs us :=
   closure_mono <| iUnion₂_mono fun _ _ ↦ upperKLimit_mono fun _ _ hp ↦
@@ -390,22 +384,22 @@ theorem semilinearLimitSetStar_subset_closure (εs : ℕ → ℝ) (us : ℕ → 
     (Eventually.of_forall fun _ _ hp ↦ ⟨subset_closure hp.1.1, subset_closure hp.1.2⟩))
     (isClosed_closure.prod isClosed_closure)
 
-
 end Glue
 
-/-! ### Theorem 3.9 -/
+/-! ### [Theorem 3.13](#AFS:t.parabolic-existence) -/
 
-/-- **Theorem 3.9** as in `ParabolicExistenceStatement`, with the additional export `0 ≤ u ≤ M` on
-`Ū × [0, ∞)` (the bound (3.7) of Proposition 3.8 passed to the limit), which the applications
-(Lemma 5.8, and Theorem 3.10 in Propositions 6.1 and 6.2) need and which
+/-- **[Theorem 3.13](#AFS:t.parabolic-existence)** as in `ParabolicExistenceStatement`, with the
+additional export `0 ≤ u ≤ M` on `Ū × [0, ∞)` (the bound [(3.8)](#AFS:e.Linfty) of
+[Proposition 3.12](#AFS:p.semilinear-wellposed) passed to the limit), which the applications
+([Lemma 5.8](#AFS:l.subsolution-inner-limit), and [Theorem 3.14](#AFS:t.longtime-inner) in
+Propositions [6.1](#AFS:p.inner-smallest) and [6.2](#AFS:p.inner-largest)) need and which
 `ParabolicExistenceStatement` does not contain.
 
-It also exports the modulus of continuity `ϖ` of Proposition 3.8(v) / Proposition A.8 on
-`Ū × [0, ∞)`, which depends on `g` only through a Lipschitz constant `L` of `g` on `Ū` and the
-sup bound `M` (so `ϖ` is chosen after `L` and before `g`). The paper's Theorem 3.9 exports no
-modulus, and the paper does not note this uniformity. Propositions 6.1 and 6.2 use it, uniformly
-over the shifts `g + a`, to get the boundary values of Perron's solutions, which the paper does
-not check. -/
+It also exports the modulus of continuity `ϖ` of [Proposition 3.12(iv)](#AFS:part.attainment) /
+[Proposition B.5](#AFS:p.attainment) on `Ū × [0, ∞)`, which depends on `g` only through a Lipschitz
+constant `L` of `g` on `Ū` and the sup bound `M` (so `ϖ` is chosen after `L` and before `g`).
+Propositions [6.1](#AFS:p.inner-smallest) and [6.2](#AFS:p.inner-largest) use it, uniformly over the
+shifts `g + a`, to get the boundary values of Perron's solutions. -/
 def ParabolicExistenceBddStatement : Prop :=
   ∀ (d : ℕ) (S : Setting d), ∃ C : ℝ, ∀ (M : ℝ) (E0 : ℝ≥0∞), E0 ≠ ⊤ → ∃ Cper : ℝ → ℝ → ℝ,
     ∀ L : ℝ≥0, ∃ ϖ : ℝ → ℝ, Tendsto ϖ (𝓝[≥] 0) (𝓝 0) ∧
@@ -433,14 +427,77 @@ theorem energyBound_indicator_le (S : Setting d) (g : E d → ℝ) :
   gcongr
   exact norm_indicator_le_norm_self _ _
 
-/-- The gauge `‖x - y‖ + |s - t|` of Proposition 3.8(v) is at most twice the (sup) distance. -/
+/-- The gauge `‖x - y‖ + |s - t|` of [Proposition 3.12(iv)](#AFS:part.attainment) is at most twice
+the (sup) distance. -/
 theorem norm_add_abs_le_two_mul_dist (p q : E d × ℝ) :
     ‖p.1 - q.1‖ + |p.2 - q.2| ≤ 2 * dist p q := by
   rw [Prod.dist_eq, ← dist_eq_norm, ← Real.dist_eq]
   linarith [le_max_left (dist p.1 q.1) (dist p.2 q.2), le_max_right (dist p.1 q.1) (dist p.2 q.2)]
 
-/-- **Theorem 3.9** with the bound `0 ≤ u ≤ M` and the uniform modulus, from Propositions 3.8,
-4.1, 5.3 and Corollary 5.4 (as statements), following the paper's proof. -/
+/-! ### Weak `H¹` convergence of the data -/
+
+/-- **Weak `L²` convergence of the data** (from [Lemma 3.11(ii)](#AFS:part.gep-2)): if
+`|f_ε - f₀| ≤ ε` on `U`, with `f_ε, f₀ ∈ L²(U)`, then `∫_U f_ε φ → ∫_U f₀ φ` as `ε → 0⁺` for every
+`φ ∈ L²(U)`. -/
+theorem tendsto_setIntegral_mul_of_abs_sub_le (S : Setting d) {f : ℝ → E d → ℝ} {f₀ : E d → ℝ}
+    {ε₀ : ℝ} (hε₀ : 0 < ε₀) (hf : ∀ ε ∈ Ioo 0 ε₀, MemLp (f ε) 2 (volume.restrict S.U))
+    (hf₀ : MemLp f₀ 2 (volume.restrict S.U)) (h : ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ S.U, |f ε x - f₀ x| ≤ ε)
+    {φ : E d → ℝ} (hφ : MemLp φ 2 (volume.restrict S.U)) :
+    Tendsto (fun ε ↦ ∫ x in S.U, f ε x * φ x) (𝓝[>] 0) (𝓝 (∫ x in S.U, f₀ x * φ x)) := by
+  have hUm : MeasurableSet S.U := S.isOpen.measurableSet
+  have hφi : Integrable φ (volume.restrict S.U) := hφ.integrable (by norm_num)
+  set I : ℝ := ∫ x in S.U, |φ x| with hIdef
+  have key : ∀ ε ∈ Ioo 0 ε₀,
+      ‖(∫ x in S.U, f ε x * φ x) - ∫ x in S.U, f₀ x * φ x‖ ≤ ε * I := by
+    intro ε hε
+    have h1 : Integrable (fun x ↦ f ε x * φ x) (volume.restrict S.U) := (hf ε hε).integrable_mul hφ
+    have h2 : Integrable (fun x ↦ f₀ x * φ x) (volume.restrict S.U) := hf₀.integrable_mul hφ
+    rw [← integral_sub h1 h2, hIdef, ← integral_const_mul]
+    refine norm_integral_le_of_norm_le (hφi.abs.const_mul ε)
+      (ae_restrict_of_forall_mem hUm fun x hx ↦ ?_)
+    rw [← sub_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
+    exact mul_le_mul_of_nonneg_right (h ε hε x hx) (abs_nonneg _)
+  have hlim : Tendsto (fun ε : ℝ ↦ ε * I) (𝓝[>] 0) (𝓝 0) := by
+    have := ((tendsto_id (x := 𝓝[>] (0 : ℝ))).mono_right nhdsWithin_le_nhds).mul_const I
+    simpa using this
+  refine tendsto_iff_norm_sub_tendsto_zero.2 (squeeze_zero' (Eventually.of_forall fun _ ↦
+    norm_nonneg _) ?_ hlim)
+  filter_upwards [Ioo_mem_nhdsGT hε₀] with ε hε using key ε hε
+
+/-- **Weak `L²` convergence of the gradients of the data** (from
+[Lemma 3.11(ii)](#AFS:part.gep-2) and [Lemma 3.11(iv)](#AFS:part.gep-4)): if the `f_ε` and
+`f₀` are locally Lipschitz on `U`, `|f_ε - f₀| ≤ ε` on `U` and `∫_U |∇f_ε|² ≤ E0 < ∞`, then
+`∫_U ∇f_ε · Φ → ∫_U ∇f₀ · Φ` as `ε → 0⁺` for every `Φ ∈ L²(U)` (along sequences, by
+`Inner.tendstoWeakL2_gradient_of_tendsto`). -/
+theorem tendsto_setIntegral_inner_gradient (S : Setting d) {f : ℝ → E d → ℝ} {f₀ : E d → ℝ}
+    {ε₀ : ℝ} (hε₀ : 0 < ε₀) (hf : ∀ ε ∈ Ioo 0 ε₀, LocallyLipschitzOn S.U (f ε))
+    (hf₀ : LocallyLipschitzOn S.U f₀) (h : ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ S.U, |f ε x - f₀ x| ≤ ε)
+    {E0 : ℝ≥0∞} (hE0 : E0 ≠ ⊤)
+    (hbd : ∀ ε ∈ Ioo 0 ε₀, ∫⁻ x in S.U, ENNReal.ofReal (‖∇ (f ε) x‖ ^ 2) ≤ E0)
+    {Φ : E d → E d} (hΦ : MemLp Φ 2 (volume.restrict S.U)) :
+    Tendsto (fun ε ↦ ∫ x in S.U, inner ℝ (∇ (f ε) x) (Φ x)) (𝓝[>] 0)
+      (𝓝 (∫ x in S.U, inner ℝ (∇ f₀ x) (Φ x))) := by
+  rw [tendsto_iff_seq_tendsto]
+  intro x hx
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hx.eventually (Ioo_mem_nhdsGT hε₀))
+  have hxN : ∀ n, x (n + N) ∈ Ioo 0 ε₀ := fun n ↦ hN _ (Nat.le_add_left N n)
+  have hx0 : Tendsto (fun n ↦ x (n + N)) atTop (𝓝 0) :=
+    ((tendsto_add_atTop_iff_nat N).2 hx).mono_right nhdsWithin_le_nhds
+  have hconv : TendstoLocallyUniformlyOn (fun n ↦ f (x (n + N))) f₀ atTop S.U := by
+    refine TendstoUniformlyOn.tendstoLocallyUniformlyOn (Metric.tendstoUniformlyOn_iff.2
+      fun δ hδ ↦ ?_)
+    filter_upwards [hx0.eventually (gt_mem_nhds hδ)] with n hn y hy
+    rw [Real.dist_eq, abs_sub_comm]
+    exact (h _ (hxN n) y hy).trans_lt hn
+  have hw := Inner.tendstoWeakL2_gradient_of_tendsto S.isOpen
+    (f := fun n ↦ f (x (n + N))) (fun n ↦ hf _ (hxN n)) hf₀ hconv hE0 (fun n ↦ hbd _ (hxN n))
+  rw [← tendsto_add_atTop_iff_nat N]
+  exact hw.2.2 Φ hΦ
+
+/-- **[Theorem 3.13](#AFS:t.parabolic-existence)** with the bound `0 ≤ u ≤ M` and the uniform
+modulus, from Propositions [3.12](#AFS:p.semilinear-wellposed), [4.1](#AFS:p.eps-inner-limit),
+[5.3](#AFS:p.semilinear-limit-viscosity) and [Corollary 5.4](#AFS:cor:increasing) (as statements),
+following the paper's proof. -/
 theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
     (h41 : EpsInnerLimitStatement) (h53 : SemilinearLimitRelaxedStatement)
     (h54 : SemilinearLimitIncreasingStatement) : ParabolicExistenceBddStatement := by
@@ -450,13 +507,15 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
   refine ⟨C, fun M E0 hE0 ↦ ?_⟩
   obtain ⟨Cper, hCper⟩ := hC (M + 1) E0 hE0
   refine ⟨Cper, fun L ↦ ?_⟩
-  -- the modulus of Proposition A.8, depending on the data only through `L` and `M + 1`
+  -- the modulus of [Proposition B.5](#AFS:p.attainment), depending on the data only through `L` and
+  -- `M + 1`
   obtain ⟨ϖ, hϖ, hmodA⟩ := exists_modulus S hβ L (M + 1)
   refine ⟨ϖ, hϖ, fun g hgM hgE hgL ↦ ?_⟩
   have hgMcl : ∀ x ∈ closure S.U, |g x| ≤ M := fun x hx ↦
     ContinuousWithinAt.closure_le hx ((hgL.continuousOn x hx).mono subset_closure).abs
       continuousWithinAt_const hgM
-  -- the `ε → 0` limit along the subsequence of Proposition 4.1, extended to `Ū × [0, ∞)`
+  -- the `ε → 0` limit along the subsequence of [Proposition 4.1](#AFS:p.eps-inner-limit), extended
+  -- to `Ū × [0, ∞)`
   have key : ∀ (b : Bool) (ε₀ : ℝ) (gε : ℝ → E d → ℝ) (uε : ℝ → E d × ℝ → ℝ),
       IsWellPreparedFamily S g β b ε₀ gε uε → ∃ (εs : ℕ → ℝ) (u w χ : E d × ℝ → ℝ),
         (∀ j, εs j ∈ Ioo 0 ε₀) ∧ Tendsto εs atTop (𝓝 0) ∧
@@ -467,11 +526,10 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
         ∀ p ∈ closure S.U ×ˢ Ici 0, ∀ q ∈ closure S.U ×ˢ Ici 0,
           |u p - u q| ≤ ϖ (‖p.1 - q.1‖ + |p.2 - q.2|) := by
     intro b ε₀ gε uε hfam
-    obtain ⟨hε₀, hfamε, hgpH1, hH1conv, -, -, -, -⟩ := hfam
+    obtain ⟨hε₀, hfamε, -, -, -, -⟩ := hfam
     have hε₀' : 0 < min ε₀ 1 := lt_min hε₀ one_pos
     have hsubε : ∀ ε ∈ Ioo 0 (min ε₀ 1), ε ∈ Ioo 0 ε₀ :=
       fun ε hε ↦ ⟨hε.1, hε.2.trans_le (min_le_left _ _)⟩
-    have hGg := energyBound_indicator_le S g
     have hgε : ∀ ε ∈ Ioo 0 (min ε₀ 1), ∀ x ∈ S.U, 0 ≤ gε ε x ∧ gε ε x ≤ M + 1 := by
       intro ε hε x hx
       have hb := (hfamε ε (hsubε ε hε)).2.2.1 x (subset_closure hx)
@@ -479,12 +537,45 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
       have hmax : max (g x) 0 ≤ M :=
         max_le ((le_abs_self _).trans (hgM x hx)) ((abs_nonneg _).trans (hgM x hx))
       exact ⟨(le_max_right _ _).trans hb.1, by linarith [hb.2]⟩
+    -- the data hypothesis of [Proposition 4.1](#AFS:p.eps-inner-limit): `gε → g₊` weakly in
+    -- `H¹(U)`, from [Lemma 3.11(ii)](#AFS:part.gep-2) and [Lemma 3.11(iv)](#AFS:part.gep-4)
+    set gp : E d → ℝ := fun x ↦ max (g x) 0 with hgpdef
+    have hgpL : LipschitzOnWith L gp (closure S.U) :=
+      LipschitzOnWith.of_dist_le_mul fun x hx y hy ↦ by
+        simpa [gp, Real.dist_eq] using (abs_max_sub_max_le_abs (g x) (g y) 0).trans
+          (by simpa [Real.dist_eq] using hgL.dist_le_mul x hx y hy)
+    have hgpH1 : MemH1 S.U gp (∇ gp) := memH1_gradient_of_lipschitzOnWith hgpL (C := L)
+      fun x hx ↦ norm_gradient_le_of_lipschitzOnWith S hgpL hx
+    have hH1ε : ∀ ε ∈ Ioo 0 (min ε₀ 1), MemH1 S.U (gε ε) (∇ (gε ε)) := fun ε hε ↦
+      (hfamε ε (hsubε ε hε)).2.2.2.2.1
+    have hdist : ∀ ε ∈ Ioo 0 (min ε₀ 1), ∀ x ∈ S.U, |gε ε x - gp x| ≤ ε := fun ε hε x hx ↦ by
+      have hb := (hfamε ε (hsubε ε hε)).2.2.1 x (subset_closure hx)
+      rw [abs_of_nonneg (by simp only [gp]; linarith [hb.1])]
+      simp only [gp]
+      linarith [hb.2]
+    have hJ : ∀ ε ∈ Ioo 0 (min ε₀ 1), energyJχ S.U S.Q (∇ (gε ε))
+        (fun x ↦ chiEps β ε (uε ε) (x, 0)) ≤ energyBound S (∇ g) := fun ε hε ↦
+      (hfamε ε (hsubε ε hε)).2.2.2.2.2.1
+    have hgEtop : energyBound S (∇ g) ≠ ⊤ := ne_top_of_le_ne_top hE0 hgE
+    have hgradbd : ∀ ε ∈ Ioo 0 (min ε₀ 1),
+        ∫⁻ x in S.U, ENNReal.ofReal (‖∇ (gε ε) x‖ ^ 2) ≤ energyBound S (∇ g) := fun ε hε ↦
+      (lintegral_mono fun x ↦ ENNReal.ofReal_le_ofReal (le_add_of_nonneg_right
+        (mul_nonneg (sq_nonneg _) (by
+          simp only [chiEps]; linarith [hβ.bigBEps_nonneg hε.1.ne' (uε ε (x, 0))])))).trans
+        (hJ ε hε)
+    have hgεloc : ∀ ε ∈ Ioo 0 (min ε₀ 1), LocallyLipschitzOn S.U (gε ε) := fun ε hε ↦ by
+      obtain ⟨K, hK⟩ := (hfamε ε (hsubε ε hε)).2.1
+      exact fun _ _ ↦ ⟨K, S.U, self_mem_nhdsWithin, hK.mono subset_closure⟩
     obtain ⟨εs, u, w, χ, hεs, -, hεs0, hloc, -, -, -, -, hinner, hheat, hdiss, hlip, hper⟩ :=
-      hCper (min ε₀ 1) (fun x ↦ max (g x) 0) ({x | 0 < g x}.indicator (∇ g)) gε
-        (fun ε ↦ ∇ (gε ε)) uε hε₀' hgpH1 (fun ε hε ↦ (hfamε ε (hsubε ε hε)).2.2.2.2.1)
-        hH1conv hgε (hGg.trans hgE) (fun ε hε ↦ (hfamε ε (hsubε ε hε)).1)
+      hCper (min ε₀ 1) gp (∇ gp) gε (fun ε ↦ ∇ (gε ε)) uε (energyBound S (∇ g)) hε₀' hgpH1 hH1ε
+        (fun φ hφ ↦ tendsto_setIntegral_mul_of_abs_sub_le S hε₀' (fun ε hε ↦ (hH1ε ε hε).1)
+          hgpH1.1 hdist hφ)
+        (fun Φ hΦ ↦ tendsto_setIntegral_inner_gradient S hε₀' hgεloc
+          (fun _ _ ↦ ⟨L, S.U, self_mem_nhdsWithin, hgpL.mono subset_closure⟩) hdist hgEtop
+          hgradbd hΦ)
+        hgε hgE hJ (fun ε hε ↦ (hfamε ε (hsubε ε hε)).1)
     have hεs' : ∀ j, εs j ∈ Ioo 0 ε₀ := fun j ↦ hsubε _ (hεs j)
-    -- the uniform modulus (Proposition A.8)
+    -- the uniform modulus ([Proposition B.5](#AFS:p.attainment))
     have hmod : ∀ ε ∈ Ioo 0 (min ε₀ 1), ∀ p ∈ closure S.U ×ˢ Ici 0,
         ∀ q ∈ closure S.U ×ˢ Ici 0, |uε ε p - uε ε q| ≤ ϖ (‖p.1 - q.1‖ + |p.2 - q.2|) := by
       intro ε hε
@@ -530,11 +621,11 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
       simpa only [hj] using hg
     exact ⟨εs, ũ, w, χ, hεs', hεs0, hloc.congr_right heq', hlim,
       ⟨hcont, hbdry, hinner.congr S.isOpen heq', hheat.congr S.isOpen heq',
-        ((hdiss.congr S.isOpen heq').mono hGg), hlip.congr S.isOpen heq', hper⟩, hbd, hmodũ⟩
+        hdiss.congr S.isOpen heq', hlip.congr S.isOpen heq', hper⟩, hbd, hmodũ⟩
   have hUI : UInf S.U ⊆ closure S.U ×ˢ Ici 0 := prod_mono subset_closure Ioi_subset_Ici_self
   have hIoc : ∀ T, S.U ×ˢ Ioc 0 T ⊆ UInf S.U := fun T ↦ prod_mono subset_rfl Ioc_subset_Ioi_self
   refine ⟨fun hsub ↦ ?_, fun hsuper ↦ ?_⟩
-  · -- strict subsolution data: Corollary 5.4
+  · -- strict subsolution data: [Corollary 5.4](#AFS:cor:increasing)
     obtain ⟨ε₀, gε, uε, hfam⟩ := (h37 d S g β hβ).1 hsub
     obtain ⟨εs, u, w, χ, hεs, hεs0, hloc, hlim, hcommon, hbd, hmodu⟩ := key true ε₀ gε uε hfam
     have hcont : ContinuousOn u (S.U ×ˢ Ioi 0) := hcommon.1.mono hUI
@@ -548,12 +639,12 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
     · exact isParaSolution_Ioi_of_Ioc hcont hnn fun T hT ↦
         (h54 d S g β ε₀ gε uε hβ hsub hfam T εs u hT hεs hεs0 (hloc.mono (hIoc T))).2.2
     · intro K hK hKsub
-      obtain ⟨τ, hτ, ε₁, hε₁, hjump⟩ := hfam.2.2.2.2.2.2.2.1 K hK hKsub
+      obtain ⟨τ, hτ, ε₁, hε₁, hjump⟩ := hfam.2.2.2.2.2.1 K hK hKsub
       refine ⟨τ, hτ, fun x hx t ht ↦ le_antisymm ?_ (hbd (x, t) ⟨(hKsub hx).1, ht.1⟩).1⟩
       refine le_of_tendsto_of_tendsto (hlim (x, t) ⟨(hKsub hx).1, ht.1⟩) hεs0 ?_
       filter_upwards [hεs0.eventually (gt_mem_nhds hε₁)] with j hj
       exact (hjump (εs j) ⟨(hεs j).1, hj⟩ (hεs j).2 x hx t ht).le
-  · -- strict supersolution data: Proposition 5.3
+  · -- strict supersolution data: [Proposition 5.3](#AFS:p.semilinear-limit-viscosity)
     obtain ⟨ε₀, gε, uε, hfam⟩ := (h37 d S g β hβ).2 hsuper
     obtain ⟨εs, u, w, χ, hεs, hεs0, hloc, hlim, hcommon, hbd, hmodu⟩ := key false ε₀ gε uε hfam
     have hcont : ContinuousOn u (S.U ×ˢ Ioi 0) := hcommon.1.mono hUI
@@ -565,7 +656,8 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
     · intro x hx s hs t ht hst
       exact le_of_tendsto_of_tendsto' (hlim (x, t) ⟨hx, ht⟩) (hlim (x, s) ⟨hx, hs⟩)
         fun j ↦ hanti j x hx hs ht hst
-    · -- Proposition 5.3 on each `U × (0, T]`, with the set `E*`; the sets glue over `T`
+    · -- [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) on each `U × (0, T]`, with the set
+    -- `E*`; the sets glue over `T`
       have hrel : ∀ T > 0, IsParaRelaxedSolution S.U S.Q (Ioc 0 T) u
           (semilinearLimitSetStar S.U (Ioc 0 T) εs (fun j ↦ uε (εs j))) := fun T hT ↦
         h53 d S β hβ T εs (fun j ↦ uε (εs j)) u hT (fun j ↦ (hεs j).1) hεs0
@@ -579,8 +671,10 @@ theorem parabolic_existence_bdd_of (h37 : SemilinearWellposedStatement)
           (fun T _ ↦ semilinearLimitSetStar_Ioc_subset _ _ T)
           (fun T _ ↦ semilinearLimitSetStar_Ioi_inter_subset _ _ T) fun T hT ↦ (hrel T hT).2⟩
 
-/-- **Theorem 3.9** from Proposition 3.8 (`h37`), Proposition 4.1 (`h41`), Proposition 5.3
-(`h53`) and Corollary 5.4 (`h54`), taken as statements. -/
+/-- **[Theorem 3.13](#AFS:t.parabolic-existence)** from
+[Proposition 3.12](#AFS:p.semilinear-wellposed) (`h37`), [Proposition 4.1](#AFS:p.eps-inner-limit)
+(`h41`), [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) (`h53`) and
+[Corollary 5.4](#AFS:cor:increasing) (`h54`), taken as statements. -/
 theorem parabolic_existence_of (h37 : SemilinearWellposedStatement)
     (h41 : EpsInnerLimitStatement) (h53 : SemilinearLimitRelaxedStatement)
     (h54 : SemilinearLimitIncreasingStatement) : ParabolicExistenceStatement := by

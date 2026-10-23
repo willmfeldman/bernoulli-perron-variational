@@ -16,7 +16,8 @@ import PerronVariational.Semilinear.Calculus
 /-!
 # Arzelà–Ascoli compactness for the semilinear approximation
 
-Compactness step of the proof of Proposition 4.1 of F. Abedin, W. M. Feldman, K. Stinson,
+Compactness step of the proof of [Proposition 4.1](#AFS:p.eps-inner-limit) of F. Abedin, W. M.
+Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981.
 
@@ -135,11 +136,12 @@ section Semilinear
 
 variable {d : ℕ}
 
-/-- **Compactness of the semilinear approximations** (proof of Proposition 4.1(i)): a sequence
-satisfying the interior Lipschitz estimate (3.9) with a common constant, bounded in `[0, M]` on
-`U_∞`, with differentiable time slices and uniformly equicontinuous in time at each point of `U_∞`,
-has a subsequence converging locally uniformly on `U_∞`; the limit is continuous, in `[0, M]`, and
-locally Lipschitz in space. -/
+/-- **Compactness of the semilinear approximations** (proof of
+[Proposition 4.1(i)](#AFS:part.eps-convergence)): a sequence satisfying the interior Lipschitz
+estimate [(3.10)](#AFS:e.localEst) with a common constant, bounded in `[0, M]` on `U_∞`, with
+differentiable time slices and uniformly equicontinuous in time at each point of `U_∞`, has a
+subsequence converging locally uniformly on `U_∞`; the limit is continuous, in `[0, M]`, and locally
+Lipschitz in space. -/
 theorem exists_subseq_tendstoLocallyUniformlyOn_of_lip {U : Set (E d)} (hU : IsOpen U)
     {v : ℕ → E d × ℝ → ℝ} {C M : ℝ} (hlip : ∀ n, InteriorLipEst U (v n) C)
     (hvd : ∀ n, ∀ t > 0, DifferentiableOn ℝ (fun x ↦ v n (x, t)) U)
@@ -223,14 +225,14 @@ theorem exists_subseq_tendstoLocallyUniformlyOn_of_lip {U : Set (E d)} (hU : IsO
 /-- **Interior time-equicontinuity for arbitrary solutions.** There is `ε₁ > 0` (depending only on
 the setting and `β`) such that for every bound `M`, finite energy bound `E0`, point `p ∈ U_∞` and
 `η > 0` there is `δ > 0` with `|u(p.1, s) - u(p)| < η` for `|s - p.2| < δ`, for every solution `u`
-of (3.4) with `0 < ε < ε₁`, data `0 ≤ gε ≤ M`, `gε ∈ H¹(U)` and `∫_U |∇gε|² + Q_max² |U| ≤ E0`.
+of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `0 < ε < ε₁`, data `0 ≤ gε ≤ M`, `gε ∈ H¹(U)`
+and `∫_U |∇gε|² + Q_max² |U| ≤ E0`.
 
-The paper's proof of Proposition 4.1 invokes Proposition 3.8(v) (a modulus of continuity up to
-the parabolic boundary), which the paper proves only for the well-prepared data and does *not*
-include in the list of estimates valid for arbitrary solutions (the remark before (4.1)). Here we
-use instead this interior version, which follows from the interior Lipschitz bound (3.9), the
-bound (4.1) and the dissipation estimate (3.8): averaging
-over a small ball `B_ρ(x₀)`,
+This is the interior modulus of continuity used in the proof of
+[Proposition 4.1](#AFS:p.eps-inner-limit) for arbitrary solutions (the remark before
+[(4.1)](#AFS:eqn:inftyBound)). It follows from the interior Lipschitz bound
+[(3.10)](#AFS:e.localEst), the bound [(4.1)](#AFS:eqn:inftyBound) and the dissipation estimate
+[(3.9)](#AFS:e.dissipation-eps): averaging over a small ball `B_ρ(x₀)`,
 `|B_ρ| |u(x₀, s) - u(x₀, t₀)| ≤ 2 L ρ |B_ρ| + ∫_{B_ρ} ∫_{t₀}^{s} |∂ₜu|` and
 `|∂ₜu| ≤ (∂ₜu)² / (2λ) + λ / 2`. -/
 theorem semilinear_time_equicontinuous (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) :

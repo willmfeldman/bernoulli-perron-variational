@@ -1,7 +1,7 @@
 # Comparator challenges
 
-This directory contains two standalone [Comparator](https://github.com/leanprover/comparator)
-workspaces for `PerronVariational`, the formalization of
+This directory contains one standalone [Comparator](https://github.com/leanprover/comparator)
+workspace, `main-results`, for `PerronVariational`, the formalization of
 
 > F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
 > the Bernoulli one-phase problem*, [arXiv:2609.14981](https://arxiv.org/abs/2609.14981).
@@ -10,31 +10,34 @@ Comparator checks that a solution proves exactly the statement of a trusted chal
 passes the kernel, and that it uses only the permitted axioms `propext`, `Quot.sound` and
 `Classical.choice`.
 
-## Workspaces
+## The workspace
 
-| Workspace | Kind | Paper | Challenge theorems | Proved from |
-|---|---|---|---|---|
-| `main-theorem` | headline theorem | Theorem 1.1 | `challenge_main_smallest`, `challenge_main_largest` | `PerronVariational.main_smallest`, `PerronVariational.main_largest` |
-| `planar-structure` | headline theorem | Corollary 1.2 | `challenge_corollary_2d_smallest`, `challenge_corollary_2d_largest` | `PerronVariational.corollary_2d_smallest`, `PerronVariational.corollary_2d_largest` |
-| both | model example (non-vacuity check) | none (not in the paper) | `challenge_model_example` | `PerronVariational.TwoDisc.model_example` |
+| Kind | Paper | Challenge theorems | Proved from |
+|---|---|---|---|
+| main theorem | Theorem 1.1 | `challenge_main_smallest`, `challenge_main_largest` | `PerronVariational.main_smallest`, `PerronVariational.main_largest` |
+| planar structure | Corollary 1.2 | `challenge_corollary_2d_smallest`, `challenge_corollary_2d_largest` | `PerronVariational.corollary_2d_smallest`, `PerronVariational.corollary_2d_largest` |
+| example (necklace) | Figure 1 (numerical; different parameters) | `challenge_necklace_example` | `PerronVariational.Necklace.necklace_example` |
 
-- `main-theorem`: for the smallest supersolution above a smooth strict subsolution `g` with
-  `g > 0` on `∂U`, and for the largest subsolution below a smooth strict supersolution `g`: the
-  solution is a viscosity solution, an inner variational solution, and a downward (resp. upward)
-  minimizer of the Alt–Caffarelli energy on a ball around each free boundary point.
-- `planar-structure`: in `ℝ²`, the free boundary of the smallest supersolution splits into a
-  relatively open part near which the solution is classical and a part where every blow-up limit
-  is a two-plane function `Q(x₀)|y · e|`; the largest subsolution is classical near every free
-  boundary point.
-- `challenge_model_example`, in both workspaces: a model example, not a result of the paper, which
-  shows that the Perron classes and extremal solutions the claims are about are not vacuous or
-  degenerate. In `ℝ²` with `Q ≡ 1`, a domain and
-  data `g_sub`, `g_super` meeting the hypotheses of Theorem 1.1, with `g_sub = g_super` on `∂U`,
-  whose smallest supersolution `u_min` and largest subsolution `u_max` are both nontrivial (each is
-  positive somewhere, vanishes somewhere and has a nonempty free boundary) and differ; `0` is a
-  two-plane point of `u_min` (its blow-ups converge to `|y₁|`). The domain is the unit disc minus
-  two small discs whose radial solutions have free boundaries touching at `0`. It is not counted as
-  coverage of the paper.
+- Theorem 1.1: for the smallest supersolution above a smooth strict subsolution `g` with `g > 0`
+  on `∂U`, and for the largest subsolution below a smooth strict supersolution `g`: the solution is
+  a viscosity solution, an inner variational solution, and a downward (resp. upward) minimizer of
+  the Alt–Caffarelli energy on a ball around each free boundary point.
+- Corollary 1.2: in `ℝ²`, the free boundary of the smallest supersolution splits into a relatively
+  open part near which the solution is classical and a part where every blow-up limit is a
+  two-plane function `Q(x₀)|y · e|`; the largest subsolution is classical near every free boundary
+  point.
+- `challenge_necklace_example`: the configuration of Figure 1 of the paper, made rigorous with
+  different parameters. In `ℝ²` with `Q ≡ 1`, a domain and data `g_sub`, `g_super` meeting the
+  hypotheses of Theorem 1.1, with `g_sub = g_super` on `∂U`, whose smallest supersolution `u_min`
+  and largest subsolution `u_max` are both nontrivial and differ on a set of positive measure;
+  `u_min` has a two-plane point; and a minimizer of the Alt–Caffarelli energy `J_1(·; U)` with
+  boundary values `g_sub` exists, and every such minimizer differs from both `u_min` and `u_max` on
+  sets of positive measure. The domain is the disc `B₄(0)` minus a ring of `100` small discs whose
+  radial solutions have touching free boundaries; Figure 1 shows `18` holes and no outer circle,
+  and the parameters are changed so that an explicit energy comparison separates `u_max` from the
+  minimizer. It also shows that the other claims are not vacuous: their hypotheses can be met, the
+  extremal solutions can be nontrivial and distinct, and the two-plane alternative of
+  Corollary 1.2(i) occurs.
 
 The hypotheses of the paper's standing setting (`d ≥ 2`; `U` open, bounded and connected with `C²`
 boundary; `Q` Lipschitz on `Ū` with `0 < Q_min ≤ Q ≤ Q_max` on `Ū`) are stated as separate,
@@ -42,16 +45,15 @@ readable hypotheses in each claim, not as a bundled structure.
 
 ## Files
 
-Each workspace has these files:
+The workspace has these files:
 
-- `Vocabulary.lean`: the workspace's trusted vocabulary and claims, a module importing Mathlib
-  only. Every notion its claims use is defined in it from Mathlib, so a reader can check the
-  meaning of each claim without reading the library. In `main-theorem` these notions are viscosity
-  solutions, strict sub- and supersolutions, Perron's extremal solutions, inner variational
-  solutions, one-sided minimizers of the Alt–Caffarelli energy and blow-ups; in
-  `planar-structure` they are viscosity super- and subsolutions, strict sub- and supersolutions,
-  Perron's extremal solutions, blow-ups and classical solutions. The docstrings list each
-  difference from the printed paper and why it is harmless.
+- `Vocabulary.lean`: the trusted vocabulary and claims, a module importing Mathlib only. Every
+  notion the claims use is defined in it from Mathlib, so a reader can check the meaning of each
+  claim without reading the library: viscosity solutions, strict sub- and supersolutions, Perron's
+  extremal solutions, inner variational solutions, one-sided minimizers of the Alt–Caffarelli
+  energy, blow-ups, classical solutions, and (for the necklace example) `H¹`, `H¹₀` and minimizers
+  of the energy with Dirichlet data. The docstrings list each difference from the printed paper and
+  why it is harmless.
 - `Challenge.lean`: the trusted challenge, a single module importing Mathlib only. Its block
   between `-- BEGIN GENERATED VOCABULARY` and `-- END GENERATED VOCABULARY` is a verbatim copy of
   `Vocabulary.lean`, generated by `python3 scripts/challenge-prep.py sync`; below it, each claim is
@@ -66,12 +68,12 @@ Each workspace has these files:
 
 The trusted files are `Vocabulary.lean`, `Challenge.lean`, `config.json` and the workspace
 `lakefile.toml`. `Solution.lean` is untrusted. `scripts/challenge-prep.py check` (run by CI)
-verifies that each `Challenge.lean` repeats its `Vocabulary.lean` verbatim.
+verifies that `Challenge.lean` repeats `Vocabulary.lean` verbatim.
 
 ## What ordinary CI establishes
 
 `scripts/check-challenges.sh`, run by CI on every push, builds `Vocabulary`, `Challenge` and
-`Solution` in every workspace. It then runs `#print axioms` on every theorem in each `config.json`
+`Solution` in the workspace. It then runs `#print axioms` on every theorem in `config.json`
 and requires exactly the permitted axioms. This catches elaboration, missing-proof and axiom
 regressions. It does not check that the challenge and the solution state the same theorems: only
 the release Comparator workflow establishes exact statement equality.
@@ -84,10 +86,10 @@ For local development, `scripts/build-challenges.sh --trusted-all` builds the sa
 The release workflow `.github/workflows/release-comparator.yml` (`scripts/release-comparator.sh`,
 with pinned tool revisions) does the following:
 1. validates the challenge inventory against `formalization.yaml`;
-2. builds the library and each workspace's trusted modules (`Vocabulary`, `Challenge`) outside the
+2. builds the library and the workspace's trusted modules (`Vocabulary`, `Challenge`) outside the
    sandbox, on a standard GitHub-hosted Linux runner;
-3. runs Comparator in its sandbox on each workspace;
-4. uploads an attestation, which records the tool revisions, the per-workspace results and the
+3. runs Comparator in its sandbox on the workspace;
+4. uploads an attestation, which records the tool revisions, the results and the
    sandbox caveats.
 
 It never builds `Solution` before Comparator processes it.
@@ -100,17 +102,17 @@ Pinned tools (`scripts/release-comparator.sh`, mirrored in `formalization.yaml`)
 
 ### Recorded acceptance
 
-The release Comparator workflow accepted both workspaces on 2026-10-05, on a standard
-GitHub-hosted Linux runner, with Lean `v4.35.0-rc3`, Mathlib `c55e6e7`, Comparator `fd5d5bc`,
-`landrun` `811cfff`, and `lean4export` `66f1fb4`, on a release candidate with the same Lean
-sources as this release:
+The release Comparator workflow accepted the `main-results` workspace before this release, on a
+standard GitHub-hosted Linux runner, with Lean `v4.35.0-rc3`, Mathlib `c55e6e7`, Comparator
+`fd5d5bc`, `landrun` `811cfff`, and `lean4export` `66f1fb4`. The run was on a release candidate
+with the same challenge, vocabulary and solution files; its library differed from this release
+only in documentation comments.
 
-| Workspace | Theorems | Statement comparison and kernel check | Axioms |
-|---|---|---|---|
-| `main-theorem` | `challenge_main_smallest`, `challenge_main_largest`, `challenge_model_example` | PASS | `propext`, `Classical.choice`, `Quot.sound` only |
-| `planar-structure` | `challenge_corollary_2d_smallest`, `challenge_corollary_2d_largest`, `challenge_model_example` | PASS | same |
+| Theorems | Statement comparison and kernel check | Axioms |
+|---|---|---|
+| `challenge_main_smallest`, `challenge_main_largest`, `challenge_corollary_2d_smallest`, `challenge_corollary_2d_largest`, `challenge_necklace_example` | PASS | `propext`, `Classical.choice`, `Quot.sound` only |
 
 The GitHub release carries the attestation artifact from running this workflow on the release
-commit itself: commit and tree hashes, toolchain and tool revisions, per-workspace results, and
+commit itself: commit and tree hashes, toolchain and tool revisions, results, and
 complete logs. Comparator ran under `landrun` without the additional `systemd-run` containment
 that upstream recommends for a full adversarial guarantee.

@@ -9,6 +9,7 @@ public import PerronVariational.Parabolic.Existence
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.ContinuousFunctionalCalculus
+import PerronVariational.Inner.LongTimeMonotone
 import PerronVariational.Main.ShiftLimit
 import PerronVariational.Parabolic.LongTimeInnerViscosity
 import PerronVariational.Parabolic.LongTimeViscosity
@@ -19,39 +20,47 @@ import PerronVariational.Stationary.Perron
 import PerronVariational.Stationary.ViscosityStability
 
 /-!
-# Proposition 6.1: the smallest supersolution is an inner variational and viscosity solution
+# The smallest supersolution is an inner variational and viscosity solution
 
-**Proposition 6.1** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. If `g` is a smooth
-strict subsolution with `g > 0` on `∂U`, Perron's smallest supersolution above `g` is both an
-inner variational and a viscosity solution of (1.1) in `U`, and it is continuous on `Ū`.
+**[Proposition 6.1](#AFS:p.inner-smallest)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. If
+`g` is a smooth strict subsolution with `g > 0` on `∂U`, Perron's smallest supersolution above `g`
+is both an inner variational and a viscosity solution of [(1.1)](#AFS:e.bernoulli-basic) in `U`, and
+it is continuous on `Ū`.
 
 Proof:
 1. (`smallest_shift`) For `-a₁ ≤ a < 0` the shift `g + a` is a strict subsolution with uniform
-   constants; Theorem 3.9 (`ParabolicExistenceBddStatement`, with bounds uniform in `a`) gives the
-   increasing flow `𝔲_a`. For `v ∈ 𝒮_g` the strict comparison principle (Theorem 3.6) on
-   `U × (0, T]` gives `𝔲_a ≤ v`. Its hypothesis "`𝔲_a ≺ v` on a neighbourhood of `∂_P`" is
-   verified in full; the paper checks the ordering only on `∂_P` itself. It holds on the lateral
-   boundary since `g > 0` on `∂U`, at `t = 0` where `v > 0` by continuity, and at `t = 0` where
-   `v = 0` because the positivity set of the flow does not jump outward at `t = 0` (a conclusion
-   of Theorem 3.9). Theorem 3.10 (`LongtimeInnerStatement`) gives the long-time limit `u_{a,∞}`,
-   inner variational, with (3.14), (3.15) uniform in `a`; Lemma 5.6 (`longtime_super`) makes it a
-   viscosity supersolution.
+   constants; [Theorem 3.13](#AFS:t.parabolic-existence) (`ParabolicExistenceBddStatement`, with
+   bounds uniform in `a`) gives the increasing flow `𝔲_a`. For `v ∈ 𝒮_g` the strict comparison
+   principle ([Theorem 3.7](#AFS:t.comparison)) on `U × (0, T]` gives `𝔲_a ≤ v`. Its hypothesis
+   "`𝔲_a ≺ v` on a neighbourhood of `∂_P`" holds on the lateral boundary since `g > 0` on `∂U`, at
+   `t = 0` where `v > 0` by continuity, and at `t = 0` where `v = 0` because the positivity set of
+   the flow does not jump outward at `t = 0` (a conclusion of
+   [Theorem 3.13](#AFS:t.parabolic-existence)). [Theorem 3.14](#AFS:t.longtime-inner)
+   (`LongtimeInnerStatement`, in its form for monotone flows `LongtimeInnerStatement.monotone`)
+   gives the long-time limit `u_{a,∞} = lim_{t→∞} 𝔲_a(·, t)`, inner variational, with
+   [(3.15)](#AFS:eqn:inftyLip), [(3.16)](#AFS:eqn:inftyPerim) uniform in `a`;
+   [Proposition 5.6](#AFS:p.supersolution-limit) (`longtime_super`) makes it a viscosity
+   supersolution.
 2. (`inner_smallest_of`) Along `a_k ↑ 0`, the compactness of inner variational solutions
-   (Lemma 2.10) gives a locally uniform limit `û` along a subsequence which is an inner
-   variational solution; Lemma 2.4 makes it a viscosity supersolution and Lemma 2.9 a viscosity
-   subsolution. (The paper attributes the subsolution property to stability, but viscosity
-   subsolutions are not stable under uniform limits; Lemma 2.9 is what applies, as in the
-   paper's proof of Proposition 6.2.) The sandwich `g₊ ≤ û ≤ v` (`v ∈ 𝒮_g`) identifies `û` with
-   Perron's solution (`eqOn_perronSmallest_of_le`). For this `û`, extended by `g₊`, must lie in
-   `𝒮_g`, i.e. attain `g₊` continuously at `∂U`, which the paper does not check. Theorem 3.9
-   exports the attainment modulus `ϖ` of Proposition A.8, which depends on the data only through
-   `(Lip g, M)` and so is uniform in `a`; hence
+   ([Lemma 2.14](#AFS:l.inner-compactness-stability)) gives a locally uniform limit `û` along a
+   subsequence which is an inner variational solution; [Lemma 2.5](#AFS:l.super-stability) makes it
+   a viscosity supersolution and [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln) a viscosity
+   subsolution. (The paper obtains the subsolution property from
+   [Theorem 3.16(i)](#AFS:part.longtime-viscosity-1), which makes each `u_{a,∞}` a viscosity
+   solution, and [Lemma 2.5(ii)](#AFS:part.stability-pair) for the increasing sequence `u_{a_k,∞}`;
+   Lean uses [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln) instead, as in the paper's proof
+   of [Proposition 6.2](#AFS:p.inner-largest).) The sandwich `g₊ ≤ û ≤ v` (`v ∈ 𝒮_g`) identifies `û`
+   with Perron's solution (`eqOn_perronSmallest_of_le`). For this `û`, extended by `g₊`, must lie in
+   `𝒮_g`, i.e. attain `g₊` continuously at `∂U`. [Theorem 3.13](#AFS:t.parabolic-existence) exports
+   the attainment modulus `ϖ` of [Proposition B.5](#AFS:p.attainment), which depends on the data
+   only through `(Lip g, M)` and so is uniform in `a`; hence
    `u_{a,∞}(x) ≤ (g + a)₊(x₀) + ϖ(|x - x₀|) ≤ g₊(x₀) + ϖ(|x - x₀|)` for `x₀ ∈ ∂U`, which passes to
    `û`. As a by-product Perron's solution is continuous on `Ū`.
 
-Theorem 3.12(i) (`LongtimeViscIncreasingStatement`) is not needed: only the supersolution property
-of `u_{a,∞}` is used, and the subsolution property of the final limit comes from Lemma 2.9.
+[Theorem 3.16(i)](#AFS:part.longtime-viscosity-1) (`LongtimeViscIncreasingStatement`) is not needed
+in this route: only the supersolution property of `u_{a,∞}` is used, and the subsolution property of
+the final limit comes from [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -63,8 +72,8 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- **Step 1 of Proposition 6.1**: the long-time limits `u_{a,∞}` of the flows with data
-`(g + a)₊`, `-a₁ ≤ a < 0`, with all constants (`M`, `C`, `CV`) uniform in `a`. -/
+/-- **Step 1 of [Proposition 6.1](#AFS:p.inner-smallest)**: the long-time limits `u_{a,∞}` of the
+flows with data `(g + a)₊`, `-a₁ ≤ a < 0`, with all constants (`M`, `C`, `CV`) uniform in `a`. -/
 theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeInnerStatement)
     (S : Setting d) {g : E d → ℝ} (hg : IsStrictSub S.U S.Q g)
     (hgb : ∀ x ∈ frontier S.U, 0 < g x) :
@@ -88,8 +97,9 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
   -- constants uniform in the shift
   obtain ⟨C, hC⟩ := h38 d S
   obtain ⟨Cper, hCper⟩ := hC M E0 hE0
-  obtain ⟨CV, hCV⟩ := h310 d S M E0 C Cper hE0
-  -- the modulus of Prop A.8, uniform in the shift: it depends on `g + a` only through its
+  obtain ⟨CV, hCV⟩ := LongtimeInnerStatement.monotone h310 d S M E0 C Cper hE0
+  -- the modulus of [Prop B.5](#AFS:p.attainment), uniform in the shift: it depends on `g + a` only
+  -- through its
   -- Lipschitz constant `L` (that of `g`) and `M`
   obtain ⟨L, hL⟩ := (hg.1.of_le one_le_two).locallyLipschitz.locallyLipschitzOn
     |>.exists_lipschitzOnWith_of_compact S.isBounded.isCompact_closure
@@ -109,7 +119,8 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
   obtain ⟨u, w, χ, hcom, hmono, hsol, hjump, hbd, hmodu⟩ := (hCperL _ hgaM hgaE hLa).1 hga
   obtain ⟨hcont, hbdry, hinner, hheat, hdiss, hlip, hper⟩ := hcom
   rw [gradient_add_const'] at hdiss
-  -- comparison with `v ∈ 𝒮_g` (Theorem 3.6 on `U × (0, T]`, Remark 3.3)
+  -- comparison with `v ∈ 𝒮_g` ([Theorem 3.7](#AFS:t.comparison) on `U × (0, T]`,
+  -- [Remark 3.4](#AFS:r.statToPara))
   have hcomp : ∀ v ∈ perronSuperClass S.U S.Q g, ∀ p ∈ closure S.U ×ˢ Ici 0, u p ≤ v p.1 := by
     intro v hv p hp
     have hp2 : (0 : ℝ) ≤ p.2 := hp.2
@@ -147,7 +158,8 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
           linarith
         have ht0 : t = 0 := ht
         subst ht0
-        -- no outward jump of `{𝔲_a > 0}` at `t = 0` near `x` (conclusion of Thm 3.9)
+        -- no outward jump of `{𝔲_a > 0}` at `t = 0` near `x` (conclusion of
+        -- [Thm 3.13](#AFS:t.parabolic-existence))
         have hopen : IsOpen {y : E d | g y + a < 0} :=
           isOpen_lt (hg.1.continuous.add continuous_const) continuous_const
         obtain ⟨ρ, hρ, hball⟩ := Metric.isOpen_iff.1 hopen x hgx
@@ -183,14 +195,16 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
     have hN := mem_nhdsSet_precOn isClosed_closure hED huD hvD hstrict
     have hres := Registry.para_strict_comparison S.isOpen S.isBounded S.isConnected S.lip
       ⟨S.Qmin, S.Qmin_pos, fun x hx ↦ (S.Q_mem x hx).1⟩ hT huD hvD
-      (hsol.2.Ioc_of_Ioi S.isOpen S.continuousOn_Q) (hv.2.1.isParaSuper_const _) hN
+      (hsol.2.Ioc_of_Ioi S.isOpen)
+      (hv.2.1.isParaSuper_const
+        (fun x hx ↦ S.Qmin_pos.trans_le (S.Q_mem x (subset_closure hx)).1) _) hN
       (fun q hq ↦ hq.2 hq.1)
     have hpD : p ∈ D := ⟨hp.1, hp2, by linarith⟩
     by_cases hpE : p ∈ Eset
     · exact (hres p ⟨hpE, hpD⟩).le
     · have : ¬ 0 < u p := fun h ↦ hpE (subset_closure ⟨hpD, h⟩)
       exact (not_lt.1 this).trans ((le_max_right _ _).trans (hv.2.2 p.1 hp.1))
-  -- the long-time limit (Thm 3.10)
+  -- the long-time limit ([Thm 3.14](#AFS:t.longtime-inner))
   have hmonoU : MonotoneInTime u S.U (Ioi 0) := fun x hx ↦
     (hmono x (subset_closure hx)).mono Ioi_subset_Ici_self
   have hbddU : ∀ p ∈ UInf S.U, u p ≤ M := fun p hp ↦
@@ -199,7 +213,8 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
     hCV u w χ hinner hheat hbddU (Or.inl hmonoU) hdiss hlip hper
   have hev : ∀ x ∈ S.U, ∀ᶠ t : ℝ in atTop, (x, t) ∈ closure S.U ×ˢ Ici 0 := fun x hx ↦
     (eventually_ge_atTop (0 : ℝ)).mono fun t ht ↦ ⟨subset_closure hx, ht⟩
-  refine ⟨uInf, χInf, hinf, longtime_super S.isOpen S.continuousOn_Q hsol.1 hconv, ?_, ?_, ?_,
+  refine ⟨uInf, χInf, hinf, longtime_super S.isOpen S.continuousOn_Q
+    (fun x hx ↦ S.Qmin_pos.le.trans (S.Q_mem x (subset_closure hx)).1) hsol.1 hconv, ?_, ?_, ?_,
     hLip, hPer, ?_⟩
   · intro x hx
     exact ⟨ge_of_tendsto (hconv.tendsto_at hx) ((hev x hx).mono fun t ht ↦ (hbd _ ht).1),
@@ -220,9 +235,9 @@ theorem smallest_shift (h38 : ParabolicExistenceBddStatement) (h310 : LongtimeIn
     have h3 : max (g x₀ + a) 0 ≤ max (g x₀) 0 := max_le_max (by linarith) le_rfl
     linarith [(abs_le.1 h1).2]
 
-/-- **Proposition 6.1**, from Theorem 3.9 (`ParabolicExistenceBddStatement`, the version of
-`ParabolicExistenceStatement` with the bound `0 ≤ u ≤ M`) and Theorem 3.10
-(`LongtimeInnerStatement`). -/
+/-- **[Proposition 6.1](#AFS:p.inner-smallest)**, from [Theorem 3.13](#AFS:t.parabolic-existence)
+(`ParabolicExistenceBddStatement`, the version of `ParabolicExistenceStatement` with the bound
+`0 ≤ u ≤ M`) and [Theorem 3.14](#AFS:t.longtime-inner) (`LongtimeInnerStatement`). -/
 theorem inner_smallest_of (h38 : ParabolicExistenceBddStatement)
     (h310 : LongtimeInnerStatement) : InnerSmallestStatement := by
   intro d S g hg hgb
@@ -240,10 +255,11 @@ theorem inner_smallest_of (h38 : ParabolicExistenceBddStatement)
     have := (tendsto_one_div_add_atTop_nhds_zero_nat.const_mul a₁).neg
     simpa [hadef, div_eq_mul_inv] using this
   choose uk χk hk using fun k ↦ hshift (a k) (ha k).1 (ha k).2
-  -- the limit `a → 0` along a subsequence (Lemma 2.10)
+  -- the limit `a → 0` along a subsequence ([Lemma 2.14](#AFS:l.inner-compactness-stability))
   obtain ⟨φ, û, χh, hφ, hconv, hinner⟩ := exists_innerVar_limit S uk χk (fun k ↦ (hk k).1)
-    (fun k ↦ (hk k).2.2.1) (fun k ↦ (hk k).2.2.2.2.2.1) (fun k ↦ (hk k).2.2.2.2.2.2.1)
-  -- Lemma 2.4 (stability of supersolutions) and Lemma 2.9 (inner variational ⇒ subsolution)
+    (fun k ↦ (hk k).2.2.1) (fun k ↦ (hk k).2.2.2.2.2.1)
+  -- [Lemma 2.5](#AFS:l.super-stability) (stability of supersolutions) and
+  -- [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln) (inner variational ⇒ subsolution)
   have hsuper : IsViscSuper S.U S.Q û :=
     isViscSuper_of_tendstoLocallyUniformlyOn S.isOpen S.continuousOn_Q
       (Eventually.of_forall fun j ↦ (hk (φ j)).2.1) hconv
@@ -258,7 +274,7 @@ theorem inner_smallest_of (h38 : ParabolicExistenceBddStatement)
     exact le_of_tendsto_of_tendsto' hlim (hconv.tendsto_at hx) fun j ↦ (hk (φ j)).2.2.2.1 x hx
   have hup : ∀ v ∈ perronSuperClass S.U S.Q g, ∀ x ∈ S.U, û x ≤ v x := fun v hv x hx ↦
     le_of_tendsto' (hconv.tendsto_at hx) fun j ↦ (hk (φ j)).2.2.2.2.1 v hv x hx
-  -- boundary values of `û` from the modulus of Prop A.8, uniform in the shift
+  -- boundary values of `û` from the modulus of [Prop B.5](#AFS:p.attainment), uniform in the shift
   have hbdry : ∀ x ∈ S.U, ∀ x₀ ∈ frontier S.U, û x ≤ max (g x₀) 0 + ϖ ‖x - x₀‖ :=
     fun x hx x₀ hx₀ ↦ le_of_tendsto' (hconv.tendsto_at hx) fun j ↦
       (hk (φ j)).2.2.2.2.2.2.2 x hx x₀ hx₀

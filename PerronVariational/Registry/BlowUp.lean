@@ -10,10 +10,10 @@ public import PerronVariational.Foundations.Glue
 public import PerronVariational.Foundations.IVBlowup
 
 /-!
-# Registry: blow-up analysis for Cor 1.2
+# Registry: blow-up analysis for [Cor 1.2](#AFS:c.2d-structure)
 
-Results from the literature used only in the proof sketch of Cor 1.2 of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+Results from the literature used only in the proof sketch of [Cor 1.2](#AFS:c.2d-structure) of F.
+Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
 Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
 
 * `Registry.locallyLipschitzOn_of_isViscSolution` (interior Lipschitz estimate,
@@ -57,10 +57,12 @@ namespace Registry
 variable {d : ℕ}
 
 /-- **Interior Lipschitz estimate for viscosity solutions.** Under the standing
-assumptions (`S : Setting d`), a viscosity solution (Def 2.1) `u` of (1.1) in `U` is locally
-Lipschitz in `U` (qualitative form of the interior estimate).
+assumptions (`S : Setting d`), a viscosity solution ([Def 2.1](#AFS:d.stationary-viscosity)) `u` of
+[(1.1)](#AFS:e.bernoulli-basic) in `U` is locally Lipschitz in `U` (qualitative form of the interior
+estimate).
 
-A result from the literature: Caffarelli–Salsa, Lemma 11.19. Paper: proof sketch of Cor 1.2.
+A result from the literature: Caffarelli–Salsa, Lemma 11.19. Paper: proof sketch of
+[Cor 1.2](#AFS:c.2d-structure).
 
 Proved in elliptic-bernoulli-foundations v0.1.0 (`locallyLipschitzOn_of_isViscSolution`), through
 the bridge `Foundations.locallyLipschitzOn_of_isViscSolution`. -/
@@ -69,16 +71,16 @@ theorem locallyLipschitzOn_of_isViscSolution (S : Setting d) {u : E d → ℝ}
   Foundations.locallyLipschitzOn_of_isViscSolution S hu
 
 /-- **Homogeneity of blow-ups (Weiss).** Under the standing assumptions, let
-`(u, χ)` be an inner variational solution of (1.1) in `U` and `x₀ ∈ ∂{u > 0} ∩ U`. Every blow-up
-limit `v` of `u` at `x₀` (`u_{x₀, r_n} → v` locally uniformly for some `r_n → 0⁺`) is homogeneous
-of degree one, and `(v, χ₀)` is a global inner variational solution with constant coefficient
-`Q(x₀)` for some `χ₀`.
+`(u, χ)` be an inner variational solution of [(1.1)](#AFS:e.bernoulli-basic) in `U` and
+`x₀ ∈ ∂{u > 0} ∩ U`. Every blow-up limit `v` of `u` at `x₀` (`u_{x₀, r_n} → v` locally uniformly
+for some `r_n → 0⁺`) is homogeneous of degree one, and `(v, χ₀)` is a global inner variational
+solution with constant coefficient `Q(x₀)` for some `χ₀`.
 
 A result from the literature: Weiss (1998), the monotonicity formula and its consequence that
 blow-up limits are homogeneous of degree one, for the variable coefficient `Q ∈ C^{0,1}` as in the
 paper ("with coefficient `Q ∈ C^{0,1} ⊂ C^γ`"); the existence of `χ₀` and the passage to the limit
 use the compactness of inner variational solutions (`Registry.innerVar_compactness`, with the
-perimeter bounds of Kriventsov–Weiss). Paper: proof sketch of Cor 1.2.
+perimeter bounds of Kriventsov–Weiss). Paper: proof sketch of [Cor 1.2](#AFS:c.2d-structure).
 
 Proved in bernoulli-rectifiability v0.2.0, through the bridge
 `Foundations.blowup_homogeneous_of_iv` (`Foundations/IVBlowup.lean`), from the sequence form
@@ -100,9 +102,10 @@ is scale-invariant, so the rescaled `χ` are precompact in `L¹_loc` (BV compact
 variation identity passes to the limit by the compactness of inner variational solutions
 (Kriventsov–Weiss, proof of Thm 9.3; Jerison–Kamburov, Prop 4.2; `Registry.innerVar_compactness`),
 and homogeneity follows from Weiss's monotonicity formula. It is used for the flatness step of
-Cor 1.2(ii) in the largest-subsolution case, which the paper's sketch leaves incomplete:
-non-degeneracy at free boundary points (Thm B.1) does not exclude a far side on which `u` is small
-and positive, and this form of the blow-up rules that out.
+[Cor 1.2(ii)](#AFS:part.largest-reg) in the largest-subsolution case: non-degeneracy at free
+boundary points ([Thm 2.10](#AFS:t.largest-sub-non-degen)) does not exclude a far side on which `u`
+is small and positive, and this form of the blow-up rules that out (as in the paper's lemma on
+one-plane blow-up limits).
 
 A result from the literature: as for `blowup_homogeneous`, together with Kriventsov–Weiss,
 Lemma 3.3 and the proof of Thm 9.3, and Jerison–Kamburov, Proposition 4.2.
@@ -128,11 +131,12 @@ homogeneous of degree one. Then for some unit vector `e`, either
   with `χ ≡ 1`), or
 * `v ≡ 0` and `χ = 0` a.e.
 
-The paper's list omits the last alternative (`v ≡ 0`, `χ ≡ 0`, which is an inner variational
-solution); here it is included, because it occurs. In the smallest-supersolution case of Cor 1.2
-it is excluded by non-degeneracy of the smallest supersolution.
+The last alternative (`v ≡ 0`, `χ ≡ 0`) is an inner variational solution. In the
+smallest-supersolution case of [Cor 1.2](#AFS:c.2d-structure) it is excluded by non-degeneracy of
+the smallest supersolution.
 
-A result from the literature: Jerison–Kamburov, Section 5. Paper: proof sketch of Cor 1.2.
+A result from the literature: Jerison–Kamburov, Section 5. Paper: proof sketch of
+[Cor 1.2](#AFS:c.2d-structure).
 
 Proved in elliptic-bernoulli-foundations v0.1.0 (`classification_homogeneous_planar`), through
 the bridge `Foundations.classification_homogeneous_planar`. -/
@@ -148,22 +152,21 @@ theorem classification_homogeneous_planar {q : ℝ} (hq : 0 < q) {v χ : E 2 →
 
 /-- **ε-regularity (flat free boundaries are `C^{1,γ}`).** Under the standing
 assumptions, there is `ε̄ > 0` (depending on the setting) such that: if `u` is a viscosity
-solution of (1.1) in `U`, `x₀ ∈ ∂{u > 0} ∩ U`, `0 < r ≤ ε̄` with `B_r(x₀) ⊆ U`, and `u` is
-`ε̄`-flat in `B_r(x₀)` in direction `e`:
+solution of [(1.1)](#AFS:e.bernoulli-basic) in `U`, `x₀ ∈ ∂{u > 0} ∩ U`, `0 < r ≤ ε̄` with
+`B_r(x₀) ⊆ U`, and `u` is `ε̄`-flat in `B_r(x₀)` in direction `e`:
 `Q(x₀) ((y - x₀) · e - ε̄ r)₊ ≤ u(y) ≤ Q(x₀) ((y - x₀) · e + ε̄ r)₊` for `y ∈ B_r(x₀)`,
 then `u` is a classical solution near `x₀` (`IsClassicalNear`: `C^{1,γ}` free boundary, `u`
 harmonic in `{u > 0}` with `|∇u| = Q` classically on the free boundary).
 
-This is the *flatness* form of the ε-regularity theorem. The paper applies ε-regularity at
-points where *some blow-up is a half-plane solution*; here we assume two-sided flatness, because
-locally uniform convergence to a half-plane only gives the lower half of the flatness condition.
-The upper half (`u = 0` on `{(y - x₀) · e < -ε̄ r}`) additionally requires Hausdorff convergence of
-the free boundaries, which the proof of Cor 1.2 obtains from non-degeneracy (smallest case) and
-from `blowup_homogeneous_seq` (largest case).
+This is the *flatness* form of the ε-regularity theorem. Locally uniform convergence to a
+half-plane only gives the lower half of the flatness condition; the upper half
+(`u = 0` on `{(y - x₀) · e < -ε̄ r}`) additionally requires Hausdorff convergence of the free
+boundaries, which the proof of [Cor 1.2](#AFS:c.2d-structure) obtains from non-degeneracy (smallest
+case) and from `blowup_homogeneous_seq` (largest case).
 
 A result from the literature: Caffarelli (1987, 1989); De Silva (2011), Theorem 1.1 (flatness ⇒
 `C^{1,α}` for Hölder `Q`), plus regularity of `u` up to the `C^{1,α}` free boundary. Paper: proof
-sketch of Cor 1.2.
+sketch of [Cor 1.2](#AFS:c.2d-structure).
 
 Proved in elliptic-bernoulli-foundations v0.1.0 (`isClassicalNear_of_flat`, following De Silva),
 through the bridge `Foundations.isClassicalNear_of_flat`. That proof needs only `Q` Lipschitz on

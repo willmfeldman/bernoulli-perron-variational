@@ -17,9 +17,9 @@ import PerronVariational.Main.Directional
 /-!
 # Stability of directional minimality: the estimate for fixed `s`
 
-Part of the proof of **Lemma 2.12** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
-of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the energy
-estimate on one ball `B_R(x)` for a fixed inner radius `s < R`.
+Part of the proof of **[Lemma 2.16](#AFS:l.directionalStable)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the energy estimate on one ball `B_R(x)` for a fixed inner radius `s < R`.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -33,7 +33,7 @@ namespace DirectionalStable
 
 variable {d : ℕ}
 
-/-! ### Lemma 2.12, downward case: the estimate for fixed `s` -/
+/-! ### [Lemma 2.16](#AFS:l.directionalStable), downward case: the estimate for fixed `s` -/
 
 section DownStep
 
@@ -69,8 +69,8 @@ theorem gradient_eq_zero_of_eqOn_ball {φ : E d → ℝ} {s : ℝ}
     exact hφ1 z (ball_subset_closedBall hz)
   simp [gradient, this.fderiv_eq]
 
-/-- **Lemma 2.12, Step 1, for fixed `s`.** With the data `D`, a downward competitor `v` of `u`
-in `B_R(x)`, and downward minimality of `uₙ` in `B_R(x)`, for `R/2 ≤ s < R`:
+/-- **[Lemma 2.16](#AFS:l.directionalStable), Step 1, for fixed `s`.** With the data `D`, a downward
+competitor `v` of `u` in `B_R(x)`, and downward minimality of `uₙ` in `B_R(x)`, for `R/2 ≤ s < R`:
 `J_Q(u; B_s) ≤ J_Q(v; B_R) + annBound`. -/
 theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     (hu : MemH1Loc U u Gu) {v : E d → ℝ} {Gv : E d → E d} (hv : MemH1Loc U v Gv)
@@ -313,8 +313,8 @@ theorem down_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
         (hvlim.add tendsto_const_nhds).liminf_eq
     _ ≤ energyJ (ball x R) Q v Gv + annBound x R s L Qmax CP Gu Gv := by gcongr
 
-/-- **Lemma 2.12, Step 2, for fixed `s`.** With the data `D`, an upward competitor `v` of `u`
-in `B_R(x)`, and upward minimality of `uₙ` in `B_R(x)`, for `R/2 ≤ s < R`:
+/-- **[Lemma 2.16](#AFS:l.directionalStable), Step 2, for fixed `s`.** With the data `D`, an upward
+competitor `v` of `u` in `B_R(x)`, and upward minimality of `uₙ` in `B_R(x)`, for `R/2 ≤ s < R`:
 `J_Q(u; B_s) ≤ J_Q(v; B_R) + annBound`. -/
 theorem up_step (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     (hu : MemH1Loc U u Gu) {v : E d → ℝ} {Gv : E d → E d} (hv : MemH1Loc U v Gv)

@@ -10,12 +10,13 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.WithDensity
 
 /-!
-# Selection of good times (proof of Theorem 3.10, Step 3)
+# Selection of good times (proof of [Theorem 3.14](#AFS:t.longtime-inner), Step 3)
 
-Pure measure theory for the selection of the times `tᵢ` in Step 3 of the proof of **Theorem 3.10**
-of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
-the Bernoulli one-phase problem*, arXiv:2609.14981: Markov's inequality on unit time intervals for
-countably many nonnegative functions simultaneously, avoiding a prescribed null set.
+Pure measure theory for the selection of the times `tᵢ` in Step 3 of the proof
+of **[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+Markov's inequality on unit time intervals for countably many nonnegative functions simultaneously,
+avoiding a prescribed null set.
 
 ## Main results
 
@@ -25,7 +26,7 @@ countably many nonnegative functions simultaneously, avoiding a prescribed null 
   `t ∉ N` with `f k t ≤ 2^(k+2) ∫_{(a,a+1)} f k` for all `k`.
 * `PerronVariational.GoodTimes.exists_good_times_seq`: the corresponding sequence `tᵢ ∈ (aᵢ, aᵢ+1)`.
 * `PerronVariational.GoodTimes.tendsto_setLIntegral_Ioo_zero`: `∫_{(aᵢ, aᵢ+1)} g → 0` when
-  `∫_{(0,∞)} g < ∞` and `aᵢ → ∞` (used for (4.13)).
+  `∫_{(0,∞)} g < ∞` and `aᵢ → ∞` (used for [(4.10)](#AFS:eqn:vanishingtime)).
 
 The paper uses, for each `k ≤ i`, the threshold `C_k / θ` with `θ = 2^{-(k+1)}`, and a separate
 threshold for `∫_U |∂ₜu(t)|²`; here all countably many functions are handled at once with the
@@ -82,9 +83,10 @@ theorem tsum_inv_two_pow_add_two_lt_one : ∑' k : ℕ, (2⁻¹ : ℝ≥0∞) ^ 
   rw [h]
   exact ENNReal.inv_lt_one.2 ENNReal.one_lt_two
 
-/-- **Good time in a unit interval** (Markov + measure count, Step 3 of Theorem 3.10).
-For a null set `N` and countably many functions `f k` (a.e.-measurable on `(a, a+1)`), there is
-`t ∈ (a, a+1)`, `t ∉ N`, with `f k t ≤ 2^(k+2) ∫_{(a,a+1)} f k` for every `k`. -/
+/-- **Good time in a unit interval** (Markov + measure count, Step 3 of
+[Theorem 3.14](#AFS:t.longtime-inner)). For a null set `N` and countably many functions `f k`
+(a.e.-measurable on `(a, a+1)`), there is `t ∈ (a, a+1)`, `t ∉ N`, with
+`f k t ≤ 2^(k+2) ∫_{(a,a+1)} f k` for every `k`. -/
 theorem exists_good_time (a : ℝ) {N : Set ℝ} (hN : volume N = 0) (f : ℕ → ℝ → ℝ≥0∞)
     (hf : ∀ k, AEMeasurable (f k) (volume.restrict (Ioo a (a + 1)))) :
     ∃ t ∈ Ioo a (a + 1), t ∉ N ∧
@@ -112,9 +114,9 @@ theorem exists_good_time (a : ℝ) {N : Set ℝ} (hN : volume N = 0) (f : ℕ �
     exact (not_le.2 hk) (htB.2 k)
   exact absurd (hμI ▸ measure_mono hsub : (1 : ℝ≥0∞) ≤ μ B) (not_le.2 hB)
 
-/-- **Sequence of good times** (Step 3 of Theorem 3.10): for intervals `(aᵢ, aᵢ + 1)`, a null set
-`N` and countably many a.e.-measurable `f k`, there are `tᵢ ∈ (aᵢ, aᵢ + 1) \ N` with
-`f k tᵢ ≤ 2^(k+2) ∫_{(aᵢ,aᵢ+1)} f k` for all `i, k`. -/
+/-- **Sequence of good times** (Step 3 of [Theorem 3.14](#AFS:t.longtime-inner)): for intervals
+`(aᵢ, aᵢ + 1)`, a null set `N` and countably many a.e.-measurable `f k`, there are
+`tᵢ ∈ (aᵢ, aᵢ + 1) \ N` with `f k tᵢ ≤ 2^(k+2) ∫_{(aᵢ,aᵢ+1)} f k` for all `i, k`. -/
 theorem exists_good_times_seq (a : ℕ → ℝ) {N : Set ℝ} (hN : volume N = 0)
     (f : ℕ → ℝ → ℝ≥0∞) (hf : ∀ k, AEMeasurable (f k)) :
     ∃ t : ℕ → ℝ, (∀ i, t i ∈ Ioo (a i) (a i + 1)) ∧ (∀ i, t i ∉ N) ∧
@@ -124,7 +126,7 @@ theorem exists_good_times_seq (a : ℕ → ℝ) {N : Set ℝ} (hN : volume N = 0
   exact ⟨t, ht, hN', hf'⟩
 
 /-- If `∫_{(0,∞)} g < ∞` and `aᵢ → ∞`, then `∫_{(aᵢ, aᵢ+1)} g → 0` (tails of a finite integral;
-used to obtain (4.13) from `∂ₜu ∈ L²(U_∞)`). -/
+used to obtain [(4.10)](#AFS:eqn:vanishingtime) from `∂ₜu ∈ L²(U_∞)`). -/
 theorem tendsto_setLIntegral_Ioo_zero {g : ℝ → ℝ≥0∞} (hg : ∫⁻ t in Ioi 0, g t ≠ ⊤)
     {ι : Type*} {l : Filter ι} {a : ι → ℝ} (ha : Tendsto a l atTop) :
     Tendsto (fun i ↦ ∫⁻ t in Ioo (a i) (a i + 1), g t) l (𝓝 0) := by

@@ -16,22 +16,25 @@ import PerronVariational.Stationary.ViscosityJet
 import PerronVariational.Stationary.ViscosityLocal
 
 /-!
-# Non-degeneracy of extremal solutions (Appendix B and the smallest-supersolution analogue)
+# Non-degeneracy of extremal solutions
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
+It covers [Section A.2](#AFS:s.largest-sub-nondegen) of the paper and the analogue for the smallest
+supersolution.
 
 * `IsNondegenerateAt u x₀`: linear growth of `u` away from the free boundary point `x₀` (the
-  conclusion of **Thm B.1** of the paper, due to B. Orcan-Ekmekci, *On the geometry and regularity
-  of largest subsolutions for a free boundary problem in ℝ²: elliptic case*, Calc. Var. Partial
-  Differential Equations 49 (2014), no. 3-4, 937–962, doi:10.1007/s00526-013-0606-8, in local form,
-  with the supremum over `∂B_r` replaced by the supremum over `B̄_r`, which is weaker).
+  conclusion of **[Thm 2.10](#AFS:t.largest-sub-non-degen)** of the paper, due to B.
+  Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a free boundary problem
+  in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3-4, 937–962,
+  doi:10.1007/s00526-013-0606-8, in local form, with the supremum over `∂B_r` replaced by the
+  supremum over `B̄_r`, which is weaker).
 * `IsUniformlyNondegenerateNear U u x₀`: the form of H. W. Alt, L. A. Caffarelli, *Existence and
   regularity for a minimum problem with free boundary*, J. Reine Angew. Math. 325 (1981), 105–144,
   doi:10.1515/crll.1981.325.105, uniformly at all points of `\overline{{u > 0}}` near `x₀`. This is
-  what the ε-regularity step of Cor 1.2 needs: the flatness hypothesis of ε-regularity is two-sided,
-  and locally uniform convergence of the rescalings to a half-plane solution gives only the lower
-  bound.
+  what the ε-regularity step of [Cor 1.2](#AFS:c.2d-structure) needs: the flatness hypothesis of
+  ε-regularity is two-sided, and locally uniform convergence of the rescalings to a half-plane
+  solution gives only the lower bound.
 -/
 
 open Set Filter Topology Metric
@@ -43,8 +46,8 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- Non-degeneracy at `x₀` (Thm B.1, local form): there are `c, ρ > 0` such that for
-`0 < r ≤ ρ`, `sup_{B̄_r(x₀)} u ≥ c r`. -/
+/-- Non-degeneracy at `x₀` ([Thm 2.10](#AFS:t.largest-sub-non-degen), local form): there are
+`c, ρ > 0` such that for `0 < r ≤ ρ`, `sup_{B̄_r(x₀)} u ≥ c r`. -/
 def IsNondegenerateAt (u : E d → ℝ) (x₀ : E d) : Prop :=
   ∃ c > 0, ∃ ρ > 0, ∀ r, 0 < r → r ≤ ρ → ∃ y ∈ closedBall x₀ r, c * r ≤ u y
 
@@ -134,9 +137,6 @@ variable {z : E d} {σ A : ℝ}
 /-- The profile as `f ∘ g` with `g(y) = |y - z|²`. -/
 noncomputable def radialProfileF (σ A : ℝ) (d : ℕ) (t : ℝ) : ℝ :=
   A - A * Real.exp (-((d : ℝ) / (2 * σ ^ 2) * (t - σ ^ 2)))
-
-theorem radialProfile_eq (y : E d) :
-    radialProfile z σ A y = radialProfileF σ A d (‖y - z‖ ^ 2) := rfl
 
 theorem hasDerivAt_radialProfileF (t : ℝ) :
     HasDerivAt (radialProfileF σ A d) (A * ((d : ℝ) / (2 * σ ^ 2)) *
@@ -316,7 +316,7 @@ theorem IsViscSuper.min {W : Set (E d)} {Q u w : E d → ℝ} (hu : IsViscSuper 
 
 end Barrier
 
-/-! ### Lemma B.2: non-degeneracy of subsolutions at outer-regular points -/
+/-! ### [Lemma A.1](#AFS:l.outer-reg-non-degen): non-degeneracy at outer-regular points -/
 
 section OuterRegular
 
@@ -389,22 +389,14 @@ theorem expProfile_eq_zero {y : E d} (hy : ‖y - p‖ = σ) : expProfile p σ l
   unfold expProfile
   rw [hy]; simp
 
-theorem expProfile_neg (hA : 0 < A) (hlam : 0 < lam) {y : E d}
-    (hy : ‖y - p‖ < σ) : expProfile p σ lam A y < 0 := by
-  unfold expProfile
-  have ht : ‖y - p‖ ^ 2 < σ ^ 2 := pow_lt_pow_left₀ hy (norm_nonneg _) two_ne_zero
-  have : 1 < Real.exp (-(lam * (‖y - p‖ ^ 2 - σ ^ 2))) :=
-    Real.one_lt_exp_iff.2 (by nlinarith)
-  nlinarith
+/-- **[Lemma A.1](#AFS:l.outer-reg-non-degen)**, quantitative form. Let `v` be a viscosity
+subsolution of [(1.1)](#AFS:e.bernoulli-basic) in `B_{4s}(x₀)` with `Q ≥ q₀ > 0`, `x₀` a free
+boundary point, and `B_s(p)` an exterior touching ball at `x₀` (`|x₀ - p| = s`, `v = 0` in
+`B_s(p)`). Then `sup_{B_{4s}(x₀)} v ≥ c s` with `c = q₀ / (32 d e^{3d})`.
 
-/-- **Lemma B.2**, quantitative form. Let `v` be a viscosity
-subsolution of (1.1) in `B_{4s}(x₀)` with `Q ≥ q₀ > 0`, `x₀` a free boundary point, and
-`B_s(p)` an exterior touching ball at `x₀` (`|x₀ - p| = s`, `v = 0` in `B_s(p)`). Then
-`sup_{B_{4s}(x₀)} v ≥ c s` with `c = q₀ / (32 d e^{3d})`.
-
-The paper states the lemma without proof, with exterior ball and domain of the same radius; here we
-prove it with an explicit barrier. The paper's version follows by applying this one to the exterior
-ball of radius `1/4` inside the given one.
+The paper's lemma is the case `s = 1/4` (exterior ball of radius `1/4`, domain `B₁`), with a
+sketched proof by a radially symmetric strictly superharmonic barrier around the exterior ball;
+here that barrier is the explicit radial function below, at scale `s`.
 
 Proof: the radial barrier `H = A (1 - exp(-λ(|y - p|² - s²)))`, `λ = 4d/s²`, is strictly
 superharmonic off `B_{s/2}(p)` with `|∇H| ≤ q₀/2` where `H < 0`; if `v < A/2` then
@@ -529,9 +521,9 @@ theorem exists_le_of_exteriorBall (hd : 1 ≤ d) {Q v : E d → ℝ} {x₀ p : E
     have := hQ x₀ (mem_ball_self (by positivity))
     linarith
 
-/-- **Lemma B.2**, in the paper's form: exterior touching ball
-and domain of the same radius `s` (the paper takes `s = 1`). The conclusion is for the supremum
-over the open ball `B_s(x₀)`; the paper's `max_{∂B_1} u` presumes `u` defined up to `∂B_1`. Proof:
+/-- **[Lemma A.1](#AFS:l.outer-reg-non-degen)**, variant with exterior touching ball
+and domain of the same radius `s`. The conclusion is for the supremum over the open ball
+`B_s(x₀)`. Proof:
 the exterior ball `B_{s/4}(p')`, `p' = x₀ + (p - x₀)/4`, lies inside `B_s(p)`; apply
 `exists_le_of_exteriorBall` with radius `s/4`. -/
 theorem exists_le_of_exteriorBall_sameRadius (hd : 1 ≤ d) {Q v : E d → ℝ} {x₀ p : E d}
@@ -564,16 +556,18 @@ end OuterRegular
 
 /-! ### Non-degeneracy of smallest supersolutions -/
 
-/-- **Uniform non-degeneracy of Perron's smallest supersolution near its free boundary.**
-Not stated in the paper, but needed for Cor 1.2(i). The paper's proof sketch of Cor 1.2(i)
-excludes the two-plane blow-ups `α|x·e|` with `α > 0`, but not the degenerate blow-up `φ₀ ≡ 0`,
-and the ε-regularity step needs the upper flatness bound, which uniform convergence of the
-rescalings does not give. Uniform non-degeneracy settles both, so Cor 1.2(i) holds as stated.
+/-- **Uniform non-degeneracy of Perron's smallest supersolution near its free boundary**
+(the smallest-supersolution non-degeneracy theorem of the paper, applied at every point of
+`\overline{{u > 0}}` near a free boundary point). Used for [Cor 1.2(i)](#AFS:part.smallest-reg): it
+excludes the degenerate blow-up `φ₀ ≡ 0` and gives the upper flatness bound needed by the
+ε-regularity step. (The paper's sketch of [Cor 1.2(i)](#AFS:part.smallest-reg) uses the
+non-degeneracy of downward minimizers for this.)
 
 Proof route (barrier): if `sup_{B̄_r(z)} u < c r` for `z ∈ \overline{{u > 0}}`, replace `u` in
 `B_r(z)` by `min(u, w)` with the radial supersolution
 `w(x) = A (1 - (ρ/|x - z|)^{2d})₊`, `ρ = r/2`, `A = Q_min ρ / (4d)`, which vanishes on `B_ρ(z)`;
-the local smallest supersolution property (Lemma 2.7) gives `u ≤ w`, so `u = 0` on `B_ρ(z)`. -/
+the local smallest supersolution property ([Lemma 2.8](#AFS:l.local-minimality)) gives `u ≤ w`, so
+`u = 0` on `B_ρ(z)`. -/
 theorem Setting.perronSmallest_uniformlyNondegenerate (S : Setting d) {g : E d → ℝ}
     (hg : IsStrictSub S.U S.Q g) (hsuper : IsViscSuper S.U S.Q (perronSmallest S.U S.Q g))
     (hcont : ContinuousOn (perronSmallest S.U S.Q g) (closure S.U)) {x₀ : E d}
@@ -634,9 +628,9 @@ theorem Setting.perronSmallest_uniformlyNondegenerate (S : Setting d) {g : E d �
   have h3 := h1.trans ((min_le_right _ _).trans h2.le)
   exact absurd hypos (not_lt.2 h3)
 
-/-! ### Theorem B.1 -/
+/-! ### [Theorem 2.10](#AFS:t.largest-sub-non-degen) -/
 
-/-- **Thm B.1** (Orcan-Ekmekci) for Perron's largest
+/-- **[Thm 2.10](#AFS:t.largest-sub-non-degen)** (Orcan-Ekmekci) for Perron's largest
 subsolution, in local form: in `d = 2`, the largest subsolution below a smooth strict
 supersolution is non-degenerate at each free boundary point. Proved in
 `Appendix/NondegeneracyLargest.lean` (`largestSub_nondegenerate_of`) and `Main/Corollary2D.lean`

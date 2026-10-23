@@ -13,38 +13,37 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Monotone
 
 /-!
-# The positive phase does not jump outward at `t = 0` (Proposition 3.8(vi))
+# The positive phase does not jump outward at `t = 0` ([Proposition 3.12(v)](#AFS:part.trace))
 
-Appendix A.6 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: Lemma A.11, its proof,
-and Corollary A.12.
+[Appendix B.6](#AFS:s.no-outward-jump) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+[Lemma B.8](#AFS:l.positivity-trace), its proof, and [Corollary B.9](#AFS:c.positivity-no-jump).
 
 ## Main results
 
-* `exists_lt_superKappa`: `κ_{θ̂}` can be made larger than any `1 - μ` (comment below (A.3)).
+* `exists_lt_superKappa`: `κ_{θ̂}` can be made larger than any `1 - μ` (comment below
+  [(B.3)](#AFS:e.kappa-def)).
 * `trapBarrier`: the radial barrier `η̂(x) = b(1 - exp((d+1)(1 - |x - x₀|²/(2r²))))`.
-* `exists_lt_of_le_mul` (**Lemma A.11**): comparison on `(U ∩ B_{2r}(x₀)) × (0, τ]` with
-  the stationary supersolution `Ψ_{ε,θ̂}(η̂)` (Lemma A.4, supersolution case). On the lateral
-  boundary piece `Ū ∩ ∂B_{2r}(x₀)` the solution is bounded via the heat barrier
+* `exists_lt_of_le_mul` (**[Lemma B.8](#AFS:l.positivity-trace)**): comparison on
+  `(U ∩ B_{2r}(x₀)) × (0, τ]` with the stationary supersolution `Ψ_{ε,θ̂}(η̂)`
+  ([Lemma 3.11](#AFS:l.well-prepared), supersolution case). On the lateral boundary piece
+  `Ū ∩ ∂B_{2r}(x₀)` the solution is bounded via the heat barrier
   `IsSemilinearSolution.le_add_of_lipschitzOnWith` (`u(y, t) ≤ g(y) + σ + 2dA_σ t`) instead of the
-  paper's appeal to Proposition A.8, so this lemma does not depend on the attainment estimate.
+  paper's appeal to [Proposition B.5](#AFS:p.attainment), so this lemma does not depend on the
+  attainment estimate.
 * `exists_superKappa_lt_Ioc_two`: `κ_{θ̂} → 0` as `θ̂ → 1⁺`.
-* `exists_lt_of_le_superKappa`: the barrier argument of Lemma A.11 with explicit trap height `b`
-  and profile parameter `θ̂`; the time `trapTime d L b` does not depend on `θ̂`.
-* `IsWellPreparedData.positivity_trace_small` (item (vi*) of the formal Proposition 3.8,
-  increasing case): `u_ε < κ ε` on `K × [0, τ]` for every `κ > 0`, with `τ` independent of `κ`
-  (`exists_lt_mul_of_nonpos`, using `g_ε = 0` near `K ⊆ U ∖ \overline{{g > 0}}`).
-* `IsWellPreparedData.positivity_trace`: Proposition 3.8(vi) for the well-prepared family, from
-  Lemma A.11 by a compactness (finite covering) argument. This replaces the paper's
-  Corollary A.12, whose proof claims `B_{3r}(x₀) ⊆ {g_ε = 0}`; that inclusion fails near points
-  `x₀ ∈ ∂U` with `g(x₀) = 0` (where `g_ε(x₀) = ε Φ_{1,θ}(0)₊ > 0` is possible), but Lemma A.11
-  only needs `g_ε ≤ (1 - μ) ε` on `B_{3r}(x₀) ∩ Ū`, which holds on `{g ≤ 0}`
+* `exists_lt_of_le_superKappa`: the barrier argument of [Lemma B.8](#AFS:l.positivity-trace) with
+  explicit trap height `b` and profile parameter `θ̂`; the time `trapTime d L b` does not depend on
+  `θ̂`.
+* `IsWellPreparedData.positivity_trace_small` (item (v*) of the formal
+  [Proposition 3.12](#AFS:p.semilinear-wellposed), increasing case): `u_ε < κ ε` on `K × [0, τ]` for
+  every `κ > 0`, with `τ` independent of `κ` (`exists_lt_mul_of_nonpos`, using `g_ε = 0` near
+  `K ⊆ U ∖ \overline{{g > 0}}`).
+* `IsWellPreparedData.positivity_trace`: the bound `u_ε < ε` near `t = 0` off
+  `\overline{{g > 0}}` for the well-prepared family, from [Lemma B.8](#AFS:l.positivity-trace) by a
+  compactness (finite covering) argument. [Lemma B.8](#AFS:l.positivity-trace) only needs
+  `g_ε ≤ (1 - μ) ε` on `B_{3r}(x₀) ∩ Ū`, which holds on `{g ≤ 0}`
   (`IsWellPreparedData.le_of_nonpos`) in both the increasing and decreasing case.
-
-The paper states Lemma A.11 with the conclusion `u_ε ≤ ε`; here it has the strict conclusion
-`u_ε < ε`, because Proposition 3.8(vi) asserts the strict inequality. The paper's proof gives it:
-`u_ε ≤ Ψ_{ε,θ̂}(η̂) ≤ κ ε + C e^{-c δ r/ε}` on `B_r(x₀)` with `κ = 1 - μ/2 < 1`, which is `< ε`
-for `ε` small.
 -/
 
 open Set Filter Topology Metric
@@ -58,7 +57,7 @@ variable {d : ℕ}
 
 /-! ### The level `κ_{θ̂}` close to `1` -/
 
-/-- `κ_{θ̂} → 1` as `θ̂ → ∞` (comment below (A.3)): for `μ ∈ (0, 1)` there is
+/-- `κ_{θ̂} → 1` as `θ̂ → ∞` (comment below [(B.3)](#AFS:e.kappa-def)): for `μ ∈ (0, 1)` there is
 `δ₀ ∈ (0, 1)` with `1 - μ < κ_{1/(1 - δ₀)}`. -/
 theorem exists_lt_superKappa {β : ℝ → ℝ} (hβ : IsReactionProfile β) {μ : ℝ}
     (hμ : μ ∈ Ioo (0 : ℝ) 1) : ∃ δ₀ ∈ Ioo (0 : ℝ) 1, 1 - μ < superKappa β (1 / (1 - δ₀)) := by
@@ -98,9 +97,10 @@ theorem exists_lt_superKappa {β : ℝ → ℝ} (hβ : IsReactionProfile β) {μ
 noncomputable def trapProfile (d : ℕ) (r b z : ℝ) : ℝ :=
   b * (1 - Real.exp ((d + 1) * (1 - z / (2 * r ^ 2))))
 
-/-- The barrier `η̂(x) = f(|x - x₀|²)` of the proof of Lemma A.11 (a smooth replacement of the
-paper's `γ r η((x - x₀)/r)`): superharmonic where `η̂ > -b`, `η̂ ≤ -b/2` on `B̄_r(x₀)`,
-`η̂ ≥ b/2` off `B_{2r}(x₀)`, and `|∇η̂| ≤ 4 b (d + 1)/r` where `|η̂| ≤ b` in `B̄_{2r}(x₀)`. -/
+/-- The barrier `η̂(x) = f(|x - x₀|²)` of the proof of [Lemma B.8](#AFS:l.positivity-trace) (a
+smooth replacement of the paper's `γ r η((x - x₀)/r)`): superharmonic where `η̂ > -b`, `η̂ ≤ -b/2`
+on `B̄_r(x₀)`, `η̂ ≥ b/2` off `B_{2r}(x₀)`, and `|∇η̂| ≤ 4 b (d + 1)/r` where `|η̂| ≤ b` in
+`B̄_{2r}(x₀)`. -/
 noncomputable def trapBarrier (x₀ : E d) (r b : ℝ) (x : E d) : ℝ :=
   trapProfile d r b (‖x - x₀‖ ^ 2)
 
@@ -275,24 +275,25 @@ theorem abs_laplacian_trapBarrier_le {x₀ x : E d} (hxr : ‖x - x₀‖ ≤ 2 
 end Barrier
 
 /-- The existence time `τ = b/(8(2dA + 1))`, `A = L²/(4 σ)`, `σ = b/8`, of the barrier argument of
-Lemma A.11: up to time `τ` the heat barrier keeps `u ≤ g + b/4` (for `L`-Lipschitz data). -/
+[Lemma B.8](#AFS:l.positivity-trace): up to time `τ` the heat barrier keeps `u ≤ g + b/4` (for
+`L`-Lipschitz data). -/
 noncomputable def trapTime (d : ℕ) (L : ℝ≥0) (b : ℝ) : ℝ :=
   b / (8 * (2 * d * ((L : ℝ) ^ 2 / (4 * (b / 8))) + 1))
 
 theorem trapTime_pos {L : ℝ≥0} {b : ℝ} (hb : 0 < b) : 0 < trapTime d L b := by
   unfold trapTime; positivity
 
-/-- The barrier argument of **Lemma A.11** with explicit parameters: the trap height `b`, the
-profile parameter `θ̂ = 1/(1 - δ₀)` (floor `κ_{θ̂}`), subject to the gradient condition
-`4b(d + 1)/r ≤ (1 - δ₀) Q_min`. For any level `m > κ_{θ̂}` there is `ε₁ > 0` such that for
-`0 < ε < ε₁`, every solution `u` of (3.4) with `L`-Lipschitz data `g ≤ κ_{θ̂} ε` on
-`B_{3r}(x₀) ∩ Ū` satisfies `u < m ε` on `(B̄_r(x₀) ∩ Ū) × [0, trapTime d L b]`. The time does not
-depend on `δ₀` or `m`.
+/-- The barrier argument of **[Lemma B.8](#AFS:l.positivity-trace)** with explicit parameters: the
+trap height `b`, the profile parameter `θ̂ = 1/(1 - δ₀)` (floor `κ_{θ̂}`), subject to the gradient
+condition `4b(d + 1)/r ≤ (1 - δ₀) Q_min`. For any level `m > κ_{θ̂}` there is `ε₁ > 0` such that for
+`0 < ε < ε₁`, every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with
+`L`-Lipschitz data `g ≤ κ_{θ̂} ε` on `B_{3r}(x₀) ∩ Ū` satisfies `u < m ε` on
+`(B̄_r(x₀) ∩ Ū) × [0, trapTime d L b]`. The time does not depend on `δ₀` or `m`.
 
 Proof: the barrier `v = Ψ_{ε,θ̂}(η̂)` (`η̂ = trapBarrier`) is a stationary supersolution in
-`V = U ∩ B_{2r}(x₀)` (Lemma A.4) with `v > κ_{θ̂} ε ≥ g` on `V̄` and `v ≥ η̂ ≥ b/2` on
-`∂B_{2r}(x₀)`, where `u ≤ g + b/4 < b/2` for `t ≤ τ` by the heat barrier. Comparison on
-`V × (0, τ]` gives `u ≤ v ≤ ε(κ_{θ̂} + C e^{-cb/(2ε)}) < m ε` on `B̄_r(x₀)`. -/
+`V = U ∩ B_{2r}(x₀)` ([Lemma 3.11](#AFS:l.well-prepared)) with `v > κ_{θ̂} ε ≥ g` on `V̄` and
+`v ≥ η̂ ≥ b/2` on `∂B_{2r}(x₀)`, where `u ≤ g + b/4 < b/2` for `t ≤ τ` by the heat barrier.
+Comparison on `V × (0, τ]` gives `u ≤ v ≤ ε(κ_{θ̂} + C e^{-cb/(2ε)}) < m ε` on `B̄_r(x₀)`. -/
 theorem exists_lt_of_le_superKappa (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) {r b δ₀ : ℝ} (hr : 0 < r) (hb : 0 < b) (hδ₀ : δ₀ ∈ Ioo (0 : ℝ) 1)
     (hbgrad : 4 * b * (d + 1) / r ≤ (1 - δ₀) * S.Qmin) {m : ℝ}
@@ -439,11 +440,11 @@ theorem exists_lt_of_le_superKappa (S : Setting d) {β : ℝ → ℝ} (hβ : IsR
     _ = m * ε := mul_comm ε m
 
 
-/-- **Lemma A.11**, with explicit dependence on bounds `L`, `M`
+/-- **[Lemma B.8](#AFS:l.positivity-trace)**, with explicit dependence on bounds `L`, `M`
 of the data: for `r > 0` and `μ ∈ (0, 1)` there are `τ > 0` and `ε₁ > 0` such that for
-`0 < ε < ε₁`, every solution `u` of (3.4) with nonnegative, `L`-Lipschitz data `g ≤ M` on `Ū`
-and `g ≤ (1 - μ) ε` on `B_{3r}(x₀) ∩ Ū` (`x₀ ∈ Ū`) satisfies `u(x, t) < ε` on
-`(B̄_r(x₀) ∩ Ū) × [0, τ]`.
+`0 < ε < ε₁`, every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with nonnegative,
+`L`-Lipschitz data `g ≤ M` on `Ū` and `g ≤ (1 - μ) ε` on `B_{3r}(x₀) ∩ Ū` (`x₀ ∈ Ū`) satisfies
+`u(x, t) < ε` on `(B̄_r(x₀) ∩ Ū) × [0, τ]`.
 
 Proof: `θ̂ = 1/(1 - δ₀)` with `κ_{θ̂} > 1 - μ`; then `exists_lt_of_le_superKappa` with
 `b = r(1 - δ₀)Q_min/(4(d + 1))` and level `m = 1`. -/
@@ -489,9 +490,10 @@ namespace IsWellPreparedData
 variable {S : Setting d} {g : E d → ℝ} {β : ℝ → ℝ} {increasing : Bool} {ε₀ : ℝ}
   {gε : ℝ → E d → ℝ}
 
-/-- **Proposition 3.8(vi)** for the well-prepared family (compare Corollary A.12): for compact
-`K ⊆ Ū ∖ \overline{{g > 0}}` there is `τ > 0` with `u_ε < ε` on `K × [0, τ]` for all small `ε`.
-Proof: Lemma A.11 around each point of `K` and a finite subcover. -/
+/-- **[Proposition 3.12(v)](#AFS:part.trace)** for the well-prepared family (compare
+[Corollary B.9](#AFS:c.positivity-no-jump)): for compact `K ⊆ Ū ∖ \overline{{g > 0}}` there is
+`τ > 0` with `u_ε < ε` on `K × [0, τ]` for all small `ε`. Proof:
+[Lemma B.8](#AFS:l.positivity-trace) around each point of `K` and a finite subcover. -/
 theorem positivity_trace (hβ : IsReactionProfile β) (hg : ContDiff ℝ 1 g)
     (h : IsWellPreparedData S g β increasing ε₀ gε) {uε : ℝ → E d × ℝ → ℝ}
     (hu : ∀ ε ∈ Ioo 0 ε₀, IsSemilinearSolution S.U S.Q β ε (gε ε) (uε ε)) :
@@ -537,11 +539,12 @@ theorem positivity_trace (hβ : IsReactionProfile β) (hg : ContDiff ℝ 1 g)
 
 end IsWellPreparedData
 
-/-! ### Proposition 3.8(vi*): below every level `κ ε` -/
+/-! ### [Proposition 3.12](#AFS:p.semilinear-wellposed)(v*): below every level `κ ε` -/
 
 /-- `κ_{θ̂} → 0` as `θ̂ → 1⁺` (from `2𝓑(κ_{θ̂}) = (θ̃ - 1)/θ̃`, `θ̃ = (1 + θ̂)/2`): for every
-`κ > 0` there is `θ̂ ∈ (1, 2]` with `κ_{θ̂} < κ`. Used for Proposition 3.8(vi*) and
-Proposition 5.3 with the set `E*`. -/
+`κ > 0` there is `θ̂ ∈ (1, 2]` with `κ_{θ̂} < κ`. Used for
+[Proposition 3.12](#AFS:p.semilinear-wellposed)(v*) and
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity) with the set `E*`. -/
 theorem exists_superKappa_lt_Ioc_two {β : ℝ → ℝ} (hβ : IsReactionProfile β) {κ : ℝ} (hκ : 0 < κ) :
     ∃ θh ∈ Ioc (1 : ℝ) 2, superKappa β θh < κ := by
   set κ' := min κ (1 / 2) with hκ'
@@ -587,7 +590,8 @@ theorem mem_closure_posSet_of_gradient_ne_zero {g : E d → ℝ} {U : Set (E d)}
   exact (div_pos_iff_of_pos_right (mem_Ioi.1 ht0)).1 ht
 
 /-- A strict subsolution is negative on `U ∖ \overline{{g > 0}}`: there `g ≤ 0`, and `g = 0`
-would force `∇g ≠ 0` (Definition 2.2(ii), `Q ≥ Q_min > 0`), hence `g > 0` nearby. -/
+would force `∇g ≠ 0` ([Definition 2.3(ii)](#AFS:d.strict-sub), `Q ≥ Q_min > 0`), hence `g > 0`
+nearby. -/
 theorem IsStrictSub.neg_of_not_mem_closure {S : Setting d} {g : E d → ℝ}
     (hg : IsStrictSub S.U S.Q g) {x : E d} (hx : x ∈ S.U)
     (hxP : x ∉ closure (posSet g (closure S.U))) : g x < 0 := by
@@ -601,12 +605,13 @@ theorem IsStrictSub.neg_of_not_mem_closure {S : Setting d} {g : E d → ℝ}
   have := S.Qmin_pos
   nlinarith
 
-/-- **Lemma A.11 with data vanishing near `x₀`**, for every level: for `r > 0` there is `τ > 0`
-(depending on `r`, `L`, `d`, `Q_min` only) such that for every `κ > 0`, for small `ε`, every
-solution `u` of (3.4) with `L`-Lipschitz data `g ≤ 0` on `B_{3r}(x₀) ∩ Ū` satisfies `u < κ ε` on
-`(B̄_r(x₀) ∩ Ū) × [0, τ]`. The barrier is that of Lemma A.11 with `θ̂ ∈ (1, 2]` chosen so that
-`κ_{θ̂} < κ` (`exists_superKappa_lt_Ioc_two`); the trap height `b = r Q_min/(8(d + 1))` works for
-all `θ̂ ∈ (1, 2]`, so `τ = trapTime d L b` is uniform in `κ`. -/
+/-- **[Lemma B.8](#AFS:l.positivity-trace) with data vanishing near `x₀`**, for every level: for
+`r > 0` there is `τ > 0` (depending on `r`, `L`, `d`, `Q_min` only) such that for every `κ > 0`, for
+small `ε`, every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `L`-Lipschitz
+data `g ≤ 0` on `B_{3r}(x₀) ∩ Ū` satisfies `u < κ ε` on `(B̄_r(x₀) ∩ Ū) × [0, τ]`. The barrier is
+that of [Lemma B.8](#AFS:l.positivity-trace) with `θ̂ ∈ (1, 2]` chosen so that `κ_{θ̂} < κ`
+(`exists_superKappa_lt_Ioc_two`); the trap height `b = r Q_min/(8(d + 1))` works for all
+`θ̂ ∈ (1, 2]`, so `τ = trapTime d L b` is uniform in `κ`. -/
 theorem exists_lt_mul_of_nonpos (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) {r : ℝ} (hr : 0 < r) :
     ∃ τ > 0, ∀ κ > 0, ∃ ε₁ > 0, ∀ ε ∈ Ioo 0 ε₁, ∀ (g : E d → ℝ) (u : E d × ℝ → ℝ) (x₀ : E d),
@@ -638,14 +643,13 @@ theorem exists_lt_mul_of_nonpos (S : Setting d) {β : ℝ → ℝ} (hβ : IsReac
   rw [he]
   exact (hg3 y hy).trans (mul_pos (superKappa_pos hβ hθh.1) hε.1).le
 
-/-- **Proposition 3.8(vi\*)** (increasing case): for compact `K ⊆ U \ \overline{{g > 0}}` there
-is `τ > 0` such that for every `κ > 0`, `u_ε < κ ε` on `K × [0, τ]` for all small `ε`.
+/-- **[Proposition 3.12](#AFS:p.semilinear-wellposed)(vi\*)** (increasing case): for compact
+`K ⊆ U \ \overline{{g > 0}}` there is `τ > 0` such that for every `κ > 0`, `u_ε < κ ε` on
+`K × [0, τ]` for all small `ε`.
 
-This strengthening of Proposition 3.8(vi) is not in the paper. The paper's Proposition 5.3 uses
-the set `limsup* {u_ε > ε}`, and with that set it is false (an `ε`-plateau `u ≡ ε` is a stationary
-solution, and a vanishing perturbation lifts it over the threshold). Here Proposition 5.3 uses the
-authors' corrected set `E* = \overline{⋃_{0<κ≤1} limsup* {u_ε > κ ε}}`, and Corollary 5.4 then
-needs `u_ε < κ ε` near `t = 0` off `\overline{{g > 0}}` for every `κ`, not only for `κ = 1`.
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity) uses the set
+`E* = \overline{⋃_{0<κ≤1} limsup* {u_ε > κ ε}}`, so [Corollary 5.4](#AFS:cor:increasing) needs
+`u_ε < κ ε` near `t = 0` off `\overline{{g > 0}}` for every `κ`, not only for `κ = 1`.
 
 Proof: `g < 0` on `K` (`IsStrictSub.neg_of_not_mem_closure`), so around each `x₀ ∈ K`,
 `g ≤ g(x₀)/2 < 0` on a ball `B_{3r}(x₀)`, where `g_ε = 0` for small `ε`

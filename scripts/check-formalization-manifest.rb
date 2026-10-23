@@ -12,8 +12,8 @@
 #   axioms.expected. A target of kind `sanity-check` has no library declaration: it is certified
 #   by its challenge workspace alone, so it has no module, declaration or related declarations;
 # * the challenge inventory (the targets' challenge fields) equals challenges/*/config.json; a
-#   target without a challenge field (the model example, whose check is folded into both headline
-#   workspaces) has none of its own, and no two targets share one. Each workspace is complete and
+#   target without a challenge field (one checked in another target's workspace, listed in its
+#   checked_in field) has none of its own, and no two targets share one. Each workspace is complete and
 #   trusted-only by default. Its trusted statement surface is a single Mathlib-only
 #   Vocabulary.lean plus Challenge.lean, which imports Mathlib only (its vocabulary block is
 #   generated from Vocabulary.lean; scripts/challenge-prep.py check verifies the copy); the old

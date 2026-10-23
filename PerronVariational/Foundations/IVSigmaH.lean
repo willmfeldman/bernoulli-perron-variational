@@ -27,17 +27,19 @@ Here they are proved from the dependency bernoulli-rectifiability v0.2.0 (Lake p
 
 * `sep_freeBoundary_inter_eq_sigmaHQ`: on an open `B ⊆ U` on which `(u, χ)` is a
   `Q`-variational solution in the sense of bernoulli-rectifiability, the high-density set of the
-  paper (from the proof of Lemma 2.9; `highDensitySet u χ U`, written out here because it is
-  defined in `Registry/`) meets `B` in `sigmaHQ B Q u χ`. This is the density characterization
-  `IsVariationalSolutionQ.mem_sigmaHQ_iff_frontier_inter` together with the locality of the
-  frontier (`frontier_posSet_inter_iff`).
+  paper (from the proof of [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln);
+  `highDensitySet u χ U`, written out here because it is defined in `Registry/`) meets `B` in
+  `sigmaHQ B Q u χ`. This is the density characterization
+  `IsVariationalSolutionQ.mem_sigmaHQ_iff_frontier_inter` together with the locality of the frontier
+  (`frontier_posSet_inter_iff`).
 * `innerVar_dichotomy_of_iv`: `Singular.chi_eq_indicator_of_localQ`, with the local solutions of
   `exists_ball_isVariationalSolutionQ`.
 * `highDensitySet_relClosed_of_iv`: `closure_sigmaHQ_inter_subset` on a ball around each point of
   `U`, through `sep_freeBoundary_inter_eq_sigmaHQ`.
 * `isViscSolution_diff_highDensitySet_of_iv`: `isViscositySolutionQ_diff_sigmaHQ` on balls,
   `sep_freeBoundary_inter_eq_sigmaHQ` and `isViscSolution_of_isViscositySolutionQ`, glued by the
-  locality of Def 2.1 (`isViscSuper_of_locally`, `isViscSub_of_locally`).
+  locality of [Def 2.1](#AFS:d.stationary-viscosity) (`isViscSuper_of_locally`,
+  `isViscSub_of_locally`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -72,8 +74,8 @@ theorem frontier_posSet_inter_iff {U B : Set (E d)} {u : E d → ℝ} (hB : IsOp
   rw [hs, h']
 
 /-- **The high-density set.** On an open `B ⊆ U` on which `(u, χ)` is a `Q`-variational solution
-in the sense of bernoulli-rectifiability, the high-density set (paper, proof of Lemma 2.9) meets
-`B` in `sigmaHQ B Q u χ`. -/
+in the sense of bernoulli-rectifiability, the high-density set (paper, proof of
+[Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)) meets `B` in `sigmaHQ B Q u χ`. -/
 theorem sep_freeBoundary_inter_eq_sigmaHQ [NeZero d] {U B : Set (E d)} {Q u χ : E d → ℝ}
     {C L : ℝ≥0} {c C' : ℝ} (hB : IsOpen B) (hBU : B ⊆ U)
     (hQ : InnerVariational.QBounds B Q L c C')

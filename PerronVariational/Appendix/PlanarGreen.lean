@@ -24,9 +24,10 @@ For `v : ℂ → ℝ` of class `C²` near `B̄_R(c)`:
   `∫_a^R (∫_{B_s(c)} Δv) / s ds = 2π (⨍_{∂B_R(c)} v - ⨍_{∂B_a(c)} v)`.
 
 These are the smooth cases of the Riesz–Jensen formula used for the Riesz measure
-(`CircleMean.exists_isRieszMeasure`), in the proof of Thm B.1 (Appendix B) of F. Abedin, W. M.
-Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981 ("the paper").
+(`CircleMean.exists_isRieszMeasure`), in the proof of [Thm 2.10](#AFS:t.largest-sub-non-degen)
+([Section A.2](#AFS:s.largest-sub-nondegen)) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+("the paper").
 -/
 
 open Set Filter Topology Metric MeasureTheory Complex

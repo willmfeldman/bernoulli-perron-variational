@@ -14,11 +14,12 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Monotonicity in time and `L^∞` bounds (Proposition 3.8(ii), Lemma A.1)
+# Monotonicity in time and `L^∞` bounds
 
-Lemma A.1 (Appendix A.1) and the bound (3.7) of Proposition 3.8(ii) of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981.
+[Lemma B.1](#AFS:l.monotone) ([Appendix B.1](#AFS:s.basic-properties)) and the bound
+[(3.8)](#AFS:e.Linfty) of [Proposition 3.12(i)](#AFS:part.monotone) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
 ## Main results
 
@@ -29,14 +30,17 @@ one-phase problem*, arXiv:2609.14981.
   a stationary viscosity sub/supersolution of `Δv = Q² β_ε(v)` is a time-independent parabolic
   viscosity sub/supersolution of `∂ₜu = Δu - Q² β_ε(u)`.
 * `IsSemilinearSolution.le_of_viscSubStat`, `IsSemilinearSolution.le_of_viscSuperStat`:
-  comparison of the solution with its (stationary sub/super) data (first step of Lemma A.1).
-* `IsSemilinearSolution.monotoneInTime`, `IsSemilinearSolution.antitoneInTime`: **Lemma A.1**,
-  by comparison with the time-shifted solution.
-* `IsSemilinearSolution.mem_Icc`: the bound (3.7), by comparison with constant solutions.
+  comparison of the solution with its (stationary sub/super) data (first step of
+  [Lemma B.1](#AFS:l.monotone)).
+* `IsSemilinearSolution.monotoneInTime`,
+  `IsSemilinearSolution.antitoneInTime`: **[Lemma B.1](#AFS:l.monotone)**, by comparison with the
+  time-shifted solution.
+* `IsSemilinearSolution.mem_Icc`: the bound [(3.8)](#AFS:e.Linfty), by comparison with constant
+  solutions.
 * `isSemilinearViscSuperOn_of_classical`: classical parabolic supersolutions are viscosity
   supersolutions; `IsSemilinearSolOn.mono_left`: spatial restriction.
 * `IsSemilinearSolution.le_add_of_lipschitzOnWith`: `u(y, t) ≤ g(y) + σ + 2d (L²/4σ) t`, by
-  comparison with a caloric quadratic barrier (used for Lemma A.11).
+  comparison with a caloric quadratic barrier (used for [Lemma B.8](#AFS:l.positivity-trace)).
 
 All comparisons are the comparison principle for the semilinear equation
 (`Registry.semilinear_comparison`, from parabolic-basic-theory v0.1.0) on the cylinders
@@ -302,7 +306,7 @@ theorem laplacian_const_add_mul_normSq (a b : ℝ) (x₀ x : F) :
 
 end Quadratic
 
-/-! ### Comparison consequences for solutions of (3.4) -/
+/-! ### Comparison consequences for solutions of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) -/
 
 /-- Points of the parabolic boundary lie over `V̄`. -/
 theorem parBdry_fst_mem {V : Set (E d)} {a b : ℝ} {p : E d × ℝ} (hp : p ∈ parBdry V a b) :
@@ -314,13 +318,15 @@ namespace IsSemilinearSolution
 
 variable {S : Setting d} {β : ℝ → ℝ} {ε : ℝ} {g : E d → ℝ} {u : E d × ℝ → ℝ}
 
-/-- A solution of (3.4) is a viscosity subsolution in `U × (0, b]`. -/
+/-- A solution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) is a viscosity subsolution in
+`U × (0, b]`. -/
 theorem viscSubOn (hu : IsSemilinearSolution S.U S.Q β ε g u) (b : ℝ) :
     IsSemilinearViscSubOn S.U S.Q β ε (Ioc 0 b) u :=
   Registry.isSemilinearViscSubOn_of_solOn S.isOpen exists_Ioc_subset_Ioc
     (hu.2.1.mono Ioc_subset_Ioi_self)
 
-/-- A solution of (3.4) is a viscosity supersolution in `U × (0, b]`. -/
+/-- A solution of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) is a viscosity supersolution in
+`U × (0, b]`. -/
 theorem viscSuperOn (hu : IsSemilinearSolution S.U S.Q β ε g u) (b : ℝ) :
     IsSemilinearViscSuperOn S.U S.Q β ε (Ioc 0 b) u :=
   Registry.isSemilinearViscSuperOn_of_solOn S.isOpen exists_Ioc_subset_Ioc
@@ -345,7 +351,7 @@ theorem continuousOn_const_time {g : E d → ℝ} (hg : ContinuousOn g (closure 
     ContinuousOn (fun p : E d × ℝ ↦ g p.1) (closure S.U ×ˢ Icc 0 b) :=
   hg.comp continuousOn_fst fun _ hp ↦ hp.1
 
-/-- First step of **Lemma A.1**: if the data `g` are a stationary viscosity
+/-- First step of **[Lemma B.1](#AFS:l.monotone)**: if the data `g` are a stationary viscosity
 subsolution, then `g ≤ u` on `Ū × [0, ∞)`. -/
 theorem le_of_viscSubStat (hβ : IsReactionProfile β) (hε : 0 < ε)
     (hu : IsSemilinearSolution S.U S.Q β ε g u) (hg : IsSemilinearViscSubStat S.U S.Q β ε g)
@@ -384,7 +390,7 @@ theorem shift_facts (hu : IsSemilinearSolution S.U S.Q β ε g u) {h : ℝ} (hh 
   · exact Registry.isSemilinearViscSubOn_of_solOn S.isOpen exists_Ioc_subset_Ioc hsol
   · exact Registry.isSemilinearViscSuperOn_of_solOn S.isOpen exists_Ioc_subset_Ioc hsol
 
-/-- **Lemma A.1**, increasing case: if `g ≤ u` on `Ū × [0, ∞)` (e.g.
+/-- **[Lemma B.1](#AFS:l.monotone)**, increasing case: if `g ≤ u` on `Ū × [0, ∞)` (e.g.
 by `le_of_viscSubStat`), then `t ↦ u(x, t)` is nondecreasing on `[0, ∞)` for every `x ∈ Ū`.
 Comparison of `u` with the translate `u(·, · + h)`. -/
 theorem monotoneInTime (hβ : IsReactionProfile β) (hε : 0 < ε)
@@ -408,8 +414,8 @@ theorem monotoneInTime (hβ : IsReactionProfile β) (hε : 0 < ε)
       exact hle (p.1, t - s) ⟨hx', hh⟩
     · exact (hu.2.2.2 _ hx' _ (by linarith [ht'.1])).ge
 
-/-- **Lemma A.1**, decreasing case: if `u ≤ g` on `Ū × [0, ∞)` (e.g. by `le_of_viscSuperStat`),
-then `t ↦ u(x, t)` is nonincreasing on `[0, ∞)` for every `x ∈ Ū`. -/
+/-- **[Lemma B.1](#AFS:l.monotone)**, decreasing case: if `u ≤ g` on `Ū × [0, ∞)` (e.g. by
+`le_of_viscSuperStat`), then `t ↦ u(x, t)` is nonincreasing on `[0, ∞)` for every `x ∈ Ū`. -/
 theorem antitoneInTime (hβ : IsReactionProfile β) (hε : 0 < ε)
     (hu : IsSemilinearSolution S.U S.Q β ε g u)
     (hle : ∀ p ∈ closure S.U ×ˢ Ici 0, u p ≤ g p.1) :

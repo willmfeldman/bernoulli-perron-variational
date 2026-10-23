@@ -12,9 +12,9 @@ public import PerronVariational.Defs.Stationary
 
 A model example for F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
 extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 (`[AFS]`). It is not a
-result of the paper; it shows that the two cases of [AFS, Theorem 1.1] can produce different
-solutions from the same boundary data, and that the smallest supersolution can have a two-plane
-point, the second alternative of [AFS, Corollary 1.2(i)].
+result of the paper; it shows that the two cases of [AFS, [Theorem 1.1](#AFS:t.main)] can produce
+different solutions from the same boundary data, and that the smallest supersolution can have a
+two-plane point, the second alternative of [AFS, [Corollary 1.2(i)](#AFS:part.smallest-reg)].
 
 The construction: in `ℝ²` with `Q ≡ 1`, `U = B₁(0) \ (B̄_{a/2}(a e₁) ∪ B̄_{a/2}(-a e₁))` for a small
 `a > 0`. The data equal `a log 2` on both inner circles, so that the radial solutions

@@ -16,7 +16,8 @@ import PerronVariational.Inner.WeakHarmonic
 /-!
 # Weak convergence of gradients from locally uniform convergence
 
-Tool for Step 2 of the proof of **Theorem 3.10** of F. Abedin, W. M. Feldman, K. Stinson,
+Tool for Step 2 of the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M.
+Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981 ("we have used that `u(·, t)` converges to `u_∞` weakly in `H¹(U)`"): if `Fₙ → f`
 locally uniformly in the open set `U` and `∇Fₙ` is locally bounded, uniformly in `n`, then

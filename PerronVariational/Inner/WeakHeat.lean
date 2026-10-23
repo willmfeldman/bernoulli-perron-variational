@@ -17,9 +17,10 @@ import PerronVariational.Inner.WeakGrad
 import PerronVariational.Semilinear.Calculus
 
 /-!
-# The weak heat equation in `{u > 0}` in the limit ((4.5))
+# The weak heat equation in `{u > 0}` in the limit ([(4.6)](#AFS:eqn:weakHeat))
 
-The weak heat equation (4.5), proved in Section 4.2 of F. Abedin, W. M. Feldman, K. Stinson,
+The weak heat [equation (4.6)](#AFS:eqn:weakHeat), proved in [Section 4.2](#AFS:subsec:strongGrad)
+of F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981, for the `ε → 0` limit of the semilinear approximations.
 
@@ -27,9 +28,11 @@ arXiv:2609.14981, for the `ε → 0` limit of the semilinear approximations.
   with compact support in `U` (Rademacher integration by parts, after a Lipschitz extension of the
   first derivatives of `f` near `spt g`);
 * `Inner.integral_lapₓ_mul_eq_neg`: its space-time version on `U_∞` (Fubini);
-* `Inner.weakHeat_of_tendsto`: (4.5) for the limit of the semilinear approximations. The paper's
-  Definition 3.7 does not contain (4.5), but the proof of Theorem 3.10 uses it; here it is a
-  conclusion of Proposition 4.1 and Theorem 3.9 and a hypothesis of Theorem 3.10.
+* `Inner.weakHeat_of_tendsto`: [(4.6)](#AFS:eqn:weakHeat) for the limit of the semilinear
+  approximations. It is the weak form of [Definition 3.8(iv)](#AFS:d.parabolic-inner), which
+  `IsParaInnerVarSolution` does not include; here it is a conclusion of
+  [Proposition 4.1](#AFS:p.eps-inner-limit) and [Theorem 3.13](#AFS:t.parabolic-existence) and a
+  hypothesis of [Theorem 3.14](#AFS:t.longtime-inner).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -307,13 +310,13 @@ theorem integral_lapₓ_mul_eq_neg {U : Set (E d)} (hU : IsOpen U) {f φ : E d �
   · have hK' : ∀ x, (x, t) ∉ K := fun x h ↦ ht (hφs h).2
     simp [h0 _ (hK' _), gradₓ_eq_zero_of_notMem (hK' _)]
 
-/-- **(4.5) in the limit**: if classical solutions `v n` of (3.4)
-with `e n → 0` converge locally uniformly to `u` on `U_∞`, with
-`∫ ∇ₓv n · ∇ₓφ → ∫ ∇ₓu · ∇ₓφ` for all test functions `φ` (e.g. weak convergence of the
+/-- **[(4.6)](#AFS:eqn:weakHeat) in the limit**: if classical solutions `v n` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `e n → 0` converge locally uniformly to `u` on
+`U_∞`, with `∫ ∇ₓv n · ∇ₓφ → ∫ ∇ₓu · ∇ₓφ` for all test functions `φ` (e.g. weak convergence of the
 gradients) and `∂ₜv n ⇀ w` weakly in `L²(U_∞)`, then `u` satisfies the weak heat
 equation in `{u > 0}`. On `spt φ ⊆ {u > 0}` one has `v n > e n` for large `n`,
-so the reaction term vanishes there; multiply (3.4) by `φ`, integrate by parts in `x`
-(`integral_lapₓ_mul_eq_neg`) and pass to the limit. -/
+so the reaction term vanishes there; multiply [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) by `φ`,
+integrate by parts in `x` (`integral_lapₓ_mul_eq_neg`) and pass to the limit. -/
 theorem weakHeat_of_tendsto_of_grad {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
     {β : ℝ → ℝ} (hβ : IsReactionProfile β) {e : ℕ → ℝ} {v : ℕ → E d × ℝ → ℝ} {u w : E d × ℝ → ℝ}
     (he : ∀ n, 0 < e n) (he0 : Tendsto e atTop (𝓝 0))
@@ -377,10 +380,10 @@ theorem weakHeat_of_tendsto_of_grad {U : Set (E d)} (hU : IsOpen U) {Q : E d →
     simpa only [mul_comm] using this
   exact tendsto_nhds_unique (hL.congr' hidn) (hR φ hφ hφc hKU).neg
 
-/-- **(4.5) in the limit**: if classical solutions `v n` of (3.4)
-with `e n → 0` converge locally uniformly to `u` on `U_∞`, with `∇ₓv n → ∇ₓu` in `L²_loc`
-(`∇ₓu ∈ L²_loc`) and `∂ₜv n ⇀ w` weakly in `L²(U_∞)`, then `u` satisfies the weak heat
-equation in `{u > 0}` for test functions that are only Lipschitz in space
+/-- **[(4.6)](#AFS:eqn:weakHeat) in the limit**: if classical solutions `v n` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `e n → 0` converge locally uniformly to `u` on
+`U_∞`, with `∇ₓv n → ∇ₓu` in `L²_loc` (`∇ₓu ∈ L²_loc`) and `∂ₜv n ⇀ w` weakly in `L²(U_∞)`, then `u`
+satisfies the weak heat equation in `{u > 0}` for test functions that are only Lipschitz in space
 (see `weakHeat_of_tendsto_of_grad`). -/
 theorem weakHeat_of_tendsto' {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} {β : ℝ → ℝ}
     (hβ : IsReactionProfile β) {e : ℕ → ℝ} {v : ℕ → E d × ℝ → ℝ} {u w : E d × ℝ → ℝ}
@@ -416,7 +419,7 @@ theorem weakHeat_of_tendsto' {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} {
   exact tendsto_integral_inner_of_tendsto hgn (hg₀ K hKU hK) (fun _ ↦ hgφ) hgφ
     (hstrong K hKU hK) (by simp)
 
-/-- **(4.5) in the limit**, in the form of Def `WeakHeatInPos`
+/-- **[(4.6)](#AFS:eqn:weakHeat) in the limit**, in the form of Def `WeakHeatInPos`
 (Lipschitz test functions); see `weakHeat_of_tendsto'` for the version with test functions that
 are only Lipschitz in space. -/
 theorem weakHeat_of_tendsto {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} {β : ℝ → ℝ}

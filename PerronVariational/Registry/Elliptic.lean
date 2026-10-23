@@ -25,8 +25,8 @@ equations*, Bull. Amer. Math. Soc. (N.S.) 27 (1992), 1–67, doi:10.1090/S0273-0
 
 * `Registry.dirichlet_harmonic_modulus`: the Dirichlet problem for the Laplacian in a bounded
   `C²` domain with Lipschitz data, with a boundary modulus depending only on the Lipschitz
-  constant and sup bound of the data (paper, proof of Lemma A.9). Proved in
-  viscosity-solution-theory v0.2.0.
+  constant and sup bound of the data (paper, proof of [Lemma B.6](#AFS:l.attainment-lateral)).
+  Proved in viscosity-solution-theory v0.2.0.
 * `Registry.harmonic_of_weakly_harmonic` (Weyl's lemma). Proved here as
   `Analysis.harmonic_of_hasWeakGradient` (`Analysis/WeylWeakGradient.lean`), which applies
   Weyl's lemma from viscosity-solution-theory v0.2.0.
@@ -53,12 +53,12 @@ A result from the literature: Gilbarg–Trudinger, Theorem 2.14 (Perron solvabil
 problem when every boundary point has a barrier, e.g. under the exterior sphere condition, §2.8),
 together with the explicit exterior-sphere barrier of §2.8, which gives a modulus depending only on
 the uniform exterior-sphere radius of `∂U` and on `L`, `M` (cf. the paper's own barrier `η` in the
-proof of Lemma A.9). Proved in viscosity-solution-theory v0.2.0: Perron's method
-(Crandall–Ishii–Lions) for the Laplacian with exterior-sphere barriers,
+proof of [Lemma B.6](#AFS:l.attainment-lateral)). Proved in viscosity-solution-theory v0.2.0:
+Perron's method (Crandall–Ishii–Lions) for the Laplacian with exterior-sphere barriers,
 `ViscositySolns.dirichlet_harmonic_modulus_of_uniformExteriorSphere`, and
 `ViscositySolns.uniformExteriorSphere_of_contDiff_levelSet` (C² ⇒ uniform exterior sphere); the
-modulus is `ϖ t = K √t`. Paper: proof of Lemma A.9 ("Since `U` is a `C²` regular domain there is a
-modulus of continuity `ϖ₀` depending only on `L` and `M`"). -/
+modulus is `ϖ t = K √t`. Paper: proof of [Lemma B.6](#AFS:l.attainment-lateral) ("Since `U` is a
+`C²` regular domain there is a modulus of continuity `ϖ₀` depending only on `L` and `M`"). -/
 theorem dirichlet_harmonic_modulus {U : Set (E d)} (hU : IsOpen U) (hUb : Bornology.IsBounded U)
     (hC2 : HasC2Boundary U) (L : ℝ≥0) (M : ℝ) :
     ∃ ϖ : ℝ → ℝ, Tendsto ϖ (𝓝[≥] 0) (𝓝 0) ∧
@@ -75,8 +75,9 @@ and harmonic in `U`.
 
 A result from the literature: Weyl's lemma; e.g. Gilbarg–Trudinger, Theorem 8.8 and Corollary 8.11
 (interior regularity of weak solutions), or Evans, §6.3.1, Theorem 3 (infinite differentiability in
-the interior). Paper: proof of Thm 3.10, Step 2 ("`u_∞` is harmonic in its positivity set", obtained
-in weak form), where `Δu_∞ = 0` classically is needed for Def 2.8(i).
+the interior). Paper: proof of [Thm 3.14](#AFS:t.longtime-inner), Step 2 ("`u_∞` is harmonic in its
+positivity set", obtained in weak form), where `Δu_∞ = 0` classically is needed for
+[Def 2.11(i)](#AFS:d.stationary-inner).
 
 Proved here: `Analysis.harmonic_of_hasWeakGradient` (`Analysis/WeylWeakGradient.lean`), which
 reduces to distributional harmonicity and applies Weyl's lemma for continuous weakly harmonic

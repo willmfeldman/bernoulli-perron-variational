@@ -13,19 +13,19 @@ import PerronVariational.Semilinear.Monotone
 import PerronVariational.Semilinear.PositivityTrace
 
 /-!
-# Boundary and initial-time estimates for the attainment of the data (Proposition A.8)
+# Boundary and initial-time estimates for attaining the data ([Proposition B.5](#AFS:p.attainment))
 
-Lemma A.9 of
+[Lemma B.6](#AFS:l.attainment-lateral) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.5).
+in the Bernoulli one-phase problem*, arXiv:2609.14981 ([Appendix B.5](#AFS:ss.attainment)).
 
-* `exists_boundary_estimate` (the lateral estimate of Lemma A.9, uniform in `t ≥ 0` and
-  `ε ∈ (0, 1]`): `|u(x, t) - g(x₀)| ≤ 2σ + K |x - x₀|` for `x₀ ∈ ∂U`, `x ∈ Ū`. Barriers built
-  from the exterior barrier `η` (`Setting.exists_exteriorBarrier`): the stationary supersolution
-  `g(x₀) + σ + Aη`, and the subsolutions `(Φ_{ε,1/2}(g(x₀) - 2σ - Aη))₊` for `ε` small and
-  `g(x₀) - 2σ - A'η` (strictly subharmonic enough to absorb the reaction term `≤ C/ε`) for `ε`
-  bounded below. This replaces the harmonic upper barrier of the paper, so the Dirichlet problem
-  for the Laplacian, which the paper solves to build that barrier, is not needed.
+* `exists_boundary_estimate` (the lateral estimate of [Lemma B.6](#AFS:l.attainment-lateral),
+  uniform in `t ≥ 0` and `ε ∈ (0, 1]`): `|u(x, t) - g(x₀)| ≤ 2σ + K |x - x₀|` for `x₀ ∈ ∂U`,
+  `x ∈ Ū`. Barriers built from the exterior barrier `η` (`Setting.exists_exteriorBarrier`): the
+  stationary supersolution `g(x₀) + σ + Aη`, and the subsolutions `(Φ_{ε,1/2}(g(x₀) - 2σ - Aη))₊`
+  for `ε` small and `g(x₀) - 2σ - A'η` (strictly subharmonic enough to absorb the reaction term
+  `≤ C/ε`) for `ε` bounded below. This replaces the harmonic upper barrier of the paper, so the
+  Dirichlet problem for the Laplacian, which the paper solves to build that barrier, is not needed.
 * `exists_initial_estimate`: `|u(x₀, t) - g(x₀)| ≤ 3σ` for `t ≤ τ`, given a quadratic modulus
   `|g(y) - g(x₀)| ≤ σ + A |y - x₀|²` of the data on `Ū` (caloric upper barrier, and lower
   barriers `(Φ_{ε,1/2}(g(x₀) - 2σ - A'|y - x₀|² - 2dA't))₊` resp. a classical subsolution).
@@ -260,8 +260,9 @@ theorem const_sub_quad_le_of_classical (hβ : IsReactionProfile β) (hε : 0 < �
 
 end IsSemilinearSolution
 
-/-- **Lateral estimate** (Lemma A.9, uniform in time): for `σ > 0` there is `K` such that for
-`0 < ε ≤ 1`, every solution `u` of (3.4) with nonnegative `L`-Lipschitz data `g` satisfies
+/-- **Lateral estimate** ([Lemma B.6](#AFS:l.attainment-lateral), uniform in time): for `σ > 0`
+there is `K` such that for `0 < ε ≤ 1`, every solution `u` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with nonnegative `L`-Lipschitz data `g` satisfies
 `|u(x, t) - g(x₀)| ≤ 2σ + K |x - x₀|` for `x₀ ∈ ∂U`, `x ∈ Ū`, `t ≥ 0`. -/
 theorem exists_boundary_estimate (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     (L : ℝ≥0) {σ : ℝ} (hσ : 0 < σ) :
@@ -380,8 +381,9 @@ theorem exists_boundary_estimate (S : Setting d) {β : ℝ → ℝ} (hβ : IsRea
 
 
 /-- **Continuity at the initial time**: given `σ > 0` and `A ≥ 0` there is `τ > 0` such that for
-`0 < ε ≤ 1`, every solution `u` of (3.4) with data `0 ≤ g ≤ M` and a point `x₀ ∈ Ū` with
-`|g(y) - g(x₀)| ≤ σ + A |y - x₀|²` on `Ū` satisfies `|u(x₀, t) - g(x₀)| ≤ 3σ` for `t ∈ [0, τ]`. -/
+`0 < ε ≤ 1`, every solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data
+`0 ≤ g ≤ M` and a point `x₀ ∈ Ū` with `|g(y) - g(x₀)| ≤ σ + A |y - x₀|²` on `Ū` satisfies
+`|u(x₀, t) - g(x₀)| ≤ 3σ` for `t ∈ [0, τ]`. -/
 theorem exists_initial_estimate (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     {σ A : ℝ} (hσ : 0 < σ) (hA : 0 ≤ A) :
     ∃ τ > 0, ∀ ε ∈ Ioc (0 : ℝ) 1, ∀ (g : E d → ℝ) (u : E d × ℝ → ℝ) (M : ℝ),

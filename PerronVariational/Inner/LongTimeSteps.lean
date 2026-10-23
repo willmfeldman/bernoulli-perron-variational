@@ -20,9 +20,9 @@ import PerronVariational.Registry.FunctionalAnalysis
 /-!
 # Long-time limit, Steps 2–4: sub-lemmas
 
-Proof of **Theorem 3.10** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. The statements
-below are the named sub-lemmas of the assembly
+Proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981. The statements below are the named sub-lemmas of the assembly
 `PerronVariational.LongTime.longtime_innerVar_of_weakHeat` (file `Inner/LongTime.lean`).
 
 ## Main definitions
@@ -30,12 +30,13 @@ below are the named sub-lemmas of the assembly
 * `PerronVariational.LongTime.innerSet`: the exhaustion `U_k = {x ∈ U : dist(x, ∂U) > 1/(k+1)}`
   (the paper's Step 3 uses `1/k`).
 * `PerronVariational.LongTime.IsGoodSeq`: a sequence of good times `sₙ → ∞` (Step 3) along which
-  `∫_U |∂ₜu(sₙ)|² → 0` ((4.13)).
+  `∫_U |∂ₜu(sₙ)|² → 0` ([(4.10)](#AFS:eqn:vanishingtime)).
 
 ## Main results
 
-* `perimeter_slices` (Step 3, from (3.13)): bounds `∫_{(i,i+1)} ∫_{U_k} |∇χ(t)| dt ≤ C_k`
-  (slicing of the partial variation, `Inner/PerimeterSlices.lean`).
+* `perimeter_slices` (Step 3, from [(3.14)](#AFS:eqn:chiEst2)): bounds
+  `∫_{(i,i+1)} ∫_{U_k} |∇χ(t)| dt ≤ C_k` (slicing of the partial variation,
+  `Inner/PerimeterSlices.lean`).
 * `bv_select` (Step 3): BV compactness with a measurable limit (from gmt-foundations v0.1.0).
 * `ae_zero_or_one_of_tendstoLpLoc`: `L¹_loc` limits of `{0, 1}`-valued functions are
   `{0, 1}`-valued a.e.
@@ -44,13 +45,14 @@ below are the named sub-lemmas of the assembly
   viscosity-solution-theory v0.2.0).
 * `strong_grad` (Step 2): `∇u(sₙ) → ∇u_∞` in `L²_loc(U)`.
 * `pos_le_limit` (Step 4): `1_{u_∞ > 0} ≤ χ_∞` a.e.
-* `innerVar_limit` (Step 4): (2.5) for `ξ ∈ C¹_c(U)`.
-* `innerVar_lipschitz` (Definition 2.8(iv) needs Lipschitz `ξ`): density of translated bumps.
+* `innerVar_limit` (Step 4): [(2.5)](#AFS:e.stationary-inner-var) for `ξ ∈ C¹_c(U)`.
+* `innerVar_lipschitz` ([Definition 2.11(iv)](#AFS:d.stationary-inner) needs Lipschitz `ξ`): density
+  of translated bumps.
 
 The time-independent parts of `strong_grad`, `pos_le_limit`, `innerVar_limit`,
 `innerVar_lipschitz` and `locallyLipschitzOn_Q_sq` are the stationary core lemmas of
 `Inner/StationaryLimit.lean`, shared with the compactness of inner variational solutions
-(Lemma 2.10, `Inner/InnerVarCompactness.lean`).
+([Lemma 2.14](#AFS:l.inner-compactness-stability), `Inner/InnerVarCompactness.lean`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -67,7 +69,7 @@ variable {d : ℕ}
 /-! ### The exhaustion `U_k` and elementary facts -/
 
 /-- The exhaustion `U_k = {x ∈ U : dist(x, Uᶜ) > 1/(k+1)}` (Step 3 of the proof of
-Theorem 3.10). -/
+[Theorem 3.14](#AFS:t.longtime-inner)). -/
 def innerSet (U : Set (E d)) (k : ℕ) : Set (E d) := {x ∈ U | ((k : ℝ) + 1)⁻¹ < infDist x Uᶜ}
 
 theorem innerSet_subset (U : Set (E d)) (k : ℕ) : innerSet U k ⊆ U := fun _ hx ↦ hx.1
@@ -119,20 +121,19 @@ theorem locallyIntegrableOn_of_bounded {s : Set (E d)} (hs : MeasurableSet s) {f
 
 /-! ### Step 3: perimeter bounds on time slices and BV compactness -/
 
-/-- **Perimeter bounds on unit time intervals** (Step 3, from (3.13)). The paper lets the constant
-of (3.13) depend on `T_η = sup {t : (x, t) ∈ spt η}`, which is too weak for the bound "independent
-of `t`" claimed in Step 3; here (3.13) is used in the form `WeightedPerimeterEst`, where the
-constant depends on the time length `ℓ_η` of `spt η` instead, which is what the proof of (3.13)
-gives. Depending only on the setting and on the function `Cper` of (3.13), there are a time offset
-`R ≥ 0` and constants `C_k` such that for every parabolic inner variational solution satisfying
-(3.13), and every `k`, the function `t ↦ ∫_{U_k} |∇χ(·, t)|` is dominated on `(0, ∞)` by a
-measurable `F` with `∫_{(i+R, i+R+1)} F ≤ C_k` for all `i ∈ ℕ`.
+/-- **Perimeter bounds on unit time intervals** (Step 3, from [(3.14)](#AFS:eqn:chiEst2)). Here
+[(3.14)](#AFS:eqn:chiEst2) is used in the form `WeightedPerimeterEst`, where the constant depends on
+the time length `ℓ_η` of `spt η`, so that the bound is independent of `t`. Depending only on the
+setting and on the function `Cper` of [(3.14)](#AFS:eqn:chiEst2), there are a time offset `R ≥ 0`
+and constants `C_k` such that for every parabolic inner variational solution satisfying
+[(3.14)](#AFS:eqn:chiEst2), and every `k`, the function `t ↦ ∫_{U_k} |∇χ(·, t)|` is dominated on
+`(0, ∞)` by a measurable `F` with `∫_{(i+R, i+R+1)} F ≤ C_k` for all `i ∈ ℕ`.
 
-Proof sketch: apply (3.13) to `η(x, t) = φ_k(x) ψ(t - i - R)` with `φ_k ∈ C¹_c(U)`, `φ_k = 1`
-on `U_k`, `ψ ∈ C¹_c((-3/2, 5/2))`, `ψ = 1` on `[-1/2, 3/2]`; for `R = diam U + 2` the quantities
-`d_η` (the lateral distance of `spt φ_k`), `ℓ_η` and `‖η‖_{L²H¹}` do not depend on `i`. Then
-`∫ ψ(t) ∫_{U_k} |∇χ(t)| dt ≤ ∫ η |∇ₓχ|` (slicing of the partial variation, with `F` the
-supremum over a countable dense family of test fields). -/
+Proof sketch: apply [(3.14)](#AFS:eqn:chiEst2) to `η(x, t) = φ_k(x) ψ(t - i - R)` with
+`φ_k ∈ C¹_c(U)`, `φ_k = 1` on `U_k`, `ψ ∈ C¹_c((-3/2, 5/2))`, `ψ = 1` on `[-1/2, 3/2]`; for
+`R = diam U + 2` the quantities `d_η` (the lateral distance of `spt φ_k`), `ℓ_η` and `‖η‖_{L²H¹}` do
+not depend on `i`. Then `∫ ψ(t) ∫_{U_k} |∇χ(t)| dt ≤ ∫ η |∇ₓχ|` (slicing of the partial variation,
+with `F` the supremum over a countable dense family of test fields). -/
 theorem perimeter_slices (S : Setting d) (Cper : ℝ → ℝ → ℝ) :
     ∃ (R : ℝ) (Cχ : ℕ → ℝ), 0 ≤ R ∧ ∀ u w χ : E d × ℝ → ℝ,
       IsParaInnerVarSolution S.U S.Q u w χ → WeightedPerimeterEst S.U χ Cper →
@@ -231,13 +232,13 @@ theorem ae_zero_or_one_of_tendstoLpLoc {U : Set (E d)} (hU : IsOpen U) (χ : ℕ
 /-! ### Good sequences of times -/
 
 /-- A sequence of good times `sₙ → ∞` (Step 3) along which `∫_U |∂ₜu(sₙ)|² → 0`
-((4.13)), for a flow converging locally uniformly to `u_∞`. -/
+([(4.10)](#AFS:eqn:vanishingtime)) and `u(·, sₙ) → u_∞` locally uniformly in `U` (Step 1). -/
 structure IsGoodSeq (U : Set (E d)) (Q : E d → ℝ) (u w χ : E d × ℝ → ℝ) (E0 : ℝ≥0∞)
     (uInf : E d → ℝ) (s : ℕ → ℝ) : Prop where
   tendsto : Tendsto s atTop atTop
   good : ∀ n, IsGoodSlice U Q u w χ E0 (s n)
   w_zero : Tendsto (fun n ↦ ∫⁻ x in U, ENNReal.ofReal (w (x, s n) ^ 2)) atTop (𝓝 0)
-  conv : TendstoLocallyUniformlyOn (fun t x ↦ u (x, t)) uInf atTop U
+  conv : TendstoLocallyUniformlyOn (fun n x ↦ u (x, s n)) uInf atTop U
 
 section Steps
 
@@ -245,9 +246,10 @@ variable {u w χ : E d × ℝ → ℝ} {E0 : ℝ≥0∞} {uInf : E d → ℝ} {s
 
 /-- **`u_∞` is weakly harmonic in `{u_∞ > 0}`** (Step 2). For `φ ∈ C_c^∞` with
 support in `{u_∞ > 0}`, eventually `spt φ ⊆ {u(·, sₙ) > 0}` (local uniform convergence), so the
-slice heat equation gives `∫ ∂ₜu(sₙ) φ = -∫ ∇u(sₙ) · ∇φ`; the left side tends to `0` by (4.13) and
-the right side to `-∫ ∇u_∞ · ∇φ`: integrating by parts, `∫ ∇u(sₙ) · ∇φ = -∫ u(sₙ) Δφ`, which
-converges by the uniform convergence `u(sₙ) → u_∞` on `spt φ`. -/
+slice heat equation gives `∫ ∂ₜu(sₙ) φ = -∫ ∇u(sₙ) · ∇φ`; the left side tends to `0` by
+[(4.10)](#AFS:eqn:vanishingtime) and the right side to `-∫ ∇u_∞ · ∇φ`: integrating by parts,
+`∫ ∇u(sₙ) · ∇φ = -∫ u(sₙ) Δφ`, which converges by the uniform convergence `u(sₙ) → u_∞` on
+`spt φ`. -/
 theorem weakHarmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
     (huInf : LocallyLipschitzOn S.U uInf) (hs : IsGoodSeq S.U S.Q u w χ E0 uInf s) :
     ∀ φ : E d → ℝ, ContDiff ℝ ∞ φ → HasCompactSupport φ → tsupport φ ⊆ posSet uInf S.U →
@@ -259,8 +261,7 @@ theorem weakHarmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u
   have hUm : MeasurableSet S.U := S.isOpen.measurableSet
   have hφ2 : ContDiff ℝ 2 φ := hφ.of_le (WithTop.coe_le_coe.2 le_top)
   have hunif : TendstoUniformlyOn (fun n x ↦ u (x, s n)) uInf atTop K :=
-    TendstoUniformlyOn.comp_seq ((tendstoLocallyUniformlyOn_iff_forall_isCompact S.isOpen).1
-      hs.conv K hKU hφc.isCompact) hs.tendsto
+    (tendstoLocallyUniformlyOn_iff_forall_isCompact S.isOpen).1 hs.conv K hKU hφc.isCompact
   have hposev : ∀ᶠ n in atTop, ∀ x ∈ K, 0 < u (x, s n) :=
     eventually_forall_pos_of_tendstoUniformlyOn hφc.isCompact (huInf.continuousOn.mono hKU)
       (fun x hx ↦ (hφW hx).2) hunif
@@ -292,9 +293,9 @@ theorem weakHarmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u
       simp [gradient, fderiv_of_notMem_tsupport ℝ fun h' ↦ hx.2 (hφW h')],
     integral_inner_gradient_eq_neg S.isOpen huInf hφ2 hφc hKU, hzero, neg_zero]
 
-/-- **`u_∞` is harmonic in `{u_∞ > 0}`** (Step 2 and Definition 2.8(i)): from the weak form by
-Weyl's lemma (from viscosity-solution-theory v0.2.0), with the weak gradient of a locally
-Lipschitz function given by its a.e. gradient (from gmt-foundations v0.1.0). -/
+/-- **`u_∞` is harmonic in `{u_∞ > 0}`** (Step 2 and [Definition 2.11(i)](#AFS:d.stationary-inner)):
+from the weak form by Weyl's lemma (from viscosity-solution-theory v0.2.0), with the weak gradient
+of a locally Lipschitz function given by its a.e. gradient (from gmt-foundations v0.1.0). -/
 theorem harmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
     (huInf : LocallyLipschitzOn S.U uInf) (hs : IsGoodSeq S.U S.Q u w χ E0 uInf s) :
     ContDiffOn ℝ 2 uInf (posSet uInf S.U) ∧ ∀ x ∈ posSet uInf S.U, Δ uInf x = 0 := by
@@ -307,13 +308,14 @@ theorem harmonic_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
   exact ⟨h1.of_le (WithTop.coe_le_coe.2 le_top), h2⟩
 
 /-- **Strong convergence of the gradients** (Step 2): along a good sequence,
-`∇u(·, sₙ) → ∇u_∞` in `L²_loc(U)`. Proof: (4.12) with `ζ = η (u(sₙ) - δ)₊` (for `δ` avoiding the
-countably many levels of positive measure; `∇u(sₙ) = 0` on `{u(sₙ) = 0}` since `u ≥ 0`) gives
-`∫ |∇u(sₙ)|² η = -∫ ∂ₜu(sₙ) u(sₙ) η - ∫ u(sₙ) ∇u(sₙ) · ∇η`; by (4.13), uniform convergence and weak
-`L²` convergence of the gradients, the right side tends to `-∫ u_∞ ∇u_∞ · ∇η`, which equals
-`∫ |∇u_∞|² η` by the harmonicity of `u_∞` in `{u_∞ > 0}` (same truncation,
-`integral_truncation_identity`). With the weak convergence of the cross term
-(`tendsto_integral_inner_gradient`), `∫ |∇u(sₙ) - ∇u_∞|² η → 0` for a cutoff `η = 1` on `K`. -/
+`∇u(·, sₙ) → ∇u_∞` in `L²_loc(U)`. Proof: [(4.9)](#AFS:eqn:heatEqn) with `ζ = η (u(sₙ) - δ)₊` (for
+`δ` avoiding the countably many levels of positive measure; `∇u(sₙ) = 0` on `{u(sₙ) = 0}` since
+`u ≥ 0`) gives `∫ |∇u(sₙ)|² η = -∫ ∂ₜu(sₙ) u(sₙ) η - ∫ u(sₙ) ∇u(sₙ) · ∇η`; by
+[(4.10)](#AFS:eqn:vanishingtime), uniform convergence and weak `L²` convergence of the gradients,
+the right side tends to `-∫ u_∞ ∇u_∞ · ∇η`, which equals `∫ |∇u_∞|² η` by the harmonicity of `u_∞`
+in `{u_∞ > 0}` (same truncation, `integral_truncation_identity`). With the weak convergence of the
+cross term (`tendsto_integral_inner_gradient`), `∫ |∇u(sₙ) - ∇u_∞|² η → 0` for a cutoff `η = 1` on
+`K`. -/
 theorem strong_grad (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
     (hlip : InteriorLipEst S.U u C) (hM : ∀ p ∈ UInf S.U, u p ≤ M)
     (huInf : LocallyLipschitzOn S.U uInf) (hs : IsGoodSeq S.U S.Q u w χ E0 uInf s) :
@@ -326,11 +328,10 @@ theorem strong_grad (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
   have hvM : ∀ n, ∀ x ∈ S.U, v n x ≤ M := fun n x hx ↦ hM _ ⟨hx, hpos n⟩
   -- `u_∞ ≥ 0`
   have hInf0 : ∀ x ∈ S.U, 0 ≤ uInf x := fun x hx ↦
-    ge_of_tendsto (hs.conv.tendsto_at hx) ((eventually_gt_atTop 0).mono fun t ht ↦
-      h.nonneg _ ⟨hx, ht⟩)
+    ge_of_tendsto (hs.conv.tendsto_at hx) (Eventually.of_forall fun n ↦
+      h.nonneg _ ⟨hx, hpos n⟩)
   have hconvK : ∀ K', IsCompact K' → K' ⊆ S.U → TendstoUniformlyOn v uInf atTop K' :=
-    fun K' hK' hK'U ↦ TendstoUniformlyOn.comp_seq
-      ((tendstoLocallyUniformlyOn_iff_forall_isCompact hU).1 hs.conv K' hK'U hK') hs.tendsto
+    fun K' hK' hK'U ↦ (tendstoLocallyUniformlyOn_iff_forall_isCompact hU).1 hs.conv K' hK'U hK'
   have hBF : ∀ K', IsCompact K' → K' ⊆ S.U → ∃ B, ∀ᶠ n in atTop, ∀ x ∈ K', ‖∇ (v n) x‖ ≤ B :=
     fun K' hK' hK'U ↦ by
       obtain ⟨B, T, hB⟩ := exists_bound_gradₓ_of_interiorLipEst hU hlip h.nonneg hM hK' hK'U
@@ -395,7 +396,7 @@ theorem pos_le_limit (S : Setting d)
     (hχm : Measurable χInf) :
     ∀ᵐ x ∂(volume.restrict S.U), 0 < uInf x → χInf x = 1 :=
   StationaryLimit.ae_pos_imp_eq_one S.isOpen huInf.continuousOn
-    (StationaryLimit.tendstoLocallyUniformlyOn_comp hs.conv hs.tendsto)
+    hs.conv
     (fun n ↦ (hs.good n).pos_le) hχ hχm
 
 /-- `Q²` is locally Lipschitz on `U` (`Q` is Lipschitz and bounded on `Ū`). -/
@@ -406,15 +407,17 @@ theorem locallyLipschitzOn_Q_sq (S : Setting d) :
     (fun y hy ↦ S.Qmin_pos.le.trans (S.Q_mem y hy).1) fun y hy ↦ (S.Q_mem y hy).2).mono
     subset_closure⟩
 
-/-- **Passage to the limit in (4.17)** (Step 4): along a good sequence with
-`∇u(sₙ) → ∇u_∞` in `L²_loc`, `χ(sₙ) → χ_∞` in `L¹_loc` and `∂ₜu(sₙ) → 0` in `L²(U)`, the
-stationary inner variation identity (2.5) holds for `ξ ∈ C¹_c(U; ℝᵈ)`.
+/-- **Passage to the limit in [(4.8)](#AFS:eqn:innerVarLocalized)** (Step 4): along a good sequence
+with `∇u(sₙ) → ∇u_∞` in `L²_loc`, `χ(sₙ) → χ_∞` in `L¹_loc` and `∂ₜu(sₙ) → 0` in `L²(U)`, the
+stationary inner variation identity [(2.5)](#AFS:e.stationary-inner-var) holds for
+`ξ ∈ C¹_c(U; ℝᵈ)`.
 
-Proof: the slice identity (4.17) at `sₙ` reads `∫_K Fₙ = ∫_K 2 ξ · ∇u(sₙ) ∂ₜu(sₙ)` (`K = spt ξ`),
-where `Fₙ` is the stationary integrand of `(u(sₙ), χ(sₙ))`. The right side tends to `0`
-(Cauchy–Schwarz, with `∇u(sₙ)` bounded on `K` for large times by (3.12)). Along a subsequence,
-`∇u(sₙ) → ∇u_∞` and `χ(sₙ) → χ_∞` a.e. on `K`, and `Fₙ` is uniformly bounded on `K`, so
-`∫_K Fₙ → ∫_K F_∞` by dominated convergence. -/
+Proof: the slice identity [(4.8)](#AFS:eqn:innerVarLocalized) at `sₙ` reads
+`∫_K Fₙ = ∫_K 2 ξ · ∇u(sₙ) ∂ₜu(sₙ)` (`K = spt ξ`), where `Fₙ` is the stationary integrand of
+`(u(sₙ), χ(sₙ))`. The right side tends to `0` (Cauchy–Schwarz, with `∇u(sₙ)` bounded on `K` for
+large times by [(3.13)](#AFS:eqn:LipEst)). Along a subsequence, `∇u(sₙ) → ∇u_∞` and `χ(sₙ) → χ_∞`
+a.e. on `K`, and `Fₙ` is uniformly bounded on `K`, so `∫_K Fₙ → ∫_K F_∞` by dominated
+convergence. -/
 theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w χ)
     (hlip : InteriorLipEst S.U u C) (hM : ∀ p ∈ UInf S.U, u p ≤ M)
     (hs : IsGoodSeq S.U S.Q u w χ E0 uInf s) {χInf : E d → ℝ}
@@ -432,13 +435,13 @@ theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
   have hpos : ∀ n, 0 < s n := fun n ↦ (hs.good n).pos
   have hχsm : ∀ t, Measurable fun x ↦ χ (x, t) := fun t ↦
     h.meas.comp (measurable_id.prodMk measurable_const)
-  -- gradient bounds on compact sets for large times, from (3.12)
+  -- gradient bounds on compact sets for large times, from [(3.13)](#AFS:eqn:LipEst)
   have hBF : ∀ K', IsCompact K' → K' ⊆ S.U →
       ∃ B, ∀ᶠ n in atTop, ∀ x ∈ K', ‖gradₓ u (x, s n)‖ ≤ B := fun K' hK' hK'U ↦ by
     obtain ⟨B, T, hB⟩ := exists_bound_gradₓ_of_interiorLipEst S.isOpen hlip h.nonneg hM hK' hK'U
     exact ⟨B, (hs.tendsto.eventually (eventually_gt_atTop T)).mono fun n hn ↦ hB _ hn⟩
   obtain ⟨Cξ, hCξ⟩ := hK.exists_bound_of_continuousOn hξ.continuous.continuousOn
-  -- the slice identity (4.17): `∫_U Fₙ = ∫_K Gₙ`
+  -- the slice identity [(4.8)](#AFS:eqn:innerVarLocalized): `∫_U Fₙ = ∫_K Gₙ`
   set F : ℕ → E d → ℝ := fun n x ↦
     innerVarIntegrand S.Q (fun y ↦ u (y, s n)) (fun y ↦ χ (y, s n)) ξ x
   set G : ℕ → E d → ℝ := fun n x ↦ 2 * inner ℝ (ξ x) (gradₓ u (x, s n)) * w (x, s n)
@@ -498,10 +501,10 @@ theorem innerVar_limit (S : Setting d) (h : IsParaInnerVarSolution S.U S.Q u w �
     hξ hξc hξU
   exact tendsto_nhds_unique hlimF (hlimG.congr fun n ↦ (hFG n).symm)
 
-/-- **From `C¹` to Lipschitz test fields** (Definition 2.8(iv) is stated for `ξ ∈ C^{0,1}_c(U)`): if
-(2.5) holds for all `ξ ∈ C¹_c(U; ℝᵈ)`, `v` is locally Lipschitz and `χ` is bounded measurable,
-then it holds for Lipschitz `ξ` with compact support in `U` (mollify `ξ`: `Dξ_ε → Dξ` a.e. and
-boundedly, dominated convergence). -/
+/-- **From `C¹` to Lipschitz test fields** ([Definition 2.11(iv)](#AFS:d.stationary-inner) is stated
+for `ξ ∈ C^{0,1}_c(U)`): if [(2.5)](#AFS:e.stationary-inner-var) holds for all `ξ ∈ C¹_c(U; ℝᵈ)`,
+`v` is locally Lipschitz and `χ` is bounded measurable, then it holds for Lipschitz `ξ` with compact
+support in `U` (mollify `ξ`: `Dξ_ε → Dξ` a.e. and boundedly, dominated convergence). -/
 theorem innerVar_lipschitz (S : Setting d) {v χ₁ : E d → ℝ} (hv : LocallyLipschitzOn S.U v)
     (hχm : Measurable χ₁) (hχb : ∀ x, |χ₁ x| ≤ 1)
     (hC1 : ∀ ξ : E d → E d, ContDiff ℝ 1 ξ → HasCompactSupport ξ → tsupport ξ ⊆ S.U →

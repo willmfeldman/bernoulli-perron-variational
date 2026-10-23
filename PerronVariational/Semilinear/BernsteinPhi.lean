@@ -14,13 +14,14 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # The Bernstein change of variables as a smooth diffeomorphism of `ℝ`
 
-Steps 1 and 4 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4).
-The change of variables `u = φ(v)` is used on `[0, v_max]` only; to invert it globally and
-smoothly we extend `φ` outside `[-1, v_max + 1]` by adding `g(v - v_max - 1) - g(-1 - v)`,
-`g(x) = x e^{-1/x}` (`x > 0`), which makes it a smooth increasing bijection `Φ` of `ℝ` with
-`Φ = φ` on `[-1, v_max + 1]`. We use the smooth cutoff `ψ₀(x) = smoothTransition(1 - x)`.
+Steps 1 and 4 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)). The change of variables `u = φ(v)` is used on `[0, v_max]`
+only; to invert it globally and smoothly we extend `φ` outside `[-1, v_max + 1]` by adding
+`g(v - v_max - 1) - g(-1 - v)`, `g(x) = x e^{-1/x}` (`x > 0`), which makes it a smooth increasing
+bijection `Φ` of `ℝ` with `Φ = φ` on `[-1, v_max + 1]`. We use the smooth cutoff
+`ψ₀(x) = smoothTransition(1 - x)`.
 
 ## Main definitions
 
@@ -209,8 +210,6 @@ noncomputable def bigPhiHomeo : ℝ ≃ₜ ℝ :=
 variable (ε M) in
 /-- `Ψ = Φ⁻¹`. -/
 noncomputable def bigPsi : ℝ → ℝ := (bigPhiHomeo ε M).symm
-
-theorem bigPhiHomeo_apply (v : ℝ) : bigPhiHomeo ε M v = bigPhi ε M v := rfl
 
 theorem bigPhi_bigPsi (s : ℝ) : bigPhi ε M (bigPsi ε M s) = s :=
   (bigPhiHomeo ε M).apply_symm_apply s

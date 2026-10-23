@@ -10,15 +10,17 @@ import Mathlib.Analysis.Calculus.Rademacher
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 
 /-!
-# Long-time limit, Step 1: existence of the locally uniform limit
+# Long-time limit: real-analysis helpers and the monotone case
 
-Step 1 of the proof of **Theorem 3.10** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
-The paper argues that `u(·, t)` is Cauchy in `L²(U)` as `t → ∞`; this does not follow from
-`∂ₜu ∈ L²(U_∞)`, which only gives `‖u(t) - u(s)‖_{L²} ≤ |t - s|^{1/2} ‖∂ₜu‖_{L²}`. Here we assume
-instead that the flow is monotone in time (as it is in Propositions 6.1 and 6.2): the limit exists
-pointwise by **time monotonicity**, and locally uniformly by the interior Lipschitz estimate
-(3.12).
+Helpers for Step 1 of the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F. Abedin, W. M.
+Feldman, K. Stinson,
+*Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981 (equi-Lipschitz bounds for the time slices from [(3.13)](#AFS:eqn:LipEst)), and the
+full limit as `t → ∞` for flows **monotone in time** (the remark after
+[Lemma 5.8](#AFS:l.subsolution-inner-limit) of the paper, used for
+`LongtimeInnerMonotoneStatement`): the limit exists pointwise by monotonicity, and locally uniformly
+by [(3.13)](#AFS:eqn:LipEst). Step 1 without monotonicity, along a sequence, is in
+`Inner/LongTimeSubseq.lean`.
 
 ## Main results
 
@@ -27,14 +29,9 @@ pointwise by **time monotonicity**, and locally uniformly by the interior Lipsch
   (Rademacher + Fubini on translated segments + FTC for absolutely continuous functions).
 * `PerronVariational.LongTime.tendstoUniformlyOn_of_lipschitzOnWith`: equi-Lipschitz functions
   converging pointwise on a totally bounded set converge uniformly there.
-* `PerronVariational.LongTime.exists_tendstoLocallyUniformlyOn`: **Step 1**: for a bounded,
-  time-monotone parabolic inner variational solution satisfying (3.12), `u(·, t) → u_∞` locally
+* `PerronVariational.LongTime.exists_tendstoLocallyUniformlyOn`: for a bounded, time-monotone
+  parabolic inner variational solution satisfying [(3.13)](#AFS:eqn:LipEst), `u(·, t) → u_∞` locally
   uniformly in `U` as `t → ∞`, and `u_∞ ≥ 0` is locally Lipschitz in `U`.
-* `PerronVariational.LongTime.norm_gradient_le_of_tendsto`: the limit inherits (3.12), in the
-  form `‖∇u_∞‖ ≤ C (r⁻¹ ‖u_∞‖_{L^∞(B_{2r}(x))} + 1)` on `B_r(x)`. The paper states (3.14) with
-  `B_r` on both sides and a constant depending on `V`, which is nearly vacuous; here we state it
-  as the limit of (3.12), with the same constant `C`, because Propositions 6.1 and 6.2 need this
-  form, uniformly over the shifted data.
 -/
 
 open Set Filter Topology Metric MeasureTheory
@@ -58,8 +55,8 @@ Proof: by Rademacher's theorem `f` is differentiable a.e. in `s`; by Fubini, for
 translation `y`, a.e. point of the segment `[a + y, b + y]` is a differentiability point, so the
 restriction of `f` to it is Lipschitz with derivative `≤ L ‖b - a‖` a.e., hence (FTC for
 absolutely continuous functions) `|f(b + y) - f(a + y)| ≤ L ‖b - a‖`; let `y → 0`. Used to turn
-the pointwise bound (3.12) (a statement about `gradₓ`) into equi-Lipschitz bounds on time
-slices. -/
+the pointwise bound [(3.13)](#AFS:eqn:LipEst) (a statement about `gradₓ`) into equi-Lipschitz bounds
+on time slices. -/
 theorem lipschitzOnWith_of_norm_gradient_le {s : Set (E d)} {f : E d → ℝ} {L : ℝ}
     (hs : IsOpen s) (hsc : Convex ℝ s) (hf : LocallyLipschitzOn s f)
     (hL : ∀ x ∈ s, ‖∇ f x‖ ≤ L) : LipschitzOnWith L.toNNReal f s := by
@@ -184,7 +181,7 @@ theorem lipschitzOnWith_of_tendsto [l.NeBot] (hF : ∀ᶠ i in l, LipschitzOnWit
       (hF.mono fun _ hi ↦ hi.dist_le_mul x hx y hy)
 
 /-- Equi-Lipschitz functions converging pointwise on a totally bounded set converge uniformly
-there (the Arzelà–Ascoli step of Theorem 3.10, Step 1). -/
+there (the Arzelà–Ascoli step of [Theorem 3.14](#AFS:t.longtime-inner), Step 1). -/
 theorem tendstoUniformlyOn_of_lipschitzOnWith (hs : TotallyBounded s)
     (hF : ∀ᶠ i in l, LipschitzOnWith K (F i) s) (hf : LipschitzOnWith K f s)
     (hconv : ∀ x ∈ s, Tendsto (fun i ↦ F i x) l (𝓝 (f x))) : TendstoUniformlyOn F f l s := by
@@ -229,8 +226,8 @@ section Slices
 variable {U : Set (E d)} {Q : E d → ℝ} {u w χ : E d × ℝ → ℝ}
 
 /-- Time slices of a parabolic inner variational solution are locally Lipschitz
-(Definition 3.7(i); the paper's `∇u ∈ L^∞_loc(U_∞)` is encoded as local spatial Lipschitz
-bounds). -/
+([Definition 3.8(i)](#AFS:d.parabolic-inner); the paper's `∇u ∈ L^∞_loc(U_∞)` is encoded as local
+spatial Lipschitz bounds). -/
 theorem locallyLipschitzOn_slice (h : IsParaInnerVarSolution U Q u w χ) {t : ℝ} (ht : 0 < t) :
     LocallyLipschitzOn U (fun x ↦ u (x, t)) := by
   intro x hx
@@ -244,8 +241,8 @@ theorem locallyLipschitzOn_slice (h : IsParaInnerVarSolution U Q u w χ) {t : �
         gcongr
         exact Real.le_coe_toNNReal K
 
-/-- The interior Lipschitz estimate (3.12) on a cylinder `Q_{2r}(x, t) ⊆ U_∞` makes the time
-slice `u(·, t)` Lipschitz on `B_r(x)` with constant `C (M/r + 1)`. -/
+/-- The interior Lipschitz estimate [(3.13)](#AFS:eqn:LipEst) on a cylinder `Q_{2r}(x, t) ⊆ U_∞`
+makes the time slice `u(·, t)` Lipschitz on `B_r(x)` with constant `C (M/r + 1)`. -/
 theorem lipschitzOnWith_slice_of_interiorLipEst {C : ℝ} (hlip : InteriorLipEst U u C)
     (h : IsParaInnerVarSolution U Q u w χ) {x : E d} {t r M : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
     (hcyl : parCyl x t (2 * r) ⊆ UInf U) (hM : ∀ q ∈ parCyl x t (2 * r), |u q| ≤ M) :
@@ -279,16 +276,16 @@ theorem exists_tendsto_atTop_of_monotoneInTime {M : ℝ} (h0 : ∀ p ∈ UInf U,
 
 end Slices
 
-/-! ### Step 1 -/
+/-! ### The full limit for monotone flows -/
 
 section Step1
 
 variable {U : Set (E d)} {Q : E d → ℝ} {u w χ : E d × ℝ → ℝ} {M C : ℝ}
 
-/-- **Theorem 3.10, Step 1** (with time monotonicity in place of the paper's `L²` Cauchy
-argument, see the module docstring): for a bounded, time-monotone parabolic inner variational
-solution satisfying (3.12), `u(·, t)` converges locally uniformly in `U` as `t → ∞` to
-a nonnegative locally Lipschitz function `u_∞`. -/
+/-- **The full limit for monotone flows** (remark after
+[Lemma 5.8](#AFS:l.subsolution-inner-limit)): for a bounded, time-monotone parabolic inner
+variational solution satisfying [(3.13)](#AFS:eqn:LipEst), `u(·, t)` converges locally uniformly in
+`U` as `t → ∞` to a nonnegative locally Lipschitz function `u_∞`. -/
 theorem exists_tendstoLocallyUniformlyOn (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
     (hM : ∀ p ∈ UInf U, u p ≤ M)
     (hmono : MonotoneInTime u U (Ioi 0) ∨ AntitoneInTime u U (Ioi 0))
@@ -329,96 +326,6 @@ theorem exists_tendstoLocallyUniformlyOn (hU : IsOpen U) (h : IsParaInnerVarSolu
         fun y hy ↦ hpt y (hsub hy)⟩
   · obtain ⟨r, hr, hsub, K, -, hKInf⟩ := hlipInf x hx
     exact ⟨K, ball x r, mem_nhdsWithin_of_mem_nhds (ball_mem_nhds x hr), hKInf⟩
-
-/-- A time-monotone function lies on the correct side of its limit: `u(z, s) ≤ u_∞(z)` if `u`
-is nondecreasing in time. -/
-theorem le_of_monotoneInTime {uInf : E d → ℝ} (hmono : MonotoneInTime u U (Ioi 0)) {z : E d}
-    (hz : z ∈ U) (hconv : Tendsto (fun t ↦ u (z, t)) atTop (𝓝 (uInf z))) {s : ℝ} (hs : 0 < s) :
-    u (z, s) ≤ uInf z :=
-  ge_of_tendsto hconv ((eventually_ge_atTop s).mono fun _ hst ↦
-    hmono z hz hs (lt_of_lt_of_le hs hst) hst)
-
-/-- **(3.14)** (in the form stated in the module docstring): the locally uniform limit of a
-bounded time-monotone solution satisfying (3.12) with constant `C` satisfies, for `B_{2r}(x) ⊆ U`,
-`r ≤ 1` and `|u_∞| ≤ M'` on `B_{2r}(x)`, the bound `‖∇u_∞‖ ≤ C (M'/r + 1)` on `B_r(x)`. -/
-theorem norm_gradient_le_of_tendsto (hU : IsOpen U) (h : IsParaInnerVarSolution U Q u w χ)
-    (hmono : MonotoneInTime u U (Ioi 0) ∨ AntitoneInTime u U (Ioi 0))
-    (hlip : InteriorLipEst U u C) {uInf : E d → ℝ}
-    (hconv : TendstoLocallyUniformlyOn (fun t x ↦ u (x, t)) uInf atTop U)
-    (x : E d) (r : ℝ) (hr : 0 < r) (hr1 : r ≤ 1) (hball : ball x (2 * r) ⊆ U) (M' : ℝ)
-    (hM' : ∀ y ∈ ball x (2 * r), |uInf y| ≤ M') (y : E d) (hy : y ∈ ball x r) :
-    ‖∇ uInf y‖ ≤ C * (M' / r + 1) := by
-  have hpt : ∀ z ∈ U, Tendsto (fun t ↦ u (z, t)) atTop (𝓝 (uInf z)) := fun z hz ↦
-    hconv.tendsto_at hz
-  -- the bound at every smaller radius `r' ∈ (dist y x, r)`, with slack `δ = r - r'`
-  have key : ∀ r' ∈ Ioo (max (dist y x) (r / 2)) r,
-      ‖∇ uInf y‖ ≤ C * ((M' + (r - r')) / r' + 1) := by
-    intro r' hr'
-    have hr'0 : 0 < r' := lt_of_lt_of_le (by linarith) (le_max_right _ _ |>.trans hr'.1.le)
-    have hyr' : y ∈ ball x r' := lt_of_le_of_lt (le_max_left _ _) hr'.1
-    have hr'1 : r' ≤ 1 := hr'.2.le.trans hr1
-    set δ := r - r' with hδ
-    have hδ0 : 0 < δ := by linarith [hr'.2]
-    have hKsub : closedBall x (2 * r') ⊆ U :=
-      (closedBall_subset_ball (by linarith [hr'.2])).trans hball
-    have hunif : TendstoUniformlyOn (fun t x ↦ u (x, t)) uInf atTop (closedBall x (2 * r')) :=
-      (tendstoLocallyUniformlyOn_iff_forall_isCompact hU).1 hconv _ hKsub
-        (isCompact_closedBall x (2 * r'))
-    have hclose : ∀ᶠ t in atTop, ∀ z ∈ closedBall x (2 * r'), u (z, t) < uInf z + δ := by
-      filter_upwards [Metric.tendstoUniformlyOn_iff.1 hunif δ hδ0] with t ht z hz
-      have := ht z hz
-      rw [Real.dist_eq] at this
-      linarith [le_abs_self (uInf z - u (z, t)), neg_abs_le (uInf z - u (z, t))]
-    -- eventually the sup bound `M' + δ` holds on the cylinder `Q_{2r'}(x, t)`
-    have hbound : ∀ᶠ t in atTop, parCyl x t (2 * r') ⊆ UInf U ∧
-        ∀ q ∈ parCyl x t (2 * r'), |u q| ≤ M' + δ := by
-      have hshift : Tendsto (fun t : ℝ ↦ t - (2 * r') ^ 2) atTop atTop :=
-        tendsto_atTop_add_const_right _ _ tendsto_id
-      filter_upwards [eventually_gt_atTop ((2 * r') ^ 2), hshift.eventually hclose] with t ht
-        hcl
-      have hcyl : parCyl x t (2 * r') ⊆ UInf U := fun q hq ↦
-        ⟨hKsub (ball_subset_closedBall hq.1), show 0 < q.2 by have := hq.2.1; linarith⟩
-      refine ⟨hcyl, fun q hq ↦ abs_le.2 ⟨?_, ?_⟩⟩
-      · linarith [h.nonneg q (hcyl hq), abs_nonneg (uInf q.1),
-          hM' q.1 (ball_subset_ball (by linarith [hr'.2]) hq.1)]
-      have hz : q.1 ∈ U := (hcyl hq).1
-      have hM'z : uInf q.1 ≤ M' :=
-        (le_abs_self _).trans (hM' q.1 (ball_subset_ball (by linarith [hr'.2]) hq.1))
-      rcases hmono with hmono | hmono
-      · have := le_of_monotoneInTime hmono hz (hpt _ hz) (hcyl hq).2
-        rw [show ((q.1, q.2) : E d × ℝ) = q from rfl] at this
-        linarith
-      · have hs0 : 0 < t - (2 * r') ^ 2 := by linarith
-        have h1 : u (q.1, q.2) ≤ u (q.1, t - (2 * r') ^ 2) :=
-          hmono q.1 hz hs0 (hcyl hq).2 hq.2.1.le
-        have h2 := hcl q.1 (ball_subset_closedBall hq.1)
-        rw [show ((q.1, q.2) : E d × ℝ) = q from rfl] at h1
-        linarith
-    set g := C * ((M' + δ) / r' + 1) with hg
-    have hlipt : ∀ᶠ t in atTop, LipschitzOnWith g.toNNReal (fun z ↦ u (z, t)) (ball x r') :=
-      hbound.mono fun t ht ↦ lipschitzOnWith_slice_of_interiorLipEst hlip h hr'0 hr'1 ht.1 ht.2
-    have hlipInf : LipschitzOnWith g.toNNReal uInf (ball x r') :=
-      lipschitzOnWith_of_tendsto hlipt fun z hz ↦
-        hpt z (hKsub (ball_subset_closedBall.trans (closedBall_subset_closedBall
-          (by linarith)) hz))
-    -- `g ≥ 0`, since (3.12) bounds a norm by `g`
-    obtain ⟨t, ht⟩ := hbound.exists
-    have hg0 : 0 ≤ g := (norm_nonneg _).trans
-      (hlip x t r' hr'0 hr'1 ht.1 (M' + δ) ht.2 (x, t)
-        ⟨mem_ball_self hr'0, by simp only [mem_Ioc]; constructor <;> nlinarith⟩)
-    have hfd : ‖fderiv ℝ uInf y‖ ≤ g.toNNReal :=
-      norm_fderiv_le_of_lipschitzOn ℝ (isOpen_ball.mem_nhds hyr') hlipInf
-    rw [Real.coe_toNNReal _ hg0] at hfd
-    simpa [gradient] using hfd
-  -- let `r' ↑ r`
-  have hlim : Tendsto (fun r' ↦ C * ((M' + (r - r')) / r' + 1)) (𝓝[<] r)
-      (𝓝 (C * (M' / r + 1))) := by
-    have hc : ContinuousAt (fun r' ↦ C * ((M' + (r - r')) / r' + 1)) r :=
-      ((continuousAt_const.add (continuousAt_const.sub continuousAt_id)).div continuousAt_id
-        hr.ne').add continuousAt_const |>.const_mul C
-    simpa using hc.tendsto.mono_left nhdsWithin_le_nhds
-  have hlt : max (dist y x) (r / 2) < r := max_lt hy (by linarith)
-  exact ge_of_tendsto hlim (Filter.mem_of_superset (Ioo_mem_nhdsLT hlt) fun r' hr' ↦ key r' hr')
 
 end Step1
 

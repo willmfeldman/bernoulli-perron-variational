@@ -15,13 +15,13 @@ import Mathlib.Topology.Algebra.Order.LiminfLimsup
 /-!
 # Energy dissipation, part 2: the energy bound near `t = 0` (Step A)
 
-Step A of the proof of the energy dissipation inequality (A.1) of
+Step A of the proof of the energy dissipation inequality [(B.1)](#AFS:eqn:dissipation) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
 in the Bernoulli one-phase problem*, arXiv:2609.14981.
-Let `u` solve (3.4) with `H¹ ∩ C(Ū)` data `g` (weak gradient
-`G`), and `w = u - g`, which is continuous on `Ū × [0, ∞)` and vanishes on the parabolic boundary.
-Testing the equation at time `t` with the truncation `T_σ(w(t))` (compact support in `U`) and
-integrating in time gives
+Let `u` solve [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with `H¹ ∩ C(Ū)` data `g` (weak
+gradient `G`), and `w = u - g`, which is continuous on `Ū × [0, ∞)` and vanishes on the parabolic
+boundary. Testing the equation at time `t` with the truncation `T_σ(w(t))` (compact support in `U`)
+and integrating in time gives
 `∫₀ˢ ∫_U T_σ'(w) ∇u · (∇u - G) = -∫_U Ψ_σ(w(s)) - ∫₀ˢ ∫_U f T_σ(w) ≤ s M δ |U|`,
 where `|f| ≤ M` and `|w| ≤ δ` on `U × (0, s]`. Letting `σ → 0` (Fatou) and using `∇u = G` a.e. on
 `{w = 0}` gives
@@ -93,7 +93,7 @@ theorem key_ineq (a G : E d) {τ c : ℝ} (hτ : 0 ≤ τ) (_hc : 0 ≤ c) (hcτ
 
 /-! ### The reaction term -/
 
-/-- The reaction term `f = Q² β_ε(u)` of (3.4). -/
+/-- The reaction term `f = Q² β_ε(u)` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear). -/
 noncomputable def reaction (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ) (u : E d × ℝ → ℝ)
     (p : E d × ℝ) : ℝ :=
   Q p.1 ^ 2 * betaEps β ε (u p)

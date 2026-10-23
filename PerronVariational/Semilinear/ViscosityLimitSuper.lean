@@ -14,31 +14,32 @@ import PerronVariational.Registry.Comparison
 import PerronVariational.Semilinear.ViscosityLimitCalculus
 
 /-!
-# Proposition 5.3, Step 2: the semilinear limit is a supersolution
+# The semilinear limit is a supersolution
 
-Step 2 of the proof of Proposition 5.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+Step 2 of the proof of [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981.
 
 Let `u_j` solve `∂ₜu = Δu - Q² β_{ε_j}(u)` in `U × (0, T]` with `ε_j → 0` and `u_j → u` locally
-uniformly. Then `u` is a parabolic viscosity supersolution of (3.1) (Definition 3.2):
-`semilinear_limit_isParaSuper`.
+uniformly. Then `u` is a parabolic viscosity supersolution of [(3.1)](#AFS:e.bernoulli-parabolic)
+([Definition 3.3](#AFS:d.parabolic-supersolution)): `semilinear_limit_isParaSuper`.
 
-## Deviation from the paper's proof (Step 2)
+## Proof (Step 2 of the paper)
 
-The paper perturbs a strict subsolution `φ` to `φ + δ` and compares `u_j` with `(Φ_{ε,θ}(φ + δ))₊`
-on the whole cylinder. But `φ + δ` need **not** be a strict subsolution: the Definition 3.2
-conditions constrain `φ` only on `\overline{{φ > 0}}`, and where `-δ < φ ≤ 0` away from
-`\overline{{φ > 0}}` (e.g. a plateau `φ ≡ 0` at positive distance from `{φ > 0}`), `∂ₜφ - Δφ` has no
-sign, so `(Φ_ε(φ + δ))₊` is not a subsolution there. (The same issue affects the use of Lemma A.4,
-which needs the sub/supersolution inequalities on `{|g| ≤ a₀}`.)
+Let `φ` be a classical strict subsolution on `V̄ × [a, b]` with constants `a₀, δ₀` and `φ ≺ u` on
+`∂_P(V × (a, b])`, and suppose `u(p₀) ≤ φ(p₀)` at some `p₀ ∈ \overline{{φ > 0}} ∩ (V × (a, b])`.
 
-We localize instead: with `A = \overline{{φ > 0}} ∩ (V̄ × [a, b])` and `D = dist(·, A)`, we use
-the glued function `w = (Φ_{ε,θ}(φ + δ))₊` on `{D < 3r/2}`, `w = 0` elsewhere (`gluedSub`). For
-`r` small: near `A` the strict subsolution inequalities hold with margins (compactness), and on the
-annulus `{r ≤ D ≤ 2r}` one has `φ ≤ -η < 0` (a zero of `φ` near `A` has `∇ₓφ ≠ 0`, hence lies in
-`\overline{{φ > 0}}`); so `w` is continuous and a viscosity subsolution for `δ, ε` small. The
-boundary ordering is obtained by compactness (`exists_bdry_margin`), which replaces the paper's
-identity (5.4).
+* As the paper says, `φ + δ` is again a classical strict subsolution for small `δ > 0`
+  (`IsClassicalStrictParaSubWith.add_const`, constants `a₀ - δ, δ₀`).
+* The ordering on `∂_P`: by compactness `φ + μ < u` on `∂_P` near
+  `A = \overline{{φ > 0}} ∩ (V̄ × [a, b])` (`exists_bdry_margin`), and every point of `V̄ × [a, b]`
+  with `φ > -δ₁` is near `A` (`exists_infDist_lt_of_neg_lt`; this is the identity
+  [(5.6)](#AFS:eqn:containerMe), `limsup*_{δ → 0} \overline{{φ + δ > 0}} = \overline{{φ > 0}}`,
+  which uses `|∇φ| > 0` on `{φ = 0}`).
+* `(Φ_{ε,θ}(φ + δ))₊` with `θ = 1/(1 + δ₀)` is a viscosity subsolution of the semilinear equation
+  (`IsClassicalStrictParaSubWith.isSemilinearViscSubOn_profileSub`, the parabolic form of
+  [Lemma 3.11](#AFS:l.well-prepared)), it lies below `u_j` on `∂_P` for large `j`, so below `u_j` in
+  the cylinder by the comparison principle; at `p₀` this contradicts `φ(p₀) + δ > u(p₀)`.
 -/
 
 open Set Filter Topology Metric
@@ -53,15 +54,6 @@ variable {d : ℕ}
 /-! ### Helpers -/
 
 section Helpers
-
-/-- A continuous positive function on a compact set has a positive lower bound. -/
-theorem exists_pos_le_of_isCompact {X : Type*} [TopologicalSpace X] {s : Set X}
-    (hs : IsCompact s) {f : X → ℝ} (hf : ContinuousOn f s) (hpos : ∀ x ∈ s, 0 < f x) :
-    ∃ m > 0, ∀ x ∈ s, m ≤ f x := by
-  rcases s.eq_empty_or_nonempty with rfl | hne
-  · exact ⟨1, one_pos, by simp⟩
-  · obtain ⟨x, hx, hmin⟩ := hs.exists_isMinOn hne hf
-    exact ⟨f x, hpos x hx, fun y hy ↦ hmin hy⟩
 
 /-- A zero of a differentiable space-time function with nonzero spatial gradient lies in the
 closure of its positivity set. -/
@@ -121,142 +113,23 @@ section Geometry
 
 variable {φ : E d × ℝ → ℝ} {K : Set (E d × ℝ)} {Q : E d → ℝ}
 
-/-- **Margins for a strict subsolution near `A = \overline{{φ > 0}} ∩ K`.** There are
-`θ ∈ (0, 1)`, `r ∈ (0, R]` and `η > 0` such that, with `D = dist(·, A)`:
-(1) `∂ₜφ - Δₓφ < 0` on `K ∩ {D < r, φ > -r}`;
-(2) `Q² ≤ θ |∇ₓφ|²` on `K ∩ {D < r, -r < φ ≤ 0}`;
-(3) `φ ≤ -η` on `K ∩ {r ≤ D ≤ 2r}`. -/
-theorem exists_sub_geometry (hφ : ContDiff ℝ ∞ φ) (hK : IsCompact K)
-    (hA : (closure {q | 0 < φ q} ∩ K).Nonempty) {Qmin Qmax : ℝ} (hQmin : 0 < Qmin)
-    (hQc : ContinuousOn (fun p : E d × ℝ ↦ Q p.1) K)
-    (hQ : ∀ p ∈ K, Qmin ≤ Q p.1 ∧ Q p.1 ≤ Qmax)
-    (h1 : ∀ p ∈ closure {q | 0 < φ q} ∩ K, dₜ φ p - lapₓ φ p < 0)
-    (h2 : ∀ p ∈ frontier {q | 0 < φ q} ∩ K, Q p.1 < ‖gradₓ φ p‖) {R : ℝ} (hR : 0 < R) :
-    ∃ θ : ℝ, 0 < θ ∧ θ < 1 ∧ ∃ r > 0, r ≤ R ∧ ∃ η > 0,
-      (∀ p ∈ K, infDist p (closure {q | 0 < φ q} ∩ K) < r → -r < φ p →
-        dₜ φ p - lapₓ φ p < 0) ∧
-      (∀ p ∈ K, infDist p (closure {q | 0 < φ q} ∩ K) < r → -r < φ p → φ p ≤ 0 →
-        Q p.1 ^ 2 ≤ θ * ‖gradₓ φ p‖ ^ 2) ∧
-      (∀ p ∈ K, r ≤ infDist p (closure {q | 0 < φ q} ∩ K) →
-        infDist p (closure {q | 0 < φ q} ∩ K) ≤ 2 * r → φ p ≤ -η) := by
-  set P := {q | 0 < φ q} with hP
-  set A := closure P ∩ K with hA_def
-  have hφ2 : ContDiff ℝ 2 φ := hφ.of_le (WithTop.coe_le_coe.2 le_top)
-  have hPo : IsOpen P := isOpen_lt continuous_const hφ.continuous
-  have hAc : IsClosed A := isClosed_closure.inter hK.isClosed
-  have hmemA : ∀ p, infDist p A = 0 → p ∈ A := fun p hp ↦ by
-    have := (mem_closure_iff_infDist_zero hA).2 hp
-    rwa [hAc.closure_eq] at this
-  have hcont1 : Continuous (fun p ↦ dₜ φ p - lapₓ φ p) :=
-    (continuous_dₜ (hφ.of_le (WithTop.coe_le_coe.2 le_top))).sub (continuous_lapₓ hφ2)
-  have hcontG : Continuous (fun p ↦ ‖gradₓ φ p‖ ^ 2) :=
-    ((continuous_gradₓ (hφ.of_le (WithTop.coe_le_coe.2 le_top))).norm).pow 2
-  set h : E d × ℝ → ℝ := fun p ↦ max (infDist p A) (-φ p) with hh_def
-  have hhc : Continuous h := (continuous_infDist_pt A).max hφ.continuous.neg
-  have hfr : ∀ p ∈ A, φ p ≤ 0 → p ∈ frontier P ∩ K := by
-    intro p hp hφp
-    refine ⟨?_, hp.2⟩
-    rw [frontier, hPo.interior_eq]
-    exact ⟨hp.1, fun h' ↦ (not_lt.2 hφp) h'⟩
-  have hQ0 : ∀ p ∈ K, 0 ≤ Q p.1 := fun p hp ↦ hQmin.le.trans (hQ p hp).1
-  -- gradient margin on the free boundary
-  obtain ⟨m, hm, hmle⟩ := exists_pos_le_of_isCompact (s := frontier P ∩ K)
-    (hK.of_isClosed_subset (isClosed_frontier.inter hK.isClosed) inter_subset_right)
-    (f := fun p ↦ ‖gradₓ φ p‖ ^ 2 - Q p.1 ^ 2)
-    (hcontG.continuousOn.sub ((hQc.mono inter_subset_right).pow 2))
-    (fun p hp ↦ sub_pos.2 (pow_lt_pow_left₀ (h2 p hp) (hQ0 p hp.2) two_ne_zero))
-  have hQmax : 0 < Qmax := by
-    obtain ⟨p, hp⟩ := hA
-    linarith [(hQ p hp.2).1, (hQ p hp.2).2]
-  set θ := Qmax ^ 2 / (Qmax ^ 2 + m / 2) with hθ_def
-  have hθ0 : 0 < θ := by positivity
-  have hθ1 : θ < 1 := by rw [hθ_def, div_lt_one (by positivity)]; linarith
-  -- bad set 1: where the heat inequality fails
-  have hB1 : IsCompact (K ∩ (fun p ↦ dₜ φ p - lapₓ φ p) ⁻¹' Ici 0) :=
-    hK.of_isClosed_subset (hK.isClosed.inter (isClosed_Ici.preimage hcont1)) inter_subset_left
-  obtain ⟨r₁, hr₁, hr₁le⟩ := exists_pos_le_of_isCompact hB1 hhc.continuousOn (fun p hp ↦ by
-    by_contra hle
-    push Not at hle
-    have hd : infDist p A = 0 := le_antisymm ((le_max_left _ _).trans hle) infDist_nonneg
-    have h' := h1 p (hmemA p hd)
-    have h'' : (0 : ℝ) ≤ dₜ φ p - lapₓ φ p := hp.2
-    linarith)
-  -- bad set 2: where the gradient margin fails on `{φ ≤ 0}`
-  have hB2 : IsCompact (K ∩ φ ⁻¹' Iic 0 ∩
-      (fun p ↦ ‖gradₓ φ p‖ ^ 2 - Q p.1 ^ 2) ⁻¹' Iic (m / 2)) := by
-    have hc : IsClosed (K ∩ φ ⁻¹' Iic 0) :=
-      hK.isClosed.inter (isClosed_Iic.preimage hφ.continuous)
-    refine hK.of_isClosed_subset ?_ (inter_subset_left.trans inter_subset_left)
-    exact (hcontG.continuousOn.sub ((hQc.mono inter_subset_left).pow 2)
-      ).preimage_isClosed_of_isClosed hc isClosed_Iic
-  obtain ⟨r₂, hr₂, hr₂le⟩ := exists_pos_le_of_isCompact hB2 hhc.continuousOn (fun p hp ↦ by
-    by_contra hle
-    push Not at hle
-    have hd : infDist p A = 0 := le_antisymm ((le_max_left _ _).trans hle) infDist_nonneg
-    have hpA := hmemA p hd
-    have hφ0 : φ p ≤ 0 := hp.1.2
-    have h' := hmle p (hfr p hpA hφ0)
-    have h'' : ‖gradₓ φ p‖ ^ 2 - Q p.1 ^ 2 ≤ m / 2 := hp.2
-    linarith)
-  set r := min (min r₁ r₂ / 3) R with hr_def
-  have hr : 0 < r := lt_min (by positivity) hR
-  have hrr₁ : 3 * r ≤ r₁ := by
-    have := min_le_left (min r₁ r₂ / 3) R
-    have := min_le_left r₁ r₂
-    linarith
-  have hrr₂ : 3 * r ≤ r₂ := by
-    have := min_le_left (min r₁ r₂ / 3) R
-    have := min_le_right r₁ r₂
-    linarith
-  -- outside the bad set 2, the gradient is large
-  have hgradbig : ∀ p ∈ K, φ p ≤ 0 → h p < r₂ → m / 2 < ‖gradₓ φ p‖ ^ 2 - Q p.1 ^ 2 := by
-    intro p hpK hφp hhp
-    by_contra hc
-    push Not at hc
-    exact (hr₂le p ⟨⟨hpK, hφp⟩, hc⟩).not_gt hhp
-  -- the annulus
-  have hAnn : IsCompact (K ∩ (fun p ↦ infDist p A) ⁻¹' Icc r (2 * r)) :=
-    hK.of_isClosed_subset (hK.isClosed.inter (isClosed_Icc.preimage (continuous_infDist_pt A)))
-      inter_subset_left
-  obtain ⟨η, hη, hηle⟩ := exists_pos_le_of_isCompact hAnn
-    (show Continuous fun p ↦ -φ p from hφ.continuous.neg).continuousOn
-    (fun p ⟨hpK, hr1, hr2⟩ ↦ by
-      simp only at hr1 hr2
-      have hpA : p ∉ A := fun hpA ↦ by rw [infDist_zero_of_mem hpA] at hr1; linarith
-      have hφle : φ p ≤ 0 := by
-        by_contra hpos
-        push Not at hpos
-        exact hpA ⟨subset_closure hpos, hpK⟩
-      rcases hφle.lt_or_eq with hlt | heq
-      · linarith
-      · exfalso
-        have hhp : h p < r₂ := by
-          simp only [hh_def, heq, neg_zero]
-          rw [max_eq_left infDist_nonneg]
-          linarith
-        have hgrad := hgradbig p hpK heq.le hhp
-        have hg0 : gradₓ φ p ≠ 0 := fun h0 ↦ by
-          rw [h0, norm_zero] at hgrad
-          nlinarith [sq_nonneg (Q p.1)]
-        exact hpA ⟨mem_closure_pos_of_gradₓ_ne_zero (hφ.differentiable (by simp) p) heq hg0,
-          hpK⟩)
-  refine ⟨θ, hθ0, hθ1, r, hr, min_le_right _ _, η, hη, ?_, ?_, ?_⟩
-  · intro p hpK hd hφr
-    have hhp : h p < r₁ := max_lt (by linarith) (by linarith)
-    by_contra hc
-    push Not at hc
-    exact (hr₁le p ⟨hpK, hc⟩).not_gt hhp
-  · intro p hpK hd hφr hφ0
-    have hhp : h p < r₂ := max_lt (by linarith) (by linarith)
-    have hgrad := hgradbig p hpK hφ0 hhp
-    have hQx := hQ p hpK
-    have hQ2 : Q p.1 ^ 2 ≤ Qmax ^ 2 := pow_le_pow_left₀ (hQ0 p hpK) hQx.2 2
-    rw [hθ_def, div_mul_eq_mul_div, le_div_iff₀ (by positivity)]
-    nlinarith [mul_le_mul_of_nonneg_left hQ2 (by positivity : (0 : ℝ) ≤ m / 2),
-      sq_nonneg Qmax]
-  · intro p hpK h1' h2'
-    have := hηle p ⟨hpK, h1', h2'⟩
-    linarith
+/-- **The identity [(5.6)](#AFS:eqn:containerMe).** If every zero of `φ` in the compact `K` lies in
+`A = \overline{{φ > 0}} ∩ K`, then for every `r > 0` there is `δ₁ > 0` such that every point of `K`
+with `φ > -δ₁` is within `r` of `A` (i.e. `limsup*_{δ → 0} \overline{{φ + δ > 0}} ∩ K ⊆ A`). -/
+theorem exists_infDist_lt_of_neg_lt (hφ : Continuous φ) (hK : IsCompact K)
+    (h0 : ∀ p ∈ K, φ p = 0 → p ∈ closure {q | 0 < φ q}) {r : ℝ} (hr : 0 < r) :
+    ∃ δ₁ > 0, ∀ p ∈ K, -δ₁ < φ p → infDist p (closure {q | 0 < φ q} ∩ K) < r := by
+  obtain ⟨δ₁, hδ₁, m, hm, hle⟩ := exists_margin_of_nonneg (f := φ)
+    (F := fun p ↦ r - infDist p (closure {q | 0 < φ q} ∩ K)) hK hφ.continuousOn
+    (continuous_const.sub (continuous_infDist_pt _)).continuousOn fun p hp hφp ↦ by
+      have hpA : p ∈ closure {q | 0 < φ q} ∩ K := by
+        refine ⟨?_, hp⟩
+        rcases hφp.lt_or_eq with h | h
+        · exact subset_closure h
+        · exact h0 p hp h.symm
+      rw [infDist_zero_of_mem hpA]
+      linarith
+  exact ⟨δ₁, hδ₁, fun p hp hφp ↦ by have := hle p hp hφp; linarith⟩
 
 /-- **Boundary margin.** If `φ < u` on `A ∩ P_b` (`P_b` closed, inside the compact `K`), then for
 some `μ, r₃ > 0`, `φ + μ < u` on `P_b ∩ {dist(·, A) < r₃}`. -/
@@ -290,151 +163,72 @@ theorem exists_bdry_margin {Pb A : Set (E d × ℝ)} (hK : IsCompact K) (hPb : I
 
 end Geometry
 
-/-! ### The glued subsolution -/
+/-! ### The subsolution `(Φ_{ε,θ}(ψ))₊` -/
 
-/-- The glued function `w = (Φ_{ε,θ}(φ + δ))₊` on `{D < 3r/2}`, `w = 0` elsewhere. -/
-noncomputable def gluedSub (β : ℝ → ℝ) (θ ε δ r : ℝ) (φ D : E d × ℝ → ℝ) (p : E d × ℝ) : ℝ :=
-  if D p < 3 * r / 2 then max (profileSubEps β θ ε (φ p + δ)) 0 else 0
+section ProfileSub
 
-section Glue
+variable {β : ℝ → ℝ} {Q : E d → ℝ} {ψ : E d × ℝ → ℝ} {V : Set (E d)} {a b a₀ δ₀ ε : ℝ}
 
-variable {β : ℝ → ℝ} {φ D : E d × ℝ → ℝ} {K : Set (E d × ℝ)} {Q : E d → ℝ}
-  {θ r η δ ε : ℝ}
-
-theorem gluedSub_nonneg (p : E d × ℝ) : 0 ≤ gluedSub β θ ε δ r φ D p := by
-  unfold gluedSub; split_ifs <;> simp
-
-theorem gluedSub_le (hβ : IsReactionProfile β) (hθ : 0 < θ) (hθ1 : θ < 1) (hε : 0 < ε)
-    (p : E d × ℝ) : gluedSub β θ ε δ r φ D p ≤ max (φ p + δ) 0 + ε := by
-  unfold gluedSub
-  split_ifs
-  · have := (abs_le.1 (abs_max_profileSubEps_sub_le hβ hθ hθ1 hε (φ p + δ))).2
+/-- **The parabolic form of [Lemma 3.11](#AFS:l.well-prepared) (subsolution case).** If `ψ` is a
+classical strict subsolution of [(3.1)](#AFS:e.bernoulli-parabolic) on `V̄ × [a, b]` with constants
+`a₀, δ₀`, `θ = 1/(1 + δ₀)`, and `ε` is small (`c_θ ε < a₀`, `ε ≤ a₀`), then `(Φ_{ε,θ}(ψ))₊` is a
+viscosity subsolution of the semilinear equation in `V × (a, b]`. -/
+theorem IsClassicalStrictParaSubWith.isSemilinearViscSubOn_profileSub
+    (hψ : IsClassicalStrictParaSubWith Q ψ V a b a₀ δ₀) (hV : IsOpen V)
+    (hβ : IsReactionProfile β) (hε : 0 < ε) (hcε : subConst (1 / (1 + δ₀)) * ε < a₀)
+    (hεa : ε ≤ a₀) :
+    IsSemilinearViscSubOn V Q β ε (Ioc a b)
+      (fun p ↦ max (profileSubEps β (1 / (1 + δ₀)) ε (ψ p)) 0) := by
+  set θ := 1 / (1 + δ₀) with hθ_def
+  have hδ₀ := hψ.δ₀_pos
+  have hθ0 : 0 < θ := by positivity
+  have hθ1 : θ < 1 := by rw [hθ_def, div_lt_one (by linarith)]; linarith
+  have hψ2 : ContDiff ℝ 2 ψ := hψ.contDiff.of_le (WithTop.coe_le_coe.2 le_top)
+  set f := profileSubEps β θ ε with hf_def
+  have hfc : ContDiff ℝ 2 f :=
+    (profileSubEps_contDiff hβ hθ0 hθ1).of_le (WithTop.coe_le_coe.2 le_top)
+  have hfψ : Continuous fun q ↦ f (ψ q) :=
+    (profileSubEps_continuous hβ hθ0 hθ1).comp hψ.contDiff.continuous
+  have hs₀ : -(subConst θ * ε) ≤ ε * profileSubZero β θ := by
+    have := mul_le_mul_of_nonneg_right (profileSubZero_mem hβ hθ0 hθ1).1 hε.le
     linarith
-  · have := le_max_right (φ p + δ) 0
-    linarith
-
-theorem le_gluedSub (hβ : IsReactionProfile β) (hθ : 0 < θ) (hθ1 : θ < 1) (hε : 0 < ε)
-    {p : E d × ℝ} (hp : D p < 3 * r / 2) : φ p + δ ≤ gluedSub β θ ε δ r φ D p := by
-  unfold gluedSub
-  rw [ite_eq_left hp]
-  exact (self_le_profileSubEps hβ hθ hθ1 hε _).trans (le_max_left _ _)
-
-/-- Where `Φ_ε(φ + δ) > 0` we have `φ > -2δ` (using `ε s₀ ≥ -c_θ ε ≥ -δ`). -/
-theorem neg_two_mul_lt_of_profileSubEps_pos (hβ : IsReactionProfile β) (hθ : 0 < θ)
-    (hθ1 : θ < 1) (hε : 0 < ε) (hcε : subConst θ * ε ≤ δ) {p : E d × ℝ}
-    (hpos : 0 < profileSubEps β θ ε (φ p + δ)) : -(2 * δ) < φ p := by
-  rw [profileSubEps_pos_iff hβ hθ hθ1 hε] at hpos
-  have h0 := (profileSubZero_mem hβ hθ hθ1).1
-  have : -(subConst θ) * ε ≤ profileSubZero β θ * ε := mul_le_mul_of_nonneg_right h0 hε.le
-  nlinarith
-
-variable (hβ : IsReactionProfile β) (hθ : 0 < θ) (hθ1 : θ < 1)
-  (hA3 : ∀ p ∈ K, r ≤ D p → D p ≤ 2 * r → φ p ≤ -η)
-  (hδ : 0 < δ) (hδη : 4 * δ ≤ η) (hε : 0 < ε) (hcε : subConst θ * ε ≤ δ)
-include hβ hθ hθ1 hA3 hδ hδη hε hcε
-
-/-- Where the glued function is positive: `D < r`, `φ > -2δ`, and `w = Φ_ε(φ + δ) > 0`. -/
-theorem gluedSub_pos_imp {p : E d × ℝ} (hp : p ∈ K) (hw : 0 < gluedSub β θ ε δ r φ D p) :
-    D p < r ∧ -(2 * δ) < φ p ∧ D p < 3 * r / 2 ∧ 0 < profileSubEps β θ ε (φ p + δ) := by
-  unfold gluedSub at hw
-  split_ifs at hw with hD
-  · have hΦ : 0 < profileSubEps β θ ε (φ p + δ) := by
-      by_contra hc
-      push Not at hc
-      rw [max_eq_right hc] at hw
-      exact lt_irrefl _ hw
-    have hφp := neg_two_mul_lt_of_profileSubEps_pos hβ hθ hθ1 hε hcε hΦ
-    refine ⟨?_, hφp, hD, hΦ⟩
-    by_contra hc
-    push Not at hc
-    have hr : 0 ≤ r := by
-      by_contra hr; push Not at hr
-      have : 3 * r / 2 < r := by linarith
-      exact absurd (hD.trans this) (not_lt.2 hc)
-    have := hA3 p hp hc (by linarith)
-    linarith
-  · exact absurd hw (lt_irrefl _)
-
-theorem gluedSub_eq_zero {p : E d × ℝ} (hp : p ∈ K) (hr : r < D p) :
-    gluedSub β θ ε δ r φ D p = 0 := by
-  rcases (gluedSub_nonneg (β := β) (θ := θ) (ε := ε) (δ := δ) (r := r) (φ := φ) (D := D)
-    p).eq_or_lt with h | h
-  · exact h.symm
-  · exact absurd (gluedSub_pos_imp hβ hθ hθ1 hA3 hδ hδη hε hcε hp h).1 (not_lt.2 hr.le)
-
-omit hA3 hδ hδη hcε hε in
-theorem gluedSub_eventuallyEq (_hε : 0 < ε) {p : E d × ℝ} (hφ : Continuous φ) (hD : Continuous D)
-    (hDp : D p < 3 * r / 2) (hΦ : 0 < profileSubEps β θ ε (φ p + δ)) :
-    (fun q ↦ profileSubEps β θ ε (φ q + δ)) =ᶠ[𝓝 p] gluedSub β θ ε δ r φ D := by
-  have hc : Continuous (fun q ↦ profileSubEps β θ ε (φ q + δ)) :=
-    (profileSubEps_continuous hβ hθ hθ1).comp (hφ.add continuous_const)
-  filter_upwards [hD.continuousAt.eventually (gt_mem_nhds hDp),
-    hc.continuousAt.eventually (lt_mem_nhds hΦ)] with q h1 h2
-  simp only [gluedSub, ite_eq_left h1, max_eq_left h2.le]
-
-theorem continuousOn_gluedSub (hφ : Continuous φ) (hD : Continuous D) (hr0 : 0 < r) :
-    ContinuousOn (gluedSub β θ ε δ r φ D) K := by
-  intro p hp
-  rcases lt_or_ge r (D p) with hr | hr
-  · -- `w = 0` near `p` in `K`
-    refine (continuousWithinAt_const (b := (0 : ℝ))).congr_of_eventuallyEq ?_
-      (gluedSub_eq_zero hβ hθ hθ1 hA3 hδ hδη hε hcε hp hr)
-    filter_upwards [nhdsWithin_le_nhds (hD.continuousAt.eventually (lt_mem_nhds hr)),
-      self_mem_nhdsWithin] with q hq hqK
-    exact gluedSub_eq_zero hβ hθ hθ1 hA3 hδ hδη hε hcε hqK hq
-  · have hDp : D p < 3 * r / 2 := by linarith
-    have hc : Continuous (fun q ↦ max (profileSubEps β θ ε (φ q + δ)) 0) :=
-      ((profileSubEps_continuous hβ hθ hθ1).comp (hφ.add continuous_const)).max
-        continuous_const
-    refine (hc.continuousAt.congr ?_).continuousWithinAt
-    filter_upwards [hD.continuousAt.eventually (gt_mem_nhds hDp)] with q hq
-    simp only [gluedSub, ite_eq_left hq]
-
-/-- **The glued function is a viscosity subsolution** of the semilinear equation in `V × (a, b]`,
-given the margins (1)–(2) of `exists_sub_geometry` (with `2δ ≤ r`, `ε ≤ δ`). -/
-theorem gluedSub_isSemilinearViscSubOn {V : Set (E d)} {a b : ℝ} (hV : IsOpen V)
-    (hVK : V ×ˢ Ioc a b ⊆ K) (hφ : ContDiff ℝ ∞ φ) (hD : Continuous D)
-    (hA1 : ∀ p ∈ K, D p < r → -r < φ p → dₜ φ p - lapₓ φ p < 0)
-    (hA2 : ∀ p ∈ K, D p < r → -r < φ p → φ p ≤ 0 → Q p.1 ^ 2 ≤ θ * ‖gradₓ φ p‖ ^ 2)
-    (hδr : 2 * δ ≤ r) (hεδ : ε ≤ δ) :
-    IsSemilinearViscSubOn V Q β ε (Ioc a b) (gluedSub β θ ε δ r φ D) := by
-  have hφ2 : ContDiff ℝ 2 φ := hφ.of_le (WithTop.coe_le_coe.2 le_top)
-  refine isSemilinearViscSubOn_of_local hV Ioc_leftNhds
-    ((continuousOn_gluedSub hβ hθ hθ1 hA3 hδ hδη hε hcε hφ.continuous hD
-      (by linarith)).mono hVK)
+  refine isSemilinearViscSubOn_of_local hV Ioc_leftNhds (hfψ.max continuous_const).continuousOn
     fun p hp ↦ ?_
-  have hpK := hVK hp
-  rcases (gluedSub_nonneg (β := β) (θ := θ) (ε := ε) (δ := δ) (r := r) (φ := φ) (D := D)
-    p).eq_or_lt with h0 | hpos
+  have hpK : p ∈ closure V ×ˢ Icc a b := ⟨subset_closure hp.1, Ioc_subset_Icc_self hp.2⟩
+  rcases (le_max_right (f (ψ p)) 0).eq_or_lt with h0 | hpos
   · -- `w(p) = 0`: compare with `F = 0`
-    refine ⟨fun _ ↦ 0, contDiff_const, h0, Eventually.of_forall fun q ↦ gluedSub_nonneg q, ?_⟩
+    refine ⟨fun _ ↦ 0, contDiff_const, h0, Eventually.of_forall fun q ↦ le_max_right _ _, ?_⟩
     rw [← h0, hβ.betaEps_zero]
     simp [dₜ, lapₓ]
-  · obtain ⟨hDr, hφδ, hD3, hΦ⟩ := gluedSub_pos_imp hβ hθ hθ1 hA3 hδ hδη hε hcε hpK hpos
-    set f : ℝ → ℝ := fun s ↦ profileSubEps β θ ε (s + δ) with hf_def
-    have hΦc : ContDiff ℝ 2 (profileSubEps β θ ε) :=
-      (profileSubEps_contDiff hβ hθ hθ1).of_le (WithTop.coe_le_coe.2 le_top)
-    have hfc : ContDiff ℝ 2 f := hΦc.comp (contDiff_id.add contDiff_const)
-    have hdf : deriv f = fun s ↦ deriv (profileSubEps β θ ε) (s + δ) :=
-      funext fun s ↦ deriv_comp_add_const _ _ _
-    have hddf : ∀ s, deriv (deriv f) s = deriv (deriv (profileSubEps β θ ε)) (s + δ) :=
-      fun s ↦ by rw [hdf]; exact deriv_comp_add_const _ _ _
-    have heq := gluedSub_eventuallyEq hβ hθ hθ1 hε hφ.continuous hD hD3 hΦ
-    refine ⟨fun q ↦ f (φ q), hfc.comp hφ2, heq.eq_of_nhds, heq.le, ?_⟩
-    rw [heat_comp hfc hφ2, hddf, hdf, ← heq.eq_of_nhds]
-    simp only
-    have hLap : 0 ≤ lapₓ φ p - dₜ φ p := by
-      have := hA1 p hpK hDr (by linarith)
+  · have hΦ : 0 < f (ψ p) := by
+      by_contra hc
+      push Not at hc
+      rw [max_eq_right hc] at hpos
+      exact lt_irrefl _ hpos
+    -- where `Φ_ε(ψ) > 0`, `ψ > ε s₀ ≥ -c_θ ε > -a₀`
+    have hψp : -a₀ < ψ p := by
+      have := (profileSubEps_pos_iff hβ hθ0 hθ1 hε (ψ p)).1 hΦ
       linarith
-    have hineq := profileSubEps_ineq hβ hθ hθ1 hε (φ p + δ) (‖gradₓ φ p‖ ^ 2)
-      (lapₓ φ p - dₜ φ p) (Q p.1) hLap (fun hb ↦ by
-        have hlt := (mem_of_betaEps_profileSubEps_pos hβ hθ hθ1 hε hb).2
-        exact hA2 p hpK hDr (by linarith) (by linarith))
+    have heq : (fun q ↦ f (ψ q)) =ᶠ[𝓝 p] fun q ↦ max (f (ψ q)) 0 := by
+      filter_upwards [hfψ.continuousAt.eventually (lt_mem_nhds hΦ)] with q hq
+      exact (max_eq_left hq.le).symm
+    refine ⟨fun q ↦ f (ψ q), hfc.comp hψ2, heq.eq_of_nhds, heq.le, ?_⟩
+    rw [heat_comp hfc hψ2, ← heq.eq_of_nhds]
+    have hLap : 0 ≤ lapₓ ψ p - dₜ ψ p := by
+      have := hψ.heat p ⟨hψp, hpK⟩
+      linarith
+    have hineq := profileSubEps_ineq hβ hθ0 hθ1 hε (ψ p) (‖gradₓ ψ p‖ ^ 2)
+      (lapₓ ψ p - dₜ ψ p) (Q p.1) hLap (fun hb ↦ by
+        -- where `β_ε(Φ_ε(ψ)) > 0`, `|ψ| < ε ≤ a₀`, so `(1 + δ₀) Q² ≤ |∇ψ|²`
+        have hlt := mem_of_betaEps_profileSubEps_pos hβ hθ0 hθ1 hε hb
+        have hg := hψ.grad p ⟨show |ψ p| ≤ a₀ from abs_le.2 ⟨by linarith, by linarith⟩, hpK⟩
+        rw [hθ_def, one_div, inv_mul_eq_div, le_div_iff₀ (by linarith)]
+        linarith)
     linarith
 
-end Glue
+end ProfileSub
 
-/-! ### Step 2 of Proposition 5.3 -/
+/-! ### Step 2 of [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) -/
 
 section Step2
 
@@ -464,10 +258,10 @@ theorem eventually_abs_sub_lt_of_isCompact
   rw [← Real.dist_eq, dist_comm]
   exact hj q hq
 
-/-- **Proposition 5.3, Step 2**: the locally uniform
+/-- **[Proposition 5.3](#AFS:p.semilinear-limit-viscosity), Step 2**: the locally uniform
 limit `u` of solutions `u_j` of the semilinear equation with `ε_j → 0` is a viscosity
-supersolution of (3.1) in `U × (0, T]` (Definition 3.2). See the module docstring for the
-localization replacing the paper's `φ + δ`. -/
+supersolution of [(3.1)](#AFS:e.bernoulli-parabolic) in `U × (0, T]`
+([Definition 3.3](#AFS:d.parabolic-supersolution)). See the module docstring. -/
 theorem semilinear_limit_isParaSuper (hβ : IsReactionProfile β) (hεpos : ∀ j, 0 < εs j)
     (hεlim : Tendsto εs atTop (𝓝 0))
     (hsol : ∀ j, IsSemilinearSolOn S.U S.Q β (εs j) (Ioc 0 T) (us j))
@@ -477,9 +271,11 @@ theorem semilinear_limit_isParaSuper (hβ : IsReactionProfile β) (hεpos : ∀ 
   have hucont := continuousOn_semilinearLimit hsol hconv
   refine ⟨hucont, semilinearLimit_nonneg hnn hconv, ?_⟩
   intro V a b φ hcyl hφ hbd
+  obtain ⟨a₀, δ₀, hφ⟩ := hφ
   obtain ⟨hVo, hVb, hab, hKΩ⟩ := hcyl
   set K := closure V ×ˢ Icc a b with hK_def
   have hKc : IsCompact K := hVb.isCompact_closure.prod isCompact_Icc
+  have hφc : Continuous φ := hφ.contDiff.continuous
   have hposeq : posSetP φ univ = {q | 0 < φ q} := by ext; simp [posSetP]
   simp only [Prec, PrecOn, hposeq] at hbd ⊢
   intro p₀ ⟨hp₀P, hp₀cyl⟩
@@ -489,31 +285,37 @@ theorem semilinear_limit_isParaSuper (hβ : IsReactionProfile β) (hεpos : ∀ 
   set A := closure {q | 0 < φ q} ∩ K with hA_def
   have hAne : A.Nonempty := ⟨p₀, hp₀P, hp₀K⟩
   have hAc : IsClosed A := isClosed_closure.inter hKc.isClosed
-  -- the coefficient `Q`
   obtain ⟨L, hL⟩ := S.lip
   have hVU : closure V ⊆ S.U := fun x hx ↦
     (hKΩ (show (x, a) ∈ K from ⟨hx, left_mem_Icc.2 hab.le⟩)).1
-  have hQc : ContinuousOn (fun p : E d × ℝ ↦ S.Q p.1) K :=
-    (hL.continuousOn.mono (hVU.trans subset_closure)).comp continuous_fst.continuousOn
-      fun p hp ↦ hp.1
-  have hQK : ∀ p ∈ K, S.Qmin ≤ S.Q p.1 ∧ S.Q p.1 ≤ S.Qmax := fun p hp ↦
-    S.Q_mem _ (subset_closure (hVU hp.1))
-  -- boundary margin
+  -- boundary margin: `φ + μ < u` on `∂_P` near `A`
   have hPbK : parBdry V a b ⊆ K := parBdry_subset hab.le
   obtain ⟨μ, hμ, r₃, hr₃, hmargin⟩ := exists_bdry_margin hKc (isClosed_parBdry V a b) hPbK hAne
-    hAc (hucont.mono hKΩ) hφ.1.continuous (fun p hp ↦ hbd p ⟨hp.1.1, hp.2⟩)
-  -- geometry of `φ`
-  obtain ⟨θ, hθ0, hθ1, r, hr, hrr₃, η, hη, hA1, hA2, hA3⟩ := exists_sub_geometry hφ.1 hKc hAne
-    S.Qmin_pos hQc hQK hφ.2.1 hφ.2.2 hr₃
-  set δ := min (min (η / 4) (μ / 4)) (r / 2) with hδ_def
-  have hδ : 0 < δ := lt_min (lt_min (by positivity) (by positivity)) (by positivity)
-  have hδη : 4 * δ ≤ η := by have := min_le_left (min (η / 4) (μ / 4)) (r / 2);
-                             have := min_le_left (η / 4) (μ / 4); linarith
-  have hδμ : 4 * δ ≤ μ := by have := min_le_left (min (η / 4) (μ / 4)) (r / 2);
-                             have := min_le_right (η / 4) (μ / 4); linarith
-  have hδr : 2 * δ ≤ r := by have := min_le_right (min (η / 4) (μ / 4)) (r / 2); linarith
+    hAc (hucont.mono hKΩ) hφc (fun p hp ↦ hbd p ⟨hp.1.1, hp.2⟩)
+  -- [(5.6)](#AFS:eqn:containerMe): points of `K` with `φ > -δ₁` are near `A`, as `∇φ ≠ 0` on
+  -- `{φ = 0} ∩ K`
+  obtain ⟨δ₁, hδ₁, hnear⟩ := exists_infDist_lt_of_neg_lt hφc hKc (fun p hp h0 ↦ by
+    refine mem_closure_pos_of_gradₓ_ne_zero (hφ.contDiff.differentiable (by simp) p) h0 ?_
+    intro hg
+    have h1 := hφ.grad p ⟨show |φ p| ≤ a₀ by rw [h0, abs_zero]; exact hφ.a₀_pos.le, hp⟩
+    have hQp : S.Qmin ≤ S.Q p.1 := (S.Q_mem _ (subset_closure (hVU hp.1))).1
+    rw [hg, norm_zero] at h1
+    nlinarith [S.Qmin_pos, hφ.δ₀_pos]) hr₃
+  set δ := min (min (a₀ / 4) (μ / 4)) (δ₁ / 4) with hδ_def
+  have hδ : 0 < δ := lt_min (lt_min (by linarith [hφ.a₀_pos]) (by positivity)) (by positivity)
+  have hδa : 4 * δ ≤ a₀ := by
+    have := min_le_left (min (a₀ / 4) (μ / 4)) (δ₁ / 4); have := min_le_left (a₀ / 4) (μ / 4)
+    linarith
+  have hδμ : 4 * δ ≤ μ := by
+    have := min_le_left (min (a₀ / 4) (μ / 4)) (δ₁ / 4); have := min_le_right (a₀ / 4) (μ / 4)
+    linarith
+  have hδδ₁ : 4 * δ ≤ δ₁ := by
+    have := min_le_right (min (a₀ / 4) (μ / 4)) (δ₁ / 4); linarith
+  -- `φ + δ` is still a classical strict subsolution (constants `a₀ - δ, δ₀`)
+  have hφδ := hφ.add_const (c := δ) (by rw [abs_of_pos hδ]; linarith)
+  rw [abs_of_pos hδ] at hφδ
+  set θ := 1 / (1 + δ₀) with hθ_def
   -- choose `j`
-  have hc0 : 0 ≤ subConst θ := subConst_nonneg hθ0 hθ1
   have hev1 : ∀ᶠ j in atTop, εs j ≤ δ := hεlim.eventually (ge_mem_nhds hδ)
   have hev2 : ∀ᶠ j in atTop, subConst θ * εs j ≤ δ := by
     have : Tendsto (fun j ↦ subConst θ * εs j) atTop (𝓝 0) := by
@@ -522,40 +324,50 @@ theorem semilinear_limit_isParaSuper (hβ : IsReactionProfile β) (hεpos : ∀ 
   obtain ⟨j, hj1, hj2, hj3⟩ := (hev1.and (hev2.and
     (eventually_abs_sub_lt_of_isCompact hconv hKc hKΩ hδ))).exists
   have hε := hεpos j
-  set D : E d × ℝ → ℝ := fun p ↦ infDist p A with hD_def
-  have hDc : Continuous D := continuous_infDist_pt A
-  set w := gluedSub β θ (εs j) δ r φ D with hw_def
+  set w : E d × ℝ → ℝ := fun p ↦ max (profileSubEps β θ (εs j) (φ p + δ)) 0 with hw_def
+  have hθ0 : 0 < θ := by have := hφ.δ₀_pos; positivity
+  have hθ1 : θ < 1 := by
+    have := hφ.δ₀_pos; rw [hθ_def, div_lt_one (by linarith)]; linarith
+  -- `w` is a viscosity subsolution of the semilinear equation ([Lemma 3.11](#AFS:l.well-prepared))
+  have hsub : IsSemilinearViscSubOn V S.Q β (εs j) (Ioc a b) w :=
+    hφδ.isSemilinearViscSubOn_profileSub hVo hβ hε (by linarith) (by linarith)
   -- the solution `u_j` is a viscosity supersolution in `V × (a, b]`
   have hVU' : V ⊆ S.U := subset_closure.trans hVU
   have hIoc : Ioc a b ⊆ Ioc 0 T := fun t ht ↦
     (hKΩ (show (p₀.1, t) ∈ K from ⟨subset_closure hp₀cyl.1, Ioc_subset_Icc_self ht⟩)).2
   have hsuper := Registry.isSemilinearViscSuperOn_of_solOn hVo Ioc_leftNhds
     ((hsol j).mono_domain hVU' hIoc)
-  have hsub := gluedSub_isSemilinearViscSubOn hβ hθ0 hθ1 hA3 hδ hδη hε hj2 hVo
-    (prod_mono subset_closure Ioc_subset_Icc_self) hφ.1 hDc hA1 hA2 hδr hj1
+  -- `w ≤ u_j` on `∂_P(V × (a, b])`
   have hbdry : ∀ p ∈ parBdry V a b, w p ≤ us j p := by
     intro p hp
     have hpK := hPbK hp
     have hpΩ := hKΩ hpK
-    rcases (gluedSub_nonneg (β := β) (θ := θ) (ε := εs j) (δ := δ) (r := r) (φ := φ) (D := D)
-      p).eq_or_lt with h0 | hpos
-    · rw [hw_def, ← h0]; exact hnn j p hpΩ
-    · obtain ⟨hDr, hφδ, -, -⟩ := gluedSub_pos_imp hβ hθ0 hθ1 hA3 hδ hδη hε hj2 hpK hpos
-      have hm := hmargin p hp (hDr.trans_le hrr₃)
-      have hup := gluedSub_le (δ := δ) (r := r) (φ := φ) (D := D) hβ hθ0 hθ1 hε p
+    rcases (le_max_right (profileSubEps β θ (εs j) (φ p + δ)) 0).eq_or_lt with h0 | hpos
+    · rw [hw_def]; simp only; rw [← h0]; exact hnn j p hpΩ
+    · have hΦ : 0 < profileSubEps β θ (εs j) (φ p + δ) := by
+        by_contra hc
+        push Not at hc
+        rw [max_eq_right hc] at hpos
+        exact lt_irrefl _ hpos
+      have hφp : -(2 * δ) < φ p := by
+        have h1 := (profileSubEps_pos_iff hβ hθ0 hθ1 hε (φ p + δ)).1 hΦ
+        have h2 := mul_le_mul_of_nonneg_right (profileSubZero_mem hβ hθ0 hθ1).1 hε.le
+        linarith
+      have hm := hmargin p hp (hnear p hpK (by linarith))
+      have hup := (abs_le.1 (abs_max_profileSubEps_sub_le hβ hθ0 hθ1 hε (φ p + δ))).2
       have hj := abs_lt.1 (hj3 p hpK)
+      simp only [hw_def]
       rcases le_total 0 (φ p + δ) with hφ0 | hφ0
       · rw [max_eq_left hφ0] at hup; linarith
       · rw [max_eq_right hφ0] at hup; linarith
+  have hwc : ContinuousOn w K :=
+    (((profileSubEps_continuous hβ hθ0 hθ1).comp (hφc.add continuous_const)).max
+      continuous_const).continuousOn
   have hcomp := Registry.semilinear_comparison hVo hVb hab
-    ⟨L, hL.mono (closure_mono hVU')⟩ hβ hε
-    (continuousOn_gluedSub hβ hθ0 hθ1 hA3 hδ hδη hε hj2 hφ.1.continuous hDc hr)
-    ((hsol j).1.mono hKΩ) hsub hsuper hbdry
+    ⟨L, hL.mono (closure_mono hVU')⟩ hβ hε hwc ((hsol j).1.mono hKΩ) hsub hsuper hbdry
   have h1 := hcomp p₀ hp₀K
-  have h2 := le_gluedSub (δ := δ) (r := r) (φ := φ) (D := D) hβ hθ0 hθ1 hε
-    (show D p₀ < 3 * r / 2 by
-      rw [hD_def]; simp only; rw [infDist_zero_of_mem (show p₀ ∈ A from ⟨hp₀P, hp₀K⟩)]
-      positivity)
+  have h2 : φ p₀ + δ ≤ w p₀ :=
+    (self_le_profileSubEps hβ hθ0 hθ1 hε _).trans (le_max_left _ _)
   have h3 := abs_lt.1 (hj3 p₀ hp₀K)
   linarith
 

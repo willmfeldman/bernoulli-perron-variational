@@ -14,19 +14,19 @@ import PerronVariational.Regularity.Caccioppoli
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper");
-used for the continuity of the obstacle minimizers in the proof of Lemma 6.3
-(`Regularity/ObstacleBoundary.lean`). The De Giorgi class `IsDeGiorgiAt`, the cutoff constant and
-the hole-filling lemma come from the dependency gmt-foundations v0.1.0
-(`GMTFoundations.DeGiorgi.Caccioppoli`).
+used for the continuity of the obstacle minimizers in the proof of
+[Proposition 6.3](#AFS:p.downward) (`Regularity/ObstacleBoundary.lean`). The De Giorgi class
+`IsDeGiorgiAt`, the cutoff constant and the hole-filling lemma come from the dependency
+gmt-foundations v0.1.0 (`GMTFoundations.DeGiorgi.Caccioppoli`).
 
 Let `B = B_r(x₀)`, `B̄ ⊆ U`, and let `w ∈ H¹_loc(U)` with `w = u` on `U \ B` minimize
 `J_Q(·; B)` among competitors with the same values off `B` and a one-sided constraint.
 
-* `step_above` (obstacle from below, `w ≥ u`; paper Lemma 6.3, Step 2): for `k ≥ sup_{B_t(z)} u`
-  the competitor `v = w - η (w - k)₊` gives the one-step inequality for `F = (w - k)₊`, with no
-  error term.
-* `step_below` (obstacle from above, `0 ≤ w ≤ u`; paper Lemma 6.3, Step 1): for
-  `k ≤ inf_{B_t(z)} u` the competitor `v = w + η (k - w)₊` gives the one-step inequality for
+* `step_above` (obstacle from below, `w ≥ u`; paper [Proposition 6.3](#AFS:p.downward), Step 2): for
+  `k ≥ sup_{B_t(z)} u` the competitor `v = w - η (w - k)₊` gives the one-step inequality for
+  `F = (w - k)₊`, with no error term.
+* `step_below` (obstacle from above, `0 ≤ w ≤ u`; paper [Proposition 6.3](#AFS:p.downward), Step 1):
+  for `k ≤ inf_{B_t(z)} u` the competitor `v = w + η (k - w)₊` gives the one-step inequality for
   `F = (k - w)₊` with the error term `sup Q² |{F > 0} ∩ B_t|`.
 
 Combined with `caccioppoli_of_step` these are the Caccioppoli inequalities of the De Giorgi classes
@@ -84,7 +84,8 @@ section Above
 
 variable {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d} {x₀ : E d} {r : ℝ}
 
-/-- **One-step inequality, obstacle from below** (`w ≥ u`, paper Lemma 6.3, Step 2). -/
+/-- **One-step inequality, obstacle from below** (`w ≥ u`, paper [Proposition 6.3](#AFS:p.downward),
+Step 2). -/
 theorem step_above (hU : IsOpen U) {Cq : ℝ} (hCq : 0 ≤ Cq) (hQ : ∀ x ∈ U, Q x ^ 2 ≤ Cq)
     (hB : closedBall x₀ r ⊆ U) (hGw : MemH1Loc U w Gw)
     (hwout : ∀ y ∈ U \ ball x₀ r, w y = u y) (hwu : ∀ y ∈ U, u y ≤ w y)
@@ -171,8 +172,9 @@ section Below
 
 variable {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d} {x₀ : E d} {r : ℝ}
 
-/-- **One-step inequality, obstacle from above** (`0 ≤ w ≤ u`, paper Lemma 6.3, Step 1).
-The error term comes from the growth of the positivity set. -/
+/-- **One-step inequality, obstacle from above** (`0 ≤ w ≤ u`, paper
+[Proposition 6.3](#AFS:p.downward), Step 1). The error term comes from the growth of the positivity
+set. -/
 theorem step_below (hU : IsOpen U) {Cq : ℝ} (hCq : 0 ≤ Cq) (hQ : ∀ x ∈ U, Q x ^ 2 ≤ Cq)
     (hB : closedBall x₀ r ⊆ U) (hGw : MemH1Loc U w Gw)
     (hwout : ∀ y ∈ U \ ball x₀ r, w y = u y) (hwu : ∀ y ∈ U, 0 ≤ w y ∧ w y ≤ u y)

@@ -13,25 +13,26 @@ import PerronVariational.Semilinear.ViscosityLimitStar
 import PerronVariational.Semilinear.ViscosityLimitSuper
 
 /-!
-# Proposition 5.3 and Corollary 5.4: semilinear limits in the viscosity sense
+# Semilinear limits in the viscosity sense
 
-Proposition 5.3 and Corollary 5.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity) and [Corollary 5.4](#AFS:cor:increasing) of F.
+Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+Bernoulli one-phase problem*, arXiv:2609.14981.
 
-* `semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement` (**Proposition 5.3**),
-  with the authors' corrected set `E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}`: the
-  supersolution part (`ViscosityLimitSuper`) and the relaxed subsolution property of `(u, E*)`
-  (`semilinear_limit_isParaRelaxedSub_star`, `ViscosityLimitStar`). arXiv v1 states it with
-  `E = limsup* {u_j > ε_j}`, and with that set it is false: `u ≡ ε` is a stationary solution, and
-  a vanishing perturbation lifts a whole `ε`-plateau over the threshold.
+* `semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement`
+  (**[Proposition 5.3](#AFS:p.semilinear-limit-viscosity)**), with the set
+  `E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}`: the supersolution part (`ViscosityLimitSuper`)
+  and the relaxed subsolution property of `(u, E*)` (`semilinear_limit_isParaRelaxedSub_star`,
+  `ViscosityLimitStar`).
 * `semilinear_limit_viscSolution_increasing : SemilinearLimitIncreasingStatement`
-  (**Corollary 5.4**), with the set `E*`: Proposition 5.3, Proposition 3.5
-  (`isParaSub_of_monotone_Ioc`) with the time-`0` hypothesis from Proposition 3.8(vi*), and
-  monotonicity of the limit. The properties of the well-prepared family enter as hypotheses.
+  (**[Corollary 5.4](#AFS:cor:increasing)**), with the set `E*`:
+  [Proposition 5.3](#AFS:p.semilinear-limit-viscosity),
+  [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed) (`isParaSub_of_monotone_Ioc`) with the
+  time-`0` hypothesis from [Proposition 3.12](#AFS:p.semilinear-wellposed)(v*), and monotonicity of
+  the limit. The properties of the well-prepared family enter as hypotheses.
 
-arXiv v1 states the identity `E = \overline{{u > 0}}` of Corollary 5.4 without restriction, but
-argues it only at `t = 0`, not at lateral boundary points over `∂U`; here it is stated inside
-`U × [0, T]`, which is all that is used later.
+The identity `E* = \overline{{u > 0}}` of [Corollary 5.4](#AFS:cor:increasing) is stated inside
+`U × [0, T]`.
 -/
 
 open Set Filter Topology Metric
@@ -42,10 +43,10 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- **Proposition 5.3**, with the authors' corrected set
-`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}` (see `SemilinearLimitRelaxedStatement` for the
-difference from arXiv v1): the supersolution part (`semilinear_limit_isParaSuper`) and the relaxed
-subsolution property of `(u, E*)` (`semilinear_limit_isParaRelaxedSub_star`). -/
+/-- **[Proposition 5.3](#AFS:p.semilinear-limit-viscosity)**, with the set
+`E* = \overline{⋃_{0<κ≤1} limsup* {u_j > κ ε_j}}`: the supersolution part
+(`semilinear_limit_isParaSuper`) and the relaxed subsolution property of `(u, E*)`
+(`semilinear_limit_isParaRelaxedSub_star`). -/
 theorem semilinear_limit_relaxedSolution : SemilinearLimitRelaxedStatement := by
   intro d S β hβ T εs us u _ hεpos hεlim hsol hnn hconv
   exact ⟨semilinear_limit_isParaSuper hβ hεpos hεlim hsol hnn hconv,
@@ -57,8 +58,9 @@ variable {S : Setting d} {g : E d → ℝ} {β : ℝ → ℝ} {ε₀ : ℝ} {gε
   {uε : ℝ → E d × ℝ → ℝ} {T : ℝ} {εs : ℕ → ℝ} {u : E d × ℝ → ℝ}
 
 /-- **No points of `E*` at `t = 0` away from `\overline{{g > 0}}`** (from
-Proposition 3.8(vi*)). Every point of `E*` near `(x, 0)` is a limit of points of some
-`limsup* {u_j > κ ε_j}`, and (vi*) with that `κ` excludes these near `K × [0, τ]`. -/
+[Proposition 3.12](#AFS:p.semilinear-wellposed)(v*)). Every point of `E*` near `(x, 0)` is a limit
+of points of some `limsup* {u_j > κ ε_j}`, and (v*) with that `κ` excludes these near
+`K × [0, τ]`. -/
 theorem timeSlice_semilinearLimitSetStar_zero_subset
     (hvistar : ∀ K : Set (E d), IsCompact K → K ⊆ S.U \ closure (posSet g (closure S.U)) →
       ∃ τ > 0, ∀ κ > 0, ∃ ε₁ > 0, ∀ ε ∈ Ioo 0 ε₁, ε < ε₀ → ∀ x ∈ K, ∀ t ∈ Icc 0 τ,
@@ -96,16 +98,18 @@ theorem timeSlice_semilinearLimitSetStar_zero_subset
     ⟨hq'Ω.2.1.le, (mem_Iio.1 hq'N.2).le⟩
   exact absurd hq'κ (not_lt.2 this.le)
 
-/-- **Corollary 5.4**, with the authors' corrected set `E*`. For the
-well-prepared family of Proposition 3.8 with strict subsolution data `g` (increasing in time), and
-`u_{ε_j} → u` locally uniformly in `U × (0, T]`: `u` is monotone increasing in time,
-`E* = \overline{{u > 0}}` in `U × [0, T]`, and `u` is a viscosity solution of (3.1) in `U × (0, T]`.
-Proof: Proposition 5.3 with `E*` (`semilinear_limit_isParaSuper`,
-`semilinear_limit_isParaRelaxedSub_star`), then Proposition 3.5 with the time-`0` hypothesis from
-Proposition 3.8(vi*) (`timeSlice_semilinearLimitSetStar_zero_subset`). -/
+/-- **[Corollary 5.4](#AFS:cor:increasing)**, with the set `E*`. For the
+well-prepared family of [Proposition 3.12](#AFS:p.semilinear-wellposed) with strict subsolution data
+`g` (increasing in time), and `u_{ε_j} → u` locally uniformly in `U × (0, T]`: `u` is monotone
+increasing in time, `E* = \overline{{u > 0}}` in `U × [0, T]`, and `u` is a viscosity solution of
+[(3.1)](#AFS:e.bernoulli-parabolic) in `U × (0, T]`. Proof:
+[Proposition 5.3](#AFS:p.semilinear-limit-viscosity) with `E*` (`semilinear_limit_isParaSuper`,
+`semilinear_limit_isParaRelaxedSub_star`), then [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)
+with the time-`0` hypothesis from [Proposition 3.12](#AFS:p.semilinear-wellposed)(v*)
+(`timeSlice_semilinearLimitSetStar_zero_subset`). -/
 theorem semilinear_limit_viscSolution_increasing : SemilinearLimitIncreasingStatement := by
   intro d S g β ε₀ gε uε hβ hg hwp T εs u hT hεs hεlim hconv
-  obtain ⟨hε₀, hfam, -, -, -, -, -, -, hvistar⟩ := hwp
+  obtain ⟨hε₀, hfam, -, -, -, -, hvistar⟩ := hwp
   set us : ℕ → E d × ℝ → ℝ := fun j ↦ uε (εs j) with hus_def
   set Ω := S.U ×ˢ Ioc 0 T with hΩ_def
   set Eset := semilinearLimitSetStar S.U (Ioc 0 T) εs us with hE_def
@@ -129,7 +133,7 @@ theorem semilinear_limit_viscSolution_increasing : SemilinearLimitIncreasingStat
     fun j ↦ (hsolj j).2.1.mono_domain subset_rfl Ioc_subset_Ioi_self
   have hnn : ∀ j, ∀ p ∈ Ω, 0 ≤ us j p := fun j p hp ↦
     (hnnj j p ⟨subset_closure hp.1, le_of_lt hp.2.1⟩).1
-  -- Proposition 5.3 with `E*`
+  -- [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) with `E*`
   have hsuper : IsParaSuper S.U S.Q (Ioc 0 T) u :=
     semilinear_limit_isParaSuper hβ hεpos hεlim hsol hnn hconv
   have hrelsub : IsParaRelaxedSub S.U S.Q (Ioc 0 T) u Eset :=
@@ -147,10 +151,11 @@ theorem semilinear_limit_viscSolution_increasing : SemilinearLimitIncreasingStat
     have h1 := hmonoj j x (subset_closure hx) (mem_Ici.2 le_rfl) (mem_Ici.2 ht.1.le) ht.1.le
     simp only at h1
     linarith [(hbdsj j x (subset_closure hx)).1]
-  -- no points of `E*` at `t = 0` outside `\overline{{g > 0}}` (Proposition 3.8(vi*))
+  -- no points of `E*` at `t = 0` outside `\overline{{g > 0}}`
+  -- ([Proposition 3.12](#AFS:p.semilinear-wellposed)(v*))
   have hE₀ : timeSlice Eset 0 ∩ S.U ⊆ closure {x ∈ S.U | 0 < max (g x) 0} :=
     timeSlice_semilinearLimitSetStar_zero_subset (hvistar rfl) hεs hεlim
-  -- Proposition 3.5
+  -- [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)
   obtain ⟨-, hsub⟩ := hrelsub.isParaSub_of_monotone_Ioc S hmono _ hu₀ hE₀
   have hEsub' := hrelsub.subset_closure_posSetP_of_monotone' S.isOpen
     (show (Ioc 0 T).Nonempty from ⟨T, hT, le_rfl⟩) (fun t ht ↦ ht.1)

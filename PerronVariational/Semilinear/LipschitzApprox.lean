@@ -17,13 +17,14 @@ import PerronVariational.Semilinear.Profiles
 /-!
 # Smooth approximation of the semilinear problem
 
-Appendix A.4 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the proof of
-Propositions A.5–A.6 ("We can assume that `Q` is smooth ... we can derive the general Lipschitz
-case by approximation") and the proof of Lemma A.7 ("By a mollification argument using the
-uniqueness ... it suffices to consider the case `g_ε` is smooth"). With `Q` only Lipschitz,
-solutions of (3.4) are classical `C^{2,1}` but not `C^∞`, so the Bernstein argument is run on
-smooth approximate problems.
+[Appendix B.4](#AFS:s.lipschitz-space) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the
+proof of Propositions [B.2](#AFS:p.localLip)–[B.3](#AFS:p.localLip-initial-data) ("We can assume
+that `Q` is smooth ... we can derive the general Lipschitz case by approximation") and the proof of
+[Lemma B.4](#AFS:l.lipschitz-initial) ("By a mollification argument using the uniqueness ... it
+suffices to consider the case `g_ε` is smooth"). With `Q` only Lipschitz, solutions of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) are classical `C^{2,1}` but not `C^∞`, so the
+Bernstein argument is run on smooth approximate problems.
 
 ## Main results
 
@@ -32,9 +33,10 @@ smooth approximate problems.
 * `IsSemilinearViscSuperOn.add_time`, `IsSemilinearViscSubOn.sub_time`: shifting a viscosity
   super/subsolution of the equation with coefficient `Q₁` by a function of time gives a
   super/subsolution of the equation with coefficient `Q₂`, if the shift grows fast enough.
-* `IsSemilinearSolution.exists_smooth_approx`: a solution of (3.4) with Lipschitz data is the
-  uniform limit on `Ū × [0, T]` of solutions with smooth `Q` and smooth data (with the same
-  bounds and Lipschitz constants).
+* `IsSemilinearSolution.exists_smooth_approx`: a solution of
+  [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with Lipschitz data is the uniform limit on
+  `Ū × [0, T]` of solutions with smooth `Q` and smooth data (with the same bounds and Lipschitz
+  constants).
 * `norm_gradient_le_of_tendsto_pointwise`: gradient bounds pass to pointwise limits on convex
   open sets.
 -/
@@ -228,14 +230,15 @@ def Setting.withQ (S : Setting d) (Q' : E d → ℝ) (hlip : ∃ K, LipschitzOnW
     (hmem : ∀ x ∈ closure S.U, S.Qmin ≤ Q' x ∧ Q' x ≤ S.Qmax) : Setting d :=
   { S with Q := Q', lip := hlip, Q_mem := hmem }
 
-/-- **Smooth approximation of the problem.** Let `u` solve (3.4) with data `g` which is
-`L`-Lipschitz on `Ū` with values in `[m, M]`, and let `Q` be `K`-Lipschitz on `Ū`. For every
-`δ > 0` and `T` there are a setting `S'` (same domain and bounds) with smooth `K`-Lipschitz
-coefficient `S'.Q ∈ [Q_min, Q_max]`, smooth `L`-Lipschitz data `g' ∈ [m, M]`, and a solution `u'`
-of (3.4) for `(S', g')` with `|u' - u| ≤ δ` on `Ū × [0, T]`. Existence of `u'` is the classical
-well-posedness of the semilinear problem (`Registry.semilinear_exists`, from parabolic-basic-theory
-v0.1.0); closeness is the comparison principle `Registry.semilinear_comparison` with
-`u' ± c(t)`, `c(t) = (η + D t) e^{Λ t}`. -/
+/-- **Smooth approximation of the problem.** Let `u` solve
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with data `g` which is `L`-Lipschitz on `Ū` with
+values in `[m, M]`, and let `Q` be `K`-Lipschitz on `Ū`. For every `δ > 0` and `T` there are a
+setting `S'` (same domain and bounds) with smooth `K`-Lipschitz coefficient `S'.Q ∈ [Q_min, Q_max]`,
+smooth `L`-Lipschitz data `g' ∈ [m, M]`, and a solution `u'` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) for `(S', g')` with `|u' - u| ≤ δ` on `Ū × [0, T]`.
+Existence of `u'` is the classical well-posedness of the semilinear problem
+(`Registry.semilinear_exists`, from parabolic-basic-theory v0.1.0); closeness is the comparison
+principle `Registry.semilinear_comparison` with `u' ± c(t)`, `c(t) = (η + D t) e^{Λ t}`. -/
 theorem IsSemilinearSolution.exists_smooth_approx (S : Setting d) (hβ : IsReactionProfile β)
     {ε : ℝ} (hε : 0 < ε) {g : E d → ℝ} {L : ℝ≥0} (hg : LipschitzOnWith L g (closure S.U))
     {m M : ℝ} (hmM : m ≤ M) (hgM : ∀ x ∈ closure S.U, m ≤ g x ∧ g x ≤ M)

@@ -12,14 +12,16 @@ public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Analysis.Complex.Harmonic.MeanValue
 
 /-!
-# Circle means in the plane and the Riesz measure (Appendix B, Lemma B.3)
+# Circle means in the plane and the Riesz measure
 
-Planar tools for the proof of **Thm B.1** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
-("the paper"): the non-degeneracy of largest subsolutions in the plane, due to B. Orcan-Ekmekci, *On
-the geometry and regularity of largest subsolutions for a free boundary problem in ℝ²: elliptic
-case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3-4, 937–962,
-doi:10.1007/s00526-013-0606-8.
+Planar tools for the proof of **[Thm 2.10](#AFS:t.largest-sub-non-degen)** of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981 ("the paper"): the non-degeneracy of largest subsolutions in
+the plane, due to B. Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a
+free boundary problem in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014),
+no. 3-4, 937–962, doi:10.1007/s00526-013-0606-8. The file ends with the two directions of
+[Lemma A.2](#AFS:l.nondegen-equivalences) ([Section A.2](#AFS:s.largest-sub-nondegen) of the paper)
+used in [Thm 2.10](#AFS:t.largest-sub-non-degen).
 
 * `toE2 : ℂ ≃ₗᵢ[ℝ] E 2` and `circleMean u x r`, the average of `u : E 2 → ℝ` over `∂B_r(x)`,
   defined through Mathlib's `Real.circleAverage`.
@@ -28,22 +30,23 @@ doi:10.1007/s00526-013-0606-8.
   non-negative harmonic function vanishing at the centre of a ball vanishes on the ball
   (`eqOn_zero_of_harmonic_of_eq_zero`, a strong minimum principle).
 * `le_circleMean_of_lipschitz`: a lower bound for the circle mean of a Lipschitz non-negative
-  function in terms of its value at one point of the circle (Lemma B.3, (ii) ⇒ (i); the paper
-  says this follows "from the Lipschitz estimate", which implicitly uses the arc on which
-  `u ≥ M/2`).
+  function in terms of its value at one point of the circle
+  ([Lemma A.2](#AFS:l.nondegen-equivalences), (ii) ⇒ (i); the paper says this follows "from the
+  Lipschitz estimate", which implicitly uses the arc on which `u ≥ M/2`).
 * `IsRieszMeasure Ω u μ`: `μ` is the Riesz measure `Δu` of `u` in `Ω`, in the form of the
   Riesz–Jensen formula
   `⨍_{∂B_r(x)} u - u(x) = (1/2π) ∫₀^r μ(B_s(x)) / s ds`
   (the integrated form of the paper's identity
-  `d/dr ⨍_{∂B_r} u = |∂B_1|⁻¹ r^{1-d} ∫_{B_r} Δu` in the proof of Lemma B.3, for `d = 2`).
+  `d/dr ⨍_{∂B_r} u = |∂B_1|⁻¹ r^{1-d} ∫_{B_r} Δu` in the proof of
+  [Lemma A.2](#AFS:l.nondegen-equivalences), for `d = 2`).
 * The existence of the Riesz measure (`exists_isRieszMeasure`, the paper's "since `Δu` is a
-  non-negative measure" in the proof of Lemma B.3, used there without proof) is proved in
-  `PerronVariational.Appendix.RieszMeasure`.
-* The two directions of **Lemma B.3** used in Thm B.1, in single-radius form:
-  `mass_lower_bound` ((ii) ⇒ (iii) at one radius) and `circleMean_lower_bound` ((iii) ⇒ (i)).
-  The paper states Lemma B.3 for bounds at all radii but applies it with the bound of Lemma B.2
-  at a single scale; here we state the single-radius version, which is what the proof of Thm B.1
-  needs and which holds.
+  non-negative measure" in the proof of [Lemma A.2](#AFS:l.nondegen-equivalences), used there
+  without proof) is proved in `PerronVariational.Appendix.RieszMeasure`.
+* The two directions of **[Lemma A.2](#AFS:l.nondegen-equivalences)** used in
+  [Thm 2.10](#AFS:t.largest-sub-non-degen), in single-radius form: `mass_lower_bound` ((ii) ⇒ (iii)
+  at one radius) and `circleMean_lower_bound` ((iii) ⇒ (i)). The paper states
+  [Lemma A.2](#AFS:l.nondegen-equivalences) for bounds at all radii; here we state the single-radius
+  version, which is what the proof of [Thm 2.10](#AFS:t.largest-sub-non-degen) needs.
 -/
 
 open Set Filter Topology Metric MeasureTheory
@@ -183,8 +186,8 @@ theorem eqOn_zero_of_harmonic_of_eq_zero {h : E 2 → ℝ} {x : E 2} {t : ℝ}
 
 /-! ### Lower bound for circle means of Lipschitz functions -/
 
-/-- **Lemma B.3, (ii) ⇒ (i).** If `u ≥ 0` is `L`-Lipschitz on `B̄_r(x)` and
-`u(z) ≥ M > 0` at a point `z ∈ ∂B_r(x)`, then
+/-- **[Lemma A.2](#AFS:l.nondegen-equivalences), (ii) ⇒ (i).** If `u ≥ 0` is `L`-Lipschitz on
+`B̄_r(x)` and `u(z) ≥ M > 0` at a point `z ∈ ∂B_r(x)`, then
 `⨍_{∂B_r(x)} u ≥ min(M / (2 L r), π) M / (2π)`: `u ≥ M/2` on an arc of half-length
 `min(M/(2Lr), π)` around `z`. -/
 theorem le_circleMean_of_lipschitz {u : E 2 → ℝ} {x z : E 2} {r L M : ℝ} (hr : 0 < r)
@@ -245,15 +248,17 @@ theorem le_circleMean_of_lipschitz {u : E 2 → ℝ} {x z : E 2} {r L M : ℝ} (
 /-! ### The Riesz measure -/
 
 /-- `μ` is the **Riesz measure** `Δu` of `u` in `Ω ⊆ E 2`, in the integrated form of the identity
-for `d/dr ⨍_{∂B_r} u` in the proof of Lemma B.3 (Riesz–Jensen formula): for every closed disc
-`B̄_r(x) ⊆ Ω`, `∫₀^r μ(B_s(x)) / s ds < ∞` and `⨍_{∂B_r(x)} u - u(x) = (1/2π) ∫₀^r μ(B_s(x)) / s
-ds`. -/
+for `d/dr ⨍_{∂B_r} u` in the proof of [Lemma A.2](#AFS:l.nondegen-equivalences) (Riesz–Jensen
+formula): for every closed disc `B̄_r(x) ⊆ Ω`, `∫₀^r μ(B_s(x)) / s ds < ∞` and `⨍_{∂B_r(x)} u -
+u(x) = (1/2π) ∫₀^r μ(B_s(x)) / s ds`. -/
 def IsRieszMeasure (Ω : Set (E 2)) (u : E 2 → ℝ) (μ : Measure (E 2)) : Prop :=
   ∀ x r, 0 < r → closedBall x r ⊆ Ω →
     (∫⁻ s in Ioo 0 r, μ (ball x s) / ENNReal.ofReal s) ≠ (⊤ : ℝ≥0∞) ∧
       circleMean u x r - u x = (∫⁻ s in Ioo 0 r, μ (ball x s) / ENNReal.ofReal s).toReal / (2 * π)
 
-/-! ### Lemma B.3: the two directions used in Thm B.1 -/
+/-! ### [Lemma A.2](#AFS:l.nondegen-equivalences)
+
+The two directions used in [Thm 2.10](#AFS:t.largest-sub-non-degen). -/
 
 section RieszConsequences
 
@@ -290,8 +295,8 @@ theorem IsRieszMeasure.circleMean_sub_le (hμ : IsRieszMeasure Ω u μ) {x : E 2
     _ = μ (ball x r) / ENNReal.ofReal a * ENNReal.ofReal (r - a) := by
         rw [setLIntegral_const, Real.volume_Ioo]
 
-/-- **Lemma B.3, (i) ⇒ (iii)** at one radius, for `u(x) = 0` and `u` `L`-Lipschitz: if
-`⨍_{∂B_r(x)} u ≥ A r` then `μ(B_r(x)) ≥ κ π A r` with `κ = min(A/(2L), 1/2)`. -/
+/-- **[Lemma A.2](#AFS:l.nondegen-equivalences), (i) ⇒ (iii)** at one radius, for `u(x) = 0` and `u`
+`L`-Lipschitz: if `⨍_{∂B_r(x)} u ≥ A r` then `μ(B_r(x)) ≥ κ π A r` with `κ = min(A/(2L), 1/2)`. -/
 theorem IsRieszMeasure.mass_lower_bound (hμ : IsRieszMeasure Ω u μ) {x : E 2} {r A L : ℝ}
     (hr : 0 < r) (hA : 0 < A) (hL : 0 < L) (hrΩ : closedBall x r ⊆ Ω) (hux : u x = 0)
     (hLip : LipschitzOnWith (Real.toNNReal L) u (closedBall x r))
@@ -347,8 +352,8 @@ theorem IsRieszMeasure.mass_lower_bound (hμ : IsRieszMeasure Ω u μ) {x : E 2}
       rw [mul_assoc, ← ENNReal.ofReal_mul (by positivity), inv_mul_cancel₀ hκpos.ne',
         ENNReal.ofReal_one, mul_one]
 
-/-- **Lemma B.3, (iii) ⇒ (i)**: if `μ(B_s(x)) ≥ c s` for `0 < s < r`, then
-`⨍_{∂B_r(x)} u - u(x) ≥ c r / (2π)`. -/
+/-- **[Lemma A.2](#AFS:l.nondegen-equivalences), (iii) ⇒ (i)**: if `μ(B_s(x)) ≥ c s` for
+`0 < s < r`, then `⨍_{∂B_r(x)} u - u(x) ≥ c r / (2π)`. -/
 theorem IsRieszMeasure.circleMean_lower_bound (hμ : IsRieszMeasure Ω u μ) {x : E 2} {r c : ℝ}
     (hr : 0 < r) (hc : 0 ≤ c) (hrΩ : closedBall x r ⊆ Ω)
     (hmass : ∀ s ∈ Ioo 0 r, ENNReal.ofReal (c * s) ≤ μ (ball x s)) :

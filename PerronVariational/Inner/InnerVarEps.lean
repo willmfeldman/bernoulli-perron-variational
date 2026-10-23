@@ -18,11 +18,11 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# The semilinear inner-variation identity (4.2)
+# The semilinear inner-variation identity [(4.2)](#AFS:eqn:innerVarEps)
 
-Identity (4.2) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. For a classical
-solution `u` of (3.4) and `ξ ∈ C¹_c(U_∞; ℝᵈ)`,
+Identity [(4.2)](#AFS:eqn:innerVarEps) of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. For
+a classical solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) and `ξ ∈ C¹_c(U_∞; ℝᵈ)`,
 `∫_{U_∞} (|∇u|² + Q² χ_ε) div ξ - 2 ∇u · Dξ ∇u + ∇(Q²) · ξ χ_ε - 2 (ξ · ∇u) ∂ₜu = 0`
 with `χ_ε = 2 𝓑_ε(u)`: multiply the equation by `2 ξ · ∇u` and integrate by parts in space.
 
@@ -170,9 +170,9 @@ theorem exists_lipschitzWith_smul {P : E d → ℝ} {X : E d → E d} {CP CX : �
         · exact hPb y
     _ = (CP * MX + MP * CX) * ‖x - y‖ := by ring
 
-/-- **The inner-variation identity on a time slice** (the spatial computation behind (4.2)).
-Let `f ∈ C²(U)`, `X ∈ C¹_c(U; ℝᵈ)`, `P` bounded and Lipschitz (it plays the role of `Q²`),
-`c ∈ C¹(U)` with `Dc = 2 r Df` on `U` (`c = 2 𝓑_ε(f)`, `r = β_ε(f)`). Then
+/-- **The inner-variation identity on a time slice** (the spatial computation behind
+[(4.2)](#AFS:eqn:innerVarEps)). Let `f ∈ C²(U)`, `X ∈ C¹_c(U; ℝᵈ)`, `P` bounded and Lipschitz (it
+plays the role of `Q²`), `c ∈ C¹(U)` with `Dc = 2 r Df` on `U` (`c = 2 𝓑_ε(f)`, `r = β_ε(f)`). Then
 `∫ (|∇f|² + P c) div X - 2 ∇f · DX ∇f + DP · X c - 2 (X · ∇f) (Δf - P r) = 0`. -/
 theorem integral_innerVar_slice {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ}
     (hf : ContDiffOn ℝ 2 f U) {X : E d → E d} (hX : ContDiff ℝ 1 X) (hXc : HasCompactSupport X)
@@ -402,12 +402,13 @@ theorem contDiff_bigBEps {β : ℝ → ℝ} (hβ : IsReactionProfile β) (ε : �
     (hβ.hasDerivAt_bigBEps ε z).deriv]
   exact hβ.continuous_betaEps ε
 
-/-- **The semilinear inner-variation identity** (4.2) (the paper cites Definition 6.1 of G. S.
-Weiss, *Partial regularity for weak solutions of an elliptic free boundary problem*, Comm. Partial
-Differential Equations 23 (1998), 439–455, doi:10.1080/03605309808821352): multiply (3.4) by
-`2 ξ · ∇u` and integrate by parts in space (`integral_innerVar_slice` on each time slice, then
-Fubini). For `ξ ∈ C¹_c(U_∞; ℝᵈ)` the integrand of (3.3) with `(u, ∂ₜu, χ_ε)` is integrable on `U_∞`
-and integrates to `0`. Since `Q` is only Lipschitz, `∇(Q²)` exists only a.e.; `Q²` is replaced near
+/-- **The semilinear inner-variation identity** [(4.2)](#AFS:eqn:innerVarEps) (the paper cites
+Definition 6.1 of G. S. Weiss, *Partial regularity for weak solutions of an elliptic free boundary
+problem*, Comm. Partial Differential Equations 23 (1998), 439–455, doi:10.1080/03605309808821352):
+multiply [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) by `2 ξ · ∇u` and integrate by parts in
+space (`integral_innerVar_slice` on each time slice, then Fubini). For `ξ ∈ C¹_c(U_∞; ℝᵈ)` the
+integrand of [(3.3)](#AFS:e.parabolic-inner-var) with `(u, ∂ₜu, χ_ε)` is integrable on `U_∞` and
+integrates to `0`. Since `Q` is only Lipschitz, `∇(Q²)` exists only a.e.; `Q²` is replaced near
 `spt ξ` by a bounded Lipschitz function `P` (McShane extension and truncation). -/
 theorem semilinear_innerVar_identity (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)
     {ε : ℝ} (_hε : 0 < ε) {gε : E d → ℝ} {u : E d × ℝ → ℝ}

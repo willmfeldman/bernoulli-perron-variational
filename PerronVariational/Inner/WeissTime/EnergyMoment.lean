@@ -17,15 +17,15 @@ import PerronVariational.Semilinear.Profiles
 /-!
 # Time regularity of the energy density: the energy moment
 
-Part of the proof of **Lemma 4.3** (the computation leading to (4.8)) of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981: integration by parts for the difference of two Dirichlet
-energy densities (`integral_norm_grad_sq_sub_mul`), the spatial moment `energyMoment` of the
-energy density, its time derivative (`hasDerivAt_energyMoment`) and the increment bound
-`enorm_energyMoment_sub_le`. The paper localizes an argument of G. S. Weiss, *A singular limit
-arising in combustion theory: fine properties of the free boundary*, Calc. Var. Partial
-Differential Equations 17 (2003), 311–340, doi:10.1007/s00526-002-0171-z, Proposition 4.1
-[Weiss 2003].
+Part of the proof of **[Lemma 4.3](#AFS:lem:chiConverge)** (the computation leading to
+[(A.6)](#AFS:eqn:timeDerivative)) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: integration by
+parts for the difference of two Dirichlet energy densities (`integral_norm_grad_sq_sub_mul`), the
+spatial moment `energyMoment` of the energy density, its time derivative (`hasDerivAt_energyMoment`)
+and the increment bound `enorm_energyMoment_sub_le`. The paper localizes an argument of G. S.
+Weiss, *A singular limit arising in combustion theory: fine properties of the free boundary*, Calc.
+Var. Partial Differential Equations 17 (2003), 311–340, doi:10.1007/s00526-002-0171-z,
+[Proposition 4.1](#AFS:p.eps-inner-limit) [Weiss 2003].
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -176,8 +176,8 @@ noncomputable def energyMoment (Q : E d → ℝ) (β : ℝ → ℝ) (ε : ℝ) (
     (ψ : E d → ℝ) (t : ℝ) : ℝ :=
   ∫ x, (‖gradₓ v (x, t)‖ ^ 2 + Q x ^ 2 * chiEps β ε v (x, t)) * ψ x
 
-/-- **Time derivative of the energy moment** (proof of Lemma 4.3, after [Weiss 2003]):
-`d/dt ∫ e_ε ψ = ∫ (-2 ψ (∂ₜv)² - 2 ∂ₜv ∇v · ∇ψ)` for a classical solution `v` and
+/-- **Time derivative of the energy moment** (proof of [Lemma 4.3](#AFS:lem:chiConverge), after
+[Weiss 2003]): `d/dt ∫ e_ε ψ = ∫ (-2 ψ (∂ₜv)² - 2 ∂ₜv ∇v · ∇ψ)` for a classical solution `v` and
 `ψ ∈ C¹_c(U)`. The reaction terms cancel since the weight `Q²` in `e_ε` matches the equation. -/
 theorem hasDerivAt_energyMoment {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
     (hQ : ContinuousOn Q U) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ}
@@ -411,7 +411,7 @@ theorem abs_energyMomentDeriv_le {ψ : E d → ℝ} {Cψ L a : ℝ} {g : E d} {x
     _ ≤ 2 * Cψ * a ^ 2 + 2 * (a ^ 2 + 1) * (L * Cψ) := by linarith
     _ ≤ 2 * Cψ * (1 + L) * (a ^ 2 + 1) := by nlinarith [sq_nonneg a, mul_nonneg hC hL]
 
-/-- **Increment of the energy moment** ((4.8)): with
+/-- **Increment of the energy moment** ([(A.6)](#AFS:eqn:timeDerivative)): with
 `|ψ|, |∇ψ| ≤ Cψ`, `|∇v| ≤ L` on `spt ψ × [t₁, t₂]` and `spt ψ ⊆ K`,
 `|∫ e(t₂) ψ - ∫ e(t₁) ψ| ≤ 2 Cψ (1 + L) ∫_{t₁}^{t₂} ∫_K ((∂ₜv)² + 1)`. -/
 theorem enorm_energyMoment_sub_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}

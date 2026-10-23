@@ -9,19 +9,21 @@ public import PerronVariational.Defs.Semilinear
 public import PerronVariational.Semilinear.AutonomousODE
 
 /-!
-# One-dimensional sub- and supersolution profiles (Appendix A.3.1)
+# One-dimensional sub- and supersolution profiles
 
-Appendix A.3.1 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+Lemmas [3.9](#AFS:l.profile-sub) and [3.10](#AFS:l.profile-super) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
-* Basic properties of reaction profiles `β` ((3.5)) and of `𝓑 = 𝓑₁`, `𝓑_ε`.
-* **Lemma A.2**: the sub-profile `Φ = Φ_{1,θ}` (`profileSub`),
+* Basic properties of reaction profiles `β` ([(3.5)](#AFS:e.beta-conditions)) and of `𝓑 = 𝓑₁`,
+  `𝓑_ε`.
+* **[Lemma 3.9](#AFS:l.profile-sub)**: the sub-profile `Φ = Φ_{1,θ}` (`profileSub`),
   `Φ'' = θ β(Φ)`, `√(1-θ) ≤ Φ' ≤ 1`, `Φ(s) = s` for `s ≥ 1`, the zero `s₀ ∈ [-c_θ, 0]`, and
   `sup |Φ₊ - s₊| ≤ 1`. Constructed exactly as in the paper: `Φ(s) = G⁻¹(s - 1)` with
   `G(z) = ∫₁ᶻ dw / √((1-θ) + 2θ𝓑(w))` (via `odeSol`). `Φ ∈ C^∞`.
-* **Lemma A.3**: the super-profile `Ψ = Ψ_{1,θ̂}` (`profileSuper`) and
+* **[Lemma 3.10](#AFS:l.profile-super)**: the super-profile `Ψ = Ψ_{1,θ̂}` (`profileSuper`) and
   the level `κ` (`superKappa`).
-* **(A.5)**: the rescalings `Φ_{ε,θ}`, `Ψ_{ε,θ̂}`.
+* **[(3.7)](#AFS:e.profile-ep-def)**: the rescalings `Φ_{ε,θ}`, `Ψ_{ε,θ̂}`.
 -/
 
 open Set Filter Topology MeasureTheory
@@ -189,19 +191,19 @@ theorem betaEps_zero (ε : ℝ) : betaEps β ε 0 = 0 := by
 
 end IsReactionProfile
 
-/-! ### Lemma A.2: the sub-profile `Φ_{1,θ}` -/
+/-! ### [Lemma 3.9](#AFS:l.profile-sub): the sub-profile `Φ_{1,θ}` -/
 
-/-- The vector field `z ↦ √((1-θ) + 2θ𝓑(z))` of (A.2). -/
+/-- The vector field `z ↦ √((1-θ) + 2θ𝓑(z))` of [(B.2)](#AFS:e.profile-foc). -/
 noncomputable def subField (β : ℝ → ℝ) (θ z : ℝ) : ℝ := √((1 - θ) + 2 * θ * bigBEps β 1 z)
 
-/-- **Lemma A.2**: the sub-profile `Φ_{1,θ}(s) = G⁻¹(s - 1)`, where
-`G(z) = ∫₁ᶻ dw / √((1-θ) + 2θ𝓑(w))` (proof of Lemma A.2). -/
+/-- **[Lemma 3.9](#AFS:l.profile-sub)**: the sub-profile `Φ_{1,θ}(s) = G⁻¹(s - 1)`, where
+`G(z) = ∫₁ᶻ dw / √((1-θ) + 2θ𝓑(w))` (proof of [Lemma 3.9](#AFS:l.profile-sub)). -/
 noncomputable def profileSub (β : ℝ → ℝ) (θ : ℝ) (s : ℝ) : ℝ := odeSol (subField β θ) 1 (s - 1)
 
-/-- The zero `s₀ = 1 + G(0)` of `Φ_{1,θ}` (Lemma A.2(iii)). -/
+/-- The zero `s₀ = 1 + G(0)` of `Φ_{1,θ}` ([Lemma 3.9(iii)](#AFS:part.profile-sub-c)). -/
 noncomputable def profileSubZero (β : ℝ → ℝ) (θ : ℝ) : ℝ := 1 + odeTimeMap (subField β θ) 1 0
 
-/-- The constant `c_θ = (1 - √(1-θ)) / √(1-θ)` of Lemma A.2(iii). -/
+/-- The constant `c_θ = (1 - √(1-θ)) / √(1-θ)` of [Lemma 3.9(iii)](#AFS:part.profile-sub-c). -/
 noncomputable def subConst (θ : ℝ) : ℝ := (1 - √(1 - θ)) / √(1 - θ)
 
 section ProfileSub
@@ -271,10 +273,7 @@ theorem profileSub_strictMono : StrictMono (profileSub β θ) := fun s t hst ↦
   odeSol_strictMono (continuous_subField hβ) (subField_pos hβ hθ hθ1) (subField_le_one hβ hθ)
     (by linarith)
 
-theorem profileSub_continuous : Continuous (profileSub β θ) :=
-  continuous_iff_continuousAt.2 fun s ↦ (profileSub_hasDerivAt hβ hθ hθ1 s).continuousAt
-
-/-- `Φ_{1,θ} ∈ C^∞(ℝ)` (bootstrap, as in the proof of Lemma A.2). -/
+/-- `Φ_{1,θ} ∈ C^∞(ℝ)` (bootstrap, as in the proof of [Lemma 3.9](#AFS:l.profile-sub)). -/
 theorem profileSub_contDiff : ContDiff ℝ ∞ (profileSub β θ) :=
   contDiff_infty_of_hasDerivAt_comp (profileSub_hasDerivAt hβ hθ hθ1) (contDiff_subField hβ hθ hθ1)
 
@@ -288,12 +287,12 @@ theorem profileSub_hasDerivAt_deriv (s : ℝ) :
   · rfl
   field_simp [(subField_pos hβ hθ hθ1 (profileSub β θ s)).ne']
 
-/-- **Lemma A.2(i)**: `Φ'' = θ β(Φ)` on `ℝ`. -/
+/-- **[Lemma 3.9(i)](#AFS:part.profile-sub-a)**: `Φ'' = θ β(Φ)` on `ℝ`. -/
 theorem profileSub_deriv_deriv (s : ℝ) :
     deriv (deriv (profileSub β θ)) s = θ * β (profileSub β θ s) :=
   (profileSub_hasDerivAt_deriv hβ hθ hθ1 s).deriv
 
-/-- **Lemma A.2(ii)**, derivative bounds: `√(1-θ) ≤ Φ' ≤ 1`. -/
+/-- **[Lemma 3.9(ii)](#AFS:part.profile-sub-b)**, derivative bounds: `√(1-θ) ≤ Φ' ≤ 1`. -/
 theorem profileSub_deriv_mem (s : ℝ) :
     √(1 - θ) ≤ deriv (profileSub β θ) s ∧ deriv (profileSub β θ) s ≤ 1 := by
   rw [profileSub_deriv hβ hθ hθ1]
@@ -302,7 +301,7 @@ theorem profileSub_deriv_mem (s : ℝ) :
 theorem profileSub_deriv_pos (s : ℝ) : 0 < deriv (profileSub β θ) s := by
   rw [profileSub_deriv hβ hθ hθ1]; exact subField_pos hβ hθ hθ1 _
 
-/-- **Lemma A.2(ii)**: `Φ(s) = s` for `s ≥ 1`. -/
+/-- **[Lemma 3.9(ii)](#AFS:part.profile-sub-b)**: `Φ(s) = s` for `s ≥ 1`. -/
 theorem profileSub_of_one_le {s : ℝ} (hs : 1 ≤ s) : profileSub β θ s = s := by
   rcases hs.eq_or_lt with rfl | hs
   · exact profileSub_one hβ hθ hθ1
@@ -329,7 +328,8 @@ theorem profileSub_sub_antitone : Antitone fun s ↦ profileSub β θ s - s := b
   rw [(hd s).deriv]
   linarith [subField_le_one hβ hθ (profileSub β θ s)]
 
-/-- **Lemma A.2(iii)**: `s ≤ Φ(s)` for all `s` (`Φ(s) ≥ s` for `s ≤ 1`, equality for `s ≥ 1`). -/
+/-- **[Lemma 3.9(iii)](#AFS:part.profile-sub-c)**: `s ≤ Φ(s)` for all `s` (`Φ(s) ≥ s` for `s ≤ 1`,
+equality for `s ≥ 1`). -/
 theorem self_le_profileSub (s : ℝ) : s ≤ profileSub β θ s := by
   rcases le_total s 1 with hs | hs
   · have := profileSub_sub_antitone hβ hθ hθ1 hs
@@ -337,7 +337,7 @@ theorem self_le_profileSub (s : ℝ) : s ≤ profileSub β θ s := by
     linarith
   · rw [profileSub_of_one_le hβ hθ hθ1 hs]
 
-/-- **Lemma A.2(iii)**: `Φ(s) ≤ 1` for `s ≤ 1`. -/
+/-- **[Lemma 3.9(iii)](#AFS:part.profile-sub-c)**: `Φ(s) ≤ 1` for `s ≤ 1`. -/
 theorem profileSub_le_one {s : ℝ} (hs : s ≤ 1) : profileSub β θ s ≤ 1 := by
   rw [← profileSub_one hβ hθ hθ1]; exact (profileSub_strictMono hβ hθ hθ1).monotone hs
 
@@ -351,7 +351,7 @@ theorem profileSub_profileSubZero : profileSub β θ (profileSubZero β θ) = 0 
   simp only [profileSub, profileSubZero, add_sub_cancel_left]
   exact odeSol_odeTimeMap (continuous_subField hβ) (subField_pos hβ hθ hθ1) 0
 
-/-- **Lemma A.2(iii)**: `Φ > 0` exactly on `(s₀, ∞)`. -/
+/-- **[Lemma 3.9(iii)](#AFS:part.profile-sub-c)**: `Φ > 0` exactly on `(s₀, ∞)`. -/
 theorem profileSub_pos_iff (s : ℝ) : 0 < profileSub β θ s ↔ profileSubZero β θ < s := by
   rw [← profileSub_profileSubZero hβ hθ hθ1]; exact (profileSub_strictMono hβ hθ hθ1).lt_iff_lt
 
@@ -362,7 +362,7 @@ theorem profileSubZero_nonpos : profileSubZero β θ ≤ 0 :=
   (profileSub_strictMono hβ hθ hθ1).le_iff_le.1 (by
     rw [profileSub_profileSubZero hβ hθ hθ1]; exact self_le_profileSub hβ hθ hθ1 0)
 
-/-- **Lemma A.2(iii)**: `s₀ ∈ [-c_θ, 0]`. -/
+/-- **[Lemma 3.9(iii)](#AFS:part.profile-sub-c)**: `s₀ ∈ [-c_θ, 0]`. -/
 theorem profileSubZero_mem : profileSubZero β θ ∈ Icc (-subConst θ) 0 := by
   refine ⟨?_, profileSubZero_nonpos hβ hθ hθ1⟩
   have hsq : 0 < √(1 - θ) := Real.sqrt_pos.2 (by linarith)
@@ -379,7 +379,7 @@ theorem subConst_nonneg : 0 ≤ subConst θ := by
   have : √(1 - θ) ≤ 1 := Real.sqrt_le_one.2 (by linarith)
   exact div_nonneg (by linarith) hsq.le
 
-/-- **Lemma A.2(iii)**: `sup_ℝ |Φ₊ - s₊| ≤ 1`. -/
+/-- **[Lemma 3.9(iii)](#AFS:part.profile-sub-c)**: `sup_ℝ |Φ₊ - s₊| ≤ 1`. -/
 theorem abs_max_profileSub_sub_le (s : ℝ) :
     |max (profileSub β θ s) 0 - max s 0| ≤ 1 := by
   rcases le_total 1 s with hs | hs
@@ -407,9 +407,9 @@ theorem abs_profileSub_sub_le (s t : ℝ) :
 
 end ProfileSub
 
-/-! ### (A.5): the rescaled sub-profile `Φ_{ε,θ}` -/
+/-! ### [(3.7)](#AFS:e.profile-ep-def): the rescaled sub-profile `Φ_{ε,θ}` -/
 
-/-- (A.5): `Φ_{ε,θ}(s) = ε Φ_{1,θ}(s/ε)`. -/
+/-- [(3.7)](#AFS:e.profile-ep-def): `Φ_{ε,θ}(s) = ε Φ_{1,θ}(s/ε)`. -/
 noncomputable def profileSubEps (β : ℝ → ℝ) (θ ε : ℝ) (s : ℝ) : ℝ := ε * profileSub β θ (s / ε)
 
 section ProfileSubEps
@@ -431,7 +431,7 @@ theorem profileSubEps_deriv :
     deriv (profileSubEps β θ ε) = fun s ↦ deriv (profileSub β θ) (s / ε) :=
   funext fun s ↦ (profileSubEps_hasDerivAt hβ hθ hθ1 hε s).deriv
 
-/-- Rescaled Lemma A.2(ii): `0 < Φ_ε' ≤ 1`. -/
+/-- Rescaled [Lemma 3.9(ii)](#AFS:part.profile-sub-b): `0 < Φ_ε' ≤ 1`. -/
 theorem profileSubEps_deriv_mem (s : ℝ) :
     0 < deriv (profileSubEps β θ ε) s ∧ deriv (profileSubEps β θ ε) s ≤ 1 := by
   rw [profileSubEps_deriv hβ hθ hθ1 hε]
@@ -452,7 +452,7 @@ theorem profileSubEps_hasDerivAt_deriv (s : ℝ) :
   simp only [one_div]
   ring
 
-/-- Rescaled Lemma A.2(i): `Φ_ε'' = θ β_ε(Φ_ε)`. -/
+/-- Rescaled [Lemma 3.9(i)](#AFS:part.profile-sub-a): `Φ_ε'' = θ β_ε(Φ_ε)`. -/
 theorem profileSubEps_deriv_deriv (s : ℝ) :
     deriv (deriv (profileSubEps β θ ε)) s = θ * betaEps β ε (profileSubEps β θ ε s) :=
   (profileSubEps_hasDerivAt_deriv hβ hθ hθ1 hε s).deriv
@@ -465,28 +465,25 @@ omit hε in
 theorem profileSubEps_continuous : Continuous (profileSubEps β θ ε) :=
   (profileSubEps_contDiff hβ hθ hθ1).continuous
 
-theorem profileSubEps_strictMono : StrictMono (profileSubEps β θ ε) := fun _ _ hst ↦
-  mul_lt_mul_of_pos_left ((profileSub_strictMono hβ hθ hθ1) (div_lt_div_of_pos_right hst hε)) hε
-
-/-- Rescaled Lemma A.2(ii): `Φ_ε(s) = s` for `s ≥ ε`. -/
+/-- Rescaled [Lemma 3.9(ii)](#AFS:part.profile-sub-b): `Φ_ε(s) = s` for `s ≥ ε`. -/
 theorem profileSubEps_of_le {s : ℝ} (hs : ε ≤ s) : profileSubEps β θ ε s = s := by
   rw [profileSubEps, profileSub_of_one_le hβ hθ hθ1 ((one_le_div hε).2 hs),
     mul_div_cancel₀ _ hε.ne']
 
-/-- Rescaled Lemma A.2(iii): `s ≤ Φ_ε(s)`. -/
+/-- Rescaled [Lemma 3.9(iii)](#AFS:part.profile-sub-c): `s ≤ Φ_ε(s)`. -/
 theorem self_le_profileSubEps (s : ℝ) : s ≤ profileSubEps β θ ε s := by
   have := self_le_profileSub hβ hθ hθ1 (s / ε)
   rw [profileSubEps]
   calc s = ε * (s / ε) := by field_simp
     _ ≤ _ := mul_le_mul_of_nonneg_left this hε.le
 
-/-- Rescaled Lemma A.2(iii): `Φ_ε > 0` exactly on `(ε s₀, ∞)`. -/
+/-- Rescaled [Lemma 3.9(iii)](#AFS:part.profile-sub-c): `Φ_ε > 0` exactly on `(ε s₀, ∞)`. -/
 theorem profileSubEps_pos_iff (s : ℝ) :
     0 < profileSubEps β θ ε s ↔ ε * profileSubZero β θ < s := by
   rw [profileSubEps, mul_pos_iff_of_pos_left hε, profileSub_pos_iff hβ hθ hθ1, lt_div_iff₀ hε,
     mul_comm]
 
-/-- Rescaled Lemma A.2(iii): `sup_ℝ |(Φ_ε)₊ - s₊| ≤ ε`. -/
+/-- Rescaled [Lemma 3.9(iii)](#AFS:part.profile-sub-c): `sup_ℝ |(Φ_ε)₊ - s₊| ≤ ε`. -/
 theorem abs_max_profileSubEps_sub_le (s : ℝ) :
     |max (profileSubEps β θ ε s) 0 - max s 0| ≤ ε := by
   have h := abs_max_profileSub_sub_le hβ hθ hθ1 (s / ε)
@@ -505,7 +502,8 @@ theorem abs_profileSubEps_sub_le (s t : ℝ) :
     abs_of_pos hε] at *
   rwa [le_div_iff₀ hε, mul_comm] at h
 
-/-- Where the reaction term is active, `ε s₀ < s < ε` (used in the proof of Lemma A.4). -/
+/-- Where the reaction term is active, `ε s₀ < s < ε` (used in the proof of
+[Lemma 3.11](#AFS:l.well-prepared)). -/
 theorem mem_of_betaEps_profileSubEps_pos {s : ℝ}
     (hs : 0 < betaEps β ε (profileSubEps β θ ε s)) :
     ε * profileSubZero β θ < s ∧ s < ε := by

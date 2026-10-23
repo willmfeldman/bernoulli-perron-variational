@@ -23,7 +23,9 @@ public import Mathlib.Order.LiminfLimsup
 Textbook facts, in the generality needed for the compactness arguments in F. Abedin,
 W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
 Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper"): the ε → 0 and t → ∞ limits
-(Prop 4.1, Thm 3.10), Lemma 6.3, and directional stability (Lemma 2.12).
+([Prop 4.1](#AFS:p.eps-inner-limit), [Thm 3.14](#AFS:t.longtime-inner)),
+[Proposition 6.3](#AFS:p.downward), and directional stability
+([Lemma 2.16](#AFS:l.directionalStable)).
 
 References: L. C. Evans, *Partial Differential Equations*, 2nd ed., Graduate Studies in
 Mathematics 19, AMS, 2010, doi:10.1090/gsm/019; L. C. Evans and R. F. Gariepy, *Measure Theory
@@ -68,9 +70,9 @@ variable {X F : Type*} [MeasurableSpace X] [NormedAddCommGroup F] [InnerProductS
 `L²(Ω, μ; F)`.
 
 A result from the literature: Evans, Appendix D.4, Theorem 3 (weak compactness in reflexive
-spaces; `L²` is a Hilbert space). Paper: proof of Prop 4.1 ("along a subsequence `u_ε` weakly
-converges ... in `H¹_loc(U_∞)`", and `∂ₜu_ε ⇀ ∂ₜu` weakly in `L²(U_∞)`), proof of Thm 3.10,
-Step 1; proof of Cor 2.13.
+spaces; `L²` is a Hilbert space). Paper: proof of [Prop 4.1](#AFS:p.eps-inner-limit) ("along a
+subsequence `u_ε` weakly converges ... in `H¹_loc(U_∞)`", and `∂ₜu_ε ⇀ ∂ₜu` weakly in `L²(U_∞)`),
+proof of [Thm 3.14](#AFS:t.longtime-inner), Step 1; proof of [Cor 2.18](#AFS:c.blow-up-directional).
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/WeakL2.lean`):
 `GMTFoundations.exists_tendstoWeakL2_subseq`, via sequential Banach–Alaoglu. -/
@@ -88,8 +90,9 @@ set_option linter.unusedSectionVars false in
 semicontinuity of the Dirichlet energy.)
 
 A result from the literature: Evans, Appendix D.4 (weak convergence: the norm is weakly lower
-semicontinuous), applied to the weighted inner product `∫ η ⟨·, ·⟩`. Paper: proof of Lemma 4.2,
-the dissipation inequality in Prop 4.1, proof of Lemma 2.12, proof of Thm 3.10, Step 2.
+semicontinuous), applied to the weighted inner product `∫ η ⟨·, ·⟩`. Paper: proof of
+[Lemma 4.2](#AFS:lem:strongGrad), the dissipation inequality in [Prop 4.1](#AFS:p.eps-inner-limit),
+proof of [Lemma 2.16](#AFS:l.directionalStable), proof of [Thm 3.14](#AFS:t.longtime-inner), Step 2.
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/WeakL2.lean`):
 `GMTFoundations.lintegral_weighted_sq_le_liminf` (integrate `η |f_i - f₀|² ≥ 0` and test the weak
@@ -110,8 +113,9 @@ variable {d : ℕ}
 Then a subsequence converges in `L²_loc(U)`.
 
 A result from the literature: Rellich–Kondrachov, Evans, §5.7, Theorem 1 (on balls `B ⊂⊂ U`),
-plus a diagonal argument over a countable cover of `U` by balls. Paper: proofs of Prop 4.1 and
-Lemma 4.2 ("strong convergence of `u_ε` in `L²`"), proof of Thm 3.10, Step 1.
+plus a diagonal argument over a countable cover of `U` by balls. Paper: proofs of
+[Prop 4.1](#AFS:p.eps-inner-limit) and [Lemma 4.2](#AFS:lem:strongGrad) ("strong convergence of
+`u_ε` in `L²`"), proof of [Thm 3.14](#AFS:t.longtime-inner), Step 1.
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/Rellich.lean`):
 `GMTFoundations.exists_tendstoLpLoc_subseq_of_H1Loc` (cut-offs `ζ u_n`, the translation estimate
@@ -157,7 +161,8 @@ weight `η`, `∫_U η |∇χ₀| ≤ liminf_l ∫_U η |∇χ_i|` (weighted tot
 
 A result from the literature: Ambrosio–Fusco–Pallara, Remark 3.5 / Proposition 3.6 (lower
 semicontinuity of the variation measure under `L¹_loc` convergence); immediate from the duality
-definition. Paper: Prop 4.1(iii), Thm 3.10, Step 3.
+definition. Paper: [Prop 4.1(iii)](#AFS:part.eps-estimates), [Thm 3.14](#AFS:t.longtime-inner),
+Step 3.
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/BV/TotalVariation.lean`):
 `GMTFoundations.weightedTV_le_liminf` (sup of `L¹_loc`-continuous functionals; the hypothesis `hU`
@@ -171,10 +176,11 @@ theorem weightedTV_le_liminf {ι : Type*} {l : Filter ι} {U : Set (E d)} (hU : 
 -- keep the registry signature (with the unused `IsOpen` hypothesis) unchanged
 set_option linter.unusedVariables false in
 /-- **Lower semicontinuity of the space-time weighted spatial total variation.** Space-time
-analogue of `weightedTV_le_liminf` for `weightedTVₓ` (paper (3.13)).
+analogue of `weightedTV_le_liminf` for `weightedTVₓ` (paper [(3.14)](#AFS:eqn:chiEst2)).
 
-A result from the literature: as for `weightedTV_le_liminf`. Paper: proof of Prop 4.1(iii) ("the
-lower semicontinuity of the weighted total variation under `L¹_loc` convergence").
+A result from the literature: as for `weightedTV_le_liminf`. Paper: proof of
+[Prop 4.1(iii)](#AFS:part.eps-estimates) ("the lower semicontinuity of the weighted total variation
+under `L¹_loc` convergence").
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/BV/TotalVariation.lean`):
 `GMTFoundations.weightedTVₓ_le_liminf`. -/
@@ -197,7 +203,7 @@ with an additive Haar measure `μ`, if `f_n → f` in `L¹(μ)` (all integrable)
 
 A result from the literature: Brezis, Theorem 4.26 and Corollary 4.27 (Riesz–Fréchet–Kolmogorov),
 necessity part (relatively compact sets in `L^p` are uniformly `L^p`-equicontinuous under
-translations). Paper: proof of Lemma 4.3, (4.10).
+translations). Paper: proof of [Lemma 4.3](#AFS:lem:chiConverge), [(A.8)](#AFS:eqn:nablaEst).
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/FrechetKolmogorov.lean`):
 `GMTFoundations.frechetKolmogorov_uniform_translation` (continuity of translation in `L¹` via
@@ -215,7 +221,7 @@ vanishing outside a fixed compact set `K`, and uniformly continuous under transl
 has a subsequence converging in `L¹(μ)`.
 
 A result from the literature: Brezis, Theorem 4.26 and Corollary 4.27 (Riesz–Fréchet–Kolmogorov).
-Paper: proof of Lemma 4.3 (compactness of `e_ε`).
+Paper: proof of [Lemma 4.3](#AFS:lem:chiConverge) (compactness of `e_ε`).
 
 Proved in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/FrechetKolmogorovCompact.lean`):
 `GMTFoundations.frechetKolmogorov_exists_subseq` (ball averages + Arzelà–Ascoli). -/
@@ -241,8 +247,9 @@ Lipschitz functions belong to `W^{1,∞}_loc`, with weak gradient equal to the a
 in gmt-foundations v0.1.0 (`GMTFoundations/Sobolev/Lipschitz.lean`):
 `GMTFoundations.memH1Loc_gradient_of_locallyLipschitzOn` (McShane extension + Mathlib's
 `LipschitzWith.integral_lineDeriv_mul_eq`). Paper: used implicitly whenever `J_Q(u; ·)` or `∇u` is
-taken for a locally Lipschitz `u` (e.g. Def 2.11 for the Perron solutions in Lemma 6.3; Lemma 2.12;
-Prop 2.14). -/
+taken for a locally Lipschitz `u` (e.g. [Def 2.15](#AFS:d.directional) for the Perron solutions in
+[Proposition 6.3](#AFS:p.downward); [Lemma 2.16](#AFS:l.directionalStable);
+[Prop 2.20](#AFS:p.two-plane-minimizing-props)). -/
 theorem memH1Loc_gradient_of_locallyLipschitzOn {U : Set (E d)} {u : E d → ℝ} (hU : IsOpen U)
     (hu : LocallyLipschitzOn U u) : MemH1Loc U u (∇ u) :=
   GMTFoundations.memH1Loc_gradient_of_locallyLipschitzOn hU hu
@@ -256,10 +263,11 @@ gradient `G`, `B_R(x) ⊂⊂ U` (`closedBall x R ⊆ U`), `w = 0` a.e. on `U \ B
 `∫_{B_R \ B_r} w² ≤ C (R - r)² ∫_{B_R \ B_r} |G|²`.
 
 A standard result (one-dimensional Poincaré inequality along rays, integrated in polar coordinates;
-e.g. Evans, §5.6.1, Theorem 3 for the method). Paper: proof of Lemma 2.12, Step 1 ("the Poincaré
-inequality on the annular domain `B₁ \ B_r` with zero outer-trace"). Proved in gmt-foundations
-v0.1.0 (`GMTFoundations/Sobolev/AnnulusPoincare.lean`):
-`GMTFoundations.poincare_annulus_zero_outer`, with `C = 4`. -/
+e.g. Evans, §5.6.1, Theorem 3 for the method). Paper: proof of
+[Lemma 2.16](#AFS:l.directionalStable), Step 1 ("the Poincaré inequality on the annular domain
+`B₁ \ B_r` with zero outer-trace"). Proved in gmt-foundations v0.1.0
+(`GMTFoundations/Sobolev/AnnulusPoincare.lean`): `GMTFoundations.poincare_annulus_zero_outer`, with
+`C = 4`. -/
 theorem poincare_annulus_zero_outer (d : ℕ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (U : Set (E d)) (w : E d → ℝ) (G : E d → E d) (x : E d) (R r : ℝ),
       IsOpen U → MemH1Loc U w G → 0 < R → closedBall x R ⊆ U → R / 2 ≤ r → r < R →

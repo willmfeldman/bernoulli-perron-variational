@@ -14,9 +14,10 @@ import PerronVariational.Inner.SliceHeat
 /-!
 # The truncation argument: from the equation in `{f > 0}` to an energy identity
 
-Tool for **Theorem 3.10**, Step 2, of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981,
-where this identity is used without the truncation argument being spelled out. Let `f ≥ 0` be
+Tool for **[Theorem 3.14](#AFS:t.longtime-inner)**, Step 2, of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981, where this identity is obtained by testing with `η max{u_∞ - δ, 0}` and sending
+`δ ↓ 0`; this file carries out that truncation argument. Let `f ≥ 0` be
 locally Lipschitz on the open set `U` and satisfy `∫_U a ζ = -∫_U ∇f · ∇ζ` for all Lipschitz `ζ`
 with compact support in `{f > 0}`. Then for all `η ∈ C¹_c(U)`,
 `∫_U a f η = -∫_U (|∇f|² η + f ∇f · ∇η)`.
@@ -27,7 +28,6 @@ convergence, using `∇f = 0` on `{f = 0} ∩ U` (minimum points).
 
 ## Main results
 
-* `PerronVariational.LongTime.lipschitzWith_of_locallyLipschitz_of_hasCompactSupport`
 * `PerronVariational.LongTime.integral_truncation_identity`
 -/
 
@@ -41,41 +41,6 @@ namespace PerronVariational
 namespace LongTime
 
 variable {d : ℕ}
-
-/-- A locally Lipschitz function with compact support is Lipschitz. -/
-theorem lipschitzWith_of_locallyLipschitz_of_hasCompactSupport {f : E d → ℝ}
-    (hf : LocallyLipschitz f) (hfc : HasCompactSupport f) : ∃ K, LipschitzWith K f := by
-  set S := tsupport f
-  set K' := cthickening 1 S
-  have hK' : IsCompact K' := hfc.isCompact.cthickening
-  obtain ⟨L, hL⟩ := (hf.locallyLipschitzOn (s := K')).exists_lipschitzOnWith_of_compact hK'
-  obtain ⟨M, hM⟩ := hfc.exists_bound_of_continuous hf.continuous
-  have hM0 : 0 ≤ M := (norm_nonneg _).trans (hM 0)
-  set C : ℝ≥0 := max L M.toNNReal
-  have hLC : (L : ℝ) ≤ C := by simp [C]
-  have hMC : M ≤ C := by simp [C, Real.coe_toNNReal _ hM0]
-  have hzero : ∀ y ∉ S, f y = 0 := fun y hy ↦ image_eq_zero_of_notMem_tsupport hy
-  have key : ∀ x y, x ∈ S → dist (f x) (f y) ≤ C * dist x y := by
-    intro x y hx
-    by_cases hy : y ∈ K'
-    · exact (hL.dist_le_mul x (self_subset_cthickening _ hx) y hy).trans
-        (mul_le_mul_of_nonneg_right hLC dist_nonneg)
-    · have hd : 1 < dist x y := by
-        by_contra h'
-        exact hy (mem_cthickening_of_dist_le y x 1 S hx (by rw [dist_comm]; linarith))
-      have hfy : f y = 0 := hzero y fun h ↦ hy (self_subset_cthickening _ h)
-      rw [hfy, dist_zero_right]
-      calc ‖f x‖ ≤ M := hM x
-        _ ≤ C := hMC
-        _ = C * 1 := (mul_one _).symm
-        _ ≤ C * dist x y := mul_le_mul_of_nonneg_left hd.le (NNReal.coe_nonneg _)
-  refine ⟨C, LipschitzWith.of_dist_le_mul fun x y ↦ ?_⟩
-  by_cases hx : x ∈ S
-  · exact key x y hx
-  by_cases hy : y ∈ S
-  · rw [dist_comm, dist_comm x]; exact key y x hy
-  rw [hzero x hx, hzero y hy, dist_self]
-  positivity
 
 /-- The derivative of `(g - δ)₊ η` at a differentiability point `x` of `g` with `g x ≠ δ`. -/
 theorem fderiv_trunc_mul {g η : E d → ℝ} {x : E d} {δ : ℝ} (hg : DifferentiableAt ℝ g x)

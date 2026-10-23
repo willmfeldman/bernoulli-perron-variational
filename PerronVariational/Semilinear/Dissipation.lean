@@ -12,12 +12,13 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.WellPosedData
 
 /-!
-# Energy dissipation for the semilinear problem (Proposition 3.8(iii))
+# Energy dissipation for the semilinear problem ([Proposition 3.12(ii)](#AFS:part.H1-continuity))
 
-The energy dissipation identity (A.1) of
+The energy dissipation identity [(B.1)](#AFS:eqn:dissipation) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
 in the Bernoulli one-phase problem*, arXiv:2609.14981
-(Appendix A.2), which is (3.8) of Proposition 3.8(iii).
+([Appendix B.2](#AFS:s.energy-estimates)), which is [(3.9)](#AFS:e.dissipation-eps) of
+[Proposition 3.12(ii)](#AFS:part.H1-continuity).
 
 The paper's argument is one line ("multiplying the equation by `∂ₜu_ε` and integrating on
 `U × [0, T]`"). Justifying it needs regularity of `u_ε` up to `t = 0` and up to `∂U` that the
@@ -40,11 +41,13 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- **Energy dissipation inequality** (A.1), i.e. (3.8) of Proposition 3.8(iii): for a solution
-`u` of (3.4) with Lipschitz data `g` on `Ū` and every `T > 0`,
-`½ J(u(T), χ_ε(T); U) + ∫₀ᵀ ∫_U (∂ₜu)² ≤ ½ J(g, χ_ε(0); U)`, with `χ_ε = 2 𝓑_ε(u)`.
-The paper states (A.1) as an equality; here we prove only the inequality `≤`, because only `≤` is
-used later, and the truncation argument gives it without regularity of `u` up to `∂U` or `t = 0`.
+/-- **Energy dissipation inequality** [(B.1)](#AFS:eqn:dissipation), i.e.
+[(3.9)](#AFS:e.dissipation-eps) of [Proposition 3.12(ii)](#AFS:part.H1-continuity): for a solution
+`u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear) with Lipschitz data `g` on `Ū` and every
+`T > 0`, `½ J(u(T), χ_ε(T); U) + ∫₀ᵀ ∫_U (∂ₜu)² ≤ ½ J(g, χ_ε(0); U)`, with `χ_ε = 2 𝓑_ε(u)`.
+The paper states [(B.1)](#AFS:eqn:dissipation) as an equality; here we prove only the inequality
+`≤`, because only `≤` is used later, and the truncation argument gives it without regularity of `u`
+up to `∂U` or `t = 0`.
 
 From `Registry.semilinear_energy_dissipation` (see the module docstring). -/
 theorem IsSemilinearSolution.dissipation (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β)

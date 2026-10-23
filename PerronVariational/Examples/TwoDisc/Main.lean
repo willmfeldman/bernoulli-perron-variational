@@ -23,12 +23,13 @@ In `U = B₁(0) \ (B̄_{1/20}(p) ∪ B̄_{1/20}(-p))`, `p = (1/10, 0)`, with `Q 
 `gSuper` agree on `∂U`, and:
 * `u_min = perronSmallest U 1 gSub` equals `(a log (a/|x - p|))₊ + (a log (a/|x + p|))₊` near `0`,
   so `0` is a two-plane point (`TwoPlane.lean`);
-* `u_min` is a viscosity solution ([AFS, Theorem 1.1]), continuous on `Ū`, and lies below
-  `gSuper₊` (`vSup_le_gSuper`), so `u_min ≤ u_max = perronLargest U 1 gSuper`; hence `u_max` is
-  positive near the holes, and it vanishes where `gSuper < 0`;
+* `u_min` is a viscosity solution ([AFS, [Theorem 1.1](#AFS:t.main)]), continuous on `Ū`, and lies
+  below `gSuper₊` (`vSup_le_gSuper`), so `u_min ≤ u_max = perronLargest U 1 gSuper`; hence `u_max`
+  is positive near the holes, and it vanishes where `gSuper < 0`;
 * `u_min ≠ u_max`: otherwise `0` would be a free boundary point of `u_max`, which is classical
-  there ([AFS, Corollary 1.2(ii)]); but `∇u_min(± t e₁) · e₁ = ± a/(a - t)`, so the continuous
-  extension `G` of `∇u_max` would satisfy `G(0) · e₁ ≥ 1` and `≤ -1`.
+  there ([AFS, [Corollary 1.2(ii)](#AFS:part.largest-reg)]); but
+  `∇u_min(± t e₁) · e₁ = ± a/(a - t)`, so the continuous extension `G` of `∇u_max` would satisfy
+  `G(0) · e₁ ≥ 1` and `≤ -1`.
 -/
 
 open Set Filter Topology Metric InnerProductSpace Real

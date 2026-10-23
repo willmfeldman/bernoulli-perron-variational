@@ -15,7 +15,7 @@ For the two-disc model example for F. Abedin, W. M. Feldman, K. Stinson, *Variat
 of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 (`[AFS]`):
 
 * `isStrictSub_gSub`: `gSub` is a smooth strict subsolution in `U` with `Q ≡ 1`
-  ([AFS, Definition 2.2]), with `a₀ = 1/1000`, `δ₀ = 1`;
+  ([AFS, [Definition 2.3](#AFS:d.strict-sub)]), with `a₀ = 1/1000`, `δ₀ = 1`;
 * `isStrictSuper_gSuper`: `gSuper` is a smooth strict supersolution, with `a₀ = 1/1000`,
   `δ₀ = 1/10`;
 * `gSub_eq_gSuper_of_mem_frontier`, `gSub_pos_of_mem_frontier`: the two data agree on `∂U`, where

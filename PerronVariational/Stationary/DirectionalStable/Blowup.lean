@@ -11,10 +11,11 @@ import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
-# Stability of directional minimality: blow-ups (Corollary 2.13)
+# Stability of directional minimality: blow-ups ([Corollary 2.18](#AFS:c.blow-up-directional))
 
-The affine change of variables `y ↦ x₀ + r y` (scaling invariance of Definition 2.11,
-`blowup_isDownwardMinimizer_scaled`) and **Corollary 2.13** of F. Abedin, W. M. Feldman, K. Stinson,
+The affine change of variables `y ↦ x₀ + r y` (scaling invariance of
+[Definition 2.15](#AFS:d.directional), `blowup_isDownwardMinimizer_scaled`)
+and **[Corollary 2.18](#AFS:c.blow-up-directional)** of F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981: `blowup_isDownwardMinimizer`, `blowup_isUpwardMinimizer`,
 `blowup_isUpwardMinimizer'`.
@@ -355,7 +356,7 @@ theorem posSet_blowup (hr0 : 0 < r) (f : E d → ℝ) (U : Set (E d)) :
     posSet (blowup f x₀ r) (affE x₀ r hr ⁻¹' U) = affE x₀ r hr ⁻¹' posSet f U := by
   ext y; exact mem_posSet_blowup hr hr0
 
-/-- The regularity part (i) of Definition 2.11 is invariant under blow-up. -/
+/-- The regularity part (i) of [Definition 2.15](#AFS:d.directional) is invariant under blow-up. -/
 theorem blowup_regular {U : Set (E d)} {u : E d → ℝ} (hr0 : 0 < r)
     (hopen : IsOpen (posSet u U)) (hc2 : ContDiffOn ℝ 2 u (posSet u U))
     (hΔ : ∀ x ∈ posSet u U, Δ u x = 0) :
@@ -373,7 +374,7 @@ end Affine
 
 end Scaling
 
-/-! ### Corollary 2.13: blow-ups -/
+/-! ### [Corollary 2.18](#AFS:c.blow-up-directional): blow-ups -/
 
 section Blowup
 
@@ -406,8 +407,9 @@ theorem blowup_locallyLipschitzOn {U : Set (E d)} {u : E d → ℝ} (huL : Local
     ho.preimage (continuous_affine x₀ r), hyo, fun z hz ↦ hot ⟨hz.1, hz.2⟩⟩, ?_⟩
   exact LipschitzOnWith.of_dist_le_mul fun a ha b hb ↦ dist_blowup_le hr hK ha hb
 
-/-- **Scaling invariance of directional minimality** (implicit in the proof of Corollary 2.13):
-the blow-up `u_{x₀,r}` is a downward minimizer of `J_{Q(x₀ + r ·)}` in `U_{x₀,r}`. -/
+/-- **Scaling invariance of directional minimality** (implicit in the proof of
+[Corollary 2.18](#AFS:c.blow-up-directional)): the blow-up `u_{x₀,r}` is a downward minimizer of
+`J_{Q(x₀ + r ·)}` in `U_{x₀,r}`. -/
 theorem blowup_isDownwardMinimizer_scaled {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ}
     (hmin : IsDownwardMinimizer U Q u) (x₀ : E d) {r : ℝ} (hr : 0 < r) :
     IsDownwardMinimizer (blowupDomain U x₀ r) (fun y ↦ Q (x₀ + r • y)) (blowup u x₀ r) := by
@@ -425,8 +427,9 @@ theorem blowup_isUpwardMinimizer_scaled {U : Set (E d)} (hU : IsOpen U) {Q u : E
   exact ⟨⟨_, memH1Loc_blowup hr.ne' hU hG⟩, h1, h2, h3, blowup_minimality_scaled hr.ne' hU hr
     (fun a b ↦ b ≤ a) (fun a b c hc h ↦ div_le_div_of_nonneg_right h hc.le) hmin'⟩
 
-/-- The blow-up sequence along `rₙ → 0⁺` satisfies the hypotheses of Lemma 2.12 on the
-exhausting domains `U_{x₀,rₙ}`, with `Qₙ = Q(x₀ + rₙ ·) → Q(x₀)`. -/
+/-- The blow-up sequence along `rₙ → 0⁺` satisfies the hypotheses of
+[Lemma 2.16](#AFS:l.directionalStable) on the exhausting domains `U_{x₀,rₙ}`, with
+`Qₙ = Q(x₀ + rₙ ·) → Q(x₀)`. -/
 theorem exhaustData_blowup {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ} {Qmax : ℝ}
     (hQc : ContinuousOn Q U) (hQb : ∀ y ∈ U, |Q y| ≤ Qmax) (huL : LocallyLipschitzOn U u)
     {x₀ : E d} (hx₀ : x₀ ∈ U) {r : ℕ → ℝ} (hr : ∀ n, 0 < r n) (hr0 : Tendsto r atTop (𝓝 0))
@@ -474,7 +477,7 @@ theorem exhaustData_blowup {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ} {
       simpa using tendsto_const_nhds.add (hr0.smul_const y)
     exact (hQc.continuousAt (hU.mem_nhds hx₀)).tendsto.comp hA
 
-/-- **Corollary 2.13(i)**. Let `u` be locally Lipschitz in `U`,
+/-- **[Corollary 2.18(i)](#AFS:part.blow-up-directional-1)**. Let `u` be locally Lipschitz in `U`,
 `Q` continuous and bounded on `U` (the paper: `Q ∈ C^{0,1}`, `Q_min ≤ Q ≤ Q_max`), and
 `x₀ ∈ U`. If `u` is a downward minimizer of `J_Q` in `U`, then every blow-up limit `v` of `u` at
 `x₀` is a downward minimizer of `J_{Q(x₀)}` in `ℝᵈ`. -/
@@ -486,7 +489,8 @@ theorem blowup_isDownwardMinimizer {U : Set (E d)} (hU : IsOpen U) {Q u : E d �
   exact isDownwardMinimizer_of_exhaust (exhaustData_blowup hU hQc hQb huL hx₀ hr hr0 hconv)
     fun n ↦ blowup_isDownwardMinimizer_scaled hU hmin x₀ (hr n)
 
-/-- **Corollary 2.13(ii)**, without the inner-variational hypothesis. -/
+/-- **[Corollary 2.18(ii)](#AFS:c.blow-up-directional)**, without the inner-variational
+hypothesis. -/
 theorem blowup_isUpwardMinimizer' {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ} {Qmax : ℝ}
     (hQc : ContinuousOn Q U) (hQb : ∀ y ∈ U, |Q y| ≤ Qmax) (huL : LocallyLipschitzOn U u)
     {x₀ : E d} (hx₀ : x₀ ∈ U) (hmin : IsUpwardMinimizer U Q u) {v : E d → ℝ}
@@ -495,8 +499,8 @@ theorem blowup_isUpwardMinimizer' {U : Set (E d)} (hU : IsOpen U) {Q u : E d →
   exact isUpwardMinimizer_of_exhaust (exhaustData_blowup hU hQc hQb huL hx₀ hr hr0 hconv)
     fun n ↦ blowup_isUpwardMinimizer_scaled hU hmin x₀ (hr n)
 
-/-- **Corollary 2.13(ii)**, with the paper's inner-variational
-hypothesis (not needed by the proof, `blowup_isUpwardMinimizer'`). -/
+/-- **[Corollary 2.18(ii)](#AFS:c.blow-up-directional)**, with an additional inner-variational
+hypothesis (not needed, `blowup_isUpwardMinimizer'`). -/
 theorem blowup_isUpwardMinimizer {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ} {Qmax : ℝ}
     (hQc : ContinuousOn Q U) (hQb : ∀ y ∈ U, |Q y| ≤ Qmax) (huL : LocallyLipschitzOn U u)
     {x₀ : E d} (hx₀ : x₀ ∈ U) (hmin : IsUpwardMinimizer U Q u) {χ : E d → ℝ}

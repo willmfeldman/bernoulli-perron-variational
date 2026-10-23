@@ -15,13 +15,13 @@ import PerronVariational.Registry.Elliptic
 import PerronVariational.Registry.FunctionalAnalysis
 
 /-!
-# Stability of directional minimality: Lemma 2.12
+# Stability of directional minimality: [Lemma 2.16](#AFS:l.directionalStable)
 
-**Lemma 2.12** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the limit `s → R`, harmonicity of
-the limit (`harmonic_of_tendsto`), `isDownwardMinimizer_of_tendsto`, `isUpwardMinimizer_of_tendsto`,
-and the version on domains exhausting `ℝᵈ` (`isDownwardMinimizer_of_exhaust`, used for Corollary
-2.13).
+**[Lemma 2.16](#AFS:l.directionalStable)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the
+limit `s → R`, harmonicity of the limit (`harmonic_of_tendsto`), `isDownwardMinimizer_of_tendsto`,
+`isUpwardMinimizer_of_tendsto`, and the version on domains exhausting `ℝᵈ`
+(`isDownwardMinimizer_of_exhaust`, used for [Corollary 2.18](#AFS:c.blow-up-directional)).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -81,7 +81,7 @@ theorem tendsto_errors (hR : 0 < R) {Gu Gv : E d → E d} {CP : ℝ}
   simp only [add_zero] at this
   simpa only [annBound, Pi.sub_apply] using this
 
-/-- **Lemma 2.12, Step 1 (downward case), on one ball.** -/
+/-- **[Lemma 2.16](#AFS:l.directionalStable), Step 1 (downward case), on one ball.** -/
 theorem energyJ_le_of_down (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     (hu : MemH1Loc U u Gu) {v : E d → ℝ} {Gv : E d → E d} (hv : MemH1Loc U v Gv)
     (hvu : ∀ᵐ y ∂(volume.restrict U), v y ≤ u y)
@@ -123,8 +123,8 @@ theorem energyJ_le_of_down (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d 
             ∫⁻ _ in ball x R \ ball x s, ENNReal.ofReal (Qmax ^ 2)) := add_le_add hstep hA
     _ = _ := add_assoc _ _ _
 
-/-- **Lemma 2.12, Step 2 (upward case), on one ball.** Unlike the paper, no inner-variational
-hypothesis is needed (lattice identity instead of `1_{uₙ>0} → 1_{u>0}` in `L¹`). -/
+/-- **[Lemma 2.16](#AFS:l.directionalStable), Step 2 (upward case), on one ball.** No
+inner-variational hypothesis is needed (lattice identity). -/
 theorem energyJ_le_of_up (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d → E d}
     (hu : MemH1Loc U u Gu) {v : E d → ℝ} {Gv : E d → E d} (hv : MemH1Loc U v Gv)
     (hvu : ∀ᵐ y ∂(volume.restrict U), u y ≤ v y)
@@ -168,12 +168,13 @@ theorem energyJ_le_of_up (D : StabData U x R t u Q un Qn Un L Qmax) {Gu : E d �
 
 end Limit
 
-/-! ### Lemma 2.12 -/
+/-! ### [Lemma 2.16](#AFS:l.directionalStable) -/
 
 section Lemma211
 
-/-- Uniformly locally Lipschitz sequences (the hypothesis (2.8) of Lemma 2.12,
-in the equivalent form of uniform Lipschitz bounds on small balls). -/
+/-- Uniformly locally Lipschitz sequences (the hypothesis [(2.8)](#AFS:eqn:locallocalLip) of
+[Lemma 2.16](#AFS:l.directionalStable), in the equivalent form of uniform Lipschitz bounds on small
+balls). -/
 def UnifLocLip (U : Set (E d)) (un : ℕ → E d → ℝ) : Prop :=
   ∀ y ∈ U, ∃ ε > 0, ball y ε ⊆ U ∧ ∃ L : ℝ≥0, ∀ n, LipschitzOnWith L (un n) (ball y ε)
 
@@ -274,9 +275,10 @@ theorem integral_inner_gradient_eq_zero_of_harmonic {V : Set (E d)} (hV : IsOpen
     exact integrableOn_mul_of_tsupport_subset hV (hc.locallyIntegrableOn hV.measurableSet)
       hφ.continuous hφc hφV
 
-/-- **Harmonicity of the limit in its positivity set** (proof of Lemma 2.12: "It is clear from the
-locally uniform convergence that `u` is harmonic in its positivity set"): weak harmonicity passes to
-the limit, then Weyl's lemma (from viscosity-solution-theory v0.2.0). -/
+/-- **Harmonicity of the limit in its positivity set** (proof of
+[Lemma 2.16](#AFS:l.directionalStable): "It is clear from the locally uniform convergence that `u`
+is harmonic in its positivity set"): weak harmonicity passes to the limit, then Weyl's lemma (from
+viscosity-solution-theory v0.2.0). -/
 theorem harmonic_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ} {un : ℕ → E d → ℝ}
     (hunL : ∀ n, LocallyLipschitzOn U (un n)) (huL : LocallyLipschitzOn U u)
     (hconv : TendstoLocallyUniformlyOn un u atTop U)
@@ -337,11 +339,11 @@ theorem stabData_of {U : Set (E d)} (hU : IsOpen U) {u Q : E d → ℝ} {un Qn :
     (tendstoLocallyUniformlyOn_iff_forall_isCompact hU).1 hconv _ hB (isCompact_closedBall x R),
     fun n ↦ (hQc n).mono hB, fun n y hy ↦ hQb n y (hB hy), fun y hy ↦ hQconv y (hB hy)⟩
 
-/-- **Lemma 2.12 (i)**. Let `uₙ` be uniformly locally
-Lipschitz on the open set `U` ((2.8)), `uₙ → u` locally uniformly in `U`, and let `Qₙ` be
-continuous on `U` with `|Qₙ| ≤ Q_max`, `Qₙ → Q` pointwise in `U` (the paper assumes locally
-uniform convergence and `Q_min ≤ Qₙ ≤ Q_max`). If the `uₙ` are downward minimizers of `J_{Qₙ}` in
-`U`, then `u` is a downward minimizer of `J_Q` in `U`. -/
+/-- **[Lemma 2.16 (i)](#AFS:l.directionalStable)**. Let `uₙ` be uniformly locally
+Lipschitz on the open set `U` ([(2.8)](#AFS:eqn:locallocalLip)), `uₙ → u` locally uniformly in `U`,
+and let `Qₙ` be continuous on `U` with `|Qₙ| ≤ Q_max`, `Qₙ → Q` pointwise in `U` (the paper assumes
+locally uniform convergence and `Q_min ≤ Qₙ ≤ Q_max`). If the `uₙ` are downward minimizers of
+`J_{Qₙ}` in `U`, then `u` is a downward minimizer of `J_Q` in `U`. -/
 theorem isDownwardMinimizer_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u Q : E d → ℝ}
     {un Qn : ℕ → E d → ℝ} {Qmax : ℝ} (hlip : UnifLocLip U un)
     (hconv : TendstoLocallyUniformlyOn un u atTop U)
@@ -358,7 +360,8 @@ theorem isDownwardMinimizer_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u Q : E 
   exact energyJ_le_of_down D hGu hGv hvu hvu' fun n w Gw hw h1 h2 ↦
     (hmin n).2.2.2.2 x R hR hB _ w Gw (D.memH1Loc_n n) hw h1 h2
 
-/-- **Lemma 2.12 (ii)**, without the inner-variational hypothesis (see the module docstring). -/
+/-- **[Lemma 2.16 (ii)](#AFS:l.directionalStable)**, without the inner-variational hypothesis (see
+the module docstring). -/
 theorem isUpwardMinimizer_of_tendsto' {U : Set (E d)} (hU : IsOpen U) {u Q : E d → ℝ}
     {un Qn : ℕ → E d → ℝ} {Qmax : ℝ} (hlip : UnifLocLip U un)
     (hconv : TendstoLocallyUniformlyOn un u atTop U)
@@ -375,10 +378,10 @@ theorem isUpwardMinimizer_of_tendsto' {U : Set (E d)} (hU : IsOpen U) {u Q : E d
   exact energyJ_le_of_up D hGu hGv hvu hvu' fun n w Gw hw h1 h2 ↦
     (hmin n).2.2.2.2 x R hR hB _ w Gw (D.memH1Loc_n n) hw h1 h2
 
-/-- **Lemma 2.12 (ii)**, with the paper's hypotheses: if the `uₙ`
-are upward minimizers of `J_{Qₙ}` in `U` and inner variational solutions (the latter hypothesis
-is not needed by our proof, `isUpwardMinimizer_of_tendsto'`), then `u` is an upward minimizer of
-`J_Q` in `U`. -/
+/-- **[Lemma 2.16 (ii)](#AFS:l.directionalStable)**, with an additional inner-variational
+hypothesis: if the `uₙ` are upward minimizers of `J_{Qₙ}` in `U` and inner variational solutions
+(the latter hypothesis is not needed, `isUpwardMinimizer_of_tendsto'`), then `u` is an upward
+minimizer of `J_Q` in `U`. -/
 theorem isUpwardMinimizer_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u Q : E d → ℝ}
     {un Qn : ℕ → E d → ℝ} {Qmax : ℝ} (hlip : UnifLocLip U un)
     (hconv : TendstoLocallyUniformlyOn un u atTop U)
@@ -390,13 +393,15 @@ theorem isUpwardMinimizer_of_tendsto {U : Set (E d)} (hU : IsOpen U) {u Q : E d 
 
 end Lemma211
 
-/-! ### Lemma 2.12 on exhausting domains (used for Corollary 2.13) -/
+/-! ### [Lemma 2.16](#AFS:l.directionalStable) on exhausting domains
+
+Used for [Corollary 2.18](#AFS:c.blow-up-directional). -/
 
 section Exhaust
 
-/-- Hypotheses of Lemma 2.12 for a sequence of functions `uₙ` defined on open sets `Uₙ`
-exhausting `ℝᵈ` (every compact set lies in `Uₙ` for large `n`), with uniform Lipschitz bounds on
-small balls for large `n`, converging locally uniformly on `ℝᵈ`. -/
+/-- Hypotheses of [Lemma 2.16](#AFS:l.directionalStable) for a sequence of functions `uₙ` defined on
+open sets `Uₙ` exhausting `ℝᵈ` (every compact set lies in `Uₙ` for large `n`), with uniform
+Lipschitz bounds on small balls for large `n`, converging locally uniformly on `ℝᵈ`. -/
 structure ExhaustData (un Qn : ℕ → E d → ℝ) (Un : ℕ → Set (E d)) (v Q : E d → ℝ) (Qmax : ℝ) :
     Prop where
   isOpen : ∀ n, IsOpen (Un n)
@@ -479,7 +484,7 @@ theorem harmonic (hc2 : ∀ n, ContDiffOn ℝ 2 (un n) (posSet (un n) (Un n)))
 
 end ExhaustData
 
-/-- **Lemma 2.12 (i) on exhausting domains.** -/
+/-- **[Lemma 2.16 (i)](#AFS:l.directionalStable) on exhausting domains.** -/
 theorem isDownwardMinimizer_of_exhaust {un Qn : ℕ → E d → ℝ} {Un : ℕ → Set (E d)}
     {v Q : E d → ℝ} {Qmax : ℝ} (D : ExhaustData un Qn Un v Q Qmax)
     (hmin : ∀ n, IsDownwardMinimizer (Un n) (Qn n) (un n)) : IsDownwardMinimizer univ Q v := by
@@ -492,7 +497,8 @@ theorem isDownwardMinimizer_of_exhaust {un Qn : ℕ → E d → ℝ} {Un : ℕ �
   exact energyJ_le_of_down S hGu hGw hwu hwu' fun k w' Gw' hw' h1 h2 ↦
     (hmin (k + N)).2.2.2.2 x R hR (hRsub k) _ w' Gw' (S.memH1Loc_n k) hw' h1 h2
 
-/-- **Lemma 2.12 (ii) on exhausting domains** (no inner-variational hypothesis needed). -/
+/-- **[Lemma 2.16 (ii)](#AFS:l.directionalStable) on exhausting domains** (no inner-variational
+hypothesis needed). -/
 theorem isUpwardMinimizer_of_exhaust {un Qn : ℕ → E d → ℝ} {Un : ℕ → Set (E d)}
     {v Q : E d → ℝ} {Qmax : ℝ} (D : ExhaustData un Qn Un v Q Qmax)
     (hmin : ∀ n, IsUpwardMinimizer (Un n) (Qn n) (un n)) : IsUpwardMinimizer univ Q v := by

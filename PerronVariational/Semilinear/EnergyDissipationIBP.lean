@@ -19,9 +19,9 @@ import PerronVariational.Semilinear.Calculus
 /-!
 # Energy dissipation, part 1: interior integration by parts and truncations
 
-Tools for the proof of the energy dissipation inequality (A.1), i.e. (3.8), of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981:
+Tools for the proof of the energy dissipation inequality [(B.1)](#AFS:eqn:dissipation), i.e.
+[(3.9)](#AFS:e.dissipation-eps), of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
 every integration by parts is performed against a test function with
 compact support in `U`, obtained by truncating (in the values) a function that vanishes on `∂U`.
 
@@ -371,13 +371,6 @@ theorem trunc_nonpos {σ s : ℝ} (hs : s ≤ 0) : trunc σ s ≤ 0 := by
   rw [intervalIntegral.integral_symm]
   exact neg_nonpos.2 (intervalIntegral.integral_nonneg hs fun r _ ↦ truncDeriv_nonneg σ r)
 
-theorem mul_trunc_nonneg (σ s : ℝ) : 0 ≤ s * trunc σ s := by
-  rcases le_total 0 s with h | h
-  · exact mul_nonneg h (trunc_nonneg h)
-  · exact mul_nonneg_of_nonpos_of_nonpos h (trunc_nonpos h)
-
-theorem trunc_zero (σ : ℝ) : trunc σ 0 = 0 := by simp [trunc]
-
 theorem eventually_truncDeriv_eq_one {s : ℝ} (hs : s ≠ 0) :
     ∀ᶠ σ in 𝓝[>] (0 : ℝ), truncDeriv σ s = 1 := by
   filter_upwards [Ioo_mem_nhdsGT (half_pos (abs_pos.2 hs))] with σ hσ
@@ -445,8 +438,6 @@ theorem tendsto_trunc (s : ℝ) : Tendsto (fun σ ↦ trunc σ s) (𝓝[>] (0 : 
 
 theorem hasDerivAt_truncPrim (σ s : ℝ) : HasDerivAt (truncPrim σ) (trunc σ s) s :=
   ((continuous_trunc σ).integral_hasStrictDerivAt 0 s).hasDerivAt
-
-theorem truncPrim_zero (σ : ℝ) : truncPrim σ 0 = 0 := by simp [truncPrim]
 
 theorem truncPrim_nonneg (σ s : ℝ) : 0 ≤ truncPrim σ s := by
   unfold truncPrim

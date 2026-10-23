@@ -11,21 +11,19 @@ public import PerronVariational.Stationary.TwoPlane.OneDim
 public import PerronVariational.Stationary.TwoPlane.Step3
 
 /-!
-# Proposition 2.14: one-sided minimality of two-plane solutions
+# [Proposition 2.20](#AFS:p.two-plane-minimizing-props): one-sided minimality of two-plane solutions
 
-**Proposition 2.14** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. Let `φ_α(x) = α |x · e|`
-(`twoPlane α e`, `e` a unit vector) and `Q ≡ q > 0`. Then
+**[Proposition 2.20](#AFS:p.two-plane-minimizing-props)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981. Let `φ_α(x) = α |x · e|` (`twoPlane α e`, `e` a unit vector) and `Q ≡ q > 0`. Then
 1. `φ_α` is not an upward minimizer of `J_q` in `ℝᵈ` for any `α > 0`
    (`twoPlane_not_upwardMinimizer`);
 2. `φ_α` is a downward minimizer of `J_q` in `ℝᵈ` iff `α ≥ q`
    (`twoPlane_downwardMinimizer_of_le`, `twoPlane_not_downwardMinimizer_of_lt`).
 
-Minimality is in the sense of Definition 2.11 (`IsUpwardMinimizer`, `IsDownwardMinimizer`). The
-paper's definition assumes `u ∈ H¹(U)` and compares `J_Q(·; U)`; here we assume `u ∈ H¹_loc(U)`
-and compare the energies on the ball where the competitor differs, because on `U = ℝᵈ` the
-two-plane functions are not in `H¹(ℝᵈ)` and every energy is infinite, so the literal definition
-is vacuous there. The two versions agree when `J_Q(u; U) < ∞`.
+Minimality is in the sense of [Definition 2.15](#AFS:d.directional) (`IsUpwardMinimizer`,
+`IsDownwardMinimizer`): `H¹_loc` competitors, with the energies compared on the ball where the
+competitor differs.
 
 ## Proof notes
 
@@ -55,12 +53,13 @@ is vacuous there. The two versions agree when `J_Q(u; U) < ∞`.
 * `PerronVariational.Stationary.TwoPlane.Basic`: one-dimensional calculus (Steps 1 and 3), the
   two-plane function `twoPlane` and its regularity.
 * `PerronVariational.Stationary.TwoPlane.Step2`: the first-variation competitor for
-  Proposition 2.14 (1), coordinates adapted to `e`, the cut-off `cylBump` and Step 2.
+  [Proposition 2.20](#AFS:p.two-plane-minimizing-props) (1), coordinates adapted to `e`, the cut-off
+  `cylBump` and Step 2.
 * `PerronVariational.Stationary.TwoPlane.OneDim`: the one-dimensional downward minimality
   (`oneDim_core`, `oneDim_downward`) and weak derivatives on the line
   (`exists_primitive_of_weakDeriv`).
 * `PerronVariational.Stationary.TwoPlane.Step3`: slices and marginals, the ACL property along `e`,
-  Step 3 and Proposition 2.14.
+  Step 3 and [Proposition 2.20](#AFS:p.two-plane-minimizing-props).
 -/
 
 @[expose] public section

@@ -17,10 +17,11 @@ import PerronVariational.Registry.FunctionalAnalysis
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# `L¹_loc` compactness of `χ_ε` (Lemma 4.3)
+# `L¹_loc` compactness of `χ_ε` ([Lemma 4.3](#AFS:lem:chiConverge))
 
-The compactness part of **Lemma 4.3** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+The compactness part of **[Lemma 4.3](#AFS:lem:chiConverge)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
 * `Inner.exists_tendstoLpLoc_subseq_of_translation`: a sequence of functions bounded by `1` on an
   open `Ω ⊆ ℝᵈ × ℝ`, continuous on `Ω`, and uniformly `L¹`-continuous under translations on every
@@ -453,14 +454,15 @@ theorem abs_chiEps_add_sub_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ} 
     (mul_le_mul_of_nonneg_right (hL r hr) (norm_nonneg _))
   nlinarith
 
-/-! ### Lemma 4.3: `L¹_loc` compactness of `χ_ε` -/
+/-! ### [Lemma 4.3](#AFS:lem:chiConverge): `L¹_loc` compactness of `χ_ε` -/
 
 section ChiEps
 
 variable {β : ℝ → ℝ}
 
-/-- **Spatial translation estimate for `χ_ε`** (the BV bound (4.7), used as in (4.9)):
-uniformly in `n` (large), `∫_A |χ_n(x + h, t) - χ_n(x, t)|` is small for small `h`. -/
+/-- **Spatial translation estimate for `χ_ε`** (the BV bound [(4.7)](#AFS:eqn:chiEpsBV), used as in
+[(A.7)](#AFS:eqn:spatialEst)): uniformly in `n` (large), `∫_A |χ_n(x + h, t) - χ_n(x, t)|` is small
+for small `h`. -/
 theorem chiEps_space_translation (S : Setting d) (hβ : IsReactionProfile β)
     {ε : ℕ → ℝ} (hε : ∀ n, 0 < ε n) (hε0 : Tendsto ε atTop (𝓝 0)) {g : ℕ → E d → ℝ}
     {G : ℕ → E d → E d} {v : ℕ → E d × ℝ → ℝ} {M : ℝ} {E0 : ℝ≥0∞}

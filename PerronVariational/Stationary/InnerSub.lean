@@ -10,11 +10,12 @@ import PerronVariational.Main.Directional
 import PerronVariational.Stationary.ConeDensity
 
 /-!
-# Inner variational solutions are viscosity subsolutions (Lemma 2.9)
+# Inner variational solutions are viscosity subsolutions
 
-**Lemma 2.9** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: if `(u, χ)` is an inner
-variational solution of (1.1) in `U` then `u` is a viscosity subsolution of (1.1) in `U`.
+**[Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: if `(u, χ)` is an inner variational solution of [(1.1)](#AFS:e.bernoulli-basic) in
+`U` then `u` is a viscosity subsolution of [(1.1)](#AFS:e.bernoulli-basic) in `U`.
 
 The proof follows the paper, using two results of
 D. Kriventsov, G. S. Weiss, *Rectifiability, finite Hausdorff measure, and compactness for
@@ -57,9 +58,9 @@ theorem posSet_diff_of_subset_frontier {U T : Set (E d)} {u : E d → ℝ}
   rw [frontier, hP.interior_eq] at this
   exact this.2 hy
 
-/-- **Lemma 2.9**, at a point of `Σ^H`: if `φ₊`
+/-- **[Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)**, at a point of `Σ^H`: if `φ₊`
 touches `u` from above in `\overline{{u > 0}} ∩ U` at `x₀ ∈ Σ^H` and `χ = 1_{u > 0}` a.e. in
-`U`, then `Δφ(x₀) ≥ 0` (proof of Lemma 2.9). -/
+`U`, then `Δφ(x₀) ≥ 0` (proof of [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)). -/
 theorem laplacian_nonneg_of_touchesAbove_highDensitySet {U : Set (E d)} {u χ φ : E d → ℝ}
     {x : E d} (hU : IsOpen U) (hu : ContinuousOn u U) (hnn : ∀ y ∈ U, 0 ≤ u y)
     (hχ : ∀ᵐ y ∂(volume.restrict U), χ y = (posSet u U).indicator 1 y)
@@ -115,10 +116,11 @@ theorem laplacian_nonneg_of_touchesAbove_highDensitySet {U : Set (E d)} {u χ φ
     (fun r hr v hv ↦ hKneg r ⟨hr.1, hr.2.trans_le (min_le_left _ _)⟩ v hv)
     (hdisj _ (min_le_right _ _)) hxH.2
 
-/-- **Lemma 2.9**. Let `U` be open and
+/-- **[Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)**. Let `U` be open and
 connected, `Q` Lipschitz on `U` with `0 < c ≤ Q ≤ C` on `U`. If `(u, χ)` is an inner variational
-solution of (1.1) in `U` (Definition 2.8), then `u` is a viscosity subsolution of (1.1) in `U`
-(Definition 2.1(ii)).
+solution of [(1.1)](#AFS:e.bernoulli-basic) in `U` ([Definition 2.11](#AFS:d.stationary-inner)),
+then `u` is a viscosity subsolution of [(1.1)](#AFS:e.bernoulli-basic) in `U`
+([Definition 2.1(ii)](#AFS:d.stationary-viscosity)).
 
 Uses the results of Kriventsov–Weiss `Registry.innerVar_dichotomy` and
 `Registry.isViscSolution_diff_highDensitySet`. -/

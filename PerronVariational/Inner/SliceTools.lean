@@ -11,22 +11,23 @@ import Mathlib.Topology.UrysohnsLemma
 /-!
 # Measurability and local bounds for the spatial gradient
 
-Tools for the time localization in the proof of **Theorem 3.10** of F. Abedin, W. M. Feldman,
-K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase
-problem*, arXiv:2609.14981: for `u` continuous on an open space-time set `Ω` and locally Lipschitz
-in space (Definition 3.7(i)), the pointwise spatial gradient `gradₓ u` is locally bounded and
-locally integrable on `Ω`, hence a.e.-strongly measurable on `Ω`.
+Tools for the time localization in the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F.
+Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+Bernoulli one-phase problem*, arXiv:2609.14981: for `u` continuous on an open space-time set `Ω` and
+locally Lipschitz in space ([Definition 3.8(i)](#AFS:d.parabolic-inner)), the pointwise spatial
+gradient `gradₓ u` is locally bounded and locally integrable on `Ω`, hence a.e.-strongly measurable
+on `Ω`.
 
-Definition 3.7(i) of the paper assumes `∇u ∈ L^∞_loc`; here we assume local spatial Lipschitz
-bounds, uniform in time near each point, which is equivalent for continuous `u`.
+[Definition 3.8(i)](#AFS:d.parabolic-inner) of the paper assumes `∇u ∈ L^∞_loc`; here we assume
+local spatial Lipschitz bounds, uniform in time near each point, which is equivalent for continuous
+`u`.
 
 ## Main results
 
 * `PerronVariational.LongTime.measurable_gradₓ_of_continuous`
 * `PerronVariational.LongTime.exists_cutoff`: continuous cutoffs `θ = 1` near a compact set.
 * `PerronVariational.LongTime.norm_gradₓ_le_of_lip`: local bound from the local Lipschitz bound.
-* `PerronVariational.LongTime.locallyIntegrableOn_gradₓ`,
-  `PerronVariational.LongTime.aestronglyMeasurable_gradₓ`.
+* `PerronVariational.LongTime.locallyIntegrableOn_gradₓ`.
 -/
 
 open Set Filter Topology MeasureTheory Metric InnerProductSpace
@@ -83,7 +84,8 @@ theorem continuous_cutoff_mul {Ω : Set (E d × ℝ)} (hΩ : IsOpen Ω) {θ u : 
       (notMem_tsupport_iff_eventuallyEq.1 hnot).mono fun q hq ↦ by simp [hq]
     exact (continuousAt_const).congr h0
 
-/-- The local Lipschitz bound of Definition 3.7(i) bounds `gradₓ u` near `p`. -/
+/-- The local Lipschitz bound of [Definition 3.8(i)](#AFS:d.parabolic-inner) bounds `gradₓ u` near
+`p`. -/
 theorem norm_gradₓ_le_of_lip {u : E d × ℝ → ℝ} {p : E d × ℝ} {K : ℝ} {N : Set (E d × ℝ)}
     (hN : N ∈ 𝓝 p)
     (hK : ∀ q ∈ N, ∀ q' ∈ N, q.2 = q'.2 → |u q - u q'| ≤ K * ‖q.1 - q'.1‖) :
@@ -137,12 +139,6 @@ theorem locallyIntegrableOn_gradₓ {Ω : Set (E d × ℝ)} (hΩ : IsOpen Ω) {u
   · exact (ae_restrict_mem measurableSet_ball).mono fun q hq ↦ heq q hq
   · exact (ae_restrict_mem measurableSet_ball).mono fun q hq ↦
       hbound q (ball_subset_ball (min_le_left _ _) hq)
-
-/-- `gradₓ u` is a.e.-strongly measurable on `U_∞` for a parabolic inner variational solution. -/
-theorem aestronglyMeasurable_gradₓ {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
-    {u w χ : E d × ℝ → ℝ} (h : IsParaInnerVarSolution U Q u w χ) :
-    AEStronglyMeasurable (gradₓ u) (volume.restrict (UInf U)) :=
-  (locallyIntegrableOn_gradₓ (hU.prod isOpen_Ioi) h.continuousOn h.locLipₓ).aestronglyMeasurable
 
 /-- `gradₓ u` is locally integrable on `U_∞` for a parabolic inner variational solution. -/
 theorem IsParaInnerVarSolution.locallyIntegrableOn_gradₓ {U : Set (E d)} (hU : IsOpen U)

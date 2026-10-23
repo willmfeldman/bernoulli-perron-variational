@@ -12,9 +12,9 @@ import Mathlib.Order.CompletePartialOrder
 /-!
 # Time slices of space-time integrals
 
-Tools for the time localization in the proof of **Theorem 3.10** (Steps 2 and 4) of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
-the Bernoulli one-phase problem*, arXiv:2609.14981:
+Tools for the time localization in the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** (Steps 2
+and 4) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
+solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
 
 * `PerronVariational.LongTime.ae_setIntegral_slice_eq_zero`: du Bois-Reymond in time: if
   `∫_{A × I} ψ(s) h(x, s) = 0` for all `ψ ∈ C_c^∞(T)` (`T ⊆ I` open), then

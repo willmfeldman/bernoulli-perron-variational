@@ -15,14 +15,13 @@ import Mathlib.Analysis.InnerProductSpace.Calculus
 # Second-order calculus for viscosity test functions
 
 Pointwise facts about the gradient and the Laplacian of `C²` functions used by the viscosity
-theory of §2 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+theory of [§2](#AFS:s.concepts) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
 
 * `iteratedFDeriv_two_eq_of_isLittleO`: a second-order expansion along a line identifies the
   value, the directional derivative and the second directional derivative;
-* `laplacian_eq_of_sub_isLittleO`, `laplacian_eq_of_sub_isBigO_pow_three`: two `C²` functions
-  whose difference vanishes to second order at `x` ("zero 2-jet") have the same value, gradient
-  and Laplacian at `x`;
+* `laplacian_eq_of_sub_isLittleO`: two `C²` functions whose difference vanishes to second order
+  at `x` ("zero 2-jet") have the same value, gradient and Laplacian at `x`;
 * `IsLocalMax.laplacian_nonpos`, `IsLocalMin.laplacian_nonneg`;
 * continuity of `∇ f` and `Δ f` for `C¹` resp. `C²` functions.
 -/
@@ -284,17 +283,6 @@ theorem laplacian_eq_of_sub_isLittleO {φ ψ : F → ℝ} (hφ : ContDiff ℝ 2 
   · have := (hφ.contDiffAt (x := x)).laplacian_sub (hψ.contDiffAt (x := x))
     rw [show (fun y ↦ φ y - ψ y) = φ - ψ from rfl, this] at h2
     exact sub_eq_zero.1 h2
-
-/-- **Zero 2-jet lemma**, big-O form: if `φ, ψ ∈ C²` and `φ - ψ = O(|y - x|³)` at `x`, then `φ`
-and `ψ` have the same value, gradient and Laplacian at `x`. -/
-theorem laplacian_eq_of_sub_isBigO_pow_three {φ ψ : F → ℝ} (hφ : ContDiff ℝ 2 φ)
-    (hψ : ContDiff ℝ 2 ψ) {x : F} (h : (fun y ↦ φ y - ψ y) =O[𝓝 x] fun y ↦ ‖y - x‖ ^ 3) :
-    φ x = ψ x ∧ ∇ φ x = ∇ ψ x ∧ Δ φ x = Δ ψ x := by
-  refine laplacian_eq_of_sub_isLittleO hφ hψ (h.trans_isLittleO ?_)
-  have ht : Tendsto (fun y ↦ ‖y - x‖) (𝓝 x) (𝓝 0) := by
-    have : Continuous fun y ↦ ‖y - x‖ := by fun_prop
-    simpa using this.tendsto x
-  exact (isLittleO_pow_pow (𝕜 := ℝ) (show 2 < 3 by norm_num)).comp_tendsto ht
 
 /-- Adding a constant does not change the Laplacian. -/
 theorem laplacian_add_const {k : F → ℝ} {x : F} (hk : ContDiffAt ℝ 2 k x) (c : ℝ) :

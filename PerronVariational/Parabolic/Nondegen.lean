@@ -6,42 +6,56 @@ Authors: William M. Feldman
 module
 
 public import PerronVariational.Defs.Parabolic
+public import PerronVariational.Defs.Stationary
 import Mathlib.Analysis.InnerProductSpace.Calculus
+import PerronVariational.Parabolic.StatToPara
+import PerronVariational.Parabolic.StrictBarrierEquiv
+import PerronVariational.Stationary.ViscosityJet
 
 /-!
-# Monotone relaxed subsolutions are subsolutions (Proposition 3.5)
+# Monotone relaxed subsolutions are subsolutions
 
-The remark after Definition 3.4 and Proposition 3.5 of F. Abedin, W. M. Feldman, K. Stinson,
+The remark after [Definition 3.5](#AFS:d.parabolic-relaxed-subsolution) and
+[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed) of F. Abedin, W. M. Feldman, K. Stinson,
 *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
 arXiv:2609.14981.
 
 ## Main results
 
-* `IsParaRelaxedSub.isParaSub_of_subset_closure` (remark after Definition 3.4): a relaxed
-  subsolution `(u, E)` with `E ⊆ \overline{{u > 0}}` (inside `U × I`) is a subsolution, and `E`
-  agrees with `\overline{{u > 0}}` on `U × I`.
-* `nondegBarrier` and `nondegBarrier_isClassicalStrictParaSuper`: an explicit globally smooth,
-  time-independent, strictly superharmonic radial barrier.
-* `IsParaRelaxedSub.exists_sphere_le_of_mem` (Step 1, (3.2)):
+* `IsParaRelaxedSub.isParaSub_of_subset_closure` (remark after
+  [Definition 3.5](#AFS:d.parabolic-relaxed-subsolution)): a relaxed subsolution `(u, E)` with
+  `E ⊆ \overline{{u > 0}}` (inside `U × I`) is a subsolution, and `E` agrees with
+  `\overline{{u > 0}}` on `U × I`.
+* `nondegSpatialBarrier` and `nondegSpatialBarrier_isUnifStrictSuper`: an explicit globally
+  smooth, strictly superharmonic radial barrier `h`, a smooth strict supersolution of
+  [(1.1)](#AFS:e.bernoulli-basic) ([Definition 2.3](#AFS:d.strict-sub));
+  `nondegBarrier_isClassicalStrictParaSuper`: hence its time-independent extension `nondegBarrier`
+  is a classical strict supersolution of [(3.1)](#AFS:e.bernoulli-parabolic)
+  (`IsUnifStrictSuper.isClassicalStrictParaSuper`), as in the paper.
+* `IsParaRelaxedSub.exists_sphere_le_of_mem` (Step 1, [(3.2)](#AFS:eqn:nondegenStep)):
   quantitative non-degeneracy `sup_{∂B_r(x₀)} u(·, t₀) ≥ κ_d q r`.
-* `IsParaRelaxedSub.isParaSub_of_monotone` (**Proposition 3.5**, Step 2).
+* `IsParaRelaxedSub.isParaSub_of_monotone` (**[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)**,
+  Step 2).
 
 ## Deviations from the paper's proof
 
-* The paper's barrier is harmonic in `B₁ ∖ B_{1/2}`, so `∂ₜh - Δh = 0` there: it is *not* a
-  classical *strict* supersolution, which the comparison with a relaxed subsolution
-  (Definition 3.4) requires. We use instead
+* The paper's barrier is `(c/4d)(1 - exp(4d(1/4 - |x|²)))` at scale `1`. We use a barrier of
+  the same form built directly at scale `r` around `x₀` (see the next item),
   `h(y) = A (1 - exp(K - λ |y - x₀|²))` with `K = d + 1`, `λ = 4K/r²`, `A = q r / (8K)`, which
   is globally smooth, vanishes exactly on `∂B_{r/2}(x₀)`, satisfies `Δh < 0` on `{h ≥ 0}` and
-  `|∇h| = q/2 < Q` on `{h = 0}` provided `Q ≥ q > 0` there.
+  `|∇h| = q/2 < Q` on `{h = 0}` provided `Q ≥ q > 0` there. By compactness it is then a smooth
+  strict supersolution of [(1.1)](#AFS:e.bernoulli-basic) with uniform constants
+  ([Definition 2.3](#AFS:d.strict-sub)) on `B̄_r(x₀)` when `Q ≥ q` on `B̄_r(x₀)`. The paper's step
+  "`h` is a smooth strict supersolution of [(1.1)](#AFS:e.bernoulli-basic) and hence also of
+  [(3.1)](#AFS:e.bernoulli-parabolic)" is then formalized as written: the stationary property is
+  lifted to [(3.1)](#AFS:e.bernoulli-parabolic) by `IsUnifStrictSuper.isClassicalStrictParaSuper`.
 * No rescaling is used: the barrier is built directly at scale `r` around `x₀`, since the
   relaxed-subsolution property is not scale invariant with the same `Q`.
 * Since test cylinders must satisfy `V̄ × [a, b] ⊆ U × I` (so `a > 0` when `I ⊆ (0, ∞)`), the
   bottom of the cylinder is placed at a small positive time `a`; closedness of `E` and
   `(B̄_r(x₀) × {0}) ∩ E = ∅` give `(B̄_r(x₀) × {a}) ∩ E = ∅`.
-* The paper assumes "`E_t` nondecreasing"; here we do not, because the argument does not use it. The
-  initial trace `u₀` is an arbitrary function with `u₀ ≤ u(·, t)` (the paper's `u(·, 0)`, combined
-  with time monotonicity).
+* The initial trace `u₀` is an arbitrary function with `u₀ ≤ u(·, t)` (the paper's `u(·, 0)`,
+  combined with time monotonicity).
 -/
 
 open Set Filter Topology Metric InnerProductSpace
@@ -158,7 +172,8 @@ section Barrier
 
 variable {d : ℕ}
 
-/-- The universal non-degeneracy constant `κ_d = (1 - e^{-3(d+1)}) / (8(d+1))` of (3.2). -/
+/-- The universal non-degeneracy constant `κ_d = (1 - e^{-3(d+1)}) / (8(d+1))` of
+[(3.2)](#AFS:eqn:nondegenStep). -/
 noncomputable def nondegConst (d : ℕ) : ℝ :=
   (1 - Real.exp (-(3 * ((d : ℝ) + 1)))) / (8 * ((d : ℝ) + 1))
 
@@ -173,13 +188,23 @@ theorem nondegConst_pos (d : ℕ) : 0 < nondegConst d := by
 noncomputable def nondegProfile (d : ℕ) (r q : ℝ) (s : ℝ) : ℝ :=
   q * r / (8 * ((d : ℝ) + 1)) * (1 - Real.exp (((d : ℝ) + 1) - 4 * ((d : ℝ) + 1) / r ^ 2 * s))
 
-/-- **Barrier** (replacement for the harmonic barrier of the proof of Proposition 3.5, which is not
-a strict supersolution; see the module docstring): the time-independent, globally smooth radial
-function `h(y, t) = A (1 - exp(K - λ |y - x₀|²))`, `K = d + 1`, `λ = 4K / r²`, `A = q r / (8K)`. It
-is negative at `x₀`, vanishes exactly on `∂B_{r/2}(x₀)`, equals `κ_d q r` on `∂B_r(x₀)`, and is a
-classical strict supersolution whenever `Q ≥ q` on `∂B_{r/2}(x₀)`. -/
+/-- **Barrier** (the barrier of the proof of [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed),
+built directly at scale `r` around `x₀`; see the module docstring): the globally smooth radial
+function `h(y) = A (1 - exp(K - λ |y - x₀|²))`, `K = d + 1`, `λ = 4K / r²`, `A = q r / (8K)`. It is
+negative at `x₀`, vanishes exactly on `∂B_{r/2}(x₀)`, equals `κ_d q r` on `∂B_r(x₀)`, and is a
+smooth strict supersolution of [(1.1)](#AFS:e.bernoulli-basic) in the sense of
+[Definition 2.3](#AFS:d.strict-sub) in every bounded `V` with `Q ≥ q` on `V̄`
+(`nondegSpatialBarrier_isUnifStrictSuper`). -/
+noncomputable def nondegSpatialBarrier (x₀ : E d) (r q : ℝ) : E d → ℝ :=
+  fun y ↦ nondegProfile d r q (‖y - x₀‖ ^ 2)
+
+/-- The time-independent extension `(y, t) ↦ h(y)` of `nondegSpatialBarrier`, the barrier used
+in [(3.1)](#AFS:e.bernoulli-parabolic) (`nondegBarrier_isClassicalStrictParaSuper`). -/
 noncomputable def nondegBarrier (x₀ : E d) (r q : ℝ) : E d × ℝ → ℝ :=
   fun p ↦ nondegProfile d r q (‖p.1 - x₀‖ ^ 2)
+
+theorem nondegBarrier_eq (x₀ : E d) (r q : ℝ) :
+    nondegBarrier x₀ r q = fun p ↦ nondegSpatialBarrier x₀ r q p.1 := rfl
 
 private theorem hasDerivAt_nondegProfile (r q s : ℝ) :
     HasDerivAt (nondegProfile d r q)
@@ -219,6 +244,12 @@ theorem contDiff_nondegBarrier (x₀ : E d) (r q : ℝ) : ContDiff ℝ ∞ (nond
   have h1 : ContDiff ℝ ∞ (fun p : E d × ℝ ↦ ‖p.1 - x₀‖ ^ 2) :=
     (contDiff_norm_sq ℝ).comp (contDiff_fst.sub contDiff_const)
   exact (contDiff_nondegProfile r q).comp h1
+
+theorem contDiff_nondegSpatialBarrier (x₀ : E d) (r q : ℝ) :
+    ContDiff ℝ ∞ (nondegSpatialBarrier x₀ r q) := by
+  unfold nondegSpatialBarrier
+  exact (contDiff_nondegProfile r q).comp
+    ((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const))
 
 theorem continuous_nondegBarrier (x₀ : E d) (r q : ℝ) : Continuous (nondegBarrier x₀ r q) :=
   (contDiff_nondegBarrier x₀ r q).continuous
@@ -291,55 +322,112 @@ private theorem norm_gradient_nondegBarrier {x₀ : E d} {r q : ℝ} (y : E d) :
     innerSL_apply_norm, Real.norm_eq_abs]
   norm_num
 
-/-- **The barrier is a classical strict supersolution** (in the sense of
-`IsClassicalStrictParaSuper`, on every `V̄ × [a, b]`) provided `Q ≥ q > 0` on `∂B_{r/2}(x₀)`. -/
-theorem nondegBarrier_isClassicalStrictParaSuper {Q : E d → ℝ} {x₀ : E d} {r q : ℝ}
-    (hr : 0 < r) (hq : 0 < q) (hQ : ∀ y ∈ sphere x₀ (r / 2), q ≤ Q y) (V : Set (E d))
-    (a b : ℝ) : IsClassicalStrictParaSuper Q (nondegBarrier x₀ r q) V a b := by
-  have hcont := continuous_nondegBarrier x₀ r q
+/-- **Uniform constants by compactness (stationary supersolution).** If `Δg < 0` on
+`{g ≥ 0} ∩ V̄` and `|∇g|² < Q²` on `{g = 0} ∩ V̄` (`g ∈ C²`, `V` bounded, `Q` continuous on `V̄`),
+then `g` is a smooth strict supersolution of [(1.1)](#AFS:e.bernoulli-basic) in `V` in the sense of
+[Definition 2.3](#AFS:d.strict-sub). -/
+theorem exists_isUnifStrictSuper_of_nonneg {V : Set (E d)} {Q g : E d → ℝ} (hg : ContDiff ℝ 2 g)
+    (hVb : Bornology.IsBounded V) (hQ : ContinuousOn Q (closure V))
+    (h1 : ∀ x ∈ closure V, 0 ≤ g x → Δ g x < 0)
+    (h2 : ∀ x ∈ closure V, g x = 0 → ‖∇ g x‖ ^ 2 < Q x ^ 2) :
+    IsUnifStrictSuper V Q g := by
+  have hK : IsCompact (closure V) := hVb.isCompact_closure
+  have hQK : ContinuousOn (fun x ↦ Q x ^ 2) (closure V) := hQ.pow 2
+  obtain ⟨a₁, ha₁, m₁, hm₁, hmar₁⟩ := exists_margin_of_nonneg (f := g) (F := fun x ↦ -Δ g x) hK
+    hg.continuous.continuousOn (continuous_laplacian hg).neg.continuousOn
+    fun x hx h0 ↦ by linarith [h1 x hx h0]
+  obtain ⟨a₂, ha₂, m₂, hm₂, hmar₂⟩ := exists_margin_of_nonneg (f := fun x ↦ -|g x|)
+    (F := fun x ↦ Q x ^ 2 - ‖∇ g x‖ ^ 2) hK hg.continuous.abs.neg.continuousOn
+    (hQK.sub ((continuous_gradient (hg.of_le (by norm_num))).norm.pow 2).continuousOn)
+    fun x hx h0 ↦ by
+      have : g x = 0 := abs_eq_zero.1 (le_antisymm (by linarith) (abs_nonneg _))
+      linarith [h2 x hx this]
+  obtain ⟨M, hM⟩ := hK.exists_bound_of_continuousOn hQK
+  set a₀ := min (min a₁ a₂ / 2) (1 / 2) with ha₀_def
+  set δ₀ := min (min m₁ (m₂ / (|M| + 1))) (1 / 2) with hδ₀_def
+  have ha₀ : 0 < a₀ := lt_min (by positivity) (by norm_num)
+  have hδ₀ : 0 < δ₀ := lt_min (lt_min hm₁ (by positivity)) (by norm_num)
+  have ha₀₁ : a₀ < a₁ := by
+    have := min_le_left (min a₁ a₂ / 2) (1 / 2); have := min_le_left a₁ a₂; linarith
+  have ha₀₂ : a₀ < a₂ := by
+    have := min_le_left (min a₁ a₂ / 2) (1 / 2); have := min_le_right a₁ a₂; linarith
+  have hδm₁ : δ₀ ≤ m₁ := (min_le_left _ _).trans (min_le_left _ _)
+  have hδm₂ : δ₀ ≤ m₂ / (|M| + 1) := (min_le_left _ _).trans (min_le_right _ _)
+  refine ⟨hg, a₀, ha₀, δ₀, hδ₀, min_le_right _ _, min_le_right _ _, fun x hx hgx ↦ ?_,
+    fun x hx hle ↦ ?_⟩
+  · have := hmar₁ x hx (by linarith)
+    linarith
+  · have := hmar₂ x hx (by linarith)
+    have hQM : Q x ^ 2 ≤ |M| + 1 := by
+      have := hM x hx
+      rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)] at this
+      linarith [le_abs_self M]
+    have hkey : δ₀ * Q x ^ 2 ≤ m₂ := by
+      calc δ₀ * Q x ^ 2 ≤ m₂ / (|M| + 1) * (|M| + 1) :=
+            mul_le_mul hδm₂ hQM (sq_nonneg _) (by positivity)
+        _ = m₂ := by field_simp
+    nlinarith
+
+/-- **The barrier is a smooth strict supersolution of [(1.1)](#AFS:e.bernoulli-basic)**
+([Definition 2.3](#AFS:d.strict-sub)) in every bounded `V` with `Q ≥ q > 0` on `V̄`: `Δh < 0` on
+`{h ≥ 0}` and `|∇h| = q/2 < q` on `{h = 0}`, and uniform constants follow by compactness
+(`exists_isUnifStrictSuper_of_nonneg`, for the constant coefficient `q`; then
+`(1 - δ₀) q² ≤ (1 - δ₀) Q²`). -/
+theorem nondegSpatialBarrier_isUnifStrictSuper {Q : E d → ℝ} {x₀ : E d} {r q : ℝ}
+    (hr : 0 < r) (hq : 0 < q) {V : Set (E d)} (hVb : Bornology.IsBounded V)
+    (hQ : ∀ y ∈ closure V, q ≤ Q y) :
+    IsUnifStrictSuper V Q (nondegSpatialBarrier x₀ r q) := by
   have hK : (0 : ℝ) < (d : ℝ) + 1 := by positivity
-  refine ⟨contDiff_nondegBarrier x₀ r q, ?_, ?_⟩
-  · rintro p ⟨hp, -⟩
-    have hp' : 0 ≤ nondegBarrier x₀ r q p :=
-      closure_lt_subset_le continuous_const hcont hp
-    unfold nondegBarrier at hp'
-    rw [nondegProfile_nonneg_iff hr hq] at hp'
-    have hdt : dₜ (nondegBarrier x₀ r q) p = 0 := by
-      unfold dₜ nondegBarrier; simp
-    have hlap : lapₓ (nondegBarrier x₀ r q) p =
-        Δ (fun y ↦ nondegProfile d r q (‖y - x₀‖ ^ 2)) p.1 := rfl
-    rw [hdt, hlap, laplacian_nondegBarrier]
-    have hL : (d : ℝ) + 1 ≤ 4 * ((d : ℝ) + 1) / r ^ 2 * ‖p.1 - x₀‖ ^ 2 := by
+  have h1 : ∀ y ∈ closure V, 0 ≤ nondegSpatialBarrier x₀ r q y →
+      Δ (nondegSpatialBarrier x₀ r q) y < 0 := by
+    intro y _ hy'
+    unfold nondegSpatialBarrier at hy' ⊢
+    rw [nondegProfile_nonneg_iff hr hq] at hy'
+    rw [laplacian_nondegBarrier]
+    have hL : (d : ℝ) + 1 ≤ 4 * ((d : ℝ) + 1) / r ^ 2 * ‖y - x₀‖ ^ 2 := by
       rw [div_mul_eq_mul_div, le_div_iff₀ (by positivity)]; nlinarith
     have hpos : 0 < q * r / (8 * ((d : ℝ) + 1)) * (4 * ((d : ℝ) + 1) / r ^ 2) *
-        Real.exp (((d : ℝ) + 1) - 4 * ((d : ℝ) + 1) / r ^ 2 * ‖p.1 - x₀‖ ^ 2) := by
+        Real.exp (((d : ℝ) + 1) - 4 * ((d : ℝ) + 1) / r ^ 2 * ‖y - x₀‖ ^ 2) := by
       positivity
-    have hneg : 2 * (d : ℝ) - 4 * (4 * ((d : ℝ) + 1) / r ^ 2 * ‖p.1 - x₀‖ ^ 2) < 0 := by
+    have hneg : 2 * (d : ℝ) - 4 * (4 * ((d : ℝ) + 1) / r ^ 2 * ‖y - x₀‖ ^ 2) < 0 := by
       linarith
     nlinarith
-  · rintro p ⟨hp, -⟩
-    have hopen : IsOpen {q' | 0 < nondegBarrier x₀ r q q'} :=
-      isOpen_lt continuous_const hcont
-    rw [hopen.frontier_eq] at hp
-    have h0 : nondegBarrier x₀ r q p = 0 :=
-      le_antisymm (not_lt.1 hp.2) (closure_lt_subset_le continuous_const hcont hp.1)
-    unfold nondegBarrier at h0
+  have h2 : ∀ y ∈ closure V, nondegSpatialBarrier x₀ r q y = 0 →
+      ‖∇ (nondegSpatialBarrier x₀ r q) y‖ ^ 2 < (fun _ ↦ q) y ^ 2 := by
+    intro y _ h0
+    unfold nondegSpatialBarrier at h0 ⊢
     rw [nondegProfile_eq_zero_iff hr hq] at h0
-    have hn : ‖p.1 - x₀‖ = r / 2 := by
-      have : ‖p.1 - x₀‖ ^ 2 = (r / 2) ^ 2 := by rw [h0]; ring
+    have hn : ‖y - x₀‖ = r / 2 := by
+      have : ‖y - x₀‖ ^ 2 = (r / 2) ^ 2 := by rw [h0]; ring
       exact (pow_left_inj₀ (norm_nonneg _) (by positivity) two_ne_zero).1 this
-    have hgrad : gradₓ (nondegBarrier x₀ r q) p =
-        ∇ (fun y ↦ nondegProfile d r q (‖y - x₀‖ ^ 2)) p.1 := rfl
-    rw [hgrad, norm_gradient_nondegBarrier, h0, hn]
-    have hsph : p.1 ∈ sphere x₀ (r / 2) := by rw [mem_sphere, dist_eq_norm, hn]
-    have hQp := hQ _ hsph
-    have : 4 * ((d : ℝ) + 1) / r ^ 2 * (r ^ 2 / 4) = (d : ℝ) + 1 := by field_simp
-    rw [this, sub_self, Real.exp_zero, mul_one]
-    rw [abs_of_pos (by positivity)]
-    have : q * r / (8 * ((d : ℝ) + 1)) * (4 * ((d : ℝ) + 1) / r ^ 2) * (2 * (r / 2)) = q / 2 := by
+    have hval : ‖∇ (fun y ↦ nondegProfile d r q (‖y - x₀‖ ^ 2)) y‖ = q / 2 := by
+      rw [norm_gradient_nondegBarrier, h0, hn]
+      have : 4 * ((d : ℝ) + 1) / r ^ 2 * (r ^ 2 / 4) = (d : ℝ) + 1 := by field_simp
+      rw [this, sub_self, Real.exp_zero, mul_one]
+      rw [abs_of_pos (by positivity)]
       field_simp; ring
-    rw [this]
-    linarith
+    rw [hval]
+    nlinarith
+  obtain ⟨hg, a₀, ha₀, δ₀, hδ₀, ha₀le, hδ₀le, hheat, hgrad⟩ :=
+    exists_isUnifStrictSuper_of_nonneg (Q := fun _ ↦ q)
+      ((contDiff_nondegSpatialBarrier x₀ r q).of_le (by norm_cast)) hVb continuousOn_const h1 h2
+  refine ⟨hg, a₀, ha₀, δ₀, hδ₀, ha₀le, hδ₀le, hheat, fun y hy hle ↦ (hgrad y hy hle).trans ?_⟩
+  have hqQ := hQ y hy
+  have : q ^ 2 ≤ Q y ^ 2 := pow_le_pow_left₀ hq.le hqQ 2
+  nlinarith
+
+/-- **The barrier is a classical strict supersolution of [(3.1)](#AFS:e.bernoulli-parabolic)** on
+every `V̄ × [a, b]` with `V` bounded, provided `Q ≥ q > 0` on `V̄`. This is the paper's route (proof
+of [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed): "`h` is a smooth strict supersolution of
+[(1.1)](#AFS:e.bernoulli-basic) and hence also of [(3.1)](#AFS:e.bernoulli-parabolic)"): the
+stationary property `nondegSpatialBarrier_isUnifStrictSuper`, lifted to the time-independent barrier
+by `IsUnifStrictSuper.isClassicalStrictParaSuper`. -/
+theorem nondegBarrier_isClassicalStrictParaSuper {Q : E d → ℝ} {x₀ : E d} {r q : ℝ}
+    (hr : 0 < r) (hq : 0 < q) {V : Set (E d)} (hVb : Bornology.IsBounded V)
+    (hQ : ∀ y ∈ closure V, q ≤ Q y) (a b : ℝ) :
+    IsClassicalStrictParaSuper Q (nondegBarrier x₀ r q) V a b :=
+  (nondegSpatialBarrier_isUnifStrictSuper hr hq hVb hQ).isClassicalStrictParaSuper
+    (contDiff_nondegSpatialBarrier x₀ r q) a b
 
 end Barrier
 
@@ -363,14 +451,10 @@ theorem AdmissibleCyl.parBdry_subset {V : Set (E d)} {a b : ℝ} (h : Admissible
     exact h.2.2.2 ⟨hx, le_rfl, h.2.2.1.le⟩
   · exact h.2.2.2 ⟨frontier_subset_closure hx, ht⟩
 
-theorem AdmissibleCyl.cyl_subset {V : Set (E d)} {a b : ℝ} (h : AdmissibleCyl U I V a b) :
-    cyl V a b ⊆ U ×ˢ I := by
-  rintro ⟨x, t⟩ ⟨hx, ht⟩
-  exact h.2.2.2 ⟨subset_closure hx, Ioc_subset_Icc_self ht⟩
-
-/-- **Remark after Definition 3.4**. If `(u, E)` is a relaxed subsolution and
-`E ⊆ \overline{{u > 0}}` (inside the space-time domain `U × I`), then `E = \overline{{u > 0}}` on
-`U × I` and `u` is a subsolution in the sense of Definition 3.2. -/
+/-- **Remark after [Definition 3.5](#AFS:d.parabolic-relaxed-subsolution)**. If `(u, E)` is a
+relaxed subsolution and `E ⊆ \overline{{u > 0}}` (inside the space-time domain `U × I`), then
+`E = \overline{{u > 0}}` on `U × I` and `u` is a subsolution in the sense of
+[Definition 3.3](#AFS:d.parabolic-supersolution). -/
 theorem IsParaRelaxedSub.isParaSub_of_subset_closure (h : IsParaRelaxedSub U Q I u Eset)
     (hE : Eset ∩ (U ×ˢ I) ⊆ closure (posSetP u (U ×ˢ I))) :
     Eset ∩ (U ×ˢ I) = closure (posSetP u (U ×ˢ I)) ∩ (U ×ˢ I) ∧ IsParaSub U Q I u := by
@@ -382,17 +466,17 @@ theorem IsParaRelaxedSub.isParaSub_of_subset_closure (h : IsParaRelaxedSub U Q I
   have hin := h.2.2.2.2.2 V a b φ hV hφ hbd'
   exact fun p hp ↦ hin p ⟨h.closure_posSetP_subset hp.1, hp.2⟩
 
-/-! ### Non-degeneracy (Step 1 of the proof of Proposition 3.5) -/
+/-! ### Non-degeneracy (proof of [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed), Step 1) -/
 
-/-- **Non-degeneracy** (Step 1 of the proof of Proposition 3.5, (3.2)),
-at scale `r` around `x₀` and without rescaling. Let `(u, E)` be a relaxed subsolution in `U × I`,
-nondecreasing in time, let `B̄_r(x₀) ⊆ U`, `[a, t₀] ⊆ I` with `a < t₀`, suppose that the bottom
-`B̄_r(x₀) × {a}` does not meet `E` and that `Q ≥ q > 0` on `∂B_{r/2}(x₀)`. If `(x₀, t₀) ∈ E` then
-`sup_{∂B_r(x₀)} u(·, t₀) ≥ κ_d q r`. -/
+/-- **Non-degeneracy** (Step 1 of the proof of [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed),
+[(3.2)](#AFS:eqn:nondegenStep)), at scale `r` around `x₀` and without rescaling. Let `(u, E)` be a
+relaxed subsolution in `U × I`, nondecreasing in time, let `B̄_r(x₀) ⊆ U`, `[a, t₀] ⊆ I` with
+`a < t₀`, suppose that the bottom `B̄_r(x₀) × {a}` does not meet `E` and that `Q ≥ q > 0` on
+`B̄_r(x₀)`. If `(x₀, t₀) ∈ E` then `sup_{∂B_r(x₀)} u(·, t₀) ≥ κ_d q r`. -/
 theorem IsParaRelaxedSub.exists_sphere_le_of_mem (h : IsParaRelaxedSub U Q I u Eset)
     (hmono : MonotoneInTime u U I) {x₀ : E d} {r q a t₀ : ℝ} (hr : 0 < r) (hq : 0 < q)
     (hball : closedBall x₀ r ⊆ U) (hat : a < t₀) (hI : Icc a t₀ ⊆ I)
-    (hbot : ∀ y ∈ closedBall x₀ r, (y, a) ∉ Eset) (hQ : ∀ y ∈ sphere x₀ (r / 2), q ≤ Q y)
+    (hbot : ∀ y ∈ closedBall x₀ r, (y, a) ∉ Eset) (hQ : ∀ y ∈ closedBall x₀ r, q ≤ Q y)
     (hmem : (x₀, t₀) ∈ Eset) :
     ∃ y ∈ sphere x₀ r, nondegConst d * q * r ≤ u (y, t₀) := by
   by_contra hcon
@@ -413,14 +497,15 @@ theorem IsParaRelaxedSub.exists_sphere_le_of_mem (h : IsParaRelaxedSub U Q I u E
         _ < nondegConst d * q * r := hcon y hy
         _ = nondegBarrier x₀ r q (y, t) := (nondegBarrier_of_mem_sphere hy hr t).symm
   have hin := h.2.2.2.2.2 _ _ _ _ hV
-    (nondegBarrier_isClassicalStrictParaSuper hr hq hQ _ _ _) hbd
+    (nondegBarrier_isClassicalStrictParaSuper hr hq isBounded_ball
+      (fun y hy ↦ hQ y (by rwa [closure_ball x₀ hr.ne'] at hy)) _ _) hbd
   have h1 := hin (x₀, t₀) ⟨hmem, mem_ball_self hr, hat, le_rfl⟩
   have h2 := h.2.1 (x₀, t₀) ⟨hball (mem_closedBall_self hr.le), hI ⟨hat.le, le_rfl⟩⟩
   have h3 := nondegBarrier_center (x₀ := x₀) (q := q) hr hq t₀
   linarith
 
-/-- Qualitative non-degeneracy: under the hypotheses of `exists_sphere_le_of_mem` (with
-`Q ≥ q > 0` on all of `B̄_r(x₀)`), `x₀ ∈ \overline{{u(·, t₀) > 0}}`. -/
+/-- Qualitative non-degeneracy: under the hypotheses of `exists_sphere_le_of_mem`,
+`x₀ ∈ \overline{{u(·, t₀) > 0}}`. -/
 theorem IsParaRelaxedSub.mem_closure_slice_of_mem (h : IsParaRelaxedSub U Q I u Eset)
     (hmono : MonotoneInTime u U I) {x₀ : E d} {r q a t₀ : ℝ} (hr : 0 < r) (hq : 0 < q)
     (hball : closedBall x₀ r ⊆ U) (hat : a < t₀) (hI : Icc a t₀ ⊆ I)
@@ -434,8 +519,7 @@ theorem IsParaRelaxedSub.mem_closure_slice_of_mem (h : IsParaRelaxedSub U Q I u 
   have hsub : closedBall x₀ (min r (ε / 2)) ⊆ closedBall x₀ r := closedBall_subset_closedBall hr'r
   obtain ⟨y, hy, hyu⟩ := h.exists_sphere_le_of_mem hmono hr' hq (hsub.trans hball) hat hI
     (fun y hy ↦ hbot y (hsub hy))
-    (fun y hy ↦ hQ y (closedBall_subset_closedBall (by linarith) (sphere_subset_closedBall hy)))
-    hmem
+    (fun y hy ↦ hQ y (hsub hy)) hmem
   have hκ := nondegConst_pos d
   refine ⟨y, ⟨hball (hsub (sphere_subset_closedBall hy)), lt_of_lt_of_le (by positivity) hyu⟩,
     ?_⟩
@@ -443,16 +527,14 @@ theorem IsParaRelaxedSub.mem_closure_slice_of_mem (h : IsParaRelaxedSub U Q I u 
   rw [hy]
   linarith [min_le_right r (ε / 2)]
 
-/-! ### Proposition 3.5 -/
+/-! ### [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed) -/
 
-/-- **Proposition 3.5**, inclusion part. Let `(u, E)` be a relaxed
-subsolution in `U × I`, where `U` is open and `I ⊆ (0, ∞)` is an initial segment
+/-- **[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)**, inclusion part. Let `(u, E)` be a
+relaxed subsolution in `U × I`, where `U` is open and `I ⊆ (0, ∞)` is an initial segment
 (`(0, t] ⊆ I` for `t ∈ I`; e.g. `I = (0, T]` or `(0, ∞)`), with `u` nondecreasing in time, and
 `Q` locally bounded below by positive constants in `U`. Let `u₀` be an initial datum below `u`
 (`u₀ ≤ u(·, t)` on `U` for `t ∈ I`; the paper's `u(·, 0)` with time monotonicity) with
-`E₀ ∩ U ⊆ \overline{{u₀ > 0}}`. Then `E ⊆ \overline{{u > 0}}` in `U × I`.
-
-The paper's hypothesis that the slices `E_t` are nondecreasing is not needed. -/
+`E₀ ∩ U ⊆ \overline{{u₀ > 0}}`. Then `E ⊆ \overline{{u > 0}}` in `U × I`. -/
 theorem IsParaRelaxedSub.subset_closure_posSetP_of_monotone (hU : IsOpen U)
     (hIpos : I ⊆ Ioi 0) (hIseg : ∀ t ∈ I, Ioc 0 t ⊆ I) (h : IsParaRelaxedSub U Q I u Eset)
     (hmono : MonotoneInTime u U I) (hQ : ∀ x ∈ U, ∃ q > 0, ∀ᶠ y in 𝓝 x, q ≤ Q y)
@@ -492,8 +574,9 @@ theorem IsParaRelaxedSub.subset_closure_posSetP_of_monotone (hU : IsOpen U)
     · rw [Real.dist_eq, sub_zero, abs_of_pos ha]
       exact lt_of_le_of_lt (min_le_left _ _) (half_lt_self hε)
 
-/-- **Proposition 3.5**. Under the hypotheses of `subset_closure_posSetP_of_monotone`,
-`E ⊆ \overline{{u > 0}}` in `U × I` and `u` is a standard subsolution (Definition 3.2). (See also
+/-- **[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)**. Under the hypotheses of
+`subset_closure_posSetP_of_monotone`, `E ⊆ \overline{{u > 0}}` in `U × I` and `u` is a standard
+subsolution ([Definition 3.3](#AFS:d.parabolic-supersolution)). (See also
 `isParaSub_of_subset_closure` for `E = \overline{{u > 0}}` on `U × I`.) -/
 theorem IsParaRelaxedSub.isParaSub_of_monotone (hU : IsOpen U)
     (hIpos : I ⊆ Ioi 0) (hIseg : ∀ t ∈ I, Ioc 0 t ⊆ I) (h : IsParaRelaxedSub U Q I u Eset)
@@ -523,9 +606,9 @@ theorem mem_closure_posSetP_of_mem_timeSlice_zero (hIne : I.Nonempty) (hIpos : I
   rw [Real.dist_eq, zero_sub, abs_neg, abs_of_pos htpos]
   exact lt_of_le_of_lt (min_le_right _ _) (half_lt_self hε)
 
-/-- **Proposition 3.5**, inclusion including the initial time: under the hypotheses of
-`subset_closure_posSetP_of_monotone` and `I ≠ ∅`, `E ⊆ \overline{{u > 0}}` on `U × ({0} ∪ I)`.
-(Only lateral-boundary points `x ∈ ∂U` of `E` are not covered.) -/
+/-- **[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)**, inclusion including the initial time:
+under the hypotheses of `subset_closure_posSetP_of_monotone` and `I ≠ ∅`, `E ⊆ \overline{{u > 0}}`
+on `U × ({0} ∪ I)`. (Only lateral-boundary points `x ∈ ∂U` of `E` are not covered.) -/
 theorem IsParaRelaxedSub.subset_closure_posSetP_of_monotone' (hU : IsOpen U) (hIne : I.Nonempty)
     (hIpos : I ⊆ Ioi 0) (hIseg : ∀ t ∈ I, Ioc 0 t ⊆ I) (h : IsParaRelaxedSub U Q I u Eset)
     (hmono : MonotoneInTime u U I) (hQ : ∀ x ∈ U, ∃ q > 0, ∀ᶠ y in 𝓝 x, q ≤ Q y)
@@ -551,8 +634,8 @@ theorem IsParaRelaxedSub.eq_closure_posSetP_of_monotone (hU : IsOpen U) (hIne : 
   exact closure_mono
     (h.subset_closure_posSetP_of_monotone' hU hIne hIpos hIseg hmono hQ u₀ hu₀ hE₀)
 
-/-- **Proposition 3.5** in the standing setting (`S : Setting d`) on `U × (0, T]`, the form used
-by Corollary 5.4. -/
+/-- **[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)** in the standing setting
+(`S : Setting d`) on `U × (0, T]`, the form used by [Corollary 5.4](#AFS:cor:increasing). -/
 theorem IsParaRelaxedSub.isParaSub_of_monotone_Ioc (S : Setting d) {T : ℝ}
     (h : IsParaRelaxedSub S.U S.Q (Ioc 0 T) u Eset) (hmono : MonotoneInTime u S.U (Ioc 0 T))
     (u₀ : E d → ℝ) (hu₀ : ∀ x ∈ S.U, ∀ t ∈ Ioc 0 T, u₀ x ≤ u (x, t))

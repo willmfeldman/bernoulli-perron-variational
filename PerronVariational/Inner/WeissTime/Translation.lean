@@ -16,12 +16,12 @@ import PerronVariational.Inner.Common
 /-!
 # Time regularity of the energy density: translation estimates
 
-Part of the proof of **Lemma 4.3** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
-((4.8)–(4.10)): `L¹`-continuity of translations,
-time translations of the mollified energy density (`lintegral_energyMoment_time_translate_le`),
-the spatial mollification error (`lintegral_sub_mollify_le`) and auxiliary lemmas for the
-assembly in `Inner/WeissTime/ChiEps.lean`.
+Part of the proof of **[Lemma 4.3](#AFS:lem:chiConverge)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981 ([(A.6)](#AFS:eqn:timeDerivative)–[(A.8)](#AFS:eqn:nablaEst)): `L¹`-continuity of
+translations, time translations of the mollified energy density
+(`lintegral_energyMoment_time_translate_le`), the spatial mollification error
+(`lintegral_sub_mollify_le`) and auxiliary lemmas for the assembly in `Inner/WeissTime/ChiEps.lean`.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -177,7 +177,7 @@ theorem exists_bound_mollAt' (k : ℕ) :
     rw [show LongTime.mollAt k q = fun x ↦ LongTime.moll d k (x - q) from rfl, fderiv_comp_sub]
   simpa [gradient, this] using (hC (x - q)).2
 
-/-- **Time translations of the mollified energy density** ((4.8),
+/-- **Time translations of the mollified energy density** ([(A.6)](#AFS:eqn:timeDerivative),
 integrated over a box): with `m(x, t) = ∫ e(z, t) φ_δ(z - x) dz`,
 `∫_{K₁ × J} |m(x, t + s) - m(x, t)| ≤ 2 Cψ (1 + L) |K₁| s ∫_{K₂ × [a, b]} ((∂ₜv)² + 1)`. -/
 theorem lintegral_energyMoment_time_translate_le {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
@@ -278,8 +278,8 @@ theorem moll_eq_zero_of_notMem {k : ℕ} {y : E d} (hy : y ∉ closedBall (0 : E
 theorem prod_add_mk_zero (p : E d × ℝ) (y : E d) : p + ((y, 0) : E d × ℝ) = (p.1 + y, p.2) := by
   ext <;> simp
 
-/-- **Spatial mollification error** ((4.9), (4.10)): if the
-spatial translations of `e` by vectors of length `≤ δ` are `L¹(B)`-small (by `c`), then so is
+/-- **Spatial mollification error** ([(A.7)](#AFS:eqn:spatialEst), [(A.8)](#AFS:eqn:nablaEst)): if
+the spatial translations of `e` by vectors of length `≤ δ` are `L¹(B)`-small (by `c`), then so is
 `e - e * φ_δ`. -/
 theorem lintegral_sub_mollify_le {Ω : Set (E d × ℝ)} {e : E d × ℝ → ℝ} (hec : ContinuousOn e Ω)
     {B : Set (E d × ℝ)} (hBm : MeasurableSet B) {k : ℕ}

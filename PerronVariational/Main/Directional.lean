@@ -15,20 +15,22 @@ import PerronVariational.Stationary.ViscosityLocal
 import PerronVariational.Stationary.ViscosityStability
 
 /-!
-# Lemma 6.3: extremal solutions are directional minimizers
+# [Proposition 6.3](#AFS:p.downward): extremal solutions are directional minimizers
 
-**Lemma 6.3** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, in the form
-`DirectionalStatement`.
+**[Proposition 6.3](#AFS:p.downward)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981, in
+the form `DirectionalStatement`.
 
-The paper states Lemma 6.3 for local extremal solutions (Definition 2.6), but its proof uses that
-`u` is harmonic in `{u > 0}`, citing Propositions 6.1/6.2, which apply only to Perron solutions;
-it also needs `u ∈ H¹`. Here we assume in addition that `u` is locally Lipschitz, `C²` and harmonic
-in `{u > 0}`. Theorem 1.1(iii) supplies these hypotheses from Theorem 1.1(ii) and Definition 2.8.
+The paper states [Proposition 6.3](#AFS:p.downward) for local extremal solutions
+([Definition 2.7](#AFS:d.largest-smallest)) and obtains by citation that `u` is a locally Lipschitz
+viscosity solution (after Feldman–Kim), hence harmonic in `{u > 0}` and in `H¹_loc`. Here we assume
+in addition that `u` is locally Lipschitz, `C²` and harmonic in `{u > 0}`.
+[Theorem 1.1(iii)](#AFS:part.downward) supplies these hypotheses from
+[Theorem 1.1(ii)](#AFS:part.inner) and [Definition 2.11](#AFS:d.stationary-inner).
 
-* `downwardMinimizer_of_localSmallest`: a local smallest supersolution (Definition 2.6(i))
-  which is locally Lipschitz and harmonic in its positivity set is a downward minimizer
-  (Definition 2.11).
+* `downwardMinimizer_of_localSmallest`: a local smallest supersolution
+  ([Definition 2.7(i)](#AFS:d.largest-smallest)) which is locally Lipschitz and harmonic in its
+  positivity set is a downward minimizer ([Definition 2.15](#AFS:d.directional)).
 * `upwardMinimizer_of_localLargest`: the dual statement for local largest subsolutions.
 * `directional : DirectionalStatement`.
 
@@ -41,14 +43,14 @@ strict-touching perturbation `jet_add_quartic`, and two elementary Sobolev facts
 uniqueness of weak gradients (`HasWeakGradient.ae_eq_of_eqOn`) and the energy splitting of
 `energyJ`.
 
-Two facts not covered by the paper's citations are proved in `Regularity/`:
-* continuity on `U` of the obstacle minimizers extended by `u` (the paper cites interior
-  regularity only), `obstacle_below_continuousOn`, `obstacle_above_continuousOn`, by a De Giorgi
-  argument (`Regularity.obstacle_below_continuousOn`,
-  `Regularity.obstacle_above_continuousOn`);
+Two further facts are proved here or in dependencies:
+* continuity on `U` of the obstacle minimizers extended by `u` (the paper cites the regularity
+  theory of quasi-minimizers, Giusti, *Direct Methods in the Calculus of Variations*, Theorem 7.8),
+  `obstacle_below_continuousOn`, `obstacle_above_continuousOn`, by a De Giorgi argument
+  (`Regularity.obstacle_below_continuousOn`, `Regularity.obstacle_above_continuousOn`);
 * `v₊ ∈ H¹_loc` with weak gradient `1_{v>0} ∇v` (standard lattice property of Sobolev functions,
-  used implicitly by the paper to reduce downward competitors `v ≤ u` to nonnegative ones,
-  `0 ≤ v₊ ≤ u`), `memH1Loc_posPart` (`GMTFoundations.memH1Loc_posPart`).
+  used to reduce the downward competitors `v ≤ u` of `IsDownwardMinimizer`, which may change sign,
+  to nonnegative ones, `0 ≤ v₊ ≤ u`), `memH1Loc_posPart` (`GMTFoundations.memH1Loc_posPart`).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -192,8 +194,9 @@ then `v₊ = max(v, 0) ∈ H¹_loc(U)` with weak gradient `1_{v > 0} G`.
 
 Standard lattice property of Sobolev functions (D. Gilbarg, N. S. Trudinger, *Elliptic Partial
 Differential Equations of Second Order*, Springer, 2001, doi:10.1007/978-3-642-61798-0,
-Lemma 7.6). The paper uses it implicitly in Lemma 6.3, Step 1: Definition 2.11 allows downward
-competitors `v ≤ u` of any sign, while the obstacle problem (6.1) only admits `0 ≤ v ≤ u`; the
+Lemma 7.6). It is used in [Proposition 6.3](#AFS:p.downward), Step 1: `IsDownwardMinimizer` allows
+downward competitors `v ≤ u` of any sign (the paper's [Definition 2.15](#AFS:d.directional) takes
+`0 ≤ v ≤ u`), while the obstacle problem [(6.1)](#AFS:e.obstacle-remin) only admits `0 ≤ v ≤ u`; the
 reduction is `J_Q(v₊; B) ≤ J_Q(v; B)` (`energyJ_posPart_le`). Proved in
 `GMTFoundations.memH1Loc_posPart` (gmt-foundations v0.1.0). -/
 theorem memH1Loc_posPart {U : Set (E d)} {v : E d → ℝ} {G : E d → E d} (hU : IsOpen U)
@@ -212,20 +215,21 @@ section BoundaryContinuity
 `B = B_r(x₀)`, `B̄ ⊆ U`), continuous in `B` and equal to `u` on `U \ B`. Then `w` is continuous on
 `U`.
 
-Paper: Lemma 6.3, Step 1 uses that `w` (extended by `u`) is a viscosity supersolution in `U`, and
-Definition 2.1 requires `w ∈ C(U)`; the regularity the paper cites (W. M. Feldman, I. C. Kim, N.
-Požár, *An obstacle approach to rate-independent droplet evolution*, Forum Math. Sigma 14 (2026),
-e38, doi:10.1017/fms.2026.10189, §3) gives at most continuity in `B`, and does not treat this
-obstacle problem. Here we prove continuity up to `∂B`. Since `0 ≤ w ≤ u` and `w = u` on `∂B`,
-continuity at a point `z ∈ ∂B` is automatic when `u(z) = 0` and upper semicontinuity always holds;
-the missing statement is the lower bound `liminf_{y → z, y ∈ B} w(y) ≥ u(z)` at points `z ∈ ∂B` with
-`u(z) > 0`, a boundary-regularity (barrier / energy) property of the obstacle minimizer with
-Lipschitz boundary data.
+Paper: [Proposition 6.3](#AFS:p.downward), Step 1 uses that `w` (extended by `u`) is a viscosity
+supersolution in `U`, and [Definition 2.1](#AFS:d.stationary-viscosity) requires `w ∈ C(U)`; the
+paper obtains continuity of `w` on `B̄` from the regularity theory of quasi-minimizers (E.
+Giusti, *Direct Methods in the Calculus of Variations*, Theorem 7.8 and Example 6.4). Here we prove
+continuity up to `∂B`. Since `0 ≤ w ≤ u` and `w = u` on `∂B`, continuity at a point `z ∈ ∂B` is
+automatic when `u(z) = 0` and upper semicontinuity always holds; the remaining statement is the
+lower bound `liminf_{y → z, y ∈ B} w(y) ≥ u(z)` at points `z ∈ ∂B` with `u(z) > 0`, a
+boundary-regularity (barrier / energy) property of the obstacle minimizer with Lipschitz boundary
+data.
 
-Why it cannot be localized away: the argument concludes via Definition 2.6(i)
-(`IsLocalSmallestSuper`), which only accepts competitors that are viscosity supersolutions — in
-particular continuous — on all of `U`; testing only at interior points of `B` does not help, because
-the extended `w` must itself be an admissible competitor, and `w ≠ u` near `∂B` in general. -/
+Why it cannot be localized away: the argument concludes via
+[Definition 2.7(i)](#AFS:d.largest-smallest) (`IsLocalSmallestSuper`), which only accepts
+competitors that are viscosity supersolutions — in particular continuous — on all of `U`; testing
+only at interior points of `B` does not help, because the extended `w` must itself be an admissible
+competitor, and `w ≠ u` near `∂B` in general. -/
 theorem obstacle_below_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d}
     (hU : IsOpen U) (hQ : ∃ K, LipschitzOnWith K Q U) (hQpos : ∃ c > 0, ∀ x ∈ U, c ≤ Q x)
     (hQb : ∃ C, ∀ x ∈ U, Q x ≤ C) (hu : LocallyLipschitzOn U u) (hu0 : ∀ x ∈ U, 0 ≤ u x)
@@ -243,8 +247,8 @@ theorem obstacle_below_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : 
 `J_Q(·; B)` over `{v ∈ u + H¹₀(B) : v ≥ u}` (the output of `Registry.obstacle_above_exists`),
 continuous in `B` and equal to `u` on `U \ B`. Then `w` is continuous on `U`.
 
-Paper: Lemma 6.3, Step 2 ("exists and is continuous as before"). Here lower
-semicontinuity at `∂B` is automatic (`w ≥ u`, `w = u` on `∂B`); the missing statement is the
+Paper: [Proposition 6.3](#AFS:p.downward), Step 2 ("exists and is continuous as before"). Here lower
+semicontinuity at `∂B` is automatic (`w ≥ u`, `w = u` on `∂B`); the remaining statement is the
 upper bound `limsup_{y → z, y ∈ B} w(y) ≤ u(z)` for `z ∈ ∂B`. -/
 theorem obstacle_above_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d}
     (hU : IsOpen U) (hQ : ∃ K, LipschitzOnWith K Q U) (hQpos : ∃ c > 0, ∀ x ∈ U, c ≤ Q x)
@@ -261,7 +265,7 @@ theorem obstacle_above_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : 
 
 end BoundaryContinuity
 
-/-! ### Lemma 6.3 -/
+/-! ### [Proposition 6.3](#AFS:p.downward) -/
 
 section Directional
 
@@ -277,10 +281,10 @@ theorem isOpen_posSet {f : E d → ℝ} (hU : IsOpen U) (hf : ContinuousOn f U) 
     IsOpen (posSet f U) :=
   hf.isOpen_inter_preimage hU isOpen_Ioi
 
-/-- **Lemma 6.3, Step 1**, with the added regularity hypotheses (see the module docstring). A local
-smallest supersolution (Definition 2.6(i)) `u` in the open set `U`, locally Lipschitz, `C²` and
-harmonic in `{u > 0}`, is a downward minimizer of `J_Q` (Definition 2.11, as encoded in
-`IsDownwardMinimizer`).
+/-- **[Proposition 6.3](#AFS:p.downward), Step 1**, with the added regularity hypotheses (see the
+module docstring). A local smallest supersolution ([Definition 2.7(i)](#AFS:d.largest-smallest)) `u`
+in the open set `U`, locally Lipschitz, `C²` and harmonic in `{u > 0}`, is a downward minimizer of
+`J_Q` ([Definition 2.15](#AFS:d.directional), as encoded in `IsDownwardMinimizer`).
 
 Proof: for a ball `B ⊂⊂ U` let `w` minimize `J_Q(·; B)` with `u` as upper obstacle. Then
 `w` is a viscosity supersolution in `U`: at a touching point with `w = u` use that `u` is one;
@@ -369,10 +373,10 @@ theorem downwardMinimizer_of_localSmallest (hU : IsOpen U) (hQ : ∃ K, Lipschit
   · filter_upwards [hvu, ae_restrict_mem hU.measurableSet] with y hy hyU
     exact ⟨le_max_right _ _, max_le hy (hu0 y hyU)⟩
 
-/-- **Lemma 6.3, Step 2**, with the added regularity hypotheses (see the module docstring). A local
-largest subsolution (Definition 2.6(ii)) `u` in the open set `U`, locally Lipschitz, `C²` and
-harmonic in `{u > 0}`, is an upward minimizer of `J_Q` (Definition 2.11, as encoded in
-`IsUpwardMinimizer`).
+/-- **[Proposition 6.3](#AFS:p.downward), Step 2**, with the added regularity hypotheses (see the
+module docstring). A local largest subsolution ([Definition 2.7(ii)](#AFS:d.largest-smallest)) `u`
+in the open set `U`, locally Lipschitz, `C²` and harmonic in `{u > 0}`, is an upward minimizer of
+`J_Q` ([Definition 2.15](#AFS:d.directional), as encoded in `IsUpwardMinimizer`).
 
 Proof: for a ball `B ⊂⊂ U` let `w` minimize `J_Q(·; B)` with `u` as lower obstacle. Then `w` is a
 viscosity subsolution in `U`: at a touching point `x₀ ∈ \overline{{u > 0}}` with `w(x₀) = u(x₀)` use
@@ -545,8 +549,8 @@ theorem upwardMinimizer_of_localLargest (hU : IsOpen U) (hQ : ∃ K, LipschitzOn
   rw [hJu]
   exact hmin v Gv hGv hvout huv
 
-/-- **Lemma 6.3** in the standing setting, with the added hypotheses that `u` is locally Lipschitz,
-`C²` and harmonic in `{u > 0}` (see the module docstring). -/
+/-- **[Proposition 6.3](#AFS:p.downward)** in the standing setting, with the added hypotheses that
+`u` is locally Lipschitz, `C²` and harmonic in `{u > 0}` (see the module docstring). -/
 theorem directional : DirectionalStatement := by
   intro d S u hu hc2 hharm
   have hQ : ∃ K, LipschitzOnWith K S.Q S.U :=

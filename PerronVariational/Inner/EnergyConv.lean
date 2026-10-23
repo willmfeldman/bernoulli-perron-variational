@@ -17,10 +17,11 @@ import PerronVariational.Inner.WeakGrad
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Lemma 4.2: strong convergence of the spatial gradients
+# [Lemma 4.2](#AFS:lem:strongGrad): strong convergence of the spatial gradients
 
-Tools for the energy argument of Lemma 4.2 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+Tools for the energy argument of [Lemma 4.2](#AFS:lem:strongGrad) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981:
 * test functions `F η` with `F` locally Lipschitz in space and `η ∈ C¹_c` (`isSliceLipTest_mul`);
 * the gradient of `F η` and of functions with a local minimum;
 * strong × weak products of vector fields in `L²`;
@@ -299,8 +300,9 @@ theorem integral_dₜ_mul_self {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
   rw [hdf p hp]
   ring
 
-/-- **The `ε`-level energy inequality** (proof of Lemma 4.2, before (4.3)): for a nonnegative
-classical solution `v` of (3.4) and `0 ≤ η ∈ C¹_c(U_∞)`,
+/-- **The `ε`-level energy inequality** (proof of [Lemma 4.2](#AFS:lem:strongGrad), before
+[(4.3)](#AFS:eqn:limsupForGrad)): for a nonnegative classical solution `v` of
+[(3.4)](#AFS:e.bernoulli-parabolic-semilinear) and `0 ≤ η ∈ C¹_c(U_∞)`,
 `∫ η |∇v|² ≤ ∫ (v²/2) ∂ₜη - ∫ v ∇v · ∇η` (multiply by `v η`, drop `Q² β_ε(v) v η ≥ 0`). -/
 theorem energy_ineq_semilinear (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) {ε : ℝ}
     (hε : 0 < ε) {v η : E d × ℝ → ℝ} (hv : IsSemilinearSolOn S.U S.Q β ε (Ioi 0) v)

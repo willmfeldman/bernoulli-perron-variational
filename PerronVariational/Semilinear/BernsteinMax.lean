@@ -14,11 +14,12 @@ import PerronVariational.Semilinear.BernsteinPoint
 /-!
 # The Bernstein computation at a maximum point (Steps 1 and 3)
 
-Steps 1 and 3 of the joint proof of Propositions A.5 and A.6 of
-F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4):
-Step 1 is the equation for `v`, where `u = Φ(v)`, and the equation (A.8) for `w = |∇v|²`;
-Step 3 is the derivative tests at a maximum of `z = η² w`.
+Steps 1 and 3 of the joint proof of Propositions [B.2](#AFS:p.localLip) and
+[B.3](#AFS:p.localLip-initial-data) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981
+([Appendix B.4](#AFS:s.lipschitz-space)): Step 1 is the equation for `v`, where `u = Φ(v)`, and the
+[equation (B.7)](#AFS:e.w-eq) for `w = |∇v|²`; Step 3 is the derivative tests at a maximum of
+`z = η² w`.
 
 Here `Φ : ℝ → ℝ` is any smooth function with `Φ' > 0` and a smooth inverse `Ψ`; `u` is a smooth
 solution of `∂ₜu = Δu - Q² β_ε(u)` on an open set `O`, and `v = Ψ ∘ u`. With
@@ -143,8 +144,8 @@ theorem dd_wOf_eqOn (hv : ContDiffOn ℝ ∞ v O) (a : E d × ℝ) :
 
 omit hu hβ hΦ hΦ' hΨ hΦΨ heq in
 include hO in
-/-- **The equation (A.8) for `w = |∇v|²`**, with the Hessian term dropped: if `v` is smooth
-on `O` and `∂ₜv = Δv + ℓ(v)|∇v|² - Q² B(v)` there, then at every `p ∈ O`
+/-- **The [equation (B.7)](#AFS:e.w-eq) for `w = |∇v|²`**, with the Hessian term dropped: if `v` is
+smooth on `O` and `∂ₜv = Δv + ℓ(v)|∇v|² - Q² B(v)` there, then at every `p ∈ O`
 `∂ₜw - Δw - 2ℓ(v)∇v·∇w ≤ -2(-ℓ'(v)) w² - 2 ∇v·(B(v)∇(Q²)) - 2 Q² B'(v) w`. -/
 theorem weq_le (hv : ContDiffOn ℝ ∞ v O) (hℓ : ContDiff ℝ ∞ ℓ) (hB : ContDiff ℝ ∞ B)
     (hQ : ContDiff ℝ ∞ Q)
@@ -265,7 +266,7 @@ theorem dd_z_eqOn (hW : ContDiffOn ℝ ∞ (wOf v) O) (hη : ContDiff ℝ ∞ η
 
 omit hu hβ hΦ hΦ' hΨ hΦΨ heq in
 include hO in
-/-- **The Bernstein inequality at a maximum point** (Step 3, (A.10)): at a point
+/-- **The Bernstein inequality at a maximum point** (Step 3, [(B.9)](#AFS:e.zmax-ineq)): at a point
 `p ∈ O` where `z = η² w` has a local maximum relative to the parabolic past, with
 `0 < η(p) ≤ 1`, `w(p) ≥ 1`, `ℓ'(v) < 0` and `ℓ(v)² ≤ 2|ℓ'(v)|`:
 `|ℓ'(v)| z ≤ C_η + 2 η² (|Q² B'(v)| + K)` where `|B(v) ∇(Q²)| ≤ K` and

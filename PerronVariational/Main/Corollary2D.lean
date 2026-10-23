@@ -10,10 +10,10 @@ public import PerronVariational.Main.Corollary2D.Flat
 public import PerronVariational.Main.Corollary2D.Structure
 
 /-!
-# Corollary 1.2: structure of the free boundary of extremal solutions in the plane
+# Structure of the free boundary of extremal solutions in the plane
 
-**Corollary 1.2** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
+**[Corollary 1.2](#AFS:c.2d-structure)** of F. Abedin, W. M. Feldman, K. Stinson, *Variational
+properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
 
 ## Part 1: classical points form a relatively open set
 
@@ -27,7 +27,7 @@ extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981.
   blow-ups of supersolutions and the supersolution test for two-plane functions.
 * `PerronVariational.Main.Corollary2D.Flat`: flatness from half-plane blow-ups.
 * `PerronVariational.Main.Corollary2D.Structure`: classification of blow-ups in the plane and
-  Corollary 1.2 (i), (ii).
+  [Corollary 1.2 (i)](#AFS:part.smallest-reg), (ii).
 -/
 
 @[expose] public section

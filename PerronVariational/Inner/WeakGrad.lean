@@ -17,15 +17,15 @@ import PerronVariational.Registry.FunctionalAnalysis
 /-!
 # Weak convergence of gradients under locally uniform convergence
 
-The spatial identification step behind the weak convergence of the gradients (Section 4.2) and the
-limit of the dissipation inequality (proof of Proposition 4.1, Section 4.4) in F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981: if `f_n → f` locally uniformly on an open `U ⊆ ℝᵈ`, all
-`f_n` and `f` are locally Lipschitz on `U`, and `∫_U |∇f_n|² ≤ E`, then `∇f_n ⇀ ∇f` weakly in
-`L²(U)` (the whole sequence: every weak subsequential limit, which exists by weak compactness of
-bounded sets in `L²`, is identified with `∇f` through the weak gradients of Lipschitz functions
-and the fundamental lemma of the calculus of variations; both results are from gmt-foundations
-v0.1.0).
+The spatial identification step behind the weak convergence of the gradients
+([Section 4.2](#AFS:subsec:strongGrad)) and the limit of the dissipation inequality (proof of
+[Proposition 4.1](#AFS:p.eps-inner-limit), [Section 4.4](#AFS:subsec:paraInnerVar)) in F. Abedin, W.
+M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981: if `f_n → f` locally uniformly on an open `U ⊆ ℝᵈ`, all `f_n`
+and `f` are locally Lipschitz on `U`, and `∫_U |∇f_n|² ≤ E`, then `∇f_n ⇀ ∇f` weakly in `L²(U)` (the
+whole sequence: every weak subsequential limit, which exists by weak compactness of bounded sets in
+`L²`, is identified with `∇f` through the weak gradients of Lipschitz functions and the fundamental
+lemma of the calculus of variations; both results are from gmt-foundations v0.1.0).
 
 * `Inner.tendstoWeakL2_gradient_of_tendsto`: the statement above.
 * `Inner.locallyLipschitzOn_of_gradient`: `C¹` on an open set implies locally Lipschitz.

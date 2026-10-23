@@ -97,13 +97,6 @@ theorem laplacian_logRad_floor (h : α * Real.log (max (‖x - z‖ ^ 2) δ) + k
       (hasDerivAt_floorCapD hlf.ne' hlc.ne') hδ hδδ' hc hτ, floorCapDD_of_le_floor hlf hlc htfc h]
     simp
 
-omit htfc hδ hδδ' hc in
-/-- In the middle, a piece is its argument. -/
-theorem logRad_eq_mid (hτ : δ ≤ ‖x - z‖ ^ 2)
-    (h : α * Real.log (‖x - z‖ ^ 2) + k ∈ Icc tf tc) :
-    logRad (floorCap tf lf tc lc) z α k δ x = α * Real.log (‖x - z‖ ^ 2) + k := by
-  rw [logRad_apply, max_eq_left hτ, floorCap_of_mem_Icc hlf hlc h]
-
 omit htfc in
 /-- In the middle, `|∇ piece| = 2|α|/|x - z|`. -/
 theorem norm_gradient_logRad_mid (hτ : δ < ‖x - z‖ ^ 2)

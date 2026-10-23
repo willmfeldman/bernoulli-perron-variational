@@ -15,9 +15,9 @@ import Mathlib.Analysis.Calculus.Rademacher
 /-!
 # Density of translated bumps for first-order linear functionals
 
-Tool for the time localization in the proof of **Theorem 3.10** (Steps 2 and 4) of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981: a functional
+Tool for the time localization in the proof of **[Theorem 3.14](#AFS:t.longtime-inner)** (Steps 2
+and 4) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
+solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: a functional
 `Ψ(ζ) = ∫ a ζ + Dζ(g)` (with `a`, `g` integrable) that vanishes on all translates `ρₙ(· - q)`
 (`q` in a countable dense set) of a fixed countable family of mollifiers `ρₙ` supported in `W`
 vanishes on every Lipschitz `ζ` with compact support in `W`.
@@ -96,12 +96,6 @@ theorem translate_moll_eq_zero_of_notMem {n : ℕ} {y x : E d}
   have : x - y ∉ tsupport (moll d n) := by
     rw [tsupport_moll, mem_closedBall, dist_zero_right, ← dist_eq_norm]; exact hx
   exact image_eq_zero_of_notMem_tsupport this
-
-theorem fderiv_translate_moll_eq_zero_of_notMem {n : ℕ} {y x : E d}
-    (hx : x ∉ closedBall y (bumpRad n)) : fderiv ℝ (moll d n) (x - y) = 0 := by
-  have : x - y ∉ tsupport (moll d n) := by
-    rw [tsupport_moll, mem_closedBall, dist_zero_right, ← dist_eq_norm]; exact hx
-  exact fderiv_of_notMem_tsupport ℝ this
 
 /-! ### The functional -/
 

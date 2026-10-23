@@ -10,12 +10,12 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
-# The Bernstein change of variables (proof of Propositions A.5–A.6, Steps 2 and 4)
+# The Bernstein change of variables
 
-Steps 2 (properties (a)–(e)) and 4 (construction of `φ`) of the joint proof of Propositions A.5
-and A.6 of
+Steps 2 (properties (a)–(e)) and 4 (construction of `φ`) of the joint proof of Propositions
+[B.2](#AFS:p.localLip) and [B.3](#AFS:p.localLip-initial-data) of
 F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions
-in the Bernoulli one-phase problem*, arXiv:2609.14981 (Appendix A.4).
+in the Bernoulli one-phase problem*, arXiv:2609.14981 ([Appendix B.4](#AFS:s.lipschitz-space)).
 This is pure one-variable real analysis.
 
 Given `ε > 0`, `M ≥ 0`, put `v_max = ε + 4M`, `a = 1/(8 v_max²)`, `ρ = ε²/(64 v_max)`, and a
@@ -27,7 +27,7 @@ cutoff `ψ : ℝ → [0, 1]` (continuous, `ψ = 1` on `(-∞, 0]`, `ψ = 0` on `
 
 ## Main results (Step 2, (a)–(e))
 
-* (a) `one_half_le_phiDeriv`, `phiDeriv_le_exp_one`, `two_mul_le_phi_vmax`;
+* (a) `one_le_phiDeriv`, `phiDeriv_le_exp_one`, `two_mul_le_phi_vmax`;
 * (b) `le_phi_eps`;
 * (c) `ellDeriv_le_of_le`, `ell_nonneg_of_le`, `ell_le_of_mem`, `one_le_phiDeriv_of_mem`;
 * (d) `ellDeriv_le_neg_a`;
@@ -35,8 +35,8 @@ cutoff `ψ : ℝ → [0, 1]` (continuous, `ψ = 1` on `(-∞, 0]`, `ψ = 0` on `
 
 The paper takes `ψ ∈ C^∞` nonincreasing; only continuity, `0 ≤ ψ ≤ 1` and the boundary values
 are used (the smooth choice `ψ(x) = smoothTransition (1 - x)` is `IsBernsteinCutoff`, see
-`isBernsteinCutoff_smoothTransition`). We in fact get `φ' ≥ 1` on `[0, v_max]`, which is
-stronger than the paper's `φ' ≥ 1/2`.
+`isBernsteinCutoff_smoothTransition`). The bounds `1 ≤ φ' ≤ e` on `[0, v_max]` of (a) are as in
+the paper; `one_half_le_phiDeriv` records the weaker bound `φ' ≥ 1/2`.
 -/
 
 open Set Filter Topology intervalIntegral Real
@@ -162,8 +162,6 @@ theorem phiDeriv_pos (v : ℝ) : 0 < phiDeriv ψ ε M v := exp_pos _
 
 theorem phi_zero : phi ψ ε M 0 = 0 := integral_same
 
-theorem phiDeriv_zero : phiDeriv ψ ε M 0 = 1 := by simp [phiDeriv]
-
 /-! ### `ℓ` on `[0, ε]` and on `[ε, ∞)` -/
 
 section Ell
@@ -242,7 +240,7 @@ theorem integral_cutoff_le {v : ℝ} (hv : ε ≤ v) :
     rw [h0, add_zero]
     exact (hle1 _ _ (by linarith)).trans (by linarith)
 
-/-- The bounds (A.11): `a(v - ε) ≤ -ℓ(v) ≤ ρ/ε² + a(v - ε)` for
+/-- The bounds [(B.10)](#AFS:e.ell-bds-above-ep): `a(v - ε) ≤ -ℓ(v) ≤ ρ/ε² + a(v - ε)` for
 `v ≥ ε`. -/
 theorem ell_bounds_of_le {v : ℝ} (hv : ε ≤ v) :
     acoef ε M * (v - ε) ≤ -ell ψ ε M v ∧
@@ -394,12 +392,12 @@ theorem phiDeriv_le_exp_one (v : ℝ) : phiDeriv ψ ε M v ≤ exp 1 := by
   rw [integral_ell_eps hψ hε hM]
   linarith [acoef_mul_eps_sq_le hε hM]
 
-/-- `φ' ≥ 1` on `[0, v_max]` (stronger than the paper's `φ' ≥ 1/2`). -/
+/-- **(a)**, lower bound: `φ' ≥ 1` on `[0, v_max]`. -/
 theorem one_le_phiDeriv {v : ℝ} (hv : v ∈ Icc 0 (vmax ε M)) : 1 ≤ phiDeriv ψ ε M v := by
   rw [phiDeriv, one_le_exp_iff]
   exact integral_ell_nonneg hψ hε hM hv
 
-/-- **(a)**, lower bound: `φ' ≥ 1/2` on `[0, v_max]`. -/
+/-- A weaker form of the lower bound in (a): `φ' ≥ 1/2` on `[0, v_max]`. -/
 theorem one_half_le_phiDeriv {v : ℝ} (hv : v ∈ Icc 0 (vmax ε M)) : 1 / 2 ≤ phiDeriv ψ ε M v :=
   (by norm_num : (1 : ℝ) / 2 ≤ 1).trans (one_le_phiDeriv hψ hε hM hv)
 

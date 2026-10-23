@@ -9,18 +9,29 @@ public import PerronVariational.Defs.Parabolic
 public import PerronVariational.Defs.Stationary
 
 /-!
-# Stationary solutions are stationary parabolic solutions (Remark 3.3)
+# Stationary solutions are stationary parabolic solutions ([Remark 3.4](#AFS:r.statToPara))
 
-Remark 3.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal
-solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. A viscosity subsolution (resp.
-supersolution) `u` of (1.1) in `U` gives the time-independent parabolic subsolution (resp.
-supersolution) `(x, t) ↦ u(x)` of (3.1) on `U × I`, for any time set `I`.
+[Remark 3.4](#AFS:r.statToPara) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties
+of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. A viscosity
+subsolution (resp. supersolution) `u` of [(1.1)](#AFS:e.bernoulli-basic) in `U` gives the
+time-independent parabolic subsolution (resp. supersolution) `(x, t) ↦ u(x)` of
+[(3.1)](#AFS:e.bernoulli-parabolic) on `U × I`, for any time set `I`.
 
 The proof is the paper's first-crossing argument: for a strict barrier `φ` ordered on the
 parabolic boundary, take the first time `t₀` at which the ordering fails on the relevant closed
 set (compactness of `V̄ × [a, b]`); the crossing point `(x₀, t₀)` lies off the parabolic boundary,
-`x ↦ φ(x, t₀)` touches `u` at `x₀`, and `∂ₜφ(x₀, t₀)` has a sign, contradicting the strict
-barrier inequalities.
+`x ↦ φ(x, t₀)` touches `u` at `x₀`, and `∂ₜφ(x₀, t₀)` has a sign. Since `φ(x₀, t₀) = u(x₀) ≥ 0`,
+condition (i) of the classical strict barrier gives the sign of `Δφ(x₀, t₀)`, and if
+`φ(x₀, t₀) = 0` condition (ii) gives `|∇φ(x₀, t₀)| < Q(x₀)` (resp. `>`); this needs `Q > 0`,
+assumed on `U`. This contradicts the stationary viscosity property.
+
+The same lift applies to barriers: a smooth strict sub/supersolution of
+[(1.1)](#AFS:e.bernoulli-basic) in the sense of [Definition 2.3](#AFS:d.strict-sub)
+(`IsUnifStrictSub`/`IsUnifStrictSuper`), viewed as time-independent, is a classical strict
+sub/supersolution of [(3.1)](#AFS:e.bernoulli-parabolic) on every `V̄ × [a, b]` with the same
+constants (`IsUnifStrictSub.isClassicalStrictParaSub`,
+`IsUnifStrictSuper.isClassicalStrictParaSuper`; used for the barrier of
+[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed)).
 -/
 
 open Set Filter Topology Metric
@@ -78,16 +89,18 @@ theorem posSetP_const (u : E d → ℝ) (U : Set (E d)) (I : Set ℝ) :
   simp only [posSetP, posSet, mem_prod, Set.mem_ofPred_eq]
   tauto
 
-/-! ### Remark 3.3 -/
+/-! ### [Remark 3.4](#AFS:r.statToPara) -/
 
-/-- **Remark 3.3**, subsolution case. A viscosity subsolution of (1.1)
-in `U` is a (stationary) parabolic viscosity subsolution of (3.1) in `U × I`. -/
+/-- **[Remark 3.4](#AFS:r.statToPara)**, subsolution case. A viscosity subsolution of
+[(1.1)](#AFS:e.bernoulli-basic) in `U` is a (stationary) parabolic viscosity subsolution of
+[(3.1)](#AFS:e.bernoulli-parabolic) in `U × I`. -/
 theorem IsViscSub.isParaSub_const {U : Set (E d)} {Q u : E d → ℝ} (hu : IsViscSub U Q u)
-    (I : Set ℝ) : IsParaSub U Q I (fun p ↦ u p.1) := by
+    (hQ : ∀ x ∈ U, 0 < Q x) (I : Set ℝ) : IsParaSub U Q I (fun p ↦ u p.1) := by
   refine ⟨hu.1.comp continuousOn_fst fun p hp ↦ hp.1, fun p hp ↦ hu.2.1 p.1 hp.1, ?_⟩
   intro V a b φ hadm hφ hbd
   obtain ⟨hVo, hVb, hab, hVU⟩ := hadm
-  obtain ⟨hφs, hφ1, hφ2⟩ := hφ
+  obtain ⟨a₀, δ₀, hφ⟩ := hφ
+  have hφs := hφ.contDiff
   have hEcl' : closure (posSetP (fun p : E d × ℝ ↦ u p.1) (U ×ˢ I)) =
       closure (posSet u U) ×ˢ closure I := by
     rw [posSetP_const, closure_prod_eq]
@@ -144,33 +157,33 @@ theorem IsViscSub.isParaSub_const {U : Set (E d)} {Q u : E d → ℝ} (hu : IsVi
     filter_upwards [mem_nhdsWithin_of_mem_nhds (hVo.mem_nhds hy₀), self_mem_nhdsWithin]
       with y hyV hyS
     exact (hat y hyS.1 (subset_closure hyV)).trans (le_max_left _ _)
-  -- `(y₀, t₀)` lies in the closure of `{φ > 0}`
-  have hcl : (y₀, t₀) ∈ closure {q | 0 < φ q} := by
-    have h1 : y₀ ∈ closure (V ∩ posSet u U) := hVo.inter_closure ⟨hy₀, hy₀P⟩
-    refine map_mem_closure (f := fun y ↦ (y, t₀)) (by fun_prop) h1 fun y hy ↦ ?_
-    exact lt_of_lt_of_le hy.2.2 (hat y (subset_closure hy.2) (subset_closure hy.1))
+  -- the strict supersolution inequalities at `(y₀, t₀)`, where `φ = u ≥ 0 > -a₀`
   have hmem : (y₀, t₀) ∈ closure V ×ˢ Icc a b := ⟨hy₀V, ht₀⟩
-  have hstrict := hφ1 (y₀, t₀) ⟨hcl, hmem⟩
+  have hφnn : 0 ≤ φ (y₀, t₀) := hφ₀ ▸ hu.2.1 y₀ hy₀U
+  have hstrict := hφ.heat (y₀, t₀) ⟨show -a₀ < φ (y₀, t₀) by linarith [hφ.a₀_pos], hmem⟩
   rcases hu.2.2 ψ hψs y₀ htouch with hlap | ⟨hzero, hgrad⟩
   · have : lapₓ φ (y₀, t₀) = Δ ψ y₀ := rfl
-    linarith
-  · have hfr : (y₀, t₀) ∈ frontier {q | 0 < φ q} := by
-      refine ⟨hcl, fun hint ↦ ?_⟩
-      have := interior_subset hint
-      simp only [Set.mem_ofPred_eq] at this
-      have : ψ y₀ = φ (y₀, t₀) := rfl
-      linarith
-    exact (not_le.2 (hφ2 (y₀, t₀) ⟨hfr, hmem⟩)) hgrad
+    linarith [hφ.δ₀_pos]
+  · -- `φ(y₀, t₀) = 0`, so `|∇φ|² ≤ (1 - δ₀) Q² < Q²`
+    have hz : φ (y₀, t₀) = 0 := hzero
+    have hg := hφ.grad (y₀, t₀) ⟨show |φ (y₀, t₀)| ≤ a₀ by rw [hz, abs_zero]; exact hφ.a₀_pos.le,
+      hmem⟩
+    have hgψ : gradₓ φ (y₀, t₀) = ∇ ψ y₀ := rfl
+    rw [hgψ] at hg
+    have hQ0 := hQ y₀ hy₀U
+    have h2 : Q y₀ ^ 2 ≤ ‖∇ ψ y₀‖ ^ 2 := pow_le_pow_left₀ hQ0.le hgrad 2
+    nlinarith [mul_pos hφ.δ₀_pos (pow_pos hQ0 2)]
 
-/-- **Remark 3.3**, supersolution case ("similar" in the paper). A
-viscosity supersolution of (1.1) in `U` is a (stationary) parabolic viscosity supersolution of
-(3.1) in `U × I`. -/
+/-- **[Remark 3.4](#AFS:r.statToPara)**, supersolution case ("similar" in the paper). A
+viscosity supersolution of [(1.1)](#AFS:e.bernoulli-basic) in `U` is a (stationary) parabolic
+viscosity supersolution of [(3.1)](#AFS:e.bernoulli-parabolic) in `U × I`. -/
 theorem IsViscSuper.isParaSuper_const {U : Set (E d)} {Q u : E d → ℝ} (hu : IsViscSuper U Q u)
-    (I : Set ℝ) : IsParaSuper U Q I (fun p ↦ u p.1) := by
+    (hQ : ∀ x ∈ U, 0 < Q x) (I : Set ℝ) : IsParaSuper U Q I (fun p ↦ u p.1) := by
   refine ⟨hu.1.comp continuousOn_fst fun p hp ↦ hp.1, fun p hp ↦ hu.2.1 p.1 hp.1, ?_⟩
   intro V a b φ hadm hφ hbd
   obtain ⟨hVo, hVb, hab, hVU⟩ := hadm
-  obtain ⟨hφs, hφ1, hφ2⟩ := hφ
+  obtain ⟨a₀, δ₀, hφ⟩ := hφ
+  have hφs := hφ.contDiff
   have hEq : posSetP φ univ = {q | 0 < φ q} := by ext q; simp [posSetP]
   simp only [Prec, hEq] at hbd ⊢
   rintro p ⟨hpE, hpcyl⟩
@@ -227,18 +240,76 @@ theorem IsViscSuper.isParaSuper_const {U : Set (E d)} {Q u : E d → ℝ} (hu : 
     refine ⟨hy₀U, hφ₀, ?_⟩
     filter_upwards [mem_nhdsWithin_of_mem_nhds (hVo.mem_nhds hy₀)] with y hyV
     exact hat y (subset_closure hyV)
+  -- the strict subsolution inequalities at `(y₀, t₀) ∈ \overline{{φ > 0}}`
   have hmem : (y₀, t₀) ∈ closure V ×ˢ Icc a b := ⟨hy₀V, ht₀⟩
-  have hstrict := hφ1 (y₀, t₀) ⟨hp₀E, hmem⟩
+  have hφnn : 0 ≤ φ (y₀, t₀) := closure_lt_subset_le continuous_const hφs.continuous hp₀E
+  have hstrict := hφ.heat (y₀, t₀) ⟨show -a₀ < φ (y₀, t₀) by linarith [hφ.a₀_pos], hmem⟩
   rcases hu.2.2 ψ hψs y₀ hy₀U htouch with hlap | ⟨hzero, hgrad⟩
   · have : lapₓ φ (y₀, t₀) = Δ ψ y₀ := rfl
-    linarith
-  · have hfr : (y₀, t₀) ∈ frontier {q | 0 < φ q} := by
-      refine ⟨hp₀E, fun hint ↦ ?_⟩
-      have := interior_subset hint
-      simp only [Set.mem_ofPred_eq] at this
-      have : ψ y₀ = φ (y₀, t₀) := rfl
-      linarith
-    exact (not_le.2 (hφ2 (y₀, t₀) ⟨hfr, hmem⟩)) hgrad
+    linarith [hφ.δ₀_pos]
+  · -- `φ(y₀, t₀) = 0`, so `|∇φ|² ≥ (1 + δ₀) Q² > Q²`
+    have hz : φ (y₀, t₀) = 0 := hzero
+    have hg := hφ.grad (y₀, t₀) ⟨show |φ (y₀, t₀)| ≤ a₀ by rw [hz, abs_zero]; exact hφ.a₀_pos.le,
+      hmem⟩
+    have hgψ : gradₓ φ (y₀, t₀) = ∇ ψ y₀ := rfl
+    rw [hgψ] at hg
+    have hQ0 := hQ y₀ hy₀U
+    have h2 : ‖∇ ψ y₀‖ ^ 2 ≤ Q y₀ ^ 2 := pow_le_pow_left₀ (norm_nonneg _) hgrad 2
+    nlinarith [mul_pos hφ.δ₀_pos (pow_pos hQ0 2)]
+
+/-! ### Time-independent lift of stationary strict barriers -/
+
+section Lift
+
+variable {V : Set (E d)} {Q g : E d → ℝ}
+
+theorem dₜ_comp_fst (g : E d → ℝ) (p : E d × ℝ) : dₜ (fun q : E d × ℝ ↦ g q.1) p = 0 := by
+  simp [dₜ]
+
+theorem lapₓ_comp_fst (g : E d → ℝ) (p : E d × ℝ) :
+    lapₓ (fun q : E d × ℝ ↦ g q.1) p = Δ g p.1 := rfl
+
+theorem gradₓ_comp_fst (g : E d → ℝ) (p : E d × ℝ) :
+    gradₓ (fun q : E d × ℝ ↦ g q.1) p = ∇ g p.1 := rfl
+
+/-- **A stationary strict subsolution is a parabolic one** (the step "smooth strict subsolution of
+[(1.1)](#AFS:e.bernoulli-basic) and hence also of [(3.1)](#AFS:e.bernoulli-parabolic)", used in the
+proof of [Proposition 3.6](#AFS:p.monotone-nondegen-relaxed) for supersolutions). A smooth strict
+subsolution `g` of [(1.1)](#AFS:e.bernoulli-basic) in `V` in the sense of
+[Definition 2.3](#AFS:d.strict-sub) (`IsUnifStrictSub`), viewed as the time-independent function
+`(x, t) ↦ g(x)`, is a classical strict subsolution of [(3.1)](#AFS:e.bernoulli-parabolic) on every
+`V̄ × [a, b]`, with the same constants `a₀, δ₀`: `∂ₜ - Δ` becomes `-Δ` and the spatial gradient is
+`∇g`. Smoothness of `g` is assumed, since [Definition 2.3](#AFS:d.strict-sub) only asks `g ∈ C²`
+while the parabolic barriers are smooth. -/
+theorem IsUnifStrictSub.isClassicalStrictParaSub (h : IsUnifStrictSub V Q g)
+    (hg : ContDiff ℝ ∞ g) (a b : ℝ) :
+    IsClassicalStrictParaSub Q (fun p ↦ g p.1) V a b := by
+  obtain ⟨-, a₀, ha₀, δ₀, hδ₀, ha₀le, hδ₀le, h1, h2⟩ := h
+  refine ⟨a₀, δ₀, hg.comp contDiff_fst, ha₀, ha₀le, hδ₀, hδ₀le, fun p hp ↦ ?_, fun p hp ↦ ?_⟩
+  · rw [dₜ_comp_fst, lapₓ_comp_fst]
+    linarith [h1 p.1 hp.2.1 hp.1]
+  · rw [gradₓ_comp_fst]
+    exact h2 p.1 hp.2.1 hp.1
+
+/-- **A stationary strict supersolution is a parabolic one** (proof of
+[Proposition 3.6](#AFS:p.monotone-nondegen-relaxed): "`h` is a smooth strict supersolution of
+[(1.1)](#AFS:e.bernoulli-basic) and hence also of [(3.1)](#AFS:e.bernoulli-parabolic)"). A smooth
+strict supersolution `g` of [(1.1)](#AFS:e.bernoulli-basic) in `V` in the sense of
+[Definition 2.3](#AFS:d.strict-sub) (`IsUnifStrictSuper`), viewed as the time-independent function
+`(x, t) ↦ g(x)`, is a classical strict supersolution of [(3.1)](#AFS:e.bernoulli-parabolic) on every
+`V̄ × [a, b]`, with the same constants `a₀, δ₀`. As in `IsUnifStrictSub.isClassicalStrictParaSub`,
+smoothness of `g` is assumed. -/
+theorem IsUnifStrictSuper.isClassicalStrictParaSuper (h : IsUnifStrictSuper V Q g)
+    (hg : ContDiff ℝ ∞ g) (a b : ℝ) :
+    IsClassicalStrictParaSuper Q (fun p ↦ g p.1) V a b := by
+  obtain ⟨-, a₀, ha₀, δ₀, hδ₀, ha₀le, hδ₀le, h1, h2⟩ := h
+  refine ⟨a₀, δ₀, hg.comp contDiff_fst, ha₀, ha₀le, hδ₀, hδ₀le, fun p hp ↦ ?_, fun p hp ↦ ?_⟩
+  · rw [dₜ_comp_fst, lapₓ_comp_fst]
+    linarith [h1 p.1 hp.2.1 hp.1]
+  · rw [gradₓ_comp_fst]
+    exact h2 p.1 hp.2.1 hp.1
+
+end Lift
 
 end PerronVariational
 

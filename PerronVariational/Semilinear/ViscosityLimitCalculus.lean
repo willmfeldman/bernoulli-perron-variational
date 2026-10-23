@@ -15,10 +15,11 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.WellPrepared
 
 /-!
-# Space-time calculus for the semilinear limit (Proposition 5.3)
+# Space-time calculus for the semilinear limit
 
-Tools for the proof of Proposition 5.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational
-properties of Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
+Tools for the proof of [Proposition 5.3](#AFS:p.semilinear-limit-viscosity) of F. Abedin, W. M.
+Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
+one-phase problem*, arXiv:2609.14981:
 
 * derivatives of time and space slices of a `C²` space-time function, and continuity of
   `∂ₜφ`, `∇ₓφ`, `Δₓφ` (`continuous_dₜ`, `continuous_gradₓ`, `continuous_lapₓ`);
@@ -26,9 +27,9 @@ properties of Perron's extremal solutions in the Bernoulli one-phase problem*, a
 * touching comparison relative to the parabolic past (`touch_compare`), and the passage from
   local classical inequalities to the semilinear viscosity notions of `Registry/Semilinear`
   (`isSemilinearViscSubOn_of_local`, `isSemilinearViscSuperOn_of_local`);
-* the pointwise profile inequalities behind the parabolic versions of Lemma A.4:
-  `profileSuperEps_ineq` (for `Ψ_{ε,θ̂}`, including the exponential tail case) and
-  `profileSubEps_ineq` (for `Φ_{ε,θ}`).
+* the pointwise profile inequalities behind the parabolic versions of
+  [Lemma 3.11](#AFS:l.well-prepared): `profileSuperEps_ineq` (for `Ψ_{ε,θ̂}`, including the
+  exponential tail case) and `profileSubEps_ineq` (for `Φ_{ε,θ}`).
 -/
 
 open Set Filter Topology Metric
@@ -253,11 +254,11 @@ section Profiles
 
 variable {β : ℝ → ℝ}
 
-/-- **Pointwise form of the supersolution computation of Lemma A.4** (its proof), with the
-Laplacian term `Lap` a free parameter (in the parabolic application `Lap = Δₓψ - ∂ₜψ`).
-Given `a₀ > 0`, `θ̂ > 1`, `Q_min > 0` and bounds `Gmax`, `D`, there is `ε₀ > 0` such that for
-`ε ∈ (0, ε₀]`: if `Lap ≤ 0` where `s > -a₀`, `θ̂ G ≤ q²` where `|s| ≤ a₀`, `0 ≤ G ≤ Gmax`,
-`|Lap| ≤ D` and `Q_min ≤ q`, then `Ψ_ε''(s) G + Ψ_ε'(s) Lap ≤ q² β_ε(Ψ_ε(s))`. -/
+/-- **Pointwise form of the supersolution computation of [Lemma 3.11](#AFS:l.well-prepared)** (its
+proof), with the Laplacian term `Lap` a free parameter (in the parabolic application
+`Lap = Δₓψ - ∂ₜψ`). Given `a₀ > 0`, `θ̂ > 1`, `Q_min > 0` and bounds `Gmax`, `D`, there is `ε₀ > 0`
+such that for `ε ∈ (0, ε₀]`: if `Lap ≤ 0` where `s > -a₀`, `θ̂ G ≤ q²` where `|s| ≤ a₀`,
+`0 ≤ G ≤ Gmax`, `|Lap| ≤ D` and `Q_min ≤ q`, then `Ψ_ε''(s) G + Ψ_ε'(s) Lap ≤ q² β_ε(Ψ_ε(s))`. -/
 theorem profileSuperEps_ineq (hβ : IsReactionProfile β) {a₀ θh Qmin Gmax D : ℝ} (ha₀ : 0 < a₀)
     (hθh : 1 < θh) (hQmin : 0 < Qmin) :
     ∃ ε₀ > 0, ∀ ε ∈ Ioc 0 ε₀, ∀ s G Lap q : ℝ, (-a₀ < s → Lap ≤ 0) →
@@ -373,9 +374,10 @@ theorem profileSuperEps_ineq (hβ : IsReactionProfile β) {a₀ θh Qmin Gmax D 
     have hmid : Ex * A / ε ≤ Qmin ^ 2 * b / ε := div_le_div_of_nonneg_right hE2 hε0.le
     linarith
 
-/-- **Pointwise form of the subsolution computation of Lemma A.4** (its proof), with the
-Laplacian term `Lap` a free parameter: if `Lap ≥ 0`, `G ≥ 0`, and `q² ≤ θ G` wherever the
-reaction term `β_ε(Φ_ε(s))` is active, then `q² β_ε(Φ_ε(s)) ≤ Φ_ε''(s) G + Φ_ε'(s) Lap`. -/
+/-- **Pointwise form of the subsolution computation of [Lemma 3.11](#AFS:l.well-prepared)** (its
+proof), with the Laplacian term `Lap` a free parameter: if `Lap ≥ 0`, `G ≥ 0`, and `q² ≤ θ G`
+wherever the reaction term `β_ε(Φ_ε(s))` is active, then
+`q² β_ε(Φ_ε(s)) ≤ Φ_ε''(s) G + Φ_ε'(s) Lap`. -/
 theorem profileSubEps_ineq (hβ : IsReactionProfile β) {θ ε : ℝ} (hθ : 0 < θ) (hθ1 : θ < 1)
     (hε : 0 < ε) (s G Lap q : ℝ) (hLap : 0 ≤ Lap)
     (hGq : 0 < betaEps β ε (profileSubEps β θ ε s) → q ^ 2 ≤ θ * G) :

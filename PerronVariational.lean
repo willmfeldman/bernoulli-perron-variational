@@ -9,6 +9,7 @@ public import PerronVariational.Analysis.WeylWeakGradient
 public import PerronVariational.Topology.KLimit
 public import PerronVariational.Parabolic.Nondegen
 public import PerronVariational.Parabolic.BernoulliComparisonBridge
+public import PerronVariational.Parabolic.StrictBarrierEquiv
 public import PerronVariational.Defs.Stationary
 public import PerronVariational.Defs.Parabolic
 public import PerronVariational.Defs.Semilinear
@@ -32,10 +33,12 @@ public import PerronVariational.Parabolic.LongTimeViscosity
 public import PerronVariational.Stationary.ViscosityJet
 public import PerronVariational.Stationary.Perron
 public import PerronVariational.Stationary.ViscosityStability
+public import PerronVariational.Stationary.LocalExtremalUnif
 public import PerronVariational.Stationary.ViscosityLocal
 public import PerronVariational.Parabolic.StatToPara
 public import PerronVariational.Stationary.ConeDensity
 public import PerronVariational.Stationary.InnerSub
+public import PerronVariational.Stationary.PerimeterBound
 public import PerronVariational.Semilinear.AutonomousODE
 public import PerronVariational.Semilinear.Calculus
 public import PerronVariational.Semilinear.Profiles
@@ -89,6 +92,9 @@ public import PerronVariational.Inner.GradConv
 public import PerronVariational.Inner.StationaryLimit
 public import PerronVariational.Inner.LongTimeSteps
 public import PerronVariational.Inner.LongTime
+public import PerronVariational.Inner.LongTimeSubseq
+public import PerronVariational.Inner.LongTimeTimeReg
+public import PerronVariational.Inner.LongTimeMonotone
 public import PerronVariational.Inner.InnerVarCompactness
 public import PerronVariational.Inner.Common
 public import PerronVariational.Inner.SemilinearEstimates
@@ -150,6 +156,19 @@ public import PerronVariational.Examples.TwoDisc.Touch
 public import PerronVariational.Examples.TwoDisc.TwoPlane
 public import PerronVariational.Examples.TwoDisc.Upper
 public import PerronVariational.Examples.TwoDisc.Main
+public import PerronVariational.Examples.Necklace.Statement
+public import PerronVariational.Examples.Necklace.Geometry
+public import PerronVariational.Examples.Necklace.Domain
+public import PerronVariational.Examples.Necklace.Data
+public import PerronVariational.Examples.Necklace.Strict
+public import PerronVariational.Examples.Necklace.Upper
+public import PerronVariational.Examples.Necklace.Lower
+public import PerronVariational.Examples.Necklace.TwoPlane
+public import PerronVariational.Examples.Necklace.Largest
+public import PerronVariational.Examples.Necklace.Energy
+public import PerronVariational.Examples.Necklace.DirichletMinimizer
+public import PerronVariational.Examples.Necklace.Minimizer
+public import PerronVariational.Examples.Necklace.Main
 
 /-!
 # PerronVariational
@@ -157,23 +176,32 @@ public import PerronVariational.Examples.TwoDisc.Main
 Lean 4 formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
 extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
 
-The main results are Theorem 1.1 of the paper (`main_smallest`, `main_largest` in
-`Main/Final.lean`) and Corollary 1.2 (`corollary_2d_smallest`, `corollary_2d_largest` in
-`Main/Corollary2D/Structure.lean`). Their statements are in `Statements/Main.lean`; the
-intermediate results of the paper are stated in `Statements/Intermediate.lean`.
+The main results are [Theorem 1.1](#AFS:t.main) of the paper (`main_smallest`, `main_largest` in
+`Main/Final.lean`) and [Corollary 1.2](#AFS:c.2d-structure) (`corollary_2d_smallest`,
+`corollary_2d_largest` in `Main/Corollary2D/Structure.lean`). Their statements are in
+`Statements/Main.lean`; the intermediate results of the paper are stated in
+`Statements/Intermediate.lean`.
 
 ## Layout
 
-* `Basic`, `Defs`: the standing setting and the solution notions of §2–§3 of the paper.
+* `Basic`, `Defs`: the standing setting and the solution notions of
+  [§2](#AFS:s.concepts)–[§3](#AFS:s.parabolic_bernoulli) of the paper.
 * `Statements`: the statements of the paper's results.
 * `Registry`: results cited from the literature, each proved here or in a dependency.
 * `Foundations`, `Analysis`, `Regularity`, `Topology`: supporting analysis.
-* `Stationary`, `Parabolic`, `Semilinear`, `Inner`: §2–§5 and Appendix A of the paper.
-* `Main`: §6 of the paper, Theorem 1.1 and Corollary 1.2.
-* `Appendix`: Appendix B of the paper (non-degeneracy of largest subsolutions in the plane).
+* `Stationary`, `Parabolic`, `Semilinear`, `Inner`:
+  [§2](#AFS:s.concepts)–[§5](#AFS:s.viscosity-limits) and [Appendix B](#AFS:s.semilinear) of the
+  paper.
+* `Main`: [§6](#AFS:s.conclusion) of the paper, [Theorem 1.1](#AFS:t.main) and
+  [Corollary 1.2](#AFS:c.2d-structure).
+* `Appendix`: [Section A.2](#AFS:s.largest-sub-nondegen) of the paper (non-degeneracy of largest
+  subsolutions in the plane).
 * `Examples`: a model example, not in the paper (`Examples/TwoDisc`, `TwoDisc.model_example`): a
   planar domain and boundary data whose smallest and largest solutions differ, the smallest one
-  having a two-plane point.
+  having a two-plane point; and the configuration of [Figure 1](#AFS:f.necklace) of the paper, with
+  different parameters (`Examples/Necklace`, `Necklace.necklace_example`): the smallest
+  supersolution, the largest subsolution and every energy minimizer with the same boundary data are
+  pairwise distinct.
 
 ## Dependencies
 

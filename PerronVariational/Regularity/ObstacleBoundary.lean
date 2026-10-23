@@ -18,18 +18,17 @@ import PerronVariational.Regularity.ObstacleCaccioppoli
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
 
-The results are `obstacle_below_continuousOn` (Lemma 6.3 of the paper, Step 1, obstacle from above
-`0 ≤ w ≤ u`) and `obstacle_above_continuousOn` (Step 2, obstacle from below `w ≥ u`), with the
-statements used in `PerronVariational/Main/Directional.lean`.
+The results are `obstacle_below_continuousOn` ([Proposition 6.3](#AFS:p.downward) of the paper, Step
+1, obstacle from above `0 ≤ w ≤ u`) and `obstacle_above_continuousOn` (Step 2, obstacle from below
+`w ≥ u`), with the statements used in `PerronVariational/Main/Directional.lean`.
 
-**A step the paper does not argue.** In the proof of Lemma 6.3 the paper needs the obstacle
-minimizer `w` on the ball `B`, extended by `u` outside `B`, to be continuous on `U`, since the
-competitors of Def 2.6 must be continuous. It cites W. M. Feldman, I. C. Kim, N. Požár, *An obstacle
-approach to rate-independent droplet evolution*, Forum Math. Sigma 14 (2026), e38,
-doi:10.1017/fms.2026.10189, Section 3, for continuity in `B`, but that section treats domain
-obstacles and does not give continuity across `∂B`. Here continuity up to `∂B` is proved by the De
-Giorgi route for quasi-minima of M. Giaquinta, E. Giusti, *Quasi-minima*, Ann. Inst. H. Poincaré
-Anal. Non Linéaire 1 (1984), no. 2, 79–107: Caccioppoli inequalities from truncation competitors
+**Continuity up to `∂B`.** In the proof of [Proposition 6.3](#AFS:p.downward) the paper needs the
+obstacle minimizer `w` on the ball `B`, extended by `u` outside `B`, to be continuous on `U`, since
+the competitors of [Def 2.7](#AFS:d.largest-smallest) must be continuous; it obtains continuity on
+`B̄` from the regularity theory of quasi-minimizers (E. Giusti, *Direct Methods in the Calculus of
+Variations*, Theorem 7.8 and Example 6.4). Here continuity up to `∂B` is proved by the De Giorgi
+route for quasi-minima of M. Giaquinta, E. Giusti, *Quasi-minima*, Ann. Inst. H. Poincaré Anal. Non
+Linéaire 1 (1984), no. 2, 79–107: Caccioppoli inequalities from truncation competitors
 (`Regularity/ObstacleCaccioppoli.lean`), then De Giorgi's oscillation decay at the boundary.
 
 Proof. At `z ∈ ∂B` put `f = w` (Step 2) or `f = -w` (Step 1), `c = ±u(z)`, and let `L` be a
@@ -247,8 +246,8 @@ theorem exists_lipschitz_ball {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ}
     gcongr
     exact (mem_ball.1 hx).le
 
-/-- **Continuity across `∂B` of the obstacle-from-above minimizer** (paper Lemma 6.3, Step 1;
-a step the paper does not argue, see the module docstring). -/
+/-- **Continuity across `∂B` of the obstacle-from-above minimizer** (paper
+[Proposition 6.3](#AFS:p.downward), Step 1; see the module docstring). -/
 theorem obstacle_below_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d}
     (hU : IsOpen U) (_hQ : ∃ K, LipschitzOnWith K Q U) (hQpos : ∃ c > 0, ∀ x ∈ U, c ≤ Q x)
     (hQb : ∃ C, ∀ x ∈ U, Q x ≤ C) (hu : LocallyLipschitzOn U u) (_hu0 : ∀ x ∈ U, 0 ≤ u x)
@@ -317,8 +316,8 @@ theorem obstacle_below_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : 
       hU.mem_nhds hy] with x hx1 hx2
     exact (hwu x hx2).2.trans_lt hx1
 
-/-- **Continuity across `∂B` of the obstacle-from-below minimizer** (paper Lemma 6.3, Step 2;
-a step the paper does not argue, see the module docstring). -/
+/-- **Continuity across `∂B` of the obstacle-from-below minimizer** (paper
+[Proposition 6.3](#AFS:p.downward), Step 2; see the module docstring). -/
 theorem obstacle_above_continuousOn {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E d}
     (hU : IsOpen U) (_hQ : ∃ K, LipschitzOnWith K Q U) (hQpos : ∃ c > 0, ∀ x ∈ U, c ≤ Q x)
     (hQb : ∃ C, ∀ x ∈ U, Q x ≤ C) (hu : LocallyLipschitzOn U u) (_hu0 : ∀ x ∈ U, 0 ≤ u x)

@@ -15,11 +15,11 @@ import PerronVariational.Stationary.ViscosityLocal
 import PerronVariational.Stationary.ViscosityStability
 
 /-!
-# Corollary 1.2: classical points and blow-ups of supersolutions
+# [Corollary 1.2](#AFS:c.2d-structure): classical points and blow-ups of supersolutions
 
-Part of **Corollary 1.2** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: the set of
-classical points is open
+Part of **[Corollary 1.2](#AFS:c.2d-structure)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: the set of classical points is open
 (`isOpen_setOf_isClassicalNear`), blow-ups of viscosity supersolutions are supersolutions
 (`isViscSuper_blowup`, `isViscSuper_of_isBlowupLimit`), and two-plane functions with slope
 below `Q` fail the supersolution test (`not_isViscSuper_twoPlane`, `le_of_isBlowupLimit_twoPlane`).
@@ -122,8 +122,8 @@ theorem _root_.PerronVariational.IsViscSuper.mono_Q {U : Set (E d)} {Q Q' u : E 
   · exact Or.inr ⟨h2, h3.trans (hQ x hx)⟩
 
 /-- **Scaling of viscosity supersolutions.** The blow-up `u_{x₀,r}(y) = r⁻¹ u(x₀ + r y)` of a
-viscosity supersolution of (1.1) in `U` is a viscosity supersolution in `U_{x₀,r}` with the
-rescaled coefficient `Q(x₀ + r ·)`. -/
+viscosity supersolution of [(1.1)](#AFS:e.bernoulli-basic) in `U` is a viscosity supersolution in
+`U_{x₀,r}` with the rescaled coefficient `Q(x₀ + r ·)`. -/
 theorem isViscSuper_blowup {U : Set (E d)} {Q u : E d → ℝ} (hU : IsOpen U)
     (hu : IsViscSuper U Q u) (x₀ : E d) {r : ℝ} (hr : 0 < r) :
     IsViscSuper (DirectionalStable.blowupDomain U x₀ r) (fun y ↦ Q (x₀ + r • y))
@@ -213,10 +213,11 @@ theorem laplacian_inner_const (e x : E d) : Δ (fun y : E d ↦ ⟪y, e⟫) x = 
   rw [laplacian_eq_sum_fderiv_fderiv, fderiv_inner_const]
   simp
 
-/-- **Supersolution test for two-plane functions** (proof sketch of Corollary 1.2: "for
-`α > Q(x₀)`, `φ_α` is not a viscosity supersolution"). If `0 ≤ q < α` and `‖e‖ = 1`, then
-`α |y · e|` is not a viscosity supersolution of (1.1) with constant coefficient `q` in any open
-set containing `0`. The test function is `φ(y) = β (y · e) + (y · e)²` with `q < β < α`. -/
+/-- **Supersolution test for two-plane functions** (proof sketch of
+[Corollary 1.2](#AFS:c.2d-structure): "for `α > Q(x₀)`, `φ_α` is not a viscosity supersolution"). If
+`0 ≤ q < α` and `‖e‖ = 1`, then `α |y · e|` is not a viscosity supersolution of
+[(1.1)](#AFS:e.bernoulli-basic) with constant coefficient `q` in any open set containing `0`. The
+test function is `φ(y) = β (y · e) + (y · e)²` with `q < β < α`. -/
 theorem not_isViscSuper_twoPlane {q α : ℝ} (hqα : q < α) (hq : 0 ≤ q) {e : E d} (he : ‖e‖ = 1)
     {W : Set (E d)} (hW : IsOpen W) (h0 : (0 : E d) ∈ W) {v : E d → ℝ}
     (hv : ∀ y, v y = α * |⟪y, e⟫|) : ¬ IsViscSuper W (fun _ ↦ q) v := by
@@ -303,10 +304,11 @@ theorem eventually_blowup_ball {U : Set (E d)} (hU : IsOpen U) {Q : E d → ℝ}
       _ < ρ := by linarith
   exact ⟨fun y hy ↦ (hρ' (hmem y hy)).1, fun y hy ↦ (hρ' (hmem y hy)).2.le⟩
 
-/-- **Blow-up limits of supersolutions are supersolutions** (proof sketch of Corollary 1.2,
-via Lemma 2.4): if `u` is a viscosity supersolution of (1.1) in `U`, `x₀ ∈ U` and `Q` is
-continuous at `x₀`, every blow-up limit of `u` at `x₀` is a viscosity supersolution in `B_1(0)`
-with constant coefficient `Q(x₀) + δ`, for every `δ > 0`. -/
+/-- **Blow-up limits of supersolutions are supersolutions** (proof sketch of
+[Corollary 1.2](#AFS:c.2d-structure), via [Lemma 2.5](#AFS:l.super-stability)): if `u` is a
+viscosity supersolution of [(1.1)](#AFS:e.bernoulli-basic) in `U`, `x₀ ∈ U` and `Q` is continuous at
+`x₀`, every blow-up limit of `u` at `x₀` is a viscosity supersolution in `B_1(0)` with constant
+coefficient `Q(x₀) + δ`, for every `δ > 0`. -/
 theorem isViscSuper_of_isBlowupLimit {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ}
     (hu : IsViscSuper U Q u) {x₀ : E d} (hx₀ : x₀ ∈ U) (hQ : ContinuousAt Q x₀) {v : E d → ℝ}
     (hv : IsBlowupLimit u x₀ v) {δ : ℝ} (hδ : 0 < δ) :
@@ -318,7 +320,7 @@ theorem isViscSuper_of_isBlowupLimit {U : Set (E d)} (hU : IsOpen U) {Q u : E d 
   exact ((isViscSuper_blowup hU hu x₀ (hr n)).mono isOpen_ball hsub).mono_Q hQn
 
 /-- **Two-plane blow-ups of supersolutions have slope at most `Q(x₀)`** (proof sketch of
-Corollary 1.2). -/
+[Corollary 1.2](#AFS:c.2d-structure)). -/
 theorem le_of_isBlowupLimit_twoPlane {U : Set (E d)} (hU : IsOpen U) {Q u : E d → ℝ}
     (hu : IsViscSuper U Q u) {x₀ : E d} (hx₀ : x₀ ∈ U) (hQ : ContinuousAt Q x₀)
     (hQ0 : 0 ≤ Q x₀) {v : E d → ℝ} (hv : IsBlowupLimit u x₀ v) {α : ℝ} {e : E d}

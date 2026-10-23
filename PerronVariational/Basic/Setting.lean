@@ -48,7 +48,8 @@ variable {d : ℕ}
 on `U` only). -/
 def posSet (u : E d → ℝ) (U : Set (E d)) : Set (E d) := {x ∈ U | 0 < u x}
 
-/-- The free boundary `∂{u > 0} ∩ U` (paper, e.g. (1.1) and Thm 1.1). -/
+/-- The free boundary `∂{u > 0} ∩ U` (paper, e.g. [(1.1)](#AFS:e.bernoulli-basic) and
+[Thm 1.1](#AFS:t.main)). -/
 def freeBoundary (u : E d → ℝ) (U : Set (E d)) : Set (E d) := frontier (posSet u U) ∩ U
 
 /-- `U` has `C²` boundary (standing assumption (i) of the paper), encoded by a global `C²` defining
@@ -58,7 +59,7 @@ charts. -/
 def HasC2Boundary (U : Set (E d)) : Prop :=
   ∃ ρ : E d → ℝ, ContDiff ℝ 2 ρ ∧ U = {x | ρ x < 0} ∧ ∀ x ∈ frontier U, ∇ ρ x ≠ 0
 
-/-- The standing assumptions of the paper (§1.2):
+/-- The standing assumptions of the paper ([§1.2](#AFS:ss.notation)):
 (i) `U ⊆ ℝᵈ`, `d ≥ 2`, is open, bounded, connected with `C²` boundary (see `HasC2Boundary`);
 (ii) `Q ∈ C^{0,1}(Ū)` with `Q_min ≤ Q ≤ Q_max` on `Ū`, `0 < Q_min ≤ Q_max`.
 

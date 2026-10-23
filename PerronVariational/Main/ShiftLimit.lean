@@ -10,30 +10,31 @@ import PerronVariational.Parabolic.LongTimeInnerViscosity
 import PerronVariational.Registry.KriventsovWeiss
 import PerronVariational.Stationary.Perron
 import PerronVariational.Stationary.ViscosityJet
+import PerronVariational.Parabolic.StrictBarrierEquiv
 
 /-!
-# Common steps of Propositions 6.1 and 6.2
+# Common steps of Propositions [6.1](#AFS:p.inner-smallest) and [6.2](#AFS:p.inner-largest)
 
-Shared ingredients of the proofs of Propositions 6.1 and 6.2 of F. Abedin, W. M. Feldman,
-K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase
-problem*, arXiv:2609.14981:
+Shared ingredients of the proofs of Propositions [6.1](#AFS:p.inner-smallest) and
+[6.2](#AFS:p.inner-largest) of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
+Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981:
 
 * congruence of the stationary solution notions under `EqOn · · U`;
 * `mem_nhdsSet_precOn`: strict ordering on a *neighbourhood* of a set from strict ordering at its
-  points of the `≺`-set. The comparison principle (Theorem 3.6) needs `u ≺ v` on a neighbourhood
-  of the parabolic boundary; the paper checks the ordering only on the parabolic boundary itself;
+  points of the `≺`-set. The comparison principle ([Theorem 3.7](#AFS:t.comparison)) needs `u ≺ v`
+  on a neighbourhood of the parabolic boundary;
 * time restriction of parabolic viscosity sub/supersolutions from `(0, ∞)` to `(0, T]`
   (`IsParaSuper.mono_time`, `IsParaSub.Ioc_of_Ioi`), needed to apply the comparison principle
-  (Theorem 3.6) on `U × (0, T]`; for subsolutions this is not a formality, since `≺` is computed
-  with `closure {u > 0}` taken in `U × I`, which changes at the top time;
+  ([Theorem 3.7](#AFS:t.comparison)) on `U × (0, T]`; for subsolutions this is not a formality,
+  since `≺` is computed with `closure {u > 0}` taken in `U × I`, which changes at the top time;
 * the `a → 0` limit of the shifted long-time limits via the compactness of inner variational
-  solutions (Lemma 2.10, `exists_innerVar_limit`);
+  solutions ([Lemma 2.14](#AFS:l.inner-compactness-stability), `exists_innerVar_limit`);
 * the sandwich argument identifying the limit with Perron's solution (`eqOn_perronSmallest_of_le`,
-  `eqOn_perronLargest_of_le`). It needs the boundary values of the limit, which the paper does
-  not address; they are supplied as a one-sided modulus bound at `∂U`, obtained in
-  Propositions 6.1/6.2 from the attainment modulus of Proposition A.8, which depends on the data
-  only through its Lipschitz constant and sup norm and is therefore uniform over the shifts
-  `g + a`. As a by-product Perron's solution is continuous on `Ū` (input of Lemma 2.7).
+  `eqOn_perronLargest_of_le`). It needs the boundary values of the limit; they are supplied as a
+  one-sided modulus bound at `∂U`, obtained in [Propositions 6.1](#AFS:p.inner-smallest)/6.2 from
+  the attainment modulus of [Proposition B.5](#AFS:p.attainment), which depends on the data only
+  through its Lipschitz constant and sup norm and is therefore uniform over the shifts `g + a`. As a
+  by-product Perron's solution is continuous on `Ū` (input of [Lemma 2.8](#AFS:l.local-minimality)).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -103,7 +104,8 @@ end Congr
 /-- If `f < h` at the points of `B` lying in the closed set `E ⊆ D`, and `f`, `h` are continuous on
 `D`, then `{p | p ∈ E → f p < h p}` is a neighbourhood of `B`. (Points of `B \ E` have the open
 neighbourhood `Eᶜ`.) Used to verify the hypothesis "`u ≺ v` on a neighbourhood of `∂_P`" of the
-comparison principle (Theorem 3.6) in Propositions 6.1/6.2. -/
+comparison principle ([Theorem 3.7](#AFS:t.comparison)) in
+[Propositions 6.1](#AFS:p.inner-smallest)/6.2. -/
 theorem mem_nhdsSet_precOn {X : Type*} [TopologicalSpace X] {f h : X → ℝ} {D Eset B : Set X}
     (hE : IsClosed Eset) (hED : Eset ⊆ D) (hf : ContinuousOn f D) (hh : ContinuousOn h D)
     (hB : ∀ p ∈ B ∩ Eset, f p < h p) : {p | p ∈ Eset → f p < h p} ∈ 𝓝ˢ B := by
@@ -132,21 +134,6 @@ theorem IsParaSuper.mono_time {I J : Set ℝ} (h : IsParaSuper U Q I u) (hJI : J
     fun V a b φ hadm hφ hbd ↦ h.2.2 V a b φ
       ⟨hadm.1, hadm.2.1, hadm.2.2.1, hadm.2.2.2.trans (prod_mono subset_rfl hJI)⟩ hφ hbd⟩
 
-/-- The spatial gradient of a `C¹` space-time function is continuous. -/
-theorem continuous_gradₓ {φ : E d × ℝ → ℝ} (hφ : ContDiff ℝ 1 φ) : Continuous (gradₓ φ) := by
-  have key : ∀ p : E d × ℝ, gradₓ φ p = (InnerProductSpace.toDual ℝ (E d)).symm
-      ((fderiv ℝ φ p).comp (ContinuousLinearMap.inl ℝ (E d) ℝ)) := by
-    intro p
-    have h1 : HasFDerivAt (fun y : E d ↦ (y, p.2)) (ContinuousLinearMap.inl ℝ (E d) ℝ) p.1 :=
-      hasFDerivAt_prodMk_left p.1 p.2
-    have h2 : HasFDerivAt (fun y : E d ↦ φ (y, p.2))
-        ((fderiv ℝ φ p).comp (ContinuousLinearMap.inl ℝ (E d) ℝ)) p.1 :=
-      ((hφ.differentiable one_ne_zero) p).hasFDerivAt.comp p.1 h1
-    simp only [gradₓ, gradient, h2.fderiv]
-  rw [show gradₓ φ = _ from funext key]
-  exact (InnerProductSpace.toDual ℝ (E d)).symm.continuous.comp
-    ((hφ.continuous_fderiv one_ne_zero).clm_comp continuous_const)
-
 /-- A continuous function which is positive on a compact set has a positive lower bound there. -/
 theorem exists_pos_forall_le_of_isCompact {X : Type*} [TopologicalSpace X] {K : Set X}
     (hK : IsCompact K) {f : X → ℝ} (hf : ContinuousOn f K) (hpos : ∀ x ∈ K, 0 < f x) :
@@ -156,79 +143,17 @@ theorem exists_pos_forall_le_of_isCompact {X : Type*} [TopologicalSpace X] {K : 
   · obtain ⟨x₀, hx₀, hmin⟩ := hK.exists_isMinOn hne hf
     exact ⟨f x₀, hpos x₀ hx₀, fun x hx ↦ hmin hx⟩
 
-theorem IsClassicalStrictParaSuper.mono_top {φ : E d × ℝ → ℝ} {V : Set (E d)} {a b b' : ℝ}
-    (h : IsClassicalStrictParaSuper Q φ V a b) (hb : b' ≤ b) :
-    IsClassicalStrictParaSuper Q φ V a b' :=
-  ⟨h.1, fun p hp ↦ h.2.1 p ⟨hp.1, hp.2.1, Icc_subset_Icc_right hb hp.2.2⟩,
-    fun p hp ↦ h.2.2 p ⟨hp.1, hp.2.1, Icc_subset_Icc_right hb hp.2.2⟩⟩
-
-theorem dₜ_sub_const (φ : E d × ℝ → ℝ) (η : ℝ) (p : E d × ℝ) :
-    dₜ (fun q ↦ φ q - η) p = dₜ φ p := by
-  simp [dₜ]
-
-theorem lapₓ_sub_const {φ : E d × ℝ → ℝ} (hφ : ContDiff ℝ 2 φ) (η : ℝ) (p : E d × ℝ) :
-    lapₓ (fun q ↦ φ q - η) p = lapₓ φ p := by
-  have hs : ContDiff ℝ 2 fun y : E d ↦ φ (y, p.2) := hφ.comp (contDiff_id.prodMk contDiff_const)
-  simp only [lapₓ, sub_eq_add_neg]
-  exact laplacian_add_const hs.contDiffAt (-η)
-
-theorem gradₓ_sub_const (φ : E d × ℝ → ℝ) (η : ℝ) (p : E d × ℝ) :
-    gradₓ (fun q ↦ φ q - η) p = gradₓ φ p := by
-  simp only [gradₓ, sub_eq_add_neg]
-  exact gradient_add_const _ _ _
-
-/-- A classical strict supersolution on a compact cylinder `V̄ × [a, b]` (`V̄ ⊆ U`, `Q` continuous
-on `U`) stays one after subtracting a small positive constant. -/
-theorem IsClassicalStrictParaSuper.sub_const (hQ : ContinuousOn Q U) {φ : E d × ℝ → ℝ}
-    {V : Set (E d)} {a b : ℝ} (hVU : closure V ⊆ U) (hVb : Bornology.IsBounded V)
+/-- **Shifts** (the paper's "`φ - δ` is still a smooth strict supersolution"): a classical strict
+supersolution with constants `a₀, δ₀` stays one after subtracting `η ∈ (0, a₀)`
+(`IsClassicalStrictParaSuperWith.add_const`). -/
+theorem IsClassicalStrictParaSuper.sub_const {φ : E d × ℝ → ℝ} {V : Set (E d)} {a b : ℝ}
     (h : IsClassicalStrictParaSuper Q φ V a b) :
     ∃ m > 0, ∀ η, 0 < η → η < m → IsClassicalStrictParaSuper Q (fun p ↦ φ p - η) V a b := by
-  have hφc : Continuous φ := h.1.continuous
-  have hφ2 : ContDiff ℝ 2 φ := contDiff_two_of_smooth h.1
-  have hφ1 : ContDiff ℝ 1 φ := hφ2.of_le one_le_two
-  set K : Set (E d × ℝ) := closure V ×ˢ Icc a b with hKdef
-  have hK : IsCompact K := hVb.isCompact_closure.prod isCompact_Icc
-  have hKc : IsClosed (K ∩ closure {q | 0 < φ q}) := hK.isClosed.inter isClosed_closure
-  set A : Set (E d × ℝ) := (K ∩ closure {q | 0 < φ q}) ∩
-    (fun p ↦ ‖gradₓ φ p‖ - Q p.1) ⁻¹' Ici 0 with hAdef
-  have hAcl : IsClosed A := by
-    refine ContinuousOn.preimage_isClosed_of_isClosed ?_ hKc isClosed_Ici
-    exact (continuous_gradₓ hφ1).norm.continuousOn.sub
-      (hQ.comp continuousOn_fst fun p hp ↦ hVU hp.1.1)
-  have hA : IsCompact A := hK.of_isClosed_subset hAcl fun p hp ↦ hp.1.1
-  have hopen : IsOpen {q | 0 < φ q} := isOpen_lt continuous_const hφc
-  have hpos : ∀ p ∈ A, 0 < φ p := by
-    intro p hp
-    have h0 : 0 ≤ φ p := closure_lt_subset_le continuous_const hφc hp.1.2
-    refine lt_of_le_of_ne h0 fun h0' ↦ ?_
-    have hfr : p ∈ frontier {q | 0 < φ q} := by
-      rw [hopen.frontier_eq]
-      exact ⟨hp.1.2, fun hp' ↦ (lt_irrefl 0) (h0' ▸ hp' : (0 : ℝ) < 0)⟩
-    have hlt := h.2.2 p ⟨hfr, hp.1.1⟩
-    have hge : 0 ≤ ‖gradₓ φ p‖ - Q p.1 := hp.2
-    linarith
-  obtain ⟨m, hm, hmA⟩ := exists_pos_forall_le_of_isCompact hA hφc.continuousOn hpos
-  refine ⟨m, hm, fun η hη hηm ↦ ⟨h.1.sub contDiff_const, ?_, ?_⟩⟩
-  · intro p hp
-    rw [dₜ_sub_const, lapₓ_sub_const hφ2]
-    refine h.2.1 p ⟨closure_mono (fun q (hq : 0 < φ q - η) ↦ ?_) hp.1, hp.2⟩
-    change 0 < φ q
-    linarith
-  · intro p hp
-    rw [gradₓ_sub_const]
-    have hset : {q | 0 < φ q - η} = {q | η < φ q} := by ext q; simp [sub_pos]
-    rw [hset] at hp
-    have hopen' : IsOpen {q | η < φ q} := isOpen_lt continuous_const hφc
-    rw [hopen'.frontier_eq] at hp
-    have hge : η ≤ φ p := closure_lt_subset_le continuous_const hφc hp.1.1
-    have hle : φ p ≤ η := not_lt.1 hp.1.2
-    have hφp : φ p = η := le_antisymm hle hge
-    by_contra hcon
-    have hpA : p ∈ A := by
-      refine ⟨⟨hp.2, subset_closure (show 0 < φ p by linarith)⟩, ?_⟩
-      change 0 ≤ ‖gradₓ φ p‖ - Q p.1
-      linarith [not_lt.1 hcon]
-    linarith [hmA p hpA]
+  obtain ⟨a₀, δ₀, h⟩ := h
+  refine ⟨a₀, h.a₀_pos, fun η hη hηm ↦ ⟨a₀ - η, δ₀, ?_⟩⟩
+  have := h.add_const (c := -η) (by rwa [abs_neg, abs_of_pos hη])
+  rw [abs_neg, abs_of_pos hη] at this
+  simpa only [← sub_eq_add_neg] using this
 
 /-- `p ∈ closure {u > 0}` does not depend on the domain `Ω` of `{u > 0}` near points of an open set
 `W` on which the domains agree. -/
@@ -270,13 +195,13 @@ theorem parBdry_mono_top (V : Set (E d)) {a b b' : ℝ} (hb : b' ≤ b) :
 
 /-- A parabolic viscosity subsolution in `U × (0, ∞)` is one in `U × (0, T]`.
 
-The relation `u ≺ φ` of Definition 3.2 is computed with `closure {u > 0}` taken inside `U × I`,
-which for `I = (0, T]` and `I = (0, ∞)` differs at time `T`. Test cylinders ending before `T` are
-handled directly; for a cylinder with top time `T` we subtract a small constant `η` from the strict
-supersolution `φ` (`IsClassicalStrictParaSuper.sub_const`), compare on the cylinders `V × (a, b']`,
-`b' < T`, and reach the top time by approximating positivity points from below in time (continuity
-of `u`). -/
-theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) (hQ : ContinuousOn Q U) {T : ℝ}
+The relation `u ≺ φ` of [Definition 3.3](#AFS:d.parabolic-supersolution) is computed with
+`closure {u > 0}` taken inside `U × I`, which for `I = (0, T]` and `I = (0, ∞)` differs at time `T`.
+Test cylinders ending before `T` are handled directly; for a cylinder with top time `T` we subtract
+a small constant `η` from the strict supersolution `φ` (`IsClassicalStrictParaSuper.sub_const`),
+compare on the cylinders `V × (a, b']`, `b' < T`, and reach the top time by approximating positivity
+points from below in time (continuity of `u`). -/
+theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) {T : ℝ}
     (h : IsParaSub U Q (Ioi 0) u) : IsParaSub U Q (Ioc 0 T) u := by
   have hIoc : U ×ˢ Ioc 0 T ⊆ U ×ˢ Ioi 0 := prod_mono subset_rfl Ioc_subset_Ioi_self
   refine ⟨h.1.mono hIoc, fun p hp ↦ h.2.1 p (hIoc hp), ?_⟩
@@ -320,7 +245,7 @@ theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) (hQ : ContinuousOn Q U) {T : ℝ}
   set K : Set (E d × ℝ) := closure V ×ˢ Icc a b with hKdef
   have hK : IsCompact K := hVb.isCompact_closure.prod isCompact_Icc
   have huK : ContinuousOn u K := h.1.mono fun q hq ↦ hIoc (hVU hq)
-  have hφc : Continuous φ := hφ.1.continuous
+  have hφc : Continuous φ := hφ.contDiff.continuous
   -- margin on the parabolic boundary
   have hBc : IsCompact (Eset ∩ parBdry V a b) :=
     hK.of_isClosed_subset (isClosed_closure.inter (isClosed_parBdry V a b))
@@ -328,7 +253,7 @@ theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) (hQ : ContinuousOn Q U) {T : ℝ}
   obtain ⟨m₁, hm₁, hm₁'⟩ := exists_pos_forall_le_of_isCompact hBc (f := fun q ↦ φ q - u q)
     (hφc.continuousOn.sub (huK.mono (inter_subset_right.trans (parBdry_subset V hab.le))))
     fun q hq ↦ sub_pos.2 (hbd q hq)
-  obtain ⟨m₂, hm₂, hsc⟩ := hφ.sub_const hQ hVU' hVb
+  obtain ⟨m₂, hm₂, hsc⟩ := hφ.sub_const
   set η := min m₁ m₂ / 2 with hηdef
   have hη : 0 < η := by positivity
   have hη₁ : η < m₁ := by
@@ -341,7 +266,7 @@ theorem IsParaSub.Ioc_of_Ioi (hU : IsOpen U) (hQ : ContinuousOn Q U) {T : ℝ}
   -- comparison on `V × (a, b']`, `b' < b`
   have hstep : ∀ b' ∈ Ioo a b, ∀ q ∈ Eset ∩ cyl V a b', u q < φ q - η := by
     intro b' hb'
-    exact hdirect (fun q ↦ φ q - η) b' hb'.1 hb'.2.le hb'.2 (hψ.mono_top hb'.2.le)
+    exact hdirect (fun q ↦ φ q - η) b' hb'.1 hb'.2.le hb'.2 (hψ.mono subset_rfl le_rfl hb'.2.le)
       fun q hq ↦ hψbd q ⟨hq.1, parBdry_mono_top V hb'.2.le hq.2⟩
   rintro p ⟨hpE, hpV, hpa, hpb⟩
   rcases lt_or_eq_of_le hpb with hpb' | hpb'
@@ -388,8 +313,8 @@ end TimeRestriction
 
 /-! ### Uniform data bounds for the shifts `g + a`
 
-Propositions 6.1/6.2 need the constants of the estimates to be uniform over the shifted data
-`g + a`; the paper uses this without saying so. -/
+[Propositions 6.1](#AFS:p.inner-smallest)/6.2 need the constants of the estimates to be uniform over
+the shifted data `g + a`. -/
 
 /-- For `g ∈ C¹`, the energy bound `E₀ = ∫_U |∇g|² + Q_max² |U|` is finite. -/
 theorem energyBound_ne_top (S : Setting d) {g : E d → ℝ} (hg : ContDiff ℝ 1 g) :
@@ -409,21 +334,20 @@ theorem gradient_add_const' (g : E d → ℝ) (a : ℝ) : ∇ (fun x ↦ g x + a
 
 /-! ### The limit `a → 0` -/
 
-/-- **The limit `a → 0`** (Propositions 6.1/6.2). A sequence of inner variational solutions
-`(u k, χ k)` in `U` with `0 ≤ u k ≤ M`, the interior Lipschitz bound (3.14) with a common
-constant `C` and the perimeter bound (3.15) with a common `CV` has a subsequence converging
-locally uniformly in `U` to an inner variational solution. This is Lemma 2.10
-(`Registry.innerVar_compactness`), whose hypotheses (a local `L^∞` bound, which the paper's
-statement of Lemma 2.10 omits; equi-Lipschitz; perimeter bounds) follow from the uniform
-bounds. -/
-theorem exists_innerVar_limit (S : Setting d) {M C : ℝ} {CV : Set (E d) → ℝ}
+/-- **The limit `a → 0`** ([Propositions 6.1](#AFS:p.inner-smallest)/6.2). A sequence of inner
+variational solutions `(u k, χ k)` in `U` with `0 ≤ u k ≤ M`, the interior Lipschitz bound
+[(3.15)](#AFS:eqn:inftyLip) with a common constant `C` has a subsequence converging locally
+uniformly in `U` to an inner variational solution. This is
+[Lemma 2.14](#AFS:l.inner-compactness-stability)
+(`Registry.innerVar_compactness_of_gradient_bound`), whose hypotheses (a local `L^∞` bound and a
+local gradient bound) follow from the uniform bounds; the perimeter control comes from
+[Lemma 2.13](#AFS:l.perimeter-bound). -/
+theorem exists_innerVar_limit (S : Setting d) {M C : ℝ}
     (u χ : ℕ → E d → ℝ) (hinner : ∀ k, IsInnerVarSolution S.U S.Q (u k) (χ k))
     (hbd : ∀ k, ∀ x ∈ S.U, 0 ≤ u k x ∧ u k x ≤ M)
     (hLip : ∀ k (x : E d) (r : ℝ), 0 < r → r ≤ 1 → ball x (2 * r) ⊆ S.U →
       ∀ M' : ℝ, (∀ y ∈ ball x (2 * r), |u k y| ≤ M') →
-        ∀ y ∈ ball x r, ‖∇ (u k) y‖ ≤ C * (M' / r + 1))
-    (hPer : ∀ k, ∀ V : Set (E d), CompactlyContained V S.U →
-      totalVariationOn V (χ k) ≤ ENNReal.ofReal (CV V)) :
+        ∀ y ∈ ball x r, ‖∇ (u k) y‖ ≤ C * (M' / r + 1)) :
     ∃ (φ : ℕ → ℕ) (u₀ χ₀ : E d → ℝ), StrictMono φ ∧
       TendstoLocallyUniformlyOn (fun j ↦ u (φ j)) u₀ atTop S.U ∧
       IsInnerVarSolution S.U S.Q u₀ χ₀ := by
@@ -448,8 +372,8 @@ theorem exists_innerVar_limit (S : Setting d) {M C : ℝ} {CV : Set (E d) → �
     rw [abs_of_nonneg (hbd k y (hball hy)).1]
     exact (hbd k y (hball hy)).2
   obtain ⟨φ, u₀, χ₀, hφ, hconv, -, -, hlim⟩ :=
-    Registry.innerVar_compactness S.two_le S.isOpen S.lipschitzOn_U S.exists_pos_le_Q S.exists_Q_le
-      u χ hinner hbdd hLip' fun V hV ↦ ⟨CV V, fun k ↦ hPer k V hV⟩
+    Registry.innerVar_compactness_of_gradient_bound S.two_le S.isOpen S.lipschitzOn_U
+      S.exists_pos_le_Q S.exists_Q_le u χ hinner hbdd hLip'
   exact ⟨φ, u₀, χ₀, hφ, hconv, hlim⟩
 
 /-! ### The sandwich argument -/
@@ -471,9 +395,9 @@ theorem eventually_nhdsWithin_closure_ball {U : Set (E d)} {x₀ : E d} {r : ℝ
 
 /-- **Sandwich, smallest case.** If `û` is a viscosity supersolution in `U` with `g₊ ≤ û ≤ v` in `U`
 for every `v ∈ 𝒮_g`, and `û(x) ≤ g₊(x₀) + ϖ(|x - x₀|)` for `x ∈ U`, `x₀ ∈ ∂U`, with a modulus `ϖ`
-(the boundary values, from the modulus of Proposition A.8 uniform over the shifts), then `û` is
-Perron's smallest supersolution on `U`, and the latter is continuous on `Ū` (`û` extended by `g₊` to
-`∂U` lies in `𝒮_g`). -/
+(the boundary values, from the modulus of [Proposition B.5](#AFS:p.attainment) uniform over the
+shifts), then `û` is Perron's smallest supersolution on `U`, and the latter is continuous on `Ū`
+(`û` extended by `g₊` to `∂U` lies in `𝒮_g`). -/
 theorem eqOn_perronSmallest_of_le (S : Setting d) {g û : E d → ℝ} (hg : Continuous g)
     (hsuper : IsViscSuper S.U S.Q û) (hlow : ∀ x ∈ S.U, max (g x) 0 ≤ û x)
     (hup : ∀ v ∈ perronSuperClass S.U S.Q g, ∀ x ∈ S.U, û x ≤ v x) {ϖ : ℝ → ℝ}

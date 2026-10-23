@@ -10,11 +10,12 @@ public import Mathlib.Analysis.InnerProductSpace.Laplacian
 import Mathlib.Order.CompletePartialOrder
 
 /-!
-# Positive density of `{φ < 0}` at a touching point (proof of Lemma 2.9)
+# Positive density of `{φ < 0}` at a touching point
 
-Measure-theoretic and calculus ingredients of the proof of Lemma 2.9 of F. Abedin, W. M. Feldman,
-K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase
-problem*, arXiv:2609.14981.
+Measure-theoretic and calculus ingredients of the proof of
+[Lemma 2.12](#AFS:l.inner-variational-implies-subsoln) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981.
 
 The paper argues that `{φ < 0}` has density `1/2` at `x₀` if `∇φ(x₀) ≠ 0`, and positive lower
 density (on a thin cone) if `∇φ(x₀) = 0` and `D²φ(x₀)` has a negative eigenvalue. We only use
@@ -121,9 +122,10 @@ theorem neg_of_fderiv_neg {φ : E d → ℝ} (hφ : Differentiable ℝ φ) {x v 
   have : g r = φ (x + r • v) := rfl
   linarith
 
-/-- **First-order case** (proof of Lemma 2.9). If `φ ∈ C¹`, `φ(x) ≤ 0` and `Dφ(x) ≠ 0`, then
-there is a nonempty open `K ⊆ B₁(0)` with `φ < 0` on `x + r • K` for all small `r > 0`
-(`K` is a truncated open cone around a direction `e` with `Dφ(x) e < 0`). -/
+/-- **First-order case** (proof of [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)). If
+`φ ∈ C¹`, `φ(x) ≤ 0` and `Dφ(x) ≠ 0`, then there is a nonempty open `K ⊆ B₁(0)` with `φ < 0` on
+`x + r • K` for all small `r > 0` (`K` is a truncated open cone around a direction `e` with
+`Dφ(x) e < 0`). -/
 theorem exists_scaled_neg_of_fderiv_ne_zero {φ : E d → ℝ} (hφ : ContDiff ℝ 1 φ) {x : E d}
     (hx : φ x ≤ 0) (h : fderiv ℝ φ x ≠ 0) :
     ∃ K : Set (E d), IsOpen K ∧ K.Nonempty ∧ K ⊆ ball 0 1 ∧
@@ -169,9 +171,10 @@ theorem exists_scaled_neg_of_fderiv_ne_zero {φ : E d → ℝ} (hφ : ContDiff �
     have hv2 : L v + ε * ‖v‖ < 0 := hv.2
     linarith
 
-/-- **Second-order case** (proof of Lemma 2.9). If `φ ∈ C²`, `φ(x) ≤ 0`, `Dφ(x) = 0` and
-`Δφ(x) < 0`, then there is a nonempty open `K ⊆ B₁(0)` with `φ < 0` on `x + r • K` for all small
-`r > 0` (`K` is a truncated open cone around a direction `e` with `D²φ(x) e · e < 0`). -/
+/-- **Second-order case** (proof of [Lemma 2.12](#AFS:l.inner-variational-implies-subsoln)). If
+`φ ∈ C²`, `φ(x) ≤ 0`, `Dφ(x) = 0` and `Δφ(x) < 0`, then there is a nonempty open `K ⊆ B₁(0)` with
+`φ < 0` on `x + r • K` for all small `r > 0` (`K` is a truncated open cone around a direction `e`
+with `D²φ(x) e · e < 0`). -/
 theorem exists_scaled_neg_of_laplacian_neg {φ : E d → ℝ} (hφ : ContDiff ℝ 2 φ) {x : E d}
     (hx : φ x ≤ 0) (h0 : fderiv ℝ φ x = 0) (hΔ : Δ φ x < 0) :
     ∃ K : Set (E d), IsOpen K ∧ K.Nonempty ∧ K ⊆ ball 0 1 ∧

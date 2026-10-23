@@ -15,13 +15,14 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.Profiles
 
 /-!
-# Local bound on the reaction term (as in (4.7))
+# Local bound on the reaction term (as in [(4.7)](#AFS:eqn:chiEpsBV))
 
-A step of Section 4.3 of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's
-extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981. For a solution `u` of
-(3.4), testing the equation with a spatial cut-off `θ` on a time slice gives
-`∫ θ Q² β_ε(u) = -∫ ∇θ · ∇u - ∫ θ ∂ₜu`; with the interior Lipschitz bound (3.9) and the
-dissipation estimate (3.8) this bounds `∫_K β_ε(u)` on compact `K ⊆ U_∞` uniformly in `ε`.
+A step of [Section 4.3](#AFS:s.perimeter-chi-compactness) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981. For a solution `u` of [(3.4)](#AFS:e.bernoulli-parabolic-semilinear), testing the
+equation with a spatial cut-off `θ` on a time slice gives `∫ θ Q² β_ε(u) = -∫ ∇θ · ∇u - ∫ θ ∂ₜu`;
+with the interior Lipschitz bound [(3.10)](#AFS:e.localEst) and the dissipation estimate
+[(3.9)](#AFS:e.dissipation-eps) this bounds `∫_K β_ε(u)` on compact `K ⊆ U_∞` uniformly in `ε`.
 
 The file also holds `exists_box_lipschitz_of_interiorLipEst` (the local spatial Lipschitz bound
 from `InteriorLipEst`), used here and by `Inner.Compactness`.
@@ -39,10 +40,10 @@ namespace Inner
 variable {d : ℕ}
 
 /-- **Uniform local spatial Lipschitz bound from the interior Lipschitz estimate**
-(`InteriorLipEst`, the form of (3.9) and (3.12)). Near every `p ∈ U_∞` there is a box
-`B_r(p.1) × (p.2 - r, p.2 + r) ⊆ U_∞` and a constant `L` (depending only on `p`, `U`, `C`, `M`)
-such that every `v` satisfying `InteriorLipEst` with constant `C`, with differentiable time
-slices and `|v| ≤ M` on `U_∞`, is `L`-Lipschitz in space on the box. -/
+(`InteriorLipEst`, the form of [(3.10)](#AFS:e.localEst) and [(3.13)](#AFS:eqn:LipEst)). Near every
+`p ∈ U_∞` there is a box `B_r(p.1) × (p.2 - r, p.2 + r) ⊆ U_∞` and a constant `L` (depending only on
+`p`, `U`, `C`, `M`) such that every `v` satisfying `InteriorLipEst` with constant `C`, with
+differentiable time slices and `|v| ≤ M` on `U_∞`, is `L`-Lipschitz in space on the box. -/
 theorem exists_box_lipschitz_of_interiorLipEst {U : Set (E d)} (hU : IsOpen U) (C M : ℝ)
     {p : E d × ℝ} (hp : p ∈ UInf U) :
     ∃ r > 0, ∃ L : ℝ, ball p.1 r ×ˢ Ioo (p.2 - r) (p.2 + r) ⊆ UInf U ∧
@@ -98,8 +99,8 @@ theorem exists_box_lipschitz_of_interiorLipEst {U : Set (E d)} (hU : IsOpen U) (
     have := Convex.norm_image_sub_le_of_norm_fderiv_le hdiff hgrad (convex_ball _ _) hy hx
     simpa [Real.norm_eq_abs] using this
 
-/-- A family satisfying (3.12) with a common constant and a common bound has uniformly bounded
-spatial gradients on compact subsets of `U_∞`. -/
+/-- A family satisfying [(3.13)](#AFS:eqn:LipEst) with a common constant and a common bound has
+uniformly bounded spatial gradients on compact subsets of `U_∞`. -/
 theorem exists_bound_gradₓ_of_interiorLipEst {U : Set (E d)} (hU : IsOpen U) (C M : ℝ)
     {K : Set (E d × ℝ)} (hK : IsCompact K) (hKU : K ⊆ UInf U) :
     ∃ L : ℝ, ∀ v : E d × ℝ → ℝ, InteriorLipEst U v C →
@@ -230,11 +231,11 @@ theorem ofReal_integral_cutoff_reaction_le {U : Set (E d)} (hU : IsOpen U) {Q : 
         rw [ENNReal.ofReal_add (by positivity) (abs_nonneg _)]
         exact add_le_add le_rfl h2
 
-/-- **Local bound on the reaction term** (the computation (4.7), used in (4.11)): for compact
-`K ⊆ U_∞` there is `C` (depending on `K`, the setting, `β`, `M` and an energy bound `E0`) such
-that `∫_K β_ε(u) ≤ C` for every solution with data `0 ≤ gε ≤ M`, `gε ∈ H¹(U)`,
-`∫_U |Gε|² + Q_max² |U| ≤ E0`, `0 < ε < ε₁`. (Proof: test the equation with a cutoff `η ≥ 1_K`
-and use (3.8).) -/
+/-- **Local bound on the reaction term** (the computation [(4.7)](#AFS:eqn:chiEpsBV), used in
+[(A.9)](#AFS:eqn:chi1)): for compact `K ⊆ U_∞` there is `C` (depending on `K`, the setting, `β`,
+`M` and an energy bound `E0`) such that `∫_K β_ε(u) ≤ C` for every solution with data `0 ≤ gε ≤ M`,
+`gε ∈ H¹(U)`, `∫_U |Gε|² + Q_max² |U| ≤ E0`, `0 < ε < ε₁`. (Proof: test the equation with a cutoff
+`η ≥ 1_K` and use [(3.9)](#AFS:e.dissipation-eps).) -/
 theorem semilinear_betaEps_lintegral_le (S : Setting d) {β : ℝ → ℝ} (hβ : IsReactionProfile β) :
     ∃ ε₁ : ℝ, 0 < ε₁ ∧ ∀ (M : ℝ) (E0 : ℝ≥0∞), E0 ≠ ⊤ → ∀ K ⊆ UInf S.U, IsCompact K →
       ∃ C : ℝ, ∀ ε ∈ Ioo 0 ε₁, ∀ (gε : E d → ℝ) (Gε : E d → E d) (u : E d × ℝ → ℝ),

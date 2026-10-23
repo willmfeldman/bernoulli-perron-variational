@@ -12,17 +12,17 @@ import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Order.CompletePartialOrder
 
 /-!
-# Corollary 1.2: flatness from half-plane blow-ups
+# [Corollary 1.2](#AFS:c.2d-structure): flatness from half-plane blow-ups
 
-Part of **Corollary 1.2** of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
-Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981: if a blow-up at a
-free boundary point is a half-plane solution, the solution is flat there
-(`flat_of_halfPlane_blowup`, `flat_or_pos_of_halfPlane_blowup`).
+Part of **[Corollary 1.2](#AFS:c.2d-structure)** of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981: if a blow-up at a free boundary point is a half-plane solution, the solution is
+flat there (`flat_of_halfPlane_blowup`, `flat_or_pos_of_halfPlane_blowup`).
 
-The ε-regularity theory needs two-sided flatness `(x·e - ε)₊ ≤ u ≤ (x·e + ε)₊`. The paper's proof
-sketch of Corollary 1.2 derives it from locally uniform convergence of the rescalings to the
-half-plane solution, which gives only the lower bound. Here the upper bound (`u = 0` on the far
-side) comes from non-degeneracy.
+The ε-regularity theory needs two-sided flatness `(x·e - ε)₊ ≤ u ≤ (x·e + ε)₊`. Locally uniform
+convergence of the rescalings to the half-plane solution gives only the lower bound; the upper
+bound (`u = 0` on the far side) comes from non-degeneracy, through the Hausdorff convergence of
+the positivity sets (as in the paper's lemma on one-plane blow-up limits).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -186,7 +186,7 @@ theorem flat_of_halfPlane_blowup_aux {U : Set (E d)} (hU : IsOpen U) {u : E d �
 non-degenerate near `x₀` and some blow-up of `u` at `x₀` is the half-plane solution
 `q (y · e)₊`, then for every `ε > 0` there is `0 < s ≤ ε` with `B_s(x₀) ⊆ U` in which `u` is
 `ε`-flat: `q ((y - x₀) · e - ε s)₊ ≤ u(y) ≤ q ((y - x₀) · e + ε s)₊`. The upper bound uses the
-non-degeneracy, which the paper's proof sketch does not invoke. -/
+non-degeneracy. -/
 theorem flat_of_halfPlane_blowup {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ}
     (hnn : ∀ x ∈ U, 0 ≤ u x) {x₀ : E d} (hx₀ : x₀ ∈ U)
     (hnd : IsUniformlyNondegenerateNear U u x₀) {q : ℝ} (hq : 0 < q) {e : E d} (he : ‖e‖ = 1)

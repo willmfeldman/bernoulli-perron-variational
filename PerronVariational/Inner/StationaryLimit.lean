@@ -19,15 +19,15 @@ import PerronVariational.Inner.WeakHarmonic
 /-!
 # Stationary cores of the limit passages for inner variational solutions
 
-These are the parts of the long-time limit (proof of **Theorem 3.10** of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli
-one-phase problem*, arXiv:2609.14981; `Inner/LongTimeSteps.lean`) that do not involve time: they
-apply verbatim to a sequence `vₙ` of locally Lipschitz functions on an open set `U`, and are shared
-by the long-time limit and by the compactness of inner variational solutions (the paper's
-**Lemma 2.10**, `Inner/InnerVarCompactness.lean`), whose proof follows the first paragraph of the
-proof of Theorem 9.3 in D. Kriventsov, G. S. Weiss, *Rectifiability, finite Hausdorff measure,
-and compactness for non-minimizing Bernoulli free boundaries*, Comm. Pure Appl. Math. 78 (2025),
-545–591, doi:10.1002/cpa.22226, arXiv:2306.10131.
+These are the parts of the long-time limit (proof of **[Theorem 3.14](#AFS:t.longtime-inner)** of F.
+Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
+Bernoulli one-phase problem*, arXiv:2609.14981; `Inner/LongTimeSteps.lean`) that do not involve
+time: they apply verbatim to a sequence `vₙ` of locally Lipschitz functions on an open set `U`, and
+are shared by the long-time limit and by the compactness of inner variational solutions (the paper's
+**[Lemma 2.14](#AFS:l.inner-compactness-stability)**, `Inner/InnerVarCompactness.lean`), whose proof
+follows the first paragraph of the proof of Theorem 9.3 in D. Kriventsov, G. S.
+Weiss, *Rectifiability, finite Hausdorff measure, and compactness for non-minimizing Bernoulli free
+boundaries*, Comm. Pure Appl. Math. 78 (2025), 545–591, doi:10.1002/cpa.22226, arXiv:2306.10131.
 
 ## Main results
 
@@ -42,9 +42,11 @@ and compactness for non-minimizing Bernoulli free boundaries*, Comm. Pure Appl. 
   `η`, then `∇vₙ → ∇u₀` in `L²_loc(U)`.
 * `StationaryLimit.tendsto_integral_innerVarIntegrand`: if `∇vₙ → ∇u₀` in `L²_loc(U)`,
   `χₙ → χ₀` in `L¹_loc(U)`, `|χₙ| ≤ 1` on `U` and the gradients are locally bounded (eventually),
-  then the integrals of the inner variation integrand (2.5) converge, for every `ξ ∈ C¹_c(U)`.
-* `StationaryLimit.innerVar_lipschitz`: (2.5) for `C¹_c` fields implies (2.5) for Lipschitz
-  fields with compact support (density of translated bumps).
+  then the integrals of the inner variation integrand [(2.5)](#AFS:e.stationary-inner-var) converge,
+  for every `ξ ∈ C¹_c(U)`.
+* `StationaryLimit.innerVar_lipschitz`: [(2.5)](#AFS:e.stationary-inner-var) for `C¹_c` fields
+  implies [(2.5)](#AFS:e.stationary-inner-var) for Lipschitz fields with compact support (density of
+  translated bumps).
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -115,8 +117,8 @@ theorem ae_restrict_of_forall_isCompact {U : Set (E d)} (hU : IsOpen U) {P : E d
   exact measure_mono_null (fun y hy ↦ by
     simp only [Set.mem_ofPred_eq, Classical.not_imp] at hy ⊢; exact hy) hB
 
-/-- **`1_{u₀ > 0} ≤ χ₀`** in the limit (proof of Theorem 3.10, Step 4): if `vₙ → u₀` locally
-uniformly on `U`, `1_{vₙ > 0} ≤ χₙ` a.e. on `U` and `χₙ → χ₀` in `L¹_loc(U)`, then
+/-- **`1_{u₀ > 0} ≤ χ₀`** in the limit (proof of [Theorem 3.14](#AFS:t.longtime-inner), Step 4): if
+`vₙ → u₀` locally uniformly on `U`, `1_{vₙ > 0} ≤ χₙ` a.e. on `U` and `χₙ → χ₀` in `L¹_loc(U)`, then
 `1_{u₀ > 0} ≤ χ₀` a.e. on `U` (on compact subsets of `{u₀ > 0}`, eventually `vₙ > 0`, hence
 `χₙ = 1` a.e.). -/
 theorem ae_pos_imp_eq_one {U : Set (E d)} (hU : IsOpen U) {v χ : ℕ → E d → ℝ}
@@ -192,11 +194,11 @@ theorem integral_energy_eq_zero {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ
 
 /-! ### Strong `L²_loc` convergence of the gradients -/
 
-/-- **Strong convergence of the gradients from the energy identities** (proof of Theorem 3.10,
-Step 2, and the first paragraph of the proof of [Kriventsov–Weiss, Theorem 9.3]). Let `vₙ → u₀`
-locally uniformly on the open set `U`, all locally Lipschitz on `U`, with `vₙ` locally bounded
-and `∇vₙ` locally bounded for large `n`. Suppose that for every smooth cut-off `η` with compact
-support in `U`,
+/-- **Strong convergence of the gradients from the energy identities** (proof of
+[Theorem 3.14](#AFS:t.longtime-inner), Step 2, and the first paragraph of the proof of
+[Kriventsov–Weiss, Theorem 9.3]). Let `vₙ → u₀` locally uniformly on the open set `U`, all locally
+Lipschitz on `U`, with `vₙ` locally bounded and `∇vₙ` locally bounded for large `n`. Suppose that
+for every smooth cut-off `η` with compact support in `U`,
 `∫_U |∇vₙ|² η + vₙ ∇vₙ · ∇η → 0` and `∫_U |∇u₀|² η + u₀ ∇u₀ · ∇η = 0`.
 Then `∇vₙ → ∇u₀` in `L²_loc(U)`.
 
@@ -542,11 +544,12 @@ theorem exists_subseq_tendsto_integral_innerVarIntegrand {U : Set (E d)} (hU : I
       (tendsto_const_nhds.mul (ha.inner
         (((fderiv ℝ ξ x).continuous.tendsto _).comp ha)))).add (tendsto_const_nhds.mul hx2)
 
-/-- **Passage to the limit in the inner variation identity** (proof of Theorem 3.10, Step 4, and
-[Kriventsov–Weiss, proof of Theorem 9.3]). If `∇vₙ → ∇u₀` in `L²_loc(U)`, `χₙ → χ₀` in `L¹_loc(U)`,
-`|χₙ| ≤ 1` on `U`, the gradients `∇vₙ` are bounded on compact subsets of `U` for large `n`, and
-`Q²` is locally Lipschitz on `U`, then for `ξ ∈ C¹_c(U; ℝᵈ)` the integrals of the inner
-variation integrand (2.5) of `(vₙ, χₙ)` converge to that of `(u₀, χ₀)`. -/
+/-- **Passage to the limit in the inner variation identity** (proof of
+[Theorem 3.14](#AFS:t.longtime-inner), Step 4, and [Kriventsov–Weiss, proof of Theorem 9.3]). If
+`∇vₙ → ∇u₀` in `L²_loc(U)`, `χₙ → χ₀` in `L¹_loc(U)`, `|χₙ| ≤ 1` on `U`, the gradients `∇vₙ` are
+bounded on compact subsets of `U` for large `n`, and `Q²` is locally Lipschitz on `U`, then for
+`ξ ∈ C¹_c(U; ℝᵈ)` the integrals of the inner variation integrand
+[(2.5)](#AFS:e.stationary-inner-var) of `(vₙ, χₙ)` converge to that of `(u₀, χ₀)`. -/
 theorem tendsto_integral_innerVarIntegrand {U : Set (E d)} (hU : IsOpen U)
     {Q : E d → ℝ} (hQ : LocallyLipschitzOn U fun y ↦ Q y ^ 2)
     {v χ : ℕ → E d → ℝ} {u₀ χ₀ : E d → ℝ} (hχm : ∀ n, Measurable (χ n))
@@ -568,10 +571,11 @@ theorem tendsto_integral_innerVarIntegrand {U : Set (E d)} (hU : IsOpen U)
 
 /-! ### From `C¹` to Lipschitz test fields -/
 
-/-- **From `C¹` to Lipschitz test fields** (Definition 2.8(iv) is stated for `ξ ∈ C^{0,1}_c(U)`): if
-(2.5) holds for all `ξ ∈ C¹_c(U; ℝᵈ)`, `v` is locally Lipschitz on `U`, `Q²` is locally
-Lipschitz on `U` and `χ` is bounded measurable, then it holds for Lipschitz `ξ` with compact
-support in `U` (mollify `ξ`: `Dξ_ε → Dξ` a.e. and boundedly, dominated convergence). -/
+/-- **From `C¹` to Lipschitz test fields** ([Definition 2.11(iv)](#AFS:d.stationary-inner) is stated
+for `ξ ∈ C^{0,1}_c(U)`): if [(2.5)](#AFS:e.stationary-inner-var) holds for all `ξ ∈ C¹_c(U; ℝᵈ)`,
+`v` is locally Lipschitz on `U`, `Q²` is locally Lipschitz on `U` and `χ` is bounded measurable,
+then it holds for Lipschitz `ξ` with compact support in `U` (mollify `ξ`: `Dξ_ε → Dξ` a.e. and
+boundedly, dominated convergence). -/
 theorem innerVar_lipschitz {U : Set (E d)} (hU : IsOpen U) {Q v χ₁ : E d → ℝ}
     (hQ : LocallyLipschitzOn U fun y ↦ Q y ^ 2) (hv : LocallyLipschitzOn U v)
     (hχm : Measurable χ₁) (hχb : ∀ x, |χ₁ x| ≤ 1)

@@ -15,23 +15,27 @@ import PerronVariational.Semilinear.Calculus
 import PerronVariational.Semilinear.NullLevelSet
 
 /-!
-# Well-prepared data for the semilinear problem (Proposition 3.8(i), (i'))
+# Well-prepared data for the semilinear problem ([Lemma 3.11](#AFS:l.well-prepared))
 
-The properties of the regularized data `g_ε` used in the proof of Proposition 3.8 of F. Abedin,
-W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in the
-Bernoulli one-phase problem*, arXiv:2609.14981, collected in the structure `IsWellPreparedData`,
-and the existence statement `exists_isWellPreparedData`, obtained from Lemma A.4
+The properties of the regularized data `g_ε` used in the proof of
+[Proposition 3.12](#AFS:p.semilinear-wellposed) of F. Abedin, W. M. Feldman, K.
+Stinson, *Variational properties of Perron's extremal solutions in the Bernoulli one-phase problem*,
+arXiv:2609.14981, collected in the structure `IsWellPreparedData`, and the existence statement
+`exists_isWellPreparedData`, obtained from [Lemma 3.11](#AFS:l.well-prepared)
 (`exists_wellPrepared_sub`, `exists_wellPrepared_super` in `WellPrepared.lean`) with
 `g_ε = (Φ_{ε,θ}(g))₊`, resp. `g_ε = Ψ_{ε,θ̂}(g)`.
 
-The fields are items (i)–(iv) of Lemma A.4, the `H¹` statements (i') of the formal
-Proposition 3.8, and `le_of_nonpos`: there is `μ ∈ (0, 1)` with `g_ε ≤ (1 - μ) ε` on
-`{g ≤ 0}`, the hypothesis of Lemma A.11 on that region
-(`μ = (1 - Φ_{1,θ}(0)₊)/2`, resp. `μ = (1 - Ψ_{1,θ̂}(0))/2`).
+The fields are items (i)–(iv) of [Lemma 3.11](#AFS:l.well-prepared), `g_ε ∈ H¹(U)`, and
+`le_of_nonpos`: there is `μ ∈ (0, 1)` with `g_ε ≤ (1 - μ) ε` on `{g ≤ 0}`, the hypothesis of
+[Lemma B.8](#AFS:l.positivity-trace) on that region (`μ = (1 - Φ_{1,θ}(0)₊)/2`, resp.
+`μ = (1 - Ψ_{1,θ̂}(0))/2`).
 
-Item (i') (`g_ε ∈ H¹(U)` and `g_ε → g₊` in `H¹(U)`) is not in the paper's Proposition 3.8. The
-paper's proof of Theorem 3.9 applies Proposition 4.1, which assumes `g_ε → g₊` in `H¹`, but only
-checks `L²` convergence; here the `H¹` convergence is added to the statement and proved.
+The strong convergence `g_ε → g₊` in `H¹(U)` of the explicit data is also proved here
+(`tendsto_H1_of_isWellPreparedSub`, `tendsto_H1_of_isWellPreparedSuper`). It is not part of the
+paper's [Proposition 3.12](#AFS:p.semilinear-wellposed) and is not used by the main line:
+[Proposition 4.1](#AFS:p.eps-inner-limit) assumes only weak `H¹` convergence, which follows from
+[Lemma 3.11(ii)](#AFS:part.gep-2) and [Lemma 3.11(iv)](#AFS:part.gep-4)
+(`Parabolic/Existence.lean`).
 
 ## Main results
 
@@ -56,9 +60,9 @@ namespace PerronVariational
 
 variable {d : ℕ}
 
-/-- Properties of the well-prepared data `gε ε`, `0 < ε < ε₀`, of Lemma A.4 for a smooth strict
-subsolution (`increasing = true`) or supersolution (`increasing = false`) `g`; see the module
-docstring. -/
+/-- Properties of the well-prepared data `gε ε`, `0 < ε < ε₀`, of [Lemma 3.11](#AFS:l.well-prepared)
+for a smooth strict subsolution (`increasing = true`) or supersolution (`increasing = false`) `g`;
+see the module docstring. -/
 structure IsWellPreparedData (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ) (increasing : Bool)
     (ε₀ : ℝ) (gε : ℝ → E d → ℝ) : Prop where
   pos : 0 < ε₀
@@ -69,7 +73,7 @@ structure IsWellPreparedData (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ
   bounds : ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ closure S.U, max (g x) 0 ≤ gε ε x ∧ gε ε x ≤ max (g x) 0 + ε
   /-- A.4(i), pointwise form: `|∇g_ε| ≤ |∇g|` in `U`. -/
   norm_gradient_le : ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ S.U, ‖∇ (gε ε) x‖ ≤ ‖∇ g x‖
-  /-- `g_ε ∈ H¹(U)` with weak gradient the pointwise gradient (part of (i')). -/
+  /-- `g_ε ∈ H¹(U)` with weak gradient the pointwise gradient. -/
   memH1 : ∀ ε ∈ Ioo 0 ε₀, MemH1 S.U (gε ε) (∇ (gε ε))
   /-- A.4(iv): `J(g_ε, χ⁰_ε; U) ≤ E₀` with `χ⁰_ε = 2 𝓑_ε(g_ε)`. -/
   energy_le : ∀ ε ∈ Ioo 0 ε₀,
@@ -78,19 +82,13 @@ structure IsWellPreparedData (S : Setting d) (g : E d → ℝ) (β : ℝ → ℝ
   `Δv = Q² β_ε(v)` in `U`. -/
   visc : ∀ ε ∈ Ioo 0 ε₀, if increasing then IsSemilinearViscSubStat S.U S.Q β ε (gε ε)
     else IsSemilinearViscSuperStat S.U S.Q β ε (gε ε)
-  /-- `g_ε ≤ (1 - μ) ε` on `{g ≤ 0}` (input of Lemma A.11). -/
+  /-- `g_ε ≤ (1 - μ) ε` on `{g ≤ 0}` (input of [Lemma B.8](#AFS:l.positivity-trace)). -/
   le_of_nonpos : ∃ μ ∈ Ioo (0 : ℝ) 1, ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ closure S.U, g x ≤ 0 →
     gε ε x ≤ (1 - μ) * ε
-  /-- Increasing case: `g_ε = 0` on `{g ≤ -c ε}` (Lemma A.4(v), `{g_ε > 0} ⊆ {g > -c_θ ε}`;
-  input of Proposition 3.8(vi*)). -/
+  /-- Increasing case: `g_ε = 0` on `{g ≤ -c ε}` ([Lemma 3.11(v)](#AFS:part.gep-5),
+  `{g_ε > 0} ⊆ {g > -c_θ ε}`; input of [Proposition 3.12](#AFS:p.semilinear-wellposed)(v*)). -/
   eq_zero_of_le : increasing = true → ∃ c > 0, ∀ ε ∈ Ioo 0 ε₀, ∀ x ∈ closure S.U,
     g x ≤ -(c * ε) → gε ε x = 0
-  /-- (i'): `g₊ ∈ H¹(U)` with weak gradient `1_{g > 0} ∇g`. -/
-  memH1_pos : MemH1 S.U (fun x ↦ max (g x) 0) ({x | 0 < g x}.indicator (∇ g))
-  /-- (i'): `g_ε → g₊` in `H¹(U)` as `ε → 0⁺`. -/
-  tendsto_H1 : Tendsto (fun ε ↦ eLpNorm (fun x ↦ gε ε x - max (g x) 0) 2 (volume.restrict S.U) +
-      eLpNorm (fun x ↦ ∇ (gε ε) x - {x | 0 < g x}.indicator (∇ g) x) 2 (volume.restrict S.U))
-    (𝓝[>] 0) (𝓝 0)
 
 /-- A `C¹` function on `ℝᵈ` is Lipschitz on the closure of a bounded set. -/
 theorem exists_lipschitzOnWith_closure {f : E d → ℝ} (hf : ContDiff ℝ 1 f) {U : Set (E d)}
@@ -164,8 +162,8 @@ theorem gradient_max_zero {g : E d → ℝ} (hg : Continuous g) (x : E d) :
     rw [indicator_of_mem (by simpa using hx), gradient, hev.fderiv_eq]
     rfl
 
-/-- `g₊ ∈ H¹(U)` with weak gradient `1_{g > 0} ∇g`, for `g ∈ C¹(ℝᵈ)` (item (i') of the formal
-Proposition 3.8). -/
+/-- `g₊ ∈ H¹(U)` with weak gradient `1_{g > 0} ∇g`, for `g ∈ C¹(ℝᵈ)` (used for the strong
+`H¹` convergence of the data below). -/
 theorem memH1_max_zero {g : E d → ℝ} (hg : ContDiff ℝ 1 g) :
     MemH1 S.U (fun x ↦ max (g x) 0) ({x | 0 < g x}.indicator (∇ g)) := by
   obtain ⟨K, hK⟩ := exists_lipschitzOnWith_closure hg S.isBounded
@@ -186,7 +184,7 @@ theorem memH1_max_zero {g : E d → ℝ} (hg : ContDiff ℝ 1 g) :
 
 end Sobolev
 
-/-! ### `H¹` convergence of the data (item (i')) -/
+/-! ### Strong `H¹` convergence of the data (not used by the main line) -/
 
 /-- Dominated convergence in `L²` for a uniformly bounded family on a finite measure space. -/
 theorem tendsto_eLpNorm_two_of_bound {X Y : Type*} [MeasurableSpace X] {μ : Measure X}
@@ -224,7 +222,7 @@ theorem tendsto_eLpNorm_two_of_bound {X Y : Type*} [MeasurableSpace X] {μ : Mea
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hε]
   simp
 
-/-- The `L²` part of (i'): `|g_ε - g₊| ≤ ε` gives `g_ε → g₊` in `L²(U)`. -/
+/-- The `L²` part: `|g_ε - g₊| ≤ ε` gives `g_ε → g₊` in `L²(U)`. -/
 private theorem tendsto_eLpNorm_sub_max (S : Setting d) {g : E d → ℝ} (hg : ContDiff ℝ 1 g)
     {ε₀ : ℝ} (hε₀ : 0 < ε₀) {gε : ℝ → E d → ℝ}
     (hlip : ∀ ε ∈ Ioc 0 ε₀, ∀ K, LipschitzOnWith K g (closure S.U) →
@@ -245,7 +243,7 @@ private theorem tendsto_eLpNorm_sub_max (S : Setting d) {g : E d → ℝ} (hg : 
       norm_nonneg _) (hev.mono fun ε hε ↦ hle ε hε x) ?_
     exact tendsto_nhdsWithin_of_tendsto_nhds tendsto_id
 
-/-- The gradient part of (i'), generic form: if `∇g_ε(x) → 1_{g>0}∇g(x)` for a.e. `x ∈ U` and
+/-- The gradient part, generic form: if `∇g_ε(x) → 1_{g>0}∇g(x)` for a.e. `x ∈ U` and
 `|∇g_ε| ≤ |∇g|` on `U`, then `∇g_ε → 1_{g>0}∇g` in `L²(U)`. -/
 private theorem tendsto_eLpNorm_gradient (S : Setting d) {g : E d → ℝ} (hg : ContDiff ℝ 1 g)
     {ε₀ : ℝ} (hε₀ : 0 < ε₀) {gε : ℝ → E d → ℝ}
@@ -309,9 +307,9 @@ private theorem tendsto_of_gradient_eq_zero {g : E d → ℝ} {ε₀ : ℝ} {gε
   rw [indicator_of_notMem (show x ∉ {x | 0 < g x} by simp [hx]), norm_le_zero_iff.1 h]
   simp
 
-/-- Item (i') of the formal Proposition 3.8 in the subsolution case: for the data
-`g_ε` of Lemma A.4 (`IsWellPreparedSub`), `g_ε → g₊` in `H¹(U)` as `ε → 0⁺`.
-Proof: `|g_ε - g₊| ≤ ε`; a.e. pointwise convergence of `∇g_ε` (`g_ε = g` near `{g > ε}`,
+/-- Strong `H¹` convergence of the data in the subsolution case: for the data
+`g_ε` of [Lemma 3.11](#AFS:l.well-prepared) (`IsWellPreparedSub`), `g_ε → g₊` in `H¹(U)` as
+`ε → 0⁺`. Proof: `|g_ε - g₊| ≤ ε`; a.e. pointwise convergence of `∇g_ε` (`g_ε = g` near `{g > ε}`,
 `g_ε = 0` near `{g < -c_θ ε}`, and on `{g = 0}` either `∇g = 0` or the point lies in a null set);
 dominated convergence with `|∇g_ε| ≤ |∇g|`. -/
 theorem tendsto_H1_of_isWellPreparedSub (S : Setting d) {β : ℝ → ℝ} {g : E d → ℝ}
@@ -354,12 +352,13 @@ theorem tendsto_H1_of_isWellPreparedSub (S : Setting d) {β : ℝ → ℝ} {g : 
   · exact tendsto_of_gradient_eq_zero hgrad hε₀ hzero (hx.resolve_left (not_not.2 hzero))
   · exact tendsto_of_pos hg.continuous (fun ε hε ↦ (hW ε hε).eq_of_le) hε₀ hpos
 
-/-- Item (i') of the formal Proposition 3.8 in the supersolution case: for
-`g_ε = Ψ_{ε,θ̂}(g)` with the properties of Lemma A.4 (`IsWellPreparedSuper`),
-`g_ε → g₊` in `H¹(U)`. On `{g < 0}`, `|∇g_ε| = Ψ₁'(g/ε)|∇g| ≤ C e^{c g/ε}|∇g| → 0` (exponential
-tail, Lemma A.3(iv)). (For strict supersolutions Definition 2.2 gives no lower bound on `|∇g|` on
-`{g = 0}`, so the argument used for subsolutions does not apply there; the null-set argument
-covers this.) -/
+/-- Strong `H¹` convergence of the data in the supersolution case: for
+`g_ε = Ψ_{ε,θ̂}(g)` with the properties of [Lemma 3.11](#AFS:l.well-prepared)
+(`IsWellPreparedSuper`), `g_ε → g₊` in `H¹(U)`. On `{g < 0}`,
+`|∇g_ε| = Ψ₁'(g/ε)|∇g| ≤ C e^{c g/ε}|∇g| → 0` (exponential tail,
+[Lemma 3.10(iv)](#AFS:part.profile-super-e)). (For strict supersolutions
+[Definition 2.3](#AFS:d.strict-sub) gives no lower bound on `|∇g|` on `{g = 0}`, so the argument
+used for subsolutions does not apply there; the null-set argument covers this.) -/
 theorem tendsto_H1_of_isWellPreparedSuper (S : Setting d) {β : ℝ → ℝ}
     (hβ : IsReactionProfile β) {g : E d → ℝ} (hg : ContDiff ℝ 1 g) {δ₀ ε₀ κ : ℝ}
     (hδ₀ : δ₀ ∈ Ioo (0 : ℝ) 1) (hε₀ : 0 < ε₀)
@@ -425,10 +424,10 @@ private theorem wellPreparedSubData_le {β : ℝ → ℝ} (hβ : IsReactionProfi
   rw [mul_max_of_nonneg _ _ hε.le, mul_zero]
   exact max_le_max (mul_le_mul_of_nonneg_left hmono hε.le) le_rfl
 
-/-- **Lemma A.4** in the form used for Proposition 3.8(i),
-(i'): for a reaction profile `β` and a smooth strict subsolution `g` (`increasing = true`), resp.
-supersolution (`increasing = false`), there are `ε₀ > 0` and data `gε` with the properties
-`IsWellPreparedData`. -/
+/-- **[Lemma 3.11](#AFS:l.well-prepared)** in the form used for
+[Proposition 3.12](#AFS:p.semilinear-wellposed): for a reaction profile `β` and a smooth strict
+subsolution `g` (`increasing = true`), resp. supersolution (`increasing = false`), there are
+`ε₀ > 0` and data `gε` with the properties `IsWellPreparedData`. -/
 theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ → ℝ}
     (hβ : IsReactionProfile β) (increasing : Bool)
     (hg : if increasing then IsStrictSub S.U S.Q g else IsStrictSuper S.U S.Q g) :
@@ -465,9 +464,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
           refine le_antisymm (not_lt.1 fun hpos ↦ ?_) ((le_max_right _ _).trans
             ((hW' ε hε).bounds x).1)
           have := (hW' ε hε).subset_pos x hpos
-          linarith [hε.1]⟩
-        memH1_pos := memH1_max_zero hg1
-        tendsto_H1 := tendsto_H1_of_isWellPreparedSub S hg1 hε₀ hW }⟩
+          linarith [hε.1]⟩ }⟩
   | false =>
     simp only [Bool.false_eq_true, ite_false] at hg
     have hg1 : ContDiff ℝ 1 g := hg.1.of_le (by norm_num)
@@ -495,9 +492,7 @@ theorem exists_isWellPreparedData (S : Setting d) {g : E d → ℝ} {β : ℝ �
           have : wellPreparedSuperData β δ₀ ε g x ≤ ε * m :=
             mul_le_mul_of_nonneg_left hmono hε.1.le
           nlinarith [hε.1]⟩
-        eq_zero_of_le := fun h ↦ absurd h Bool.false_ne_true
-        memH1_pos := memH1_max_zero hg1
-        tendsto_H1 := tendsto_H1_of_isWellPreparedSuper S hβ hg1 hδ₀ hε₀ hW }⟩
+        eq_zero_of_le := fun h ↦ absurd h Bool.false_ne_true }⟩
 
 namespace IsWellPreparedData
 
@@ -532,9 +527,7 @@ theorem mono (h : IsWellPreparedData S g β increasing ε₀ gε) {ε₁ : ℝ} 
       le_of_nonpos := ⟨μ, hμ, fun ε hε ↦ hμ' ε (hsub hε)⟩
       eq_zero_of_le := fun hinc ↦ by
         obtain ⟨c, hc, hc'⟩ := h.eq_zero_of_le hinc
-        exact ⟨c, hc, fun ε hε ↦ hc' ε (hsub hε)⟩
-      memH1_pos := h.memH1_pos
-      tendsto_H1 := h.tendsto_H1 }
+        exact ⟨c, hc, fun ε hε ↦ hc' ε (hsub hε)⟩ }
 
 end IsWellPreparedData
 

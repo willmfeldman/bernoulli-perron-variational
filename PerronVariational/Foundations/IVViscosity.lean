@@ -12,16 +12,17 @@ import PerronVariational.Stationary.Perron
 import PerronVariational.Stationary.ViscosityJet
 
 /-!
-# Viscosity solutions of bernoulli-rectifiability are viscosity solutions in the sense of Def 2.1
+# Viscosity solutions of bernoulli-rectifiability satisfy [Def 2.1](#AFS:d.stationary-viscosity)
 
 Part of the Lean formalization of F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of
 Perron's extremal solutions in the Bernoulli one-phase problem*, arXiv:2609.14981 ("the paper").
 `InnerVariational.IsViscositySolutionQ W Q u` of the dependency bernoulli-rectifiability v0.2.0 asks
 for harmonicity in `{u > 0}` and for the two free boundary conditions `|∇φ(x)| ≤ Q(x)` (touching
 from below) and `|∇φ(x)| ≥ Q(x)` (touching `φ₊` from above) at free boundary points, with touching
-on a ball in `W`. Def 2.1 of the paper (`IsViscSolution W Q u`) is phrased with touching on a
-relative neighbourhood (in `W` for supersolutions, in `\overline{{u > 0}} ∩ W` for subsolutions) and
-a disjunction "`Δφ(x) ≤ 0`, or `φ(x) = 0` and the gradient condition".
+on a ball in `W`. [Def 2.1](#AFS:d.stationary-viscosity) of the paper (`IsViscSolution W Q u`) is
+phrased with touching on a relative neighbourhood (in `W` for supersolutions, in
+`\overline{{u > 0}} ∩ W` for subsolutions) and a disjunction "`Δφ(x) ≤ 0`, or `φ(x) = 0` and the
+gradient condition".
 
 * Supersolution: at `u(x) > 0`, `Δφ(x) ≤ Δu(x) = 0`. At a free boundary point, the condition of
   bernoulli-rectifiability. At a zero of `u` off the free boundary, `u ≡ 0` near `x`, so `x` is a
@@ -131,7 +132,8 @@ theorem isViscSub_of_isViscositySolutionQ {W : Set (E d)} {Q u : E d → ℝ} (h
       exact (not_lt.1 this).trans (le_max_right _ _)
 
 /-- A viscosity solution in the sense of bernoulli-rectifiability (`IsViscositySolutionQ`) on an
-open set `W` is a viscosity solution in the sense of Def 2.1 (`IsViscSolution`). -/
+open set `W` is a viscosity solution in the sense of [Def 2.1](#AFS:d.stationary-viscosity)
+(`IsViscSolution`). -/
 theorem isViscSolution_of_isViscositySolutionQ {W : Set (E d)} {Q u : E d → ℝ} (hW : IsOpen W)
     (h : InnerVariational.IsViscositySolutionQ W Q u) : IsViscSolution W Q u :=
   ⟨isViscSuper_of_isViscositySolutionQ hW h, isViscSub_of_isViscositySolutionQ hW h⟩
